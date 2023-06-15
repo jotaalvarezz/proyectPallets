@@ -78,6 +78,7 @@ async function createTable() {
             "CREATE TABLE IF NOT EXISTS mytable (id INTEGER PRIMARY KEY, name TEXT)",
             []
         );
+        console.log(db)
         return database;
     } catch (error) {
         console.log('error e la creacion de la tabla ', error)

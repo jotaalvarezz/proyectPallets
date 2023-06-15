@@ -4,7 +4,7 @@
     <TabView :selectedIndex="selectedIndex" @selectedIndexChange="indexChange" androidTabsPosition="buttom"
       tabBackgroundColor="#222A37">
       <TabViewItem :title="'fa-list' | fonticon" class="fas" style="font-size: 24">
-        <Ships />
+        <Ships/>
       </TabViewItem>
       <TabViewItem :title="'fa-list' | fonticon" class="fas" style="font-size: 24">
         <Frame>

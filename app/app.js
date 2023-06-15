@@ -7,6 +7,11 @@ Vue.use(RadSideDrawer);
 
 import { TNSFontIcon, fonticon } from 'nativescript-fonticon';
 
+Vue.registerElement(
+  'Fab',
+  () => require('@nstudio/nativescript-floatingactionbutton').Fab
+);
+
 TNSFontIcon.debug = true; // Opcionalmente, puedes habilitar el modo de depuración
 
 TNSFontIcon.paths = {

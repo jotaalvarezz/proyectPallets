@@ -11,7 +11,7 @@
                     <Label col="0" :text="'fa-home' | fonticon" class="fas" fontSize="18" />
                     <Label col="1" text="Inicio" fontSize="15" class="p-l-10"/>
                 </GridLayout>
-                <GridLayout columns="auto,*" class="nt-drawer__list-item">
+                <GridLayout columns="auto,*" class="nt-drawer__list-item" @tap="createTables">
                     <Label col="0" :text="'fa-sync' | fonticon" class="fas" fontSize="18" />
                     <Label col="1" text="Actualizar" fontSize="15" class="p-l-10"/>
                 </GridLayout>
@@ -20,7 +20,26 @@
     </GridLayout>
 </template>
 <script>
+//import {createTable, openDatabase} from '~/sqlite/database'
+const { createTable } = require('../../sqlite/database');
+
 export default {
-    name: 'Content-Drawer'
+    name: 'Content-Drawer',
+
+    methods: {
+        async createTables(){
+            try {
+                const db = await createTable()
+                alert({
+                    title:'Inicializando DB',
+                    message:'Actualizando Tablas...',
+                    okButtonText:"aceptar"
+                })
+                console.log(db)
+            } catch (error) {
+                console.log('error intentando crear las tablas...')
+            }
+        }
+    },
 }
 </script>
