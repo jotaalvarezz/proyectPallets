@@ -5,15 +5,7 @@
             <!-- Contenido principal -->
             <StackLayout ~mainContent>
                 <!-- Agrega tus elementos de contenido principal aquí -->
-                <TabView :selectedIndex="selectedIndex" @selectedIndexChange="indexChange" androidTabsPosition="buttom"
-                    tabBackgroundColor="#222A37">
-                    <TabViewItem fontSize="35" :title="'fa-barcode' | fonticon" class="fas">
-                        <label text="page 1"></label>
-                    </TabViewItem>
-                    <TabViewItem fontSize="35" :title="'fa-barcode' | fonticon" class="fas">
-                        <label text="page 2"></label>
-                    </TabViewItem>
-                </TabView>
+                <NavViews/>
             </StackLayout>
             <!-- Contenido del Drawer -->
             <StackLayout ~drawerContent>
@@ -28,11 +20,13 @@
 import axios from 'axios';
 import Header from '~/components/header/Header.vue';
 import ContentDrawer from '~/components/contentDrawer/ContentDrawer.vue';
+import NavViews from './tabview/NavViews.vue';
 
 export default {
     components: {
         Header,
-        ContentDrawer
+        ContentDrawer,
+        NavViews
     },
 
     data() {
