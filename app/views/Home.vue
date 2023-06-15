@@ -1,19 +1,18 @@
 <template>
-    <!-- <Page> -->
-        <!-- <Header :open="openDrawer"/> -->
-        <RadSideDrawer ref="drawer" @drawerOpened="onDrawerOpened" @drawerClosed="onDrawerClosed">
-            <!-- Contenido principal -->
-            <StackLayout ~mainContent>
-                <!-- Agrega tus elementos de contenido principal aquí -->
-                <NavViews/>
-            </StackLayout>
-            <!-- Contenido del Drawer -->
-            <StackLayout ~drawerContent>
-                <!-- Agrega tus elementos de contenido del Drawer aquí -->
-                <ContentDrawer></ContentDrawer>
-            </StackLayout>
-        </RadSideDrawer>
-   <!--  </Page> -->
+    <RadSideDrawer ref="drawer" @drawerOpened="onDrawerOpened" @drawerClosed="onDrawerClosed">
+        <!-- Contenido principal -->
+        <StackLayout ~mainContent>
+            <!-- Agrega tus elementos de contenido principal aquí -->
+            <Frame>
+                <NavViews />
+            </Frame>
+        </StackLayout>
+        <!-- Contenido del Drawer -->
+        <StackLayout ~drawerContent>
+            <!-- Agrega tus elementos de contenido del Drawer aquí -->
+            <ContentDrawer></ContentDrawer>
+        </StackLayout>
+    </RadSideDrawer>
 </template>
 
 <script>
@@ -31,7 +30,7 @@ export default {
 
     data() {
         return {
-            drawer:[]
+            drawer: []
         }
     },
 
@@ -53,10 +52,10 @@ export default {
             }
         },
 
-        openDrawer(){
+        /* openDrawer() {
             const drawer = this.$refs.drawer
             drawer.showDrawer()
-        }
+        } */
     },
 
     created() {

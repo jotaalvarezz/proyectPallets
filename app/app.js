@@ -20,6 +20,7 @@ TNSFontIcon.loadCss();
 Vue.filter('fonticon', fonticon);
 
 new Vue({
-  render: (h) => h('frame', [h(Home)]),
+  /* render: (h) => h('frame', [h(Home)]), */
+  render: (h) => h(Home),
   Store
 }).$start()

@@ -1,25 +1,16 @@
 <template>
   <Page>
-    <TabView
-      :selectedIndex="selectedIndex"
-      @selectedIndexChange="indexChange"
-      androidTabsPosition="buttom"
-      tabBackgroundColor="#222A37"
-    >
-      <TabViewItem
-        :title="'fa-list' | fonticon"
-        class="fas"
-        style="font-size: 24"
-      >
-         <Ships/>
-        <!-- <Button text="Button" backgroundColor="#366233" @tap="onButtonTap" /> -->
+    <Header :open="openDrawer" />
+    <TabView :selectedIndex="selectedIndex" @selectedIndexChange="indexChange" androidTabsPosition="buttom"
+      tabBackgroundColor="#222A37">
+      <TabViewItem :title="'fa-list' | fonticon" class="fas" style="font-size: 24">
+        <Ships />
       </TabViewItem>
-      <TabViewItem
-        :title="'fa-list' | fonticon"
-        class="fas"
-        style="font-size: 24"
-      >
-        <label text="page 2"></label>
+      <TabViewItem :title="'fa-list' | fonticon" class="fas" style="font-size: 24">
+        <Frame>
+          <PalletsWarehouse/>
+        </Frame>
+        <!-- <label text="laksjdlajds"/> -->
       </TabViewItem>
     </TabView>
   </Page>
@@ -27,14 +18,29 @@
 
 <script>
 import Ships from "./ships/Ships.vue";
+import Header from "~/components/header/Header.vue";
+import PalletsWarehouse from "./palletsWarehouse/PalletsWarehouse.vue";
+
 export default {
   components: {
     Ships,
+    Header,
+    PalletsWarehouse
+},
+  data() {
+    return {
+
+    }
   },
   methods: {
     onButtonTap() {
       this.$navigateTo(Ships);
     },
+
+    /* evento(){
+      const rootView = getRootView();
+      console.log("=> ",rootView.mainContent)
+    } */
   },
 };
 </script>
