@@ -1,6 +1,6 @@
 <template>
-    <Page>
-        <Header :open="openDrawer"/>
+    <!-- <Page> -->
+        <!-- <Header :open="openDrawer"/> -->
         <RadSideDrawer ref="drawer" @drawerOpened="onDrawerOpened" @drawerClosed="onDrawerClosed">
             <!-- Contenido principal -->
             <StackLayout ~mainContent>
@@ -13,7 +13,7 @@
                 <ContentDrawer></ContentDrawer>
             </StackLayout>
         </RadSideDrawer>
-    </Page>
+   <!--  </Page> -->
 </template>
 
 <script>

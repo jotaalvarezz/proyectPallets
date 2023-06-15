@@ -1,6 +1,6 @@
 <template>
-  <FlexboxLayout flexDirection="column" backgroundColor="#3c495e">
-    <ListView for="(item,index) in listOfItems" @itemTap="onItemTap">
+  <!-- <Page> -->
+    <ListView for="(item, index) in listOfItems" @itemTap="onItemTap">
       <v-template>
         <FlexboxLayout>
           <Label
@@ -11,15 +11,21 @@
             backgroundColor="#222A37"
             color="white"
           />
-          <Label :text="item.text" class="p-l-10" width="auto" color="white" fontSize="25"/>
+          <Label
+            :text="item.text"
+            class="p-l-10"
+            width="auto"
+            color="white"
+            fontSize="25"
+          />
         </FlexboxLayout>
       </v-template>
     </ListView>
-  </FlexboxLayout>
+  <!-- </Page> -->
 </template>
 
 <script>
-import { GridLayout } from "@nativescript/core";
+/* import { GridLayout } from "@nativescript/core"; */
 
 export default {
   name: "Ships",
@@ -38,6 +44,6 @@ export default {
       console.log("success");
     },
   },
-  components: { GridLayout },
+  /* components: { GridLayout }, */
 };
 </script>
