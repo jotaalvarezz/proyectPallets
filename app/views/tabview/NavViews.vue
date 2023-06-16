@@ -1,10 +1,12 @@
 <template>
   <Page>
-    <Header :open="openDrawer" />
+    <Header/>
     <TabView :selectedIndex="selectedIndex" @selectedIndexChange="indexChange" androidTabsPosition="buttom"
       tabBackgroundColor="#222A37">
       <TabViewItem :title="'fa-list' | fonticon" class="fas" style="font-size: 24">
-        <Ships/>
+        <!-- <Frame> -->
+          <Ships/>
+        <!-- </Frame> -->
       </TabViewItem>
       <TabViewItem :title="'fa-list' | fonticon" class="fas" style="font-size: 24">
         <Frame>

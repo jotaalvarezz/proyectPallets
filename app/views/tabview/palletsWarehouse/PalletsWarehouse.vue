@@ -17,7 +17,9 @@ export default {
     },
 
     methods: {
-
+        fabTap() {
+            console.log('fotante activo...')
+        }
     },
 }
 </script>

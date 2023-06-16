@@ -1,11 +1,10 @@
 <template>
-    <StackLayout>
-        <!-- <Label text="Contenido de la página" /> -->
-        //https://github.com/nstudio/nativescript-floatingactionbutton
-        <fab @tap="fabTap" row="0" icon="res://ic_add_white" rippleColor="#f1f1f1" class="fab-button"></fab>
-    </StackLayout>
+    <!-- https://github.com/nstudio/nativescript-floatingactionbutton -->
+    <fab @tap="fabTap" :text="'fa-plus' | fonticon" class="fab-button fas" rippleColor="#f1f1f1"></fab>
 </template>
 <script>
+import { fonticon } from 'nativescript-fonticon';
+
 export default {
     data() {
         return {
@@ -25,8 +24,8 @@ export default {
     height: 70;
     width: 70; /// this is required on iOS - Android does not require width so you might need to adjust styles
     margin: 15;
-    background-color: #ff4081;
-    horizontal-align: left;
+    background-color: #081a36;
+    horizontal-align: right;
     vertical-align: bottom;
 }
 </style>
