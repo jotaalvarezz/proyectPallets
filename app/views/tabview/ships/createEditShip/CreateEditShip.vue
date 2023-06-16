@@ -4,21 +4,23 @@
       <StackLayout orientation="horizontal" style="background-color: #222A37; text-align: center;" height="70">
         <Label :text="'fa-reply' | fonticon" fontSize="18" class="fas" width="20%" @tap="$modal.close"></Label>
         <Label text="Nuevo Barco" fontSize="18" fontWeight="bold" width="60%"></Label>
+        <!-- <Image src="~/assets/images/logobarco.png" stretch="aspectFit" width="60%"/> -->
         <!-- <Label text="Nuevo Barco" width="20%"></Label> -->
       </StackLayout>
       <card-view margin="10" elevation="40" radius="15">
-        <GridLayout rows="auto,auto,auto" padding="30">
+        <GridLayout rows="auto,auto,auto,auto" padding="30">
+          <Image row="0" src="~/assets/images/logobarco.png" stretch="aspectFit" height="30%" width="60%"/>
           <TextField
-            row="0"
+            row="1"
             v-model="nameShip"
-            hint="Nombra de Barco..."
+            hint="Nombre de Barco..."
             height="40"
             fontSize="15"
             borderColor="#3c495e"
             style="placeholder-color: #3c495e; color: #3c495e;"
           />
           <TextField
-            row="1"
+            row="2"
             v-model="journey"
             hint="Viaje..."
             height="40"
@@ -26,7 +28,7 @@
             borderColor="#3c495e"
             style="placeholder-color: #3c495e; color: #3c495e;"
           />
-        <Button row="2" marginTop="14" backgroundColor="#081a36" text="Agregar" @tap="addShip"/>
+        <Button row="3" marginTop="14" backgroundColor="#081a36" text="Agregar" @tap="addShip"/>
       </GridLayout>
       </card-view>
     </StackLayout>

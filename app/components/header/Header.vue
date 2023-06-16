@@ -2,8 +2,12 @@
     <ActionBar backgroundColor="#222A37">
         <!-- <NavigationButton /> -->
         <GridLayout columns="50, *">
-            <Label text="WSP" class="action-bar-title cardtitle" fontSize="18" colSpan="2" />
-            <Label class="fas" text.decode="&#xf0c9;" color="white" @tap="openDrawer" fontSize="25"/>
+            <StackLayout col="1" orientation="horizontal" class="action-bar-title cardtitle" colSpan="2" style="margin-left: 27%;">
+                <Image src="~/assets/images/logobarco.png" width="40" height="40" verticalAlignment="center" />
+                <Label text="WSP" fontSize="24" verticalAlignment="center" />
+            </StackLayout>
+            <!-- <Label text="WSP" class="action-bar-title cardtitle" fontSize="18" colSpan="2" /> -->
+            <Label col="0" class="fas" text.decode="&#xf0c9;" color="white" @tap="openDrawer" fontSize="25" />
         </GridLayout>
         <!-- <ActionItem android.systemIcon="ic_menu_camera" ios.position="left" text="scan code" @tap="readCode" /> -->
         <ActionItem android.systemIcon="ic_menu_search" ios.position="right" text="delete" @tap="modalSearch" />
@@ -30,12 +34,12 @@ export default {
             //this.$showModal(searchView, { fullscreen: true, props: { animes: this.animes_store } });
         },
 
-        openDrawer(){
+        openDrawer() {
             util.showDrawer();
         },
 
-        modalSearch(){
-            this.$showModal(searchView,{fullscreen:true})
+        modalSearch() {
+            this.$showModal(searchView, { fullscreen: true })
         }
         /*  async getAnimes() {
              try {
