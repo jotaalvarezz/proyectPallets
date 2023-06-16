@@ -75,7 +75,7 @@ async function createTable() {
     try {
         const db = await openDatabase();
         const database = db.execSQL(
-            "CREATE TABLE IF NOT EXISTS mytable (id INTEGER PRIMARY KEY, name TEXT)",
+            "CREATE TABLE IF NOT EXISTS ships (id INTEGER PRIMARY KEY, name TEXT)",
             []
         );
         console.log(db)
@@ -89,7 +89,7 @@ async function createTable() {
 async function allData() {
     try {
         const db = await openDatabase();
-        const data = await db.all("SELECT * FROM mytable", []);
+        const data = await db.all("SELECT * FROM ships", []);
         return data;
     } catch (error) {
         console.log("error al traer los datos ", error);
@@ -100,7 +100,7 @@ async function allData() {
 async function insertData(data) {
     try {
         const db = await openDatabase()
-        let postData = db.execSQL("INSERT INTO mytable (name) VALUES (?)", [data])
+        let postData = db.execSQL("INSERT INTO ships (name) VALUES (?)", [data])
         return postData
     } catch (error) {
         console.log('ocurrio un problema al insertar la fila', error)

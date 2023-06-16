@@ -22,7 +22,8 @@
           </FlexboxLayout>
         </v-template>
       </ListView>
-      <FloatingButton row="1"/>
+      <fab @tap="getShips" marginBottom="13%" :text="'fa-sync' | fonticon" class="fab-sync fas" rippleColor="#f1f1f1"></fab>
+      <FloatingButton row="2" :add="openModal"/>
     </grid-layout>
   <!-- </Page> -->
 </template>
@@ -30,11 +31,14 @@
 <script>
 /* import { GridLayout } from "@nativescript/core"; */
 import FloatingButton from "~/components/floatingButton/FloatingButton.vue";
+import CreateEditShip from "./createEditShip/CreateEditShip.vue";
+const {allData} = require('~/sqlite/database')
 
 export default {
   name: "Ships",
   components: {
     FloatingButton,
+    CreateEditShip
   },
   data() {
     return {
@@ -50,10 +54,34 @@ export default {
     onItemTap() {
       console.log("success");
     },
+
+    openModal(){
+      this.$showModal(CreateEditShip,{fullscreen:true})
+    },
+
+    async getShips(){
+      try {
+        this.listOfItems = []
+        const ships = await allData()
+        console.log(ships)
+        for (let i = 0; i < ships.length; i++) {
+          this.listOfItems.push({text:ships[i][1]})
+        }
+      } catch (error) {
+        console.error("error al traer lo datos ",error)        
+      }
+    }
   },
   /* components: { GridLayout }, */
 };
 </script>
 <style lang="scss">
-
+.fab-sync {
+    height: 70;
+    width: 70; /// this is required on iOS - Android does not require width so you might need to adjust styles
+    margin: 15;
+    background-color: #081a36;
+    horizontal-align: right;
+    vertical-align: bottom;
+}
 </style>

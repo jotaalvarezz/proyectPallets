@@ -6,6 +6,12 @@
 import { fonticon } from 'nativescript-fonticon';
 
 export default {
+    props:{
+        add:{
+            type:Function,
+            required:true
+        }
+    },
     data() {
         return {
 
@@ -14,7 +20,7 @@ export default {
 
     methods: {
         fabTap() {
-            console.log('fotante activo...')
+            this.add()
         }
     },
 }
