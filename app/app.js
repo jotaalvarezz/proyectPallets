@@ -12,6 +12,11 @@ Vue.registerElement(
   () => require('@nstudio/nativescript-floatingactionbutton').Fab
 );
 
+Vue.registerElement(
+  'CardView',
+  () => require('@nstudio/nativescript-cardview').CardView
+);
+
 TNSFontIcon.debug = true; // Opcionalmente, puedes habilitar el modo de depuración
 
 TNSFontIcon.paths = {

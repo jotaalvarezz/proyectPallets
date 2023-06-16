@@ -1,6 +1,6 @@
 <template>
   <!-- <Page> -->
-    <grid-layout rows="*">
+    <grid-layout rows="*" backgroundColor="#3C495E">
       <ListView for="(item, index) in listOfItems" @itemTap="onItemTap">
         <v-template>
           <FlexboxLayout>
@@ -68,7 +68,7 @@ export default {
           this.listOfItems.push({text:ships[i][1]})
         }
       } catch (error) {
-        console.error("error al traer lo datos ",error)        
+        console.error("error al traer lo datos ",error)
       }
     }
   },

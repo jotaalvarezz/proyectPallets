@@ -1,6 +1,6 @@
 <template>
     <ActionBar backgroundColor="#222A37">
-        <NavigationButton />
+        <!-- <NavigationButton /> -->
         <GridLayout columns="50, *">
             <Label text="WSP" class="action-bar-title cardtitle" fontSize="18" colSpan="2" />
             <Label class="fas" text.decode="&#xf0c9;" color="white" @tap="openDrawer" fontSize="25"/>
