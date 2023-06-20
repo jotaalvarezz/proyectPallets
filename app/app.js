@@ -1,6 +1,7 @@
 import Vue from 'nativescript-vue'
 import Home from './views/Home'
 import Store from './store/index'
+import router from './Routes/Routes'
 import RadSideDrawer from "nativescript-ui-sidedrawer/vue";
 
 Vue.use(RadSideDrawer);
@@ -31,6 +32,7 @@ Vue.filter('fonticon', fonticon);
 
 new Vue({
   /* render: (h) => h('frame', [h(Home)]), */
+  router,
   render: (h) => h(Home),
   Store
 }).$start()

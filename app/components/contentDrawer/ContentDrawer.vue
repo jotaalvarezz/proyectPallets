@@ -15,13 +15,21 @@
                     <Label col="0" :text="'fa-sync' | fonticon" class="fas" fontSize="18" />
                     <Label col="1" text="Actualizar" fontSize="15" class="p-l-10"/>
                 </GridLayout>
+                <GridLayout columns="auto,*" class="nt-drawer__list-item" @tap="createTabless">
+                    <Label col="0" :text="'fa-eye' | fonticon" class="fas" fontSize="18" />
+                    <Label col="1" text="Ver DB" fontSize="15" class="p-l-10"/>
+                </GridLayout>
+                <GridLayout columns="auto,*" class="nt-drawer__list-item" @tap="deleteDB">
+                    <Label col="0" :text="'fa-trash-alt' | fonticon" class="fas" fontSize="18" />
+                    <Label col="1" text="Eliminar DB" fontSize="15" class="p-l-10"/>
+                </GridLayout>
             </StackLayout>
         </ScrollView>
     </GridLayout>
 </template>
 <script>
 //import {createTable, openDatabase} from '~/sqlite/database'
-const { createTable } = require('../../sqlite/database');
+const { createTable, DBdelete, structure } = require('../../sqlite/database');
 
 export default {
     name: 'Content-Drawer',
@@ -38,6 +46,29 @@ export default {
                 console.log(db)
             } catch (error) {
                 console.log('error intentando crear las tablas...')
+            }
+        },
+
+        async createTabless(){
+            try {
+                const db = await structure()
+                alert({
+                    title:'Inicializando DB',
+                    message:'Actualizando Tablas...',
+                    okButtonText:"aceptar"
+                })
+                console.log(db)
+            } catch (error) {
+                console.log('error intentando crear las tablas...')
+            }
+        },
+
+        async deleteDB(){
+            try {
+                const db = await DBdelete()
+                console.log("... ",db)
+            } catch (error) {
+                console.log('delete exitoso!')
             }
         }
     },

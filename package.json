@@ -13,6 +13,7 @@
     "nativescript-sqlite": "^2.8.6",
     "nativescript-ui-sidedrawer": "^15.2.3",
     "nativescript-vue": "~2.9.3",
+    "nativescript-vue-router-ns": "^1.0.4",
     "vuex": "^3.6.2"
   },
   "devDependencies": {
