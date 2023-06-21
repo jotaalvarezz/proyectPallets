@@ -4,7 +4,7 @@
         <StackLayout ~mainContent>
             <!-- Agrega tus elementos de contenido principal aquí -->
             <Frame>
-                <NavViews />
+                <Ships/>
             </Frame>
         </StackLayout>
         <!-- Contenido del Drawer -->
@@ -19,13 +19,13 @@
 import axios from 'axios';
 import Header from '~/components/header/Header.vue';
 import ContentDrawer from '~/components/contentDrawer/ContentDrawer.vue';
-import NavViews from './tabview/NavViews.vue';
+import Ships from './ships/Ships.vue';
 
 export default {
     components: {
         Header,
         ContentDrawer,
-        NavViews
+        Ships
     },
 
     data() {

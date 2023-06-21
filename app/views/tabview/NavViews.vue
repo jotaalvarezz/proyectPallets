@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import Ships from "./ships/Ships.vue";
+import Ships from "~/views/ships/Ships.vue";
 import Header from "~/components/header/Header.vue";
 import PalletsWarehouse from "./palletsWarehouse/PalletsWarehouse.vue";
 

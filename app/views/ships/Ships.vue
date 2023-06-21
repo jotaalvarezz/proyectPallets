@@ -1,5 +1,6 @@
 <template>
-  <!-- <Page> -->
+  <Page>
+    <Header/>
     <grid-layout rows="*" backgroundColor="#3C495E">
       <ListView for="(item, index) in listOfItems" @itemTap="onItemTap">
         <v-template>
@@ -34,14 +35,15 @@
       <fab @tap="getShips" marginBottom="13%" :text="'fa-sync' | fonticon" class="fab-sync fas" rippleColor="#f1f1f1"></fab>
       <FloatingButton row="2" :add="openModal"/>
     </grid-layout>
-  <!-- </Page> -->
+  </Page>
 </template>
 
 <script>
 /* import { GridLayout } from "@nativescript/core"; */
 import Warehouses from "~/views/Warehouses/Warehouses.vue";
 import FloatingButton from "~/components/floatingButton/FloatingButton.vue";
-import CreateEditShip from "./createEditShip/CreateEditShip.vue";
+import CreateEditShip from "~/views/ships/createEditShip/CreateEditShip.vue";
+import Header from "~/components/header/Header.vue";
 const {allData, deleteRecord} = require('~/sqlite/database')
 
 export default {
@@ -49,7 +51,8 @@ export default {
   components: {
     FloatingButton,
     CreateEditShip,
-    Warehouses
+    Warehouses,
+    Header
   },
   data() {
     return {

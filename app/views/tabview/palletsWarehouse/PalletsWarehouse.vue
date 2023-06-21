@@ -1,14 +1,17 @@
 <template>
     <page>
+        <Header/>
         <FloatingButton/>
     </page>
 </template>
 <script>
 import FloatingButton from '~/components/floatingButton/FloatingButton.vue';
+import Header from '~/components/header/Header.vue';
 
 export default {
     components:{
-        FloatingButton
+        FloatingButton,
+        Header
     },
     data() {
         return {
