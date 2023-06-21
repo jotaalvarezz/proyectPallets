@@ -6,7 +6,7 @@ Vue.use(Vuex);
 const store = new Vuex.Store({
   state: {
     count: 0,
-    animes_store: [],
+    item: {},
     welcome: "Bienvenido Rey Cabro",
   },
   mutations: {
@@ -14,8 +14,8 @@ const store = new Vuex.Store({
       state.count++;
     },
 
-    save_anime(state, payload) {
-      state.animes_store = payload;
+    saveItem(state, payload) {
+      state.item = payload;
     },
   },
 });

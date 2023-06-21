@@ -5,6 +5,7 @@ import NSVueRouter from 'nativescript-vue-router-ns'
 import Warehouse from '~/views/Warehouses/Warehouses'
 import Ship from '~/views/ships/Ships'
 import palletsWarehouse from '~/views/tabview/palletsWarehouse/PalletsWarehouse'
+import Pallets from '~/views/pallets/Pallets'
 
 Vue.use(NSVueRouter)
 
@@ -12,7 +13,7 @@ const routes = [
   {
     name: 'warehouse.index',
     component: Warehouse,
-    meta: { auth: true }
+    meta: { guest: true }
   },
   {
     name: 'ship.index',
@@ -22,6 +23,11 @@ const routes = [
   {
     name:'palletswarehouse.index',
     component: palletsWarehouse,
+    meta: { guest: true }
+  },
+  {
+    name:'pallets.index',
+    component: Pallets,
     meta: { guest: true }
   }
 ]

@@ -42,6 +42,7 @@ export default {
     methods: {
         async getAnimes() {
             try {
+                console.log('wel ',this.welcome)
                 const animes = await axios.get('https://api.jikan.moe/v4/anime');
                 console.log(animes)
                 this.animes = animes.data.data
