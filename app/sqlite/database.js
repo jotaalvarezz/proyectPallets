@@ -67,6 +67,7 @@ const Querys = [
 }; */
 
 // Función para abrir o crear la base de datos
+/* ************************************************************************************** */
 async function openDatabase() {
   try {
     const lite = await new Sqlite("mydatabase.db");
@@ -109,9 +110,11 @@ async function createTable() {
     console.log("error e la creacion de la tabla ", error);
   }
 }
+/* ************************************************************************************** */
 
 //traer todos los datos
-async function allData() {
+/* ************************************************************************************** */
+async function getShips() {
   try {
     const db = await openDatabase();
     const data = await db.all("SELECT * FROM ships", []);
@@ -121,22 +124,86 @@ async function allData() {
   }
 }
 
-// Función para insertar datos en la tabla
-async function insertData(data) {
+async function getWarehouses(ship_id) {
   try {
     const db = await openDatabase();
-    let postData = db.execSQL("INSERT INTO ships (name) VALUES (?)", [data]);
+    const data = await db.all("SELECT * FROM warehouses WHERE ship_id = (?)", [ship_id]);
+    return data;
+  } catch (error) {
+    console.log("error al traer los datos ", error);
+  }
+}
+
+async function getPallets(warehouse_id) {
+  try {
+    const db = await openDatabase();
+    const data = await db.all("SELECT * FROM pallets WHERE warehouse_id = (?)", [warehouse_id]);
+    return data;
+  } catch (error) {
+    console.log("error al traer los datos ", error);
+  }
+}
+/* ************************************************************************************** */
+
+// Función para insertar datos en la tabla
+/* ************************************************************************************** */
+async function insertShip(data) {
+  try {
+    const db = await openDatabase();
+    let postData = db.execSQL("INSERT INTO ships (name, journey) VALUES (?, ?)", [data.nameShip, data.journey]);
     return postData;
   } catch (error) {
     console.log("ocurrio un problema al insertar la fila", error);
   }
 }
 
+async function insertWarehuse(data) {
+  try {
+    const db = await openDatabase();
+    let postData = db.execSQL("INSERT INTO warehouses (name, ship_id) VALUES (?, ?)", [data.name, data.ship_id]);
+    return postData;
+  } catch (error) {
+    console.log("ocurrio un problema al insertar la fila", error);
+  }
+}
+
+async function insertPallet(data) {
+  try {
+    const db = await openDatabase();
+    let postData = db.execSQL("INSERT INTO pallets (code, warehouse_id) VALUES (?, ?)", [data.code, data.warehouse_id]);
+    return postData;
+  } catch (error) {
+    console.log("ocurrio un problema al insertar la fila", error);
+  }
+}
+/* ************************************************************************************** */
+
+
 //Funcion para eliminar registros de una tabla
-async function deleteRecord(id) {
+async function deleteShip(id) {
   try {
     const db = await openDatabase();
     const data = await db.execSQL("DELETE FROM ships WHERE id = ?", [id]);
+    return data;
+  } catch (error) {
+    console.log("Hubo un error intentando eliminar el registro ", error);
+  }
+}
+
+async function deleteWarehouse(id) {
+  try {
+    const db = await openDatabase();
+    const data = await db.execSQL("DELETE FROM warehouses WHERE id = ?", [id]);
+    return data;
+  } catch (error) {
+    console.log("Hubo un error intentando eliminar el registro ", error);
+  }
+}
+
+async function deletePallet(id) {
+  try {
+    const db = await openDatabase();
+    const data = await db.execSQL("DELETE FROM pallets WHERE id = ?", [id]);
     return data;
   } catch (error) {
     console.log("Hubo un error intentando eliminar el registro ", error);
@@ -157,10 +224,16 @@ async function DBdelete() {
 
 module.exports = {
   createTable,
-  insertData,
-  allData,
+  insertShip,
+  insertWarehuse,
+  insertPallet,
+  getShips,
+  getWarehouses,
+  getPallets,
   openDatabase,
   DBdelete,
-  deleteRecord,
+  deleteShip,
+  deleteWarehouse,
+  deletePallet,
   structure
 };

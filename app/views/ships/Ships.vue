@@ -2,13 +2,16 @@
   <Page>
     <Header />
     <grid-layout rows="*" backgroundColor="#3C495E">
-      <ListView for="(item, index) in listOfItems" @itemTap="onItemTap">
+      <ListView for="(item, index) in ships" @itemTap="onItemTap">
         <v-template>
           <GridLayout columns="auto, *,50" @tap="navigate(item)" @longPress="operations">
             <Label :text="'fa-ship' | fonticon" class="fas" width="110" fontSize="70" col="0" backgroundColor="#222A37"
               color="white" />
             <Label :text="item.text" class="p-l-10" width="auto" color="white" fontSize="25" col="1" />
-            <Label :text="'fa-trash-alt' | fonticon" class="fas" fontSize="18" col="2" @tap="deleteRow(item.id)" />
+            <Label :text="'fa-trash-alt' | fonticon" class="fas" fontSize="18" col="2" @tap="deleteRow(item.id, index)" />
+            <!-- <StackLayout col="3">
+              <check-box :checked="isChecked" boxType="circle" @checkedChange="isChecked = $event.value" />
+            </StackLayout> -->
           </GridLayout>
         </v-template>
       </ListView>
@@ -25,8 +28,9 @@ import Warehouses from "~/views/Warehouses/Warehouses.vue";
 import FloatingButton from "~/components/floatingButton/FloatingButton.vue";
 import CreateEditShip from "~/views/ships/createEditShip/CreateEditShip.vue";
 import Header from "~/components/header/Header.vue";
-import {mapMutations, mapState} from 'vuex'
-const { allData, deleteRecord } = require('~/sqlite/database')
+import { mapMutations, mapState } from 'vuex'
+const { getShips, deleteShip } = require('~/sqlite/database')
+
 
 export default {
   name: "Ships",
@@ -38,19 +42,16 @@ export default {
   },
   data() {
     return {
-      listOfItems: [
-        { id:1, text: "first" },
-        { id:2, text: "second" },
-        { id:3, text: "three" },
-        { id:4, text: "four" },
-      ],
+      ships: [],
+      selectedOption: null,
+      isChecked: false
     };
   },
-  computed:{
+  computed: {
     ...mapState(['item'])
   },
   methods: {
-    ...mapMutations(['saveItem']),
+    ...mapMutations(['saveItem', 'saveCollection']),
 
     onItemTap() {
       console.log("success");
@@ -74,9 +75,10 @@ export default {
         })
     },
 
-    async deleteRow(id) {
+    async deleteRow(id, index) {
       try {
-        const record = await deleteRecord(id)
+        const record = await deleteShip(id)
+        this.ships.splice(index,1)
         console.log(record)
       } catch (error) {
         console.log("eleminacion fallida ", error)
@@ -97,17 +99,21 @@ export default {
 
     async getShips() {
       try {
-        this.listOfItems = []
-        const ships = await allData()
+        this.ships = []
+        const ships = await getShips()
         console.log(ships)
         for (let i = 0; i < ships.length; i++) {
-          this.listOfItems.push({ id: ships[i][0], text: ships[i][1] })
+          this.ships.push({ id: ships[i][0], text: ships[i][1], journey: ships[i][2]})
         }
       } catch (error) {
         console.error("error al traer lo datos ", error)
       }
     }
   },
+
+  created(){
+    this.getShips()
+  }
   /* components: { GridLayout }, */
 };
 </script>

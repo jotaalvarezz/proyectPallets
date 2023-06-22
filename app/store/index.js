@@ -7,6 +7,7 @@ const store = new Vuex.Store({
   state: {
     count: 0,
     item: {},
+    collection:[],
     welcome: "Bienvenido Rey Cabro",
   },
   mutations: {
@@ -17,6 +18,10 @@ const store = new Vuex.Store({
     saveItem(state, payload) {
       state.item = payload;
     },
+
+    saveCollection(state, payload){
+      state.collection = payload;
+    }
   },
 });
 
