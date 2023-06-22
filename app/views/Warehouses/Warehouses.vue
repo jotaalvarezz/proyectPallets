@@ -1,10 +1,10 @@
 <template>
   <Page>
-    <!-- <Header/> -->
+    <Header/>
     <grid-layout rows="*" backgroundColor="#3C495E">
-      <ListView for="(item, index) in listOfItems" @tap="navigate" @itemTap="onItemTap">
+      <ListView for="(item, index) in listOfItems" @itemTap="onItemTap">
         <v-template>
-          <GridLayout columns="auto, *,50" @longPress="operations">
+          <GridLayout columns="auto, *,50" @tap="navigate(item)" @longPress="operations">
             <Label :text="'fa-warehouse' | fonticon" class="fas" width="110" fontSize="70" col="0"
               backgroundColor="#222A37" color="white" />
             <Label :text="item.text" class="p-l-10" width="auto" color="white" fontSize="25" col="1" />
@@ -21,18 +21,18 @@
 
 <script>
 /* import { GridLayout } from "@nativescript/core"; */
-//import Header from '~/components/header/Header.vue'
+import Header from '~/components/header/Header.vue'
 import FloatingButton from "~/components/floatingButton/FloatingButton.vue";
-/* import CreateEditShip from "./createEditShip/CreateEditShip.vue"; */
+import CreateEditShip from '../ships/createEditShip/CreateEditShip.vue';
 const { allData, deleteRecord } = require('~/sqlite/database')
-import { mapState } from "vuex";
+import { mapState, mapMutations } from "vuex";
 
 export default {
   name: "Ships",
   components: {
     FloatingButton,
     /*  CreateEditShip, */
-    // Header
+   Header
   },
   data() {
     return {
@@ -48,13 +48,14 @@ export default {
     ...mapState(['item'])
   },
   methods: {
+    ...mapMutations(['saveItem']),
     onItemTap() {
       console.log("success");
     },
 
-    navigate() {
-      console.log("state >> ",this.item)
-      //this.$router.push('pallets.index')
+    navigate(item) {
+      this.saveItem(item)
+      this.$router.push('pallets.index')
     },
 
     openModal() {
@@ -63,6 +64,7 @@ export default {
           textBar: 'Nueva Bodega',
           textHint1: 'Nombre de Bodega...',
           textHint2: 'Barco...',
+          item: this.item,
           update: false,
         }
       })
@@ -101,10 +103,6 @@ export default {
         console.error("error al traer lo datos ", error)
       }
     }
-  },
-
-  created() {
-    console.log("params ship ",this.$route.query)
   },
   /* components: { GridLayout }, */
 };

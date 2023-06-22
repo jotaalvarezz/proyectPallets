@@ -11,7 +11,7 @@ Vue.use(NSVueRouter)
 
 const routes = [
   {
-    name: 'warehouse.index',
+    name: 'warehouses.index',
     component: Warehouse,
     meta: { guest: true }
   },

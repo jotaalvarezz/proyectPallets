@@ -1,7 +1,7 @@
 const Sqlite = require("nativescript-sqlite");
 
 const Querys = [
-  "CREATE TABLE IF NOT EXISTS ships (id INTEGER PRIMARY KEY, name TEXT)",
+  "CREATE TABLE IF NOT EXISTS ships (id INTEGER PRIMARY KEY, name TEXT, journey TEXT)",
   "CREATE TABLE IF NOT EXISTS warehouses (id INTEGER PRIMARY KEY, ship_id INTEGER, name TEXT, FOREIGN KEY (ship_id) REFERENCES ships(ship_id))",
   "CREATE TABLE IF NOT EXISTS pallets (id INTEGER PRIMARY KEY, warehouse_id INTEGER, code TEXT, observation TEXT,FOREIGN KEY (warehouse_id) REFERENCES warehouses(warehouse_id))",
 ];

@@ -4,7 +4,7 @@
     <grid-layout rows="*" backgroundColor="#3C495E">
       <ListView for="(item, index) in listOfItems" @itemTap="onItemTap">
         <v-template>
-          <GridLayout columns="auto, *,50" @tap="navigate" @longPress="operations">
+          <GridLayout columns="auto, *,50" @tap="navigate(item)" @longPress="operations">
             <Label :text="'fa-ship' | fonticon" class="fas" width="110" fontSize="70" col="0" backgroundColor="#222A37"
               color="white" />
             <Label :text="item.text" class="p-l-10" width="auto" color="white" fontSize="25" col="1" />
@@ -56,10 +56,9 @@ export default {
       console.log("success");
     },
 
-    navigate() {
-      //this.saveItem(item)
-      //this.$navigateTo(Warehouses)
-      this.$router.push('warehouse.index')
+    navigate(item) {
+      this.saveItem(item)
+      this.$router.push('warehouses.index')
     },
 
     openModal() {
@@ -69,6 +68,7 @@ export default {
             textBar: 'Nuevo Barco',
             textHint1: 'Nombre de Barco...',
             textHint2: 'Viaje...',
+            item: {},
             update: false,
           }
         })

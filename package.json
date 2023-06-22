@@ -9,6 +9,7 @@
     "@nstudio/nativescript-cardview": "^2.0.2",
     "@nstudio/nativescript-floatingactionbutton": "^3.0.4",
     "axios": "^0.27.2",
+    "nativescript-drop-down": "^6.0.2",
     "nativescript-fonticon": "^2.0.2",
     "nativescript-sqlite": "^2.8.6",
     "nativescript-ui-sidedrawer": "^15.2.3",

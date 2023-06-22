@@ -18,6 +18,11 @@ Vue.registerElement(
   () => require('@nstudio/nativescript-cardview').CardView
 );
 
+Vue.registerElement(
+  "DropDown",
+  () => require("nativescript-drop-down/drop-down").DropDown
+);
+
 TNSFontIcon.debug = true; // Opcionalmente, puedes habilitar el modo de depuración
 
 TNSFontIcon.paths = {
