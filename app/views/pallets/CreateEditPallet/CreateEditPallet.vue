@@ -138,6 +138,7 @@ export default {
 
         async savePallet() {
             try {
+                this.model.warehouse_id = this.item.id
                 const pallet = await insertPallet(this.model);
                 console.log("save ", pallet);
                 /* this.model.codePallet = "";
