@@ -120,6 +120,16 @@ async function getPallets(warehouse_id) {
     console.log("error al traer los datos ", error);
   }
 }
+
+async function getPalletas() {
+  try {
+    const db = await openDatabase();
+    const data = await db.all("SELECT * FROM pallets", []);
+    return data;
+  } catch (error) {
+    console.log("error al traer los datos ", error);
+  }
+}
 /* ************************************************************************************** */
 
 // Función para insertar datos en la tabla
@@ -137,7 +147,7 @@ async function insertShip(data) {
 async function insertWarehuse(data) {
   try {
     const db = await openDatabase();
-    let postData = db.execSQL("INSERT INTO warehouses (name, ship_id) VALUES (?, ?)", [data.name, data.ship_id]);
+    let postData = db.execSQL("INSERT INTO warehouses (name, ship_id) VALUES (?, ?)", [data.nameWarehouse, data.ship_id]);
     return postData;
   } catch (error) {
     console.log("ocurrio un problema al insertar la fila", error);
@@ -147,7 +157,7 @@ async function insertWarehuse(data) {
 async function insertPallet(data) {
   try {
     const db = await openDatabase();
-    let postData = db.execSQL("INSERT INTO pallets (code, warehouse_id) VALUES (?, ?)", [data.code, data.warehouse_id]);
+    let postData = db.execSQL("INSERT INTO pallets (code, warehouse_id) VALUES (?, ?)", [data.codePallet, data.warehouse_id]);
     return postData;
   } catch (error) {
     console.log("ocurrio un problema al insertar la fila", error);
@@ -212,7 +222,8 @@ module.exports = {
   deleteShip,
   deleteWarehouse,
   deletePallet,
-  structure
+  structure,
+  getPalletas
 };
 
 

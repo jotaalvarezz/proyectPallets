@@ -2,7 +2,7 @@
   <Page>
     <Header/>
     <grid-layout rows="*" backgroundColor="#F4F6F8">
-      <ListView for="(item, index) in listOfItems" @itemTap="onItemTap">
+      <ListView for="(item, index) in pallets" @itemTap="onItemTap">
         <v-template>
           <GridLayout columns="auto, *,50" @longPress="operations">
             <Label
@@ -11,8 +11,7 @@
               width="110"
               fontSize="70"
               col="0"
-              backgroundColor="#222A37"
-              color="white"
+              color="#0096b7"
             />
             <Label
               :text="item.text"
@@ -21,18 +20,18 @@
               fontSize="25"
               col="1"
             />
-            <Label
+            <!-- <Label
               :text="'fa-trash-alt' | fonticon"
               class="fas colorIcons"
               fontSize="18"
               col="2"
               @tap="deleteRow(item.id)"
-            />
+            /> -->
           </GridLayout>
         </v-template>
       </ListView>
       <fab
-        @tap="getShips"
+        @tap="getPallets"
         marginBottom="13%"
         :text="'fa-sync' | fonticon"
         class="fab-sync fas"
@@ -48,7 +47,9 @@
 import Header from '~/components/header/Header.vue'
 import FloatingButton from "~/components/floatingButton/FloatingButton.vue";
 /* import CreateEditShip from "./createEditShip/CreateEditShip.vue"; */
-const { allData, deleteRecord } = require("~/sqlite/database");
+import { mapState } from 'vuex';
+import CreateEditPallet from "~/views/pallets/CreateEditPallet/CreateEditPallet.vue"
+const { getPallets, getPalletas } = require("~/sqlite/database");
 
 export default {
   name: "Ships",
@@ -59,21 +60,20 @@ export default {
   },
   data() {
     return {
-      listOfItems: [
-        { text: "first" },
-        { text: "second" },
-        { text: "three" },
-        { text: "four" },
-      ],
+      pallets: [],
     };
   },
+  computed: {
+    ...mapState(['item'])
+  },
+
   methods: {
     onItemTap() {
       console.log("success");
     },
 
     openModal() {
-      this.$showModal(CreateEditShip, { fullscreen: true });
+      this.$showModal(CreateEditPallet, { fullscreen: true , props:{item:this.item}});
     },
 
     async deleteRow(id) {
@@ -97,19 +97,39 @@ export default {
       }
     },
 
-    async getShips() {
+    async paletas(){
       try {
-        this.listOfItems = [];
-        const ships = await allData();
-        console.log(ships);
-        for (let i = 0; i < ships.length; i++) {
-          this.listOfItems.push({ id: ships[i][0], text: ships[i][1] });
+        const pallets = await getPalletas();
+        console.log("paletas ", pallets)
+      } catch (error) {
+        console.log(error)
+      }
+    },
+
+    async getPallets() {
+      try {
+        this.pallets = [];
+        console.log("item ",this.item)
+        const pallets = await getPallets(this.item.id);
+        console.log(pallets);
+        for (let i = 0; i < pallets.length; i++) {
+          this.pallets.push(
+          {
+            id: pallets[i][0],
+            text: pallets[i][1],
+            observation: pallets[i][2],
+            warehouse_id: pallets[i][3]
+          });
         }
       } catch (error) {
-        console.error("error al traer lo datos ", error);
+        console.error("error", error);
       }
     },
   },
+
+  created(){
+    this.getPallets()
+  }
   /* components: { GridLayout }, */
 };
 </script>

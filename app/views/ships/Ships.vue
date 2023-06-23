@@ -5,8 +5,8 @@
       <ListView for="(item, index) in ships" @itemTap="onItemTap">
         <v-template>
           <GridLayout columns="auto, *,50" @tap="navigate(item)" @longPress="operations">
-            <Label :text="'fa-ship' | fonticon" class="fas" width="110" fontSize="70" col="0" backgroundColor="#222A37"
-              color="white" />
+            <Label :text="'fa-ship' | fonticon" class="fas" width="110" fontSize="70" col="0"
+              color="#0096b7" />
             <Label :text="item.text" class="p-l-10 colorIcons" width="auto"  fontSize="25" col="1" />
             <Label :text="'fa-trash-alt' | fonticon" class="fas colorIcons" fontSize="18" col="2" @tap="deleteRow(item.id, index)" />
             <!-- <StackLayout col="3">

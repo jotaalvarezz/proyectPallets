@@ -53,7 +53,7 @@ export default {
 
         home() {
             try {
-                this.$router.push('ship.index')
+                this.$router.pushClear('ship.index')
                 utils.closeDrawer()
             } catch (error) {
                 console.log("error al dirigirme a la ruta ",error)

@@ -31,6 +31,11 @@ Vue.registerElement(
   () => require("nativescript-drop-down/drop-down").DropDown
 );
 
+Vue.registerElement(
+  "BarcodeScanner",
+  () => require("nativescript-barcodescanner").BarcodeScannerView
+);
+
 TNSFontIcon.debug = true; // Opcionalmente, puedes habilitar el modo de depuración
 
 TNSFontIcon.paths = {

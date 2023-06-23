@@ -6,7 +6,7 @@
         <v-template>
           <GridLayout columns="auto, *,50" @tap="navigate(item)" @longPress="operations">
             <Label :text="'fa-warehouse' | fonticon" class="fas" width="110" fontSize="70" col="0"
-              backgroundColor="#222A37" color="white" />
+            color="#0096b7" />
             <Label :text="item.text" class="p-l-10 colorIcons" width="auto" fontSize="25" col="1" />
             <Label :text="'fa-trash-alt' | fonticon" class="fas colorIcons" fontSize="18" col="2" @tap="deleteRow(item.id, index)" />
           </GridLayout>
@@ -23,7 +23,7 @@
 /* import { GridLayout } from "@nativescript/core"; */
 import Header from '~/components/header/Header.vue'
 import FloatingButton from "~/components/floatingButton/FloatingButton.vue";
-import CreateEditShip from '../ships/createEditShip/CreateEditShip.vue';
+import CreateEditWarehouse from './createEditWarehouse/CreateEditWarehouse.vue';
 const { getWarehouses, deleteWarehouse } = require('~/sqlite/database')
 import { mapState, mapMutations } from "vuex";
 
@@ -54,7 +54,7 @@ export default {
     },
 
     openModal() {
-      this.$showModal(CreateEditShip, {
+      this.$showModal(CreateEditWarehouse, {
         fullscreen: true, props: {
           textBar: 'Nueva Bodega',
           textHint1: 'Nombre de Bodega...',
