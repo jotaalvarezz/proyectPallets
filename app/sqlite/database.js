@@ -2,69 +2,24 @@ const Sqlite = require("nativescript-sqlite");
 
 const Querys = [
   "CREATE TABLE IF NOT EXISTS ships (id INTEGER PRIMARY KEY, name TEXT, journey TEXT)",
-  "CREATE TABLE IF NOT EXISTS warehouses (id INTEGER PRIMARY KEY, ship_id INTEGER, name TEXT, FOREIGN KEY (ship_id) REFERENCES ships(ship_id))",
-  "CREATE TABLE IF NOT EXISTS pallets (id INTEGER PRIMARY KEY, warehouse_id INTEGER, code TEXT, observation TEXT,FOREIGN KEY (warehouse_id) REFERENCES warehouses(warehouse_id))",
+  "CREATE TABLE IF NOT EXISTS warehouses (id INTEGER PRIMARY KEY, name TEXT,ship_id INTEGER , FOREIGN KEY (ship_id) REFERENCES ships(ship_id))",
+  "CREATE TABLE IF NOT EXISTS pallets (id INTEGER PRIMARY KEY, code TEXT, observation TEXT, warehouse_id INTEGER, FOREIGN KEY (warehouse_id) REFERENCES warehouses(warehouse_id))",
 ];
 
-// Función para abrir o crear la base de datos
-/* const openDatabase = async () => {
-  return new Promise((resolve, reject) => {
-    new Sqlite('mydatabase.db', (err, db) => {
-      if (err) {
-        reject(err);
-      } else {
-        //console.log("open ",resolve(db))
-        resolve(db);
-      }
-    });
-  });
-}; */
+const DefaultShips = [
+    {nameShip:"CALA PINO", journey:""},
+    {nameShip:"CALA PEDRA", journey:""},
+    {nameShip:"CALA PALMA", journey:""},
+    {nameShip:"CALA PULA", journey:""}
+]
 
-//traer todos los datos
-/* const allData = async () => {
-  const db = await openDatabase();
-  return new Promise((resolve, reject) => {
-      db.all('SELECT * FROM mytable', [], (err, rows) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(rows);
-        }
-      })
-  })
-} */
+const DefaultWarehouses = [
+    {name:"1A", ship_id:""},
+    {name:"1B", ship_id:""},
+    {name:"1C", ship_id:""},
+    {name:"1D", ship_id:""}
+]
 
-// Función para crear la tabla
-/* const createTable = async () => {
-  const db = await openDatabase();
-  return new Promise((resolve, reject) => {
-    db.execSQL(
-      "CREATE TABLE IF NOT EXISTS mytable (id INTEGER PRIMARY KEY, name TEXT)",
-      [],
-      (err) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
-        }
-      }
-    );
-  });
-}; */
-
-// Función para insertar datos en la tabla
-/* const insertData = async (name) => {
-  const db = await openDatabase();
-  return new Promise((resolve, reject) => {
-    db.execSQL("INSERT INTO mytable (name) VALUES (?)", [name], (err, id) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(id);
-      }
-    });
-  });
-}; */
 
 // Función para abrir o crear la base de datos
 /* ************************************************************************************** */
@@ -93,7 +48,7 @@ async function structure() {
   } catch (error) {}
 }
 
-// Función para crear la tabla
+// Función para crear las tablas
 async function createTable() {
   try {
     let database = [];
@@ -104,6 +59,7 @@ async function createTable() {
         []
       );
     }
+    insertDefaultData(db)
     console.log(db);
     return database;
   } catch (error) {
@@ -111,6 +67,27 @@ async function createTable() {
   }
 }
 /* ************************************************************************************** */
+
+//Creacion de datos por defecto
+async function insertDefaultData(db) {
+  try {
+    let postWarehouse = []
+    let postData = []
+    //const db = await openDatabase();
+    for (let i = 0; i < DefaultShips.length; i++) {
+      postData[i] = await db.execSQL("INSERT INTO ships (name, journey) VALUES (?, ?)", [DefaultShips[i].nameShip, DefaultShips[i].journey]);
+      for (let j = 0; j < DefaultWarehouses.length; j++) {
+        DefaultWarehouses[j].ship_id = postData[i]
+        postWarehouse = db.execSQL("INSERT INTO warehouses (name, ship_id) VALUES (?, ?)", [DefaultWarehouses[j].name, DefaultWarehouses[j].ship_id]);
+      }
+    }
+    //return  {postShip:postData, postWarehouse:postWarehouse};
+  } catch (error) {
+    console.log("ocurrio un problema al insertar la fila", error);
+  }
+}
+
+
 
 //traer todos los datos
 /* ************************************************************************************** */
@@ -237,3 +214,64 @@ module.exports = {
   deletePallet,
   structure
 };
+
+
+// Función para abrir o crear la base de datos
+/* const openDatabase = async () => {
+  return new Promise((resolve, reject) => {
+    new Sqlite('mydatabase.db', (err, db) => {
+      if (err) {
+        reject(err);
+      } else {
+        //console.log("open ",resolve(db))
+        resolve(db);
+      }
+    });
+  });
+}; */
+
+//traer todos los datos
+/* const allData = async () => {
+  const db = await openDatabase();
+  return new Promise((resolve, reject) => {
+      db.all('SELECT * FROM mytable', [], (err, rows) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(rows);
+        }
+      })
+  })
+} */
+
+// Función para crear la tabla
+/* const createTable = async () => {
+  const db = await openDatabase();
+  return new Promise((resolve, reject) => {
+    db.execSQL(
+      "CREATE TABLE IF NOT EXISTS mytable (id INTEGER PRIMARY KEY, name TEXT)",
+      [],
+      (err) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      }
+    );
+  });
+}; */
+
+// Función para insertar datos en la tabla
+/* const insertData = async (name) => {
+  const db = await openDatabase();
+  return new Promise((resolve, reject) => {
+    db.execSQL("INSERT INTO mytable (name) VALUES (?)", [name], (err, id) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(id);
+      }
+    });
+  });
+}; */

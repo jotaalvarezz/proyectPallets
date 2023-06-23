@@ -1,12 +1,12 @@
 <template>
     <page>
         <StackLayout backgroundColor="#3c495e">
-            <StackLayout backgroundColor="#354052" orientation="horizontal" padding="11" height="70">
-                <TextField v-model="textFieldValue" height="40" borderWidth="1" backgroundColor="#3c495e" width="70%"
-                    borderRadius="5" borderColor="#F40000" horizontalAlignment="left"
-                    style="placeholder-color:#F4F6F8; color: #F4F6F8;" hint="Buscar Pallet..." paddingLeft="10" fontSize="15"
+            <StackLayout backgroundColor="#00acc1" orientation="horizontal" padding="11" height="70">
+                <TextField v-model="textFieldValue" height="40" borderWidth="1" backgroundColor="#F4F6F8" width="70%"
+                    borderRadius="5" borderColor="##F4F6F8" horizontalAlignment="left"
+                    style="placeholder-color:#3c495e; color: #3c495e;" hint="Buscar Pallet..." paddingLeft="10" fontSize="15"
                     @textChange="filterAnime" />
-                <Label :text="'fa-window-close' | fonticon" class="fas" color="#F40000" fontSize="40" alignItems="flex-end"
+                <Label :text="'fa-window-close' | fonticon" class="fas" color="#222a37" fontSize="40" alignItems="flex-end"
                     @tap="$modal.close" />
             </StackLayout>
             <FlexboxLayout v-if="this.animes_filter.length > 0" alignSelf="center" flexWrap="wrap" marginTop="30" height="auto">

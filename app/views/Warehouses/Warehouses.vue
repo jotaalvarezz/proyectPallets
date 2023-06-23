@@ -1,18 +1,18 @@
 <template>
   <Page>
     <Header/>
-    <grid-layout rows="*" backgroundColor="#3C495E">
-      <ListView for="(item, index) in listOfItems" @itemTap="onItemTap">
+    <grid-layout rows="*" backgroundColor="#F4F6F8">
+      <ListView for="(item, index) in warehouses" @itemTap="onItemTap">
         <v-template>
           <GridLayout columns="auto, *,50" @tap="navigate(item)" @longPress="operations">
             <Label :text="'fa-warehouse' | fonticon" class="fas" width="110" fontSize="70" col="0"
               backgroundColor="#222A37" color="white" />
-            <Label :text="item.text" class="p-l-10" width="auto" color="white" fontSize="25" col="1" />
-            <Label :text="'fa-trash-alt' | fonticon" class="fas" fontSize="18" col="2" @tap="deleteRow(item.id)" />
+            <Label :text="item.text" class="p-l-10 colorIcons" width="auto" fontSize="25" col="1" />
+            <Label :text="'fa-trash-alt' | fonticon" class="fas colorIcons" fontSize="18" col="2" @tap="deleteRow(item.id, index)" />
           </GridLayout>
         </v-template>
       </ListView>
-      <fab @tap="getShips" marginBottom="13%" :text="'fa-sync' | fonticon" class="fab-sync fas" rippleColor="#f1f1f1">
+      <fab @tap="getWarehouses" marginBottom="13%" :text="'fa-sync' | fonticon" class="fab-sync fas" rippleColor="#f1f1f1">
       </fab>
       <FloatingButton row="2" :add="openModal" />
     </grid-layout>
@@ -24,7 +24,7 @@
 import Header from '~/components/header/Header.vue'
 import FloatingButton from "~/components/floatingButton/FloatingButton.vue";
 import CreateEditShip from '../ships/createEditShip/CreateEditShip.vue';
-const { allData, deleteRecord } = require('~/sqlite/database')
+const { getWarehouses, deleteWarehouse } = require('~/sqlite/database')
 import { mapState, mapMutations } from "vuex";
 
 export default {
@@ -36,12 +36,7 @@ export default {
   },
   data() {
     return {
-      listOfItems: [
-        { text: "first" },
-        { text: "second" },
-        { text: "three" },
-        { text: "four" },
-      ],
+      warehouses: [],
     };
   },
   computed:{
@@ -70,9 +65,10 @@ export default {
       })
     },
 
-    async deleteRow(id) {
+    async deleteRow(id, index) {
       try {
-        const record = await deleteRecord(id)
+        const record = await deleteWarehouse(id)
+        this.warehouses.splice(index,1)
         console.log(record)
       } catch (error) {
         console.log("eleminacion fallida ", error)
@@ -91,18 +87,22 @@ export default {
       }
     },
 
-    async getShips() {
+    async getWarehouses() {
       try {
-        this.listOfItems = []
-        const ships = await allData()
-        console.log(ships)
-        for (let i = 0; i < ships.length; i++) {
-          this.listOfItems.push({ id: ships[i][0], text: ships[i][1] })
+        this.warehouses = []
+        const warehouses = await getWarehouses(this.item.id)
+        console.log(warehouses)
+        for (let i = 0; i < warehouses.length; i++) {
+          this.warehouses.push({ id: warehouses[i][0], text: warehouses[i][1], ship_id:warehouses[i][2]})
         }
       } catch (error) {
         console.error("error al traer lo datos ", error)
       }
     }
+  },
+
+  created() {
+    this.getWarehouses()
   },
   /* components: { GridLayout }, */
 };
@@ -112,8 +112,13 @@ export default {
   height: 70;
   width: 70; /// this is required on iOS - Android does not require width so you might need to adjust styles
   margin: 15;
-  background-color: #081a36;
+  background-color: #00acc1;
+  color: #F4F6F8;
   horizontal-align: right;
   vertical-align: bottom;
+}
+
+.colorIcons{
+    color: #303947;
 }
 </style>

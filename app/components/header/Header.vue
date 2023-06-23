@@ -1,10 +1,10 @@
 <template>
-    <ActionBar backgroundColor="#222A37">
+    <ActionBar backgroundColor="#00acc1">
         <!-- <NavigationButton /> -->
         <GridLayout columns="50, *">
             <StackLayout col="1" orientation="horizontal" class="action-bar-title cardtitle" colSpan="2" style="margin-left: 27%;">
                 <Image src="~/assets/images/logobarco.png" width="40" height="40" verticalAlignment="center" />
-                <Label text="WSP" fontSize="24" verticalAlignment="center" />
+                <Label text="WSP" fontSize="24" color="#F4F6F8" fontWeight="bold" verticalAlignment="center" />
             </StackLayout>
             <!-- <Label text="WSP" class="action-bar-title cardtitle" fontSize="18" colSpan="2" /> -->
             <Label col="0" class="fas" text.decode="&#xf0c9;" color="white" @tap="openDrawer" fontSize="25" />

@@ -1,27 +1,27 @@
 <template>
     <GridLayout rows="auto,*" class="nt-drawer__content">
-        <StackLayout row="0" class="nt-drawer__header">
-            <Image class="nt-drawer__header-image fas t-36" src.decode="font://&#xf2bd;" />
-            <Label class="nt-drawer__header-brand" text="User Name" />
-            <Label class="nt-drawer__header-footnote" text="username@mail.com" />
+        <StackLayout row="0" class="nt-drawer__header" backgroundColor="#00acc1">
+            <Image class="nt-drawer__header-image fas t-36" src="~/assets/images/logobarco.png" />
+            <Label class="nt-drawer__header-brand coloIcons" color="#F4F6F8" fontWeight="bold" text="WSP" />
+            <!-- <Label class="nt-drawer__header-footnote" text="username@mail.com" /> -->
         </StackLayout>
-        <ScrollView row="1" class="nt-drawer__body">
+        <ScrollView row="1" class="nt-drawer__body" backgroundColor="#F4F6F8">
             <StackLayout>
                 <GridLayout columns="auto,*" class="nt-drawer__list-item" @tap="home">
-                    <Label col="0" :text="'fa-home' | fonticon" class="fas" fontSize="18" />
-                    <Label col="1" text="Inicio" fontSize="15" class="p-l-10" />
+                    <Label col="0" :text="'fa-home' | fonticon" class="fas colorIcons" fontSize="18" />
+                    <Label col="1" text="Inicio" fontSize="15" class="p-l-10 colorIcons" />
                 </GridLayout>
                 <GridLayout columns="auto,*" class="nt-drawer__list-item" @tap="createTabless">
-                    <Label col="0" :text="'fa-pallet' | fonticon" class="fas" fontSize="18" />
-                    <Label col="1" text="Pallets" fontSize="15" class="p-l-10" />
+                    <Label col="0" :text="'fa-pallet' | fonticon" class="fas colorIcons" fontSize="18" />
+                    <Label col="1" text="Pallets" fontSize="15" class="p-l-10 colorIcons" />
                 </GridLayout>
                 <GridLayout columns="auto,*" class="nt-drawer__list-item" @tap="createTables">
-                    <Label col="0" :text="'fa-sync' | fonticon" class="fas" fontSize="18" />
-                    <Label col="1" text="Actualizar" fontSize="15" class="p-l-10" />
+                    <Label col="0" :text="'fa-sync' | fonticon" class="fas colorIcons" fontSize="18" />
+                    <Label col="1" text="Actualizar" fontSize="15" class="p-l-10 colorIcons" />
                 </GridLayout>
                 <GridLayout columns="auto,*" class="nt-drawer__list-item" @tap="deleteDB">
-                    <Label col="0" :text="'fa-trash-alt' | fonticon" class="fas" fontSize="18" />
-                    <Label col="1" text="Eliminar DB" fontSize="15" class="p-l-10" />
+                    <Label col="0" :text="'fa-trash-alt' | fonticon" class="fas colorIcons" fontSize="18" />
+                    <Label col="1" text="Eliminar DB" fontSize="15" class="p-l-10 colorIcons" />
                 </GridLayout>
             </StackLayout>
         </ScrollView>
@@ -88,3 +88,8 @@ export default {
     },
 }
 </script>
+<style>
+.colorIcons{
+    color: #222a37;
+}
+</style>

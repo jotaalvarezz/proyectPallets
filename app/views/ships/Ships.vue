@@ -1,14 +1,14 @@
 <template>
   <Page>
     <Header />
-    <grid-layout rows="*" backgroundColor="#3C495E">
+    <grid-layout rows="*" backgroundColor="#F4F6F8">
       <ListView for="(item, index) in ships" @itemTap="onItemTap">
         <v-template>
           <GridLayout columns="auto, *,50" @tap="navigate(item)" @longPress="operations">
             <Label :text="'fa-ship' | fonticon" class="fas" width="110" fontSize="70" col="0" backgroundColor="#222A37"
               color="white" />
-            <Label :text="item.text" class="p-l-10" width="auto" color="white" fontSize="25" col="1" />
-            <Label :text="'fa-trash-alt' | fonticon" class="fas" fontSize="18" col="2" @tap="deleteRow(item.id, index)" />
+            <Label :text="item.text" class="p-l-10 colorIcons" width="auto"  fontSize="25" col="1" />
+            <Label :text="'fa-trash-alt' | fonticon" class="fas colorIcons" fontSize="18" col="2" @tap="deleteRow(item.id, index)" />
             <!-- <StackLayout col="3">
               <check-box :checked="isChecked" boxType="circle" @checkedChange="isChecked = $event.value" />
             </StackLayout> -->
@@ -122,8 +122,13 @@ export default {
   height: 70;
   width: 70; /// this is required on iOS - Android does not require width so you might need to adjust styles
   margin: 15;
-  background-color: #081a36;
+  background-color: #00acc1;
+  color: #F4F6F8;
   horizontal-align: right;
   vertical-align: bottom;
+}
+
+.colorIcons{
+    color: #303947;
 }
 </style>

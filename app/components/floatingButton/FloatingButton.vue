@@ -30,7 +30,8 @@ export default {
     height: 70;
     width: 70; /// this is required on iOS - Android does not require width so you might need to adjust styles
     margin: 15;
-    background-color: #081a36;
+    background-color: #00acc1;
+    color: #F4F6F8;
     horizontal-align: right;
     vertical-align: bottom;
 }
