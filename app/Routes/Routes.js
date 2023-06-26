@@ -4,7 +4,7 @@ import NSVueRouter from 'nativescript-vue-router-ns'
 
 import Warehouse from '~/views/Warehouses/Warehouses'
 import Ship from '~/views/ships/Ships'
-import palletsWarehouse from '~/views/tabview/palletsWarehouse/PalletsWarehouse'
+import GeneralPallets from '~/views/tabview/generalPallets/GeneralPallets.vue'
 import Pallets from '~/views/pallets/Pallets'
 
 Vue.use(NSVueRouter)
@@ -21,8 +21,8 @@ const routes = [
     meta: { guest: true }
   },
   {
-    name:'palletswarehouse.index',
-    component: palletsWarehouse,
+    name:'generalpallets.index',
+    component: GeneralPallets,
     meta: { guest: true }
   },
   {

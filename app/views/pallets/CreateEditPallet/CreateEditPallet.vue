@@ -1,29 +1,20 @@
 <template>
-    <Page>
+    <Page @loaded="addFocus">
         <StackLayout backgroundColor="#F4F6F8">
             <StackLayout orientation="horizontal" style="background-color: #00acc1; text-align: center" height="70">
                 <Label :text="'fa-reply' | fonticon" fontSize="18" class="fas" width="20%" @tap="$modal.close"></Label>
                 <Label text="Registro de Pallets" fontSize="18" color="#F4F6F8" fontWeight="bold" width="60%"></Label>
-                <!-- <Image src="~/assets/images/logobarco.png" stretch="aspectFit" width="60%"/> -->
-                <!-- <Label text="Nuevo Barco" width="20%"></Label> -->
             </StackLayout>
             <card-view margin="10" elevation="40" radius="15">
                 <GridLayout rows="auto,auto,auto" padding="30">
-                    <!-- <Image
-              row="0"
-              src="~/assets/images/logobarco.png"
-              stretch="aspectFit"
-              height="30%"
-              width="60%"
-            /> -->
                     <Label row="0" text="Pallet:" fontSize="18" fontWeight="bold" style=" color: #3c495e; width: 80%;" />
-                    <TextField row="1" v-model="model.codePallet" padding="10" hint="code..." class="fas" height="45"
+                    <TextField ref="field" row="1" v-model="code" padding="10" hint="code..." class="fas" height="45"
                         fontSize="18" boder="none" style="
                         placeholder-color: #3c495e;
                         color: #3c495e;
                         background-color: #c0c9d7;
                         width: 80%;
-                    " @textChange="savePallet" />
+                    " />
                     <Label row="2" :text="'fa-qrcode' | fonticon" class="fas" marginTop="10" fontSize="45" fontWeight="bold"
                         style=" color: #3c495e; width: 80%; text-align:center;" @tap="scanner" />
                     <!-- <GridLayout row="1"  height="40" columns="auto, *,auto" padding="10" @tap="modalOption" style="background-color: #c0c9d7; width: 80%;">
@@ -83,8 +74,11 @@ export default {
                 codePallet: "",
                 warehouse_id: "",
             },
+            code: '',
             options: ["Cala Pedra", "Cala Pino", "Cala Pula"],
             selectedIndex: 1,
+            typingTimer: null,
+            typingTimeout: 1000
         };
     },
     computed: {
@@ -92,6 +86,12 @@ export default {
             this.journey = this.item.text;
             return this.journey;
         },
+    },
+    watch: {
+        code() {
+            clearTimeout(this.typingTimer);
+            this.typingTimer = setTimeout(this.savePallet, this.typingTimeout);
+        }
     },
     methods: {
         scanner() {
@@ -115,15 +115,8 @@ export default {
             }).then((res) => {
                 this.model.codePallet = res.text
                 this.model.warehouse_id = this.item.id
-            }
-                /* function (result) {
-                    console.log("Scan format: " + result.format);
-                    console.log("Scan text:   " + result.text);
 
-                },
-                function (error) {
-                    console.log("No scan: " + error);
-                } */
+            }
             );
         },
 
@@ -138,16 +131,29 @@ export default {
 
         async savePallet() {
             try {
-                this.model.warehouse_id = this.item.id
-                const pallet = await insertPallet(this.model);
-                console.log("save ", pallet);
-                /* this.model.codePallet = "";
-                this.model.warehouse_id = ""; */
+                if (this.code.length > 0) {
+                    this.model.codePallet = this.code
+                    console.log("CUCH ", this.model.codePallet)
+                    this.model.warehouse_id = this.item.id
+                    const pallet = await insertPallet(this.model);
+                    console.log("save ", pallet);
+                    this.code = "";
+                    this.model.warehouse_id = "";
+                    this.$refs.field.nativeView.focus()
+                }
             } catch (error) {
                 console.log("al insertar error ", error);
             }
         },
+
+        addFocus(){
+            this.$refs.field.nativeView.focus()
+        }
     },
+
+    mounted() {
+
+    }
 };
 </script>
 <style>

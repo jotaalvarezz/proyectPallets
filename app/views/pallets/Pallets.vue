@@ -49,7 +49,7 @@ import FloatingButton from "~/components/floatingButton/FloatingButton.vue";
 /* import CreateEditShip from "./createEditShip/CreateEditShip.vue"; */
 import { mapState } from 'vuex';
 import CreateEditPallet from "~/views/pallets/CreateEditPallet/CreateEditPallet.vue"
-const { getPallets, getPalletas } = require("~/sqlite/database");
+const { getPallets, getPalletsAll } = require("~/sqlite/database");
 
 export default {
   name: "Ships",
@@ -99,7 +99,7 @@ export default {
 
     async paletas(){
       try {
-        const pallets = await getPalletas();
+        const pallets = await getPalletsAll();
         console.log("paletas ", pallets)
       } catch (error) {
         console.log(error)

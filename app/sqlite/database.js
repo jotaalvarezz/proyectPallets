@@ -121,7 +121,7 @@ async function getPallets(warehouse_id) {
   }
 }
 
-async function getPalletas() {
+async function getPalletsAll() {
   try {
     const db = await openDatabase();
     const data = await db.all("SELECT * FROM pallets", []);
@@ -223,7 +223,7 @@ module.exports = {
   deleteWarehouse,
   deletePallet,
   structure,
-  getPalletas
+  getPalletsAll
 };
 
 

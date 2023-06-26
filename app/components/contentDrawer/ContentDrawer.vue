@@ -11,7 +11,7 @@
                     <Label col="0" :text="'fa-home' | fonticon" class="fas colorIcons" fontSize="18" />
                     <Label col="1" text="Inicio" fontSize="15" class="p-l-10 colorIcons" />
                 </GridLayout>
-                <GridLayout columns="auto,*" class="nt-drawer__list-item" @tap="createTabless">
+                <GridLayout columns="auto,*" class="nt-drawer__list-item" @tap="pallets">
                     <Label col="0" :text="'fa-pallet' | fonticon" class="fas colorIcons" fontSize="18" />
                     <Label col="1" text="Pallets" fontSize="15" class="p-l-10 colorIcons" />
                 </GridLayout>
@@ -31,7 +31,7 @@
 //import {createTable, openDatabase} from '~/sqlite/database'
 const { createTable, DBdelete, structure } = require('../../sqlite/database');
 import * as utils from "~/shared/util";
-import PalletsWarehouse from '~/views/tabview/palletsWarehouse/PalletsWarehouse.vue';
+import GeneralPallets from '~/views/tabview/generalPallets/GeneralPallets.vue'
 
 export default {
     name: 'Content-Drawer',
@@ -60,10 +60,10 @@ export default {
             }
         },
 
-        createTabless() {
+        pallets() {
             try {
                 //this.$navigateTo(PalletsWarehouse)
-                this.$router.push('palletswarehouse.index')
+                this.$router.push('generalpallets.index')
                 utils.closeDrawer()
                 /* const db = await structure()
                 alert({
