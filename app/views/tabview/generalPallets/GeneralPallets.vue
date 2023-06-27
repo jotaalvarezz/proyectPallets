@@ -7,8 +7,7 @@
           <GridLayout columns="auto, *,50">
             <Label :text="'fa-pallet' | fonticon" class="fas" width="110" fontSize="70" col="0" color="#0096b7" />
             <Label :text="item.text" class="p-l-10 colorIcons" width="auto" fontSize="25" col="1" />
-            <Label :text="'fa-ellipsis-v' | fonticon" class="fas colorIcons" fontSize="18" col="2"
-              @tap="operations" />
+            <Label :text="'fa-ellipsis-v' | fonticon" class="fas colorIcons" fontSize="18" col="2" @tap="operations" />
           </GridLayout>
         </v-template>
       </ListView>
@@ -39,11 +38,18 @@ export default {
       console.log('fotante activo...')
     },
 
-    operations(){
+    operations() {
       const options = {
-        transparent: true,
+        props: {
+          someProp: true,
+          anotherProp: false
+        },
+        // listeners to be connected to MyComponent
+        on: {
+          someEvent: (value) => { console.log(value) }
+        }
       }
-      this.$showBottomSheet(ButtomSheet,options)
+      this.$showBottomSheet(ButtomSheet, options)
     },
 
     async getAll() {
