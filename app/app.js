@@ -6,6 +6,12 @@ import RadSideDrawer from "nativescript-ui-sidedrawer/vue";
 
 Vue.use(RadSideDrawer);
 
+import BottomSheetPlugin from '@nativescript-community/ui-material-bottomsheet/vue';
+import { install } from "@nativescript-community/ui-material-bottomsheet";
+install();
+
+Vue.use(BottomSheetPlugin);
+
 import { TNSFontIcon, fonticon } from "nativescript-fonticon";
 
 import { CheckBox } from "@nstudio/nativescript-checkbox";
