@@ -31,7 +31,6 @@
 //import {createTable, openDatabase} from '~/sqlite/database'
 const { createTable, DBdelete, structure } = require('../../sqlite/database');
 import * as utils from "~/shared/util";
-import GeneralPallets from '~/views/tabview/generalPallets/GeneralPallets.vue'
 
 export default {
     name: 'Content-Drawer',
@@ -63,7 +62,7 @@ export default {
         pallets() {
             try {
                 //this.$navigateTo(PalletsWarehouse)
-                this.$router.push('generalpallets.index')
+                this.$router.pushClear('generalpallets.index')
                 utils.closeDrawer()
                 /* const db = await structure()
                 alert({

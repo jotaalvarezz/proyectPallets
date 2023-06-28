@@ -130,6 +130,21 @@ async function getPalletsAll() {
     console.log("error al traer los datos ", error);
   }
 }
+
+async function getPallet(item){
+  try {
+    const db = await openDatabase();
+    const data = await db.all(`SELECT p.id, p.code, p.observation, sh.name, w.name
+                                        FROM pallets p
+                                        INNER JOIN warehouses w on w.id = p.warehouse_id
+                                        INNER JOIN ships sh on sh.id = w.ship_id
+                                        WHERE p.id = (?)`, [item.id]
+                            );
+    return data;
+  } catch (error) {
+    console.log("error al traer los datos ", error);
+  }
+}
 /* ************************************************************************************** */
 
 // Función para insertar datos en la tabla
@@ -223,7 +238,8 @@ module.exports = {
   deleteWarehouse,
   deletePallet,
   structure,
-  getPalletsAll
+  getPalletsAll,
+  getPallet
 };
 
 

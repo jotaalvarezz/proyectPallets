@@ -4,8 +4,9 @@ import NSVueRouter from 'nativescript-vue-router-ns'
 
 import Warehouse from '~/views/Warehouses/Warehouses'
 import Ship from '~/views/ships/Ships'
-import GeneralPallets from '~/views/tabview/generalPallets/GeneralPallets.vue'
+import GeneralPallets from '~/views/generalPallets/GeneralPallets.vue'
 import Pallets from '~/views/pallets/Pallets'
+import CreateEditPallet from '~/views/pallets/CreateEditPallet/CreateEditPallet'
 
 Vue.use(NSVueRouter)
 
@@ -28,6 +29,11 @@ const routes = [
   {
     name:'pallets.index',
     component: Pallets,
+    meta: { guest: true }
+  },
+  {
+    name:'editpallets.index',
+    component: CreateEditPallet,
     meta: { guest: true }
   }
 ]

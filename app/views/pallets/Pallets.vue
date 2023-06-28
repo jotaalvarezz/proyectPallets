@@ -179,6 +179,6 @@ export default {
 }
 
 .colorMinus{
-  color: #ff0000;
+  color: #222a37;
 }
 </style>
