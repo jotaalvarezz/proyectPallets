@@ -40,7 +40,7 @@ export default {
         }
     },
     methods: {
-        async getAnimes() {
+        /* async getAnimes() {
             try {
                 console.log('wel ',this.welcome)
                 const animes = await axios.get('https://api.jikan.moe/v4/anime');
@@ -51,16 +51,12 @@ export default {
             } catch (error) {
                 console.log(error)
             }
-        },
+        }, */
 
         /* openDrawer() {
             const drawer = this.$refs.drawer
             drawer.showDrawer()
         } */
-    },
-
-    created() {
-        this.getAnimes()
     },
 };
 </script>

@@ -3,16 +3,18 @@
     <!-- <ScrollView> -->
     <GridLayout rows="auto,auto,auto" margin="15" style="width: 100%; height:65%;">
       <GridLayout row="0" columns="auto,*" @tap="navigate()" height="40%" width="40%">
-        <Label col="0" :text="'fa-edit' | fonticon" class="fas colorIcons" fontSize="30"/>
-        <Label col="1" text="Editar" fontSize="22" class="p-l-10 colorIcons"/>
+        <Label col="0" :text="'fa-edit' | fonticon" class="fas colorIcons" fontSize="30" />
+        <Label col="1" text="Editar" fontSize="22" class="p-l-10 colorIcons" />
       </GridLayout>
-      <GridLayout row="1" marginTop="15" columns="auto,*" height="40%" width="40%" @tap="removePallet" style="text-align: center">
+      <GridLayout row="1" marginTop="15" columns="auto,*" height="40%" width="40%" @tap="removePallet"
+        style="text-align: center">
         <Label col="0" :text="'fa-times' | fonticon" class="fas colorIcons" fontSize="30" />
         <Label col="1" text="Eliminar" fontSize="22" class="p-l-10 colorIcons" />
       </GridLayout>
     </GridLayout>
     <GridLayout columns="*" style="height: 25%;">
-      <Button text="CERRAR" backgroundColor="#F4F6F8" color="#222a37" fontSize="22" @tap="$closeBottomSheet()" borderWidth="1" borderColor="#222a37" borderRadius="30" />
+      <Button text="CERRAR" backgroundColor="#F4F6F8" color="#222a37" fontSize="22" @tap="$closeBottomSheet()"
+        borderWidth="1" borderColor="#222a37" borderRadius="30" />
     </GridLayout>
     <!-- </ScrollView> -->
   </StackLayout>
@@ -21,61 +23,65 @@
 <script>
 const { getPalletsAll, deletePallet, getPallet } = require("~/sqlite/database");
 import CreateEditPallet from "~/views/pallets/CreateEditPallet/CreateEditPallet.vue";
+import Alert from "~/alerts/Alerts";
 
 export default {
-  name:'ButtonSheet',
-  props:{
-    item:{
+  name: 'ButtonSheet',
+  props: {
+    item: {
       type: Object,
     }
   },
   data() {
     return {
-      infoPallet:{}
+      infoPallet: {}
     }
   },
   methods: {
-    navigate(){
+    navigate() {
       this.$closeBottomSheet()
-      this.$showModal(CreateEditPallet,{fullscreen: true, props:{infoPallet:this.infoPallet}})
+      this.$showModal(CreateEditPallet, { fullscreen: true, props: { infoPallet: this.infoPallet } })
       //this.$router.push('editpallets.index')
       /* this.$closeBottomSheet()
       this.$navigateTo(CreateEditPallet) */
     },
 
-    async palletInfo(){
+    async palletInfo() {
       try {
-        console.log("item ",this.item)
+        console.log("item ", this.item)
         const pallet = await getPallet(this.item)
-        console.log("info ",pallet)
+        console.log("info ", pallet)
         for (let i = 0; i < pallet.length; i++) {
           this.infoPallet = Object.assign({},
-                  {
-                    id: pallet[i][0],
-                    code: pallet[i][1],
-                    observation: pallet[i][2],
-                    ship_id: pallet[i][3],
-                    warehouse_id: pallet[i][4]
-                  })
+            {
+              id: pallet[i][0],
+              code: pallet[i][1],
+              observation: pallet[i][2],
+              ship_id: pallet[i][3],
+              warehouse_id: pallet[i][4]
+            })
         }
-        console.log("buuu ",this.infoPallet)
+        console.log("buuu ", this.infoPallet)
       } catch (error) {
-
+        console.log("error al traer los datos ", error)
       }
     },
 
-    async removePallet(){
-      try {
-        const pallet = await deletePallet(this.item.id)
-        console.log("delete ",pallet)
-        this.$closeBottomSheet()
-      } catch (error) {
-        console.log("hubo un error al eliminar")
+    async removePallet() {
+      let confirmated = await Alert.Danger()
+      if (confirmated) {
+        try {
+          const pallet = await deletePallet(this.item.id)
+          console.log("delete ", pallet)
+          this.$closeBottomSheet()
+        } catch (error) {
+          console.log("hubo un error al eliminar")
+        }
       }
     },
   },
 
-  created(){
+  created() {
     this.palletInfo()
   }
 }
@@ -85,5 +91,4 @@ export default {
 .colorIcons {
   color: #222a37;
 }
-
 </style>

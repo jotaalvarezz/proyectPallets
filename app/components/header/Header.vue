@@ -19,27 +19,41 @@ import * as util from "~/shared/util"
 import searchView from "../search/searchView.vue";
 
 export default {
-    /* props:{
-        open:{
-            type:Function,
+    props:{
+        data:{
+            type:Array,
             required:true
+        },
+        icons:{
+            type:Object,
+            required:true
+        },
+        operation1:{
+            type:Function
+        },
+        operation2:{
+            type:Function
         }
-    }, */
+    },
     computed: {
 
     },
     methods: {
-        modalSearch() {
-            cosnole.log('searh')
-            //this.$showModal(searchView, { fullscreen: true, props: { animes: this.animes_store } });
-        },
-
         openDrawer() {
             util.showDrawer();
         },
 
         modalSearch() {
-            this.$showModal(searchView, { fullscreen: true })
+            this.$showModal(searchView,
+                            {
+                                fullscreen: true,
+                                props:{
+                                        data:this.data,
+                                        icons:this.icons,
+                                        operation1:this.operation1,
+                                        operation2:this.operation2
+                                    }
+                            })
         }
         /*  async getAnimes() {
              try {

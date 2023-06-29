@@ -1,6 +1,8 @@
 <template>
   <Page>
-    <Header />
+    <Header :data="pallets" :icons="icons" :operation1="showInfo"
+            :operation2="navigate"
+    />
     <grid-layout rows="*" backgroundColor="#F4F6F8">
       <ListView for="(item, index) in pallets" @itemTap="onItemTap">
         <v-template>
@@ -35,7 +37,11 @@ export default {
   data() {
     return {
       pallets: [],
-      infoPallet: {}
+      infoPallet: {},
+      icons:{
+        iconLogo:'fa-pallet',
+        iconOperations: 'fa-ellipsis-v'
+      }
     };
   },
 
@@ -88,6 +94,7 @@ export default {
         for (let i = 0; i < pallets.length; i++) {
           this.pallets.push({ id: pallets[i][0], text: pallets[i][1], observation: pallets[i][2], warehouse_id: pallets[i][3] })
         }
+
       } catch (error) {
         console.error("error al traer lo datos ", error)
       }

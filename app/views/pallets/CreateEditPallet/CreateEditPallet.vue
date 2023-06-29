@@ -2,15 +2,16 @@
     <Page>
         <StackLayout backgroundColor="#F4F6F8">
             <StackLayout orientation="horizontal" style="background-color: #00acc1; text-align: center" height="70">
-                <Label :text="'fa-reply' | fonticon" fontSize="18" color="#F4F6F8" class="fas" width="20%" @tap="$modal.close"></Label>
+                <Label :text="'fa-reply' | fonticon" fontSize="18" color="#F4F6F8" class="fas" width="20%"
+                    @tap="$modal.close"></Label>
                 <Label text="Registro de Pallet" fontSize="18" color="#F4F6F8" fontWeight="bold" width="60%"></Label>
             </StackLayout>
             <card-view margin="10" elevation="40" radius="15">
                 <GridLayout rows="auto,auto,auto,auto,auto,auto,auto,auto,auto,auto" padding="30">
                     <Image src="~/assets/images/logopallets.png" stretch="aspectFit" height="30%" width="60%" row="0" />
                     <Label row="1" text="Pallet:" fontSize="18" fontWeight="bold" style=" color: #3c495e; width: 80%;" />
-                    <TextField ref="field" row="2" isEnabled="false" v-model="model.code" padding="10" hint="code..." class="fas" height="45"
-                        fontSize="18" boder="none" style="
+                    <TextField ref="field" row="2" isEnabled="false" v-model="model.code" padding="10" hint="code..."
+                        class="fas" height="45" fontSize="18" boder="none" style="
                         placeholder-color: #3c495e;
                         color: #3c495e;
                         background-color: #c0c9d7;
@@ -18,8 +19,8 @@
                     " />
                     <Label row="3" text="Observacion:" fontSize="18" fontWeight="bold"
                         style=" color: #3c495e; width: 80%;" />
-                    <TextField ref="field" row="4" v-model="model.observation" padding="10" hint="observacion..." class="fas" height="45"
-                        fontSize="18" boder="none" style="
+                    <TextField ref="field" row="4" v-model="model.observation" padding="10" hint="observacion..."
+                        class="fas" height="45" fontSize="18" boder="none" style="
                         placeholder-color: #3c495e;
                         color: #3c495e;
                         background-color: #c0c9d7;
@@ -36,11 +37,12 @@
                     <GridLayout row="8" height="45" columns="auto, *,auto" padding="10"
                         style="background-color: #c0c9d7; width: 80%;">
                         <Label :text="'fa-warehouse' | fonticon" fontSize="18" class="fas" col="0" color="#3c495e" />
-                        <Label :text="model.warehouse_id" ccolor="white" class="p-l-10" fontSize="15" col="1" color="#3c495e" />
+                        <Label :text="model.warehouse_id" ccolor="white" class="p-l-10" fontSize="15" col="1"
+                            color="#3c495e" />
                         <Label :text="'fa-sort-down' | fonticon" fontSize="18" class="fas" col="2" color="#3c495e" />
                     </GridLayout>
-                    <Button row="9" marginTop="30" backgroundColor="#0096b7" color="#F4F6F8" text="ENVIAR"
-                        @tap="editPallet" style="width: 80%;" borderWidth="1" borderColor="#222a37" borderRadius="30" />
+                    <Button row="9" marginTop="30" backgroundColor="#0096b7" color="#F4F6F8" text="ENVIAR" @tap="editPallet"
+                        style="width: 80%;" borderWidth="1" borderColor="#222a37" borderRadius="30" />
                 </GridLayout>
             </card-view>
         </StackLayout>
@@ -52,8 +54,10 @@ import Header from "~/components/header/Header.vue";
 import ListOptions from "~/components/listOptions/ListOptions.vue";
 const { insertPallet, updatePallet } = require("~/sqlite/database");
 import { BarcodeScanner } from "nativescript-barcodescanner";
+import Alerts from '~/alerts/Alerts'
 
 export default {
+    name: 'CreateEditPallet',
     components: {
         Header,
     },
@@ -79,12 +83,12 @@ export default {
             return this.journey;
         },
     },
-  /*   watch: {
-        code() {
-            clearTimeout(this.typingTimer);
-            this.typingTimer = setTimeout(this.savePallet, this.typingTimeout);
-        }
-    }, */
+    /*   watch: {
+          code() {
+              clearTimeout(this.typingTimer);
+              this.typingTimer = setTimeout(this.savePallet, this.typingTimeout);
+          }
+      }, */
     methods: {
         scanner() {
             let barcodeScanner = new BarcodeScanner()
@@ -138,15 +142,20 @@ export default {
             }
         },
 
-        async editPallet(){
-            try {
-                console.log("observacion ",this.model.observation)
-                if(this.model.observation.length > 0){
-                    const pallet = await updatePallet(this.model)
-                    console.log("update ", pallet)
+        async editPallet() {
+            let confirmated = await Alerts.confirmation()
+            if (confirmated) {
+                try {
+                    console.log("observacion ", this.model.observation)
+                    if (this.model.observation.length > 0) {
+                        const pallet = await updatePallet(this.model)
+                        console.log("update ", pallet)
+                        this.$modal.close()
+                        //this.$router.pushClear('generalpallets.index')
+                    }
+                } catch (error) {
+                    console.error("Hubo un error al editar ", error)
                 }
-            } catch (error) {
-                console.error("Hubo un error al editar ",error)
             }
         },
 
