@@ -181,7 +181,23 @@ async function insertPallet(data) {
 /* ************************************************************************************** */
 
 
+// Funciónes para editar datos en la tabla
+/* ************************************************************************************** */
+async function updatePallet(item){
+  try {
+    const db = await openDatabase();
+    let updateData = db.execSQL(`UPDATE pallets
+                                        SET observation = (?)
+                                        WHERE id = (?)`,[item.observation, item.id]);
+    return updateData
+  } catch (error) {
+    console.error("Error al editar el pallet ",error)
+  }
+}
+/* ************************************************************************************** */
+
 //Funcion para eliminar registros de una tabla
+/* ************************************************************************************** */
 async function deleteShip(id) {
   try {
     const db = await openDatabase();
@@ -239,7 +255,8 @@ module.exports = {
   deletePallet,
   structure,
   getPalletsAll,
-  getPallet
+  getPallet,
+  updatePallet
 };
 
 

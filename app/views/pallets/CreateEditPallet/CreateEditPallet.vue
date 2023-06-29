@@ -3,7 +3,7 @@
         <StackLayout backgroundColor="#F4F6F8">
             <StackLayout orientation="horizontal" style="background-color: #00acc1; text-align: center" height="70">
                 <Label :text="'fa-reply' | fonticon" fontSize="18" color="#F4F6F8" class="fas" width="20%" @tap="$modal.close"></Label>
-                <Label text="Registro de Pallets" fontSize="18" color="#F4F6F8" fontWeight="bold" width="60%"></Label>
+                <Label text="Registro de Pallet" fontSize="18" color="#F4F6F8" fontWeight="bold" width="60%"></Label>
             </StackLayout>
             <card-view margin="10" elevation="40" radius="15">
                 <GridLayout rows="auto,auto,auto,auto,auto,auto,auto,auto,auto,auto" padding="30">
@@ -40,7 +40,7 @@
                         <Label :text="'fa-sort-down' | fonticon" fontSize="18" class="fas" col="2" color="#3c495e" />
                     </GridLayout>
                     <Button row="9" marginTop="30" backgroundColor="#0096b7" color="#F4F6F8" text="ENVIAR"
-                        @tap="addWarehouse" style="width: 80%;" borderWidth="1" borderColor="#222a37" borderRadius="30" />
+                        @tap="editPallet" style="width: 80%;" borderWidth="1" borderColor="#222a37" borderRadius="30" />
                 </GridLayout>
             </card-view>
         </StackLayout>
@@ -50,7 +50,7 @@
 import { fonticon } from "nativescript-fonticon";
 import Header from "~/components/header/Header.vue";
 import ListOptions from "~/components/listOptions/ListOptions.vue";
-const { insertPallet } = require("~/sqlite/database");
+const { insertPallet, updatePallet } = require("~/sqlite/database");
 import { BarcodeScanner } from "nativescript-barcodescanner";
 
 export default {
@@ -138,13 +138,25 @@ export default {
             }
         },
 
+        async editPallet(){
+            try {
+                console.log("observacion ",this.model.observation)
+                if(this.model.observation.length > 0){
+                    const pallet = await updatePallet(this.model)
+                    console.log("update ", pallet)
+                }
+            } catch (error) {
+                console.error("Hubo un error al editar ",error)
+            }
+        },
+
         addFocus() {
             this.$refs.field.nativeView.focus()
         }
     },
 
     created() {
-        this.model = this.infoPallet[0]
+        this.model = this.infoPallet
         console.log(this.model)
     }
 };

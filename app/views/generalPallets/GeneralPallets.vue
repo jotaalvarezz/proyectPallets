@@ -4,16 +4,17 @@
     <grid-layout rows="*" backgroundColor="#F4F6F8">
       <ListView for="(item, index) in pallets" @itemTap="onItemTap">
         <v-template>
-          <GridLayout columns="auto, *,50">
-            <Label :text="'fa-pallet' | fonticon" class="fas" width="110" fontSize="70" col="0" color="#0096b7" />
-            <Label :text="item.text" class="p-l-10 colorIcons" width="auto" fontSize="25" col="1"
-              @tap="showInfo(item)"/>
-            <Label :text="'fa-ellipsis-v' | fonticon" class="fas colorIcons" fontSize="18" col="2"
-              @tap="navigate(item)" />
+          <GridLayout columns="*,70">
+            <StackLayout orientation="horizontal" @tap="showInfo(item)" col="0" >
+              <Label :text="'fa-pallet' | fonticon" class="fas" width="110" fontSize="70" color="#0096b7" />
+              <Label :text="item.text" class="p-l-10 colorIcons" textWrap="true" width="65%" fontSize="25"/>
+            </StackLayout>
+            <Label :text="'fa-ellipsis-v' | fonticon" class="fas colorIcons" fontSize="18" col="1"
+              style="text-align: center;"  @tap="navigate(item)" />
           </GridLayout>
         </v-template>
       </ListView>
-      <fab @tap="getAll" marginBottom="13%" :text="'fa-sync' | fonticon" class="fab-sync fas" rippleColor="#f1f1f1">
+      <fab @tap="getAll" :text="'fa-sync' | fonticon" class="fab-sync fas" rippleColor="#f1f1f1">
       </fab>
     </grid-layout>
   </Page>
@@ -34,7 +35,7 @@ export default {
   data() {
     return {
       pallets: [],
-      infoPallet:[]
+      infoPallet: {}
     };
   },
 
@@ -43,33 +44,33 @@ export default {
       console.log("success");
     },
 
-    async showInfo(item){
+    async showInfo(item) {
       try {
         const pallet = await getPallet(item)
-        console.log("info ",pallet)
+        console.log("info ", pallet)
         for (let i = 0; i < pallet.length; i++) {
-          this.infoPallet.push({
-                    id: pallet[i][0],
-                    code: pallet[i][1],
-                    observation: pallet[i][2],
-                    ship_id: pallet[i][3],
-                    warehouse_id: pallet[i][4]
-                  })
+          this.infoPallet = Object.assign({}, {
+            id: pallet[i][0],
+            code: pallet[i][1],
+            observation: pallet[i][2],
+            ship_id: pallet[i][3],
+            warehouse_id: pallet[i][4]
+          })
         }
-        this.$showModal(InfoPallet,{props:{infoPallet:this.infoPallet[0]}})
+        this.$showModal(InfoPallet, { props: { infoPallet: this.infoPallet } })
         console.log(this.infoPallet)
       } catch (error) {
-        console.log("error al traer los datos ",error)
+        console.log("error al traer los datos ", error)
       }
     },
 
     navigate(item) {
       const options = {
-        dismissOnBackgroundTap:true,
-        dismissOnDraggingDownSheet:false,
-        transparent:true,
+        dismissOnBackgroundTap: true,
+        dismissOnDraggingDownSheet: false,
+        transparent: true,
         props: {
-          item:item
+          item: item
         },
         // listeners to be connected to MyComponent
         on: {

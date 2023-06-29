@@ -19,7 +19,7 @@
         <v-template>
           <GridLayout columns="auto, *,50" @longPress="operations">
             <Label :text="'fa-pallet' | fonticon" class="fas" width="110" fontSize="70" col="0" color="#0096b7" />
-            <Label :text="item.text" class="p-l-10 colorIcons" width="auto" fontSize="25" col="1" />
+            <Label :text="item.text" class="p-l-10 colorIcons" textWrap="true" width="auto" fontSize="25" col="1" />
             <Label
               :text="'fa-minus' | fonticon"
               class="fas colorMinus"

@@ -1,5 +1,5 @@
 <template>
-  <StackLayout style="text-align: center" height="300">
+  <StackLayout style="text-align: center" height="300" backgroundColor="#F4F6F8">
     <!-- <ScrollView> -->
     <GridLayout rows="auto,auto,auto" margin="15" style="width: 100%; height:65%;">
       <GridLayout row="0" columns="auto,*" @tap="navigate()" height="40%" width="40%">
@@ -12,7 +12,7 @@
       </GridLayout>
     </GridLayout>
     <GridLayout columns="*" style="height: 25%;">
-      <Button text="CERRAR" class="colorIcons" fontSize="22" @tap="$closeBottomSheet()" borderWidth="1" borderColor="#222a37" borderRadius="30" />
+      <Button text="CERRAR" backgroundColor="#F4F6F8" color="#222a37" fontSize="22" @tap="$closeBottomSheet()" borderWidth="1" borderColor="#222a37" borderRadius="30" />
     </GridLayout>
     <!-- </ScrollView> -->
   </StackLayout>
@@ -31,7 +31,7 @@ export default {
   },
   data() {
     return {
-      infoPallet:[]
+      infoPallet:{}
     }
   },
   methods: {
@@ -45,10 +45,12 @@ export default {
 
     async palletInfo(){
       try {
+        console.log("item ",this.item)
         const pallet = await getPallet(this.item)
         console.log("info ",pallet)
         for (let i = 0; i < pallet.length; i++) {
-          this.infoPallet.push({
+          this.infoPallet = Object.assign({},
+                  {
                     id: pallet[i][0],
                     code: pallet[i][1],
                     observation: pallet[i][2],
@@ -56,7 +58,7 @@ export default {
                     warehouse_id: pallet[i][4]
                   })
         }
-        console.log(this.infoPallet)
+        console.log("buuu ",this.infoPallet)
       } catch (error) {
 
       }
@@ -79,8 +81,9 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .colorIcons {
   color: #222a37;
 }
+
 </style>
