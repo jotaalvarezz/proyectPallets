@@ -61,7 +61,6 @@ export default {
               warehouse_id: pallet[i][4]
             })
         }
-        console.log("buuu ", this.infoPallet)
       } catch (error) {
         console.log("error al traer los datos ", error)
       }

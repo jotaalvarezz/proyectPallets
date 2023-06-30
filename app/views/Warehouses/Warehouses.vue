@@ -8,7 +8,7 @@
             <Label :text="'fa-warehouse' | fonticon" class="fas" width="110" fontSize="70" col="0"
             color="#0096b7" />
             <Label :text="item.text" class="p-l-10 colorIcons" width="auto" fontSize="25" col="1" />
-            <Label :text="'fa-trash-alt' | fonticon" class="fas colorIcons" fontSize="18" col="2" @tap="deleteRow(item.id, index)" />
+            <Label :text="'fa-times' | fonticon" class="fas colorTimes" fontSize="18" col="2" @tap="deleteRow(item.id, index)" />
           </GridLayout>
         </v-template>
       </ListView>
@@ -120,5 +120,9 @@ export default {
 
 .colorIcons{
     color: #303947;
+}
+
+.colorTimes {
+  color: #e92222;
 }
 </style>

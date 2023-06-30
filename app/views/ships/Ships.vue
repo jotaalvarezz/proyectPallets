@@ -10,7 +10,7 @@
               <Label :text="'fa-ship' | fonticon" class="fas" width="110" fontSize="70" color="#0096b7" />
               <Label :text="item.text" class="p-l-10 colorIcons" width="auto" fontSize="25" />
             </StackLayout>
-            <Label :text="'fa-trash-alt' | fonticon" class="fas colorIcons" fontSize="18" col="1"
+            <Label :text="'fa-times' | fonticon" class="fas colorTimes" fontSize="18" col="1"
                     style="text-align: center;" @tap="deleteRow(item.id, index)" />
           </GridLayout>
         </v-template>
@@ -133,5 +133,9 @@ export default {
 
 .colorIcons {
   color: #303947;
+}
+
+.colorTimes {
+  color: #e92222;
 }
 </style>

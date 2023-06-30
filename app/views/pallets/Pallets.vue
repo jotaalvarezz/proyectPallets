@@ -2,7 +2,7 @@
   <Page @loaded="addFocus">
     <Header />
     <grid-layout rows="auto, *" backgroundColor="#F4F6F8">
-      <card-view margin="10" elevation="40" radius="15" row="0">
+      <card-view margin="10" elevation="2" radius="40" row="0">
         <GridLayout rows="auto,auto,auto" padding="30">
           <Image src="~/assets/images/logopallets.png" stretch="aspectFit" height="10%" width="30%" row="0" />
           <Label row="1" text="Pallet:" fontSize="18" fontWeight="bold" style=" color: #3c495e; width: 80%;" />
@@ -20,13 +20,8 @@
           <GridLayout columns="auto, *,50" @longPress="operations">
             <Label :text="'fa-pallet' | fonticon" class="fas" width="110" fontSize="70" col="0" color="#0096b7" />
             <Label :text="item.text" class="p-l-10 colorIcons" textWrap="true" width="auto" fontSize="25" col="1" />
-            <Label
-              :text="'fa-minus' | fonticon"
-              class="fas colorMinus"
-              fontSize="18"
-              col="2"
-              @tap="deleteRow(item.id)"
-            />
+            <Label :text="'fa-times' | fonticon" class="fas colorMinus" fontSize="18" col="2"
+              @tap="deleteRow(item.id, index)" />
           </GridLayout>
         </v-template>
       </ListView>
@@ -39,13 +34,13 @@
 </template>
 
 <script>
-/* import { GridLayout } from "@nativescript/core"; */
 import Header from '~/components/header/Header.vue'
 import FloatingButton from "~/components/floatingButton/FloatingButton.vue";
 /* import CreateEditShip from "./createEditShip/CreateEditShip.vue"; */
 import { mapState } from 'vuex';
 import CreateEditPallet from "~/views/pallets/CreateEditPallet/CreateEditPallet.vue"
-const { getPallets, insertPallet } = require("~/sqlite/database");
+const { getPallets, insertPallet, deletePallet } = require("~/sqlite/database");
+import Alert from '~/alerts/Alerts';
 
 export default {
   name: "Ships",
@@ -84,12 +79,16 @@ export default {
       this.$showModal(CreateEditPallet, { fullscreen: true, props: { item: this.item } });
     },
 
-    async deleteRow(id) {
-      try {
-        const record = await deleteRecord(id);
-        console.log(record);
-      } catch (error) {
-        console.log("eleminacion fallida ", error);
+    async deleteRow(id, index) {
+      let confirmated = await Alert.Danger()
+      if (confirmated) {
+        try {
+          const record = await deletePallet(id);
+          console.log(record);
+          this.pallets.splice(index, 1)
+        } catch (error) {
+          console.log("eleminacion fallida ", error);
+        }
       }
     },
 
@@ -178,7 +177,7 @@ export default {
   color: #222a37;
 }
 
-.colorMinus{
-  color: #222a37;
+.colorMinus {
+  color: #e92222;
 }
 </style>

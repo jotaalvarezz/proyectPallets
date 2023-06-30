@@ -84,6 +84,9 @@ export default {
         }
       }
       this.$showBottomSheet(ButtomSheet, options)
+      .then(()=>{
+        this.getAll()
+      })
     },
 
     async getAll() {
