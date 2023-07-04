@@ -1,7 +1,6 @@
 <template>
   <Page>
-    <Header :data="ships" :icons="icons" :operation1="navigate"
-            :operation2="deleteRow"/>
+    <Header :data="ships" :icons="icons" :operation1="navigate" :operation2="deleteRow" />
     <grid-layout rows="*" backgroundColor="#F4F6F8">
       <ListView for="(item, index) in ships" @itemTap="onItemTap">
         <v-template>
@@ -10,8 +9,8 @@
               <Label :text="'fa-ship' | fonticon" class="fas" width="110" fontSize="70" color="#0096b7" />
               <Label :text="item.text" class="p-l-10 colorIcons" width="auto" fontSize="25" />
             </StackLayout>
-            <Label :text="'fa-times' | fonticon" class="fas colorTimes" fontSize="18" col="1"
-                    style="text-align: center;" @tap="deleteRow(item.id, index)" />
+            <Label :text="'fa-times' | fonticon" class="fas colorTimes" fontSize="18" col="1" style="text-align: center;"
+              @tap="deleteRow(item.id, index)" />
           </GridLayout>
         </v-template>
       </ListView>
@@ -29,6 +28,7 @@ import CreateEditShip from "~/views/ships/createEditShip/CreateEditShip.vue";
 import Header from "~/components/header/Header.vue";
 import { mapMutations, mapState } from 'vuex'
 const { getShips, deleteShip } = require('~/sqlite/database')
+import Alert from "~/alerts/Alerts";
 
 
 export default {
@@ -44,8 +44,8 @@ export default {
       ships: [],
       selectedOption: null,
       isChecked: false,
-      icons:{
-        iconLogo:'fa-ship',
+      icons: {
+        iconLogo: 'fa-ship',
         iconOperations: 'fa-trash-alt'
       }
     };
@@ -79,12 +79,15 @@ export default {
     },
 
     async deleteRow(id, index) {
-      try {
-        const record = await deleteShip(id)
-        this.ships.splice(index, 1)
-        console.log(record)
-      } catch (error) {
-        console.log("eleminacion fallida ", error)
+      let confirmated = await Alert.Danger()
+      if (confirmated) {
+        try {
+          const record = await deleteShip(id)
+          this.ships.splice(index, 1)
+          console.log(record)
+        } catch (error) {
+          console.log("eleminacion fallida ", error)
+        }
       }
     },
 

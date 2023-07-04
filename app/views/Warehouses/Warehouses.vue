@@ -1,18 +1,19 @@
 <template>
   <Page>
-    <Header/>
+    <Header />
     <grid-layout rows="*" backgroundColor="#F4F6F8">
       <ListView for="(item, index) in warehouses" @itemTap="onItemTap">
         <v-template>
           <GridLayout columns="auto, *,50" @tap="navigate(item)" @longPress="operations">
-            <Label :text="'fa-warehouse' | fonticon" class="fas" width="110" fontSize="70" col="0"
-            color="#0096b7" />
+            <Label :text="'fa-warehouse' | fonticon" class="fas" width="110" fontSize="70" col="0" color="#0096b7" />
             <Label :text="item.text" class="p-l-10 colorIcons" width="auto" fontSize="25" col="1" />
-            <Label :text="'fa-times' | fonticon" class="fas colorTimes" fontSize="18" col="2" @tap="deleteRow(item.id, index)" />
+            <Label :text="'fa-times' | fonticon" class="fas colorTimes" fontSize="18" col="2"
+              @tap="deleteRow(item.id, index)" />
           </GridLayout>
         </v-template>
       </ListView>
-      <fab @tap="getWarehouses" marginBottom="13%" :text="'fa-sync' | fonticon" class="fab-sync fas" rippleColor="#f1f1f1">
+      <fab @tap="getWarehouses" marginBottom="13%" :text="'fa-sync' | fonticon" class="fab-sync fas"
+        rippleColor="#f1f1f1">
       </fab>
       <FloatingButton row="2" :add="openModal" />
     </grid-layout>
@@ -32,14 +33,14 @@ export default {
   components: {
     FloatingButton,
     /*  CreateEditShip, */
-   Header
+    Header
   },
   data() {
     return {
       warehouses: [],
     };
   },
-  computed:{
+  computed: {
     ...mapState(['item'])
   },
   methods: {
@@ -66,12 +67,15 @@ export default {
     },
 
     async deleteRow(id, index) {
-      try {
-        const record = await deleteWarehouse(id)
-        this.warehouses.splice(index,1)
-        console.log(record)
-      } catch (error) {
-        console.log("eleminacion fallida ", error)
+      let confirmated = await Alert.Danger()
+      if (confirmated) {
+        try {
+          const record = await deleteWarehouse(id)
+          this.warehouses.splice(index, 1)
+          console.log(record)
+        } catch (error) {
+          console.log("eleminacion fallida ", error)
+        }
       }
     },
 
@@ -93,7 +97,7 @@ export default {
         const warehouses = await getWarehouses(this.item.id)
         console.log(warehouses)
         for (let i = 0; i < warehouses.length; i++) {
-          this.warehouses.push({ id: warehouses[i][0], text: warehouses[i][1], ship_id:warehouses[i][2]})
+          this.warehouses.push({ id: warehouses[i][0], text: warehouses[i][1], ship_id: warehouses[i][2] })
         }
       } catch (error) {
         console.error("error al traer lo datos ", error)
@@ -118,8 +122,8 @@ export default {
   vertical-align: bottom;
 }
 
-.colorIcons{
-    color: #303947;
+.colorIcons {
+  color: #303947;
 }
 
 .colorTimes {
