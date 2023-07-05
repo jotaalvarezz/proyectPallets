@@ -62,7 +62,7 @@ export default {
         Header,
     },
     props: {
-        infoPallet: {
+        info: {
             type: Object,
             required: true,
         },
@@ -165,7 +165,7 @@ export default {
     },
 
     created() {
-        this.model = this.infoPallet
+        this.model = this.info
         console.log(this.model)
     }
 };

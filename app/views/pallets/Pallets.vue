@@ -25,10 +25,6 @@
           </GridLayout>
         </v-template>
       </ListView>
-      <!-- <fab row="2" @tap="getPallets" marginBottom="13%" :text="'fa-sync' | fonticon" class="fab-sync fas"
-        rippleColor="#f1f1f1">
-      </fab> -->
-      <FloatingButton row="2" :add="openModal" />
     </grid-layout>
   </Page>
 </template>

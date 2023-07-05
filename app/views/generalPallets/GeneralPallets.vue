@@ -12,7 +12,7 @@
               <Label :text="item.text" class="p-l-10 colorIcons" textWrap="true" width="65%" fontSize="25"/>
             </StackLayout>
             <Label :text="'fa-ellipsis-v' | fonticon" class="fas colorIcons" fontSize="18" col="1"
-              style="text-align: center;"  @tap="navigate(item)" />
+              style="text-align: center;"  @tap="navigate(item, index)" />
           </GridLayout>
         </v-template>
       </ListView>
@@ -24,10 +24,11 @@
 
 <script>
 import Header from "~/components/header/Header.vue";
-const { getPalletsAll, getPallet } = require("~/sqlite/database");
+const { getPalletsAll, getPallet, deletePallet} = require("~/sqlite/database");
 import ButtomSheet from '~/components/buttomSheet/ButtomSheet.vue';
 import InfoPallet from "./infoPallet/InfoPallet.vue";
-
+import CreateEditPallet from '~/views/pallets/CreateEditPallet/CreateEditPallet.vue'
+import Alert from "~/alerts/Alerts";
 
 export default {
   name: "Ships",
@@ -50,19 +51,29 @@ export default {
       console.log("success");
     },
 
-    async showInfo(item) {
+    async palletInfo(item) {
       try {
+        console.log("item ", item)
         const pallet = await getPallet(item)
         console.log("info ", pallet)
         for (let i = 0; i < pallet.length; i++) {
-          this.infoPallet = Object.assign({}, {
-            id: pallet[i][0],
-            code: pallet[i][1],
-            observation: pallet[i][2],
-            ship_id: pallet[i][3],
-            warehouse_id: pallet[i][4]
-          })
+          this.infoPallet = Object.assign({},
+            {
+              id: pallet[i][0],
+              code: pallet[i][1],
+              observation: pallet[i][2],
+              ship_id: pallet[i][3],
+              warehouse_id: pallet[i][4]
+            })
         }
+      } catch (error) {
+        console.log("error al traer los datos ", error)
+      }
+    },
+
+    async showInfo(item) {
+      try {
+        await this.palletInfo(item)
         this.$showModal(InfoPallet, { props: { infoPallet: this.infoPallet } })
         console.log(this.infoPallet)
       } catch (error) {
@@ -70,13 +81,18 @@ export default {
       }
     },
 
-    navigate(item) {
+    async navigate(item, index) {
+      await this.palletInfo(item)
       const options = {
         dismissOnBackgroundTap: true,
         dismissOnDraggingDownSheet: false,
         transparent: true,
         props: {
-          item: item
+          item: this.infoPallet,
+          generalOptions: false,
+          component: CreateEditPallet,
+          getInfo: () => this.getAll(),
+          deleteRow: () => this.removePallet(item.id, index)
         },
         // listeners to be connected to MyComponent
         on: {
@@ -101,7 +117,21 @@ export default {
       } catch (error) {
         console.error("error al traer lo datos ", error)
       }
-    }
+    },
+
+    async removePallet(id, index) {
+      let confirmated = await Alert.Danger()
+      if (confirmated) {
+        try {
+          const pallet = await deletePallet(id)
+          this.pallets.splice(index, 1)
+          console.log("delete ", pallet)
+          this.$closeBottomSheet()
+        } catch (error) {
+          console.log("hubo un error al eliminar")
+        }
+      }
+    },
   },
 
   created() {

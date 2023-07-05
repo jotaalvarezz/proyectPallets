@@ -2,11 +2,15 @@
   <StackLayout style="text-align: center" height="300" backgroundColor="#F4F6F8">
     <!-- <ScrollView> -->
     <GridLayout rows="auto,auto,auto" margin="15" style="width: 100%; height:65%;">
-      <GridLayout row="0" columns="auto,*" @tap="navigate()" height="40%" width="40%">
+      <GridLayout row="0" v-if="generalOptions" columns="auto,*" @tap="infoItem" height="33%" width="40%">
+        <Label col="0" :text="'fa-eye' | fonticon" class="fas colorIcons" fontSize="30" />
+        <Label col="1" text="Detalles" fontSize="22" class="p-l-10 colorIcons" />
+      </GridLayout>
+      <GridLayout row="1" columns="auto,*" @tap="navigate()" height="33%" width="40%">
         <Label col="0" :text="'fa-edit' | fonticon" class="fas colorIcons" fontSize="30" />
         <Label col="1" text="Editar" fontSize="22" class="p-l-10 colorIcons" />
       </GridLayout>
-      <GridLayout row="1" marginTop="15" columns="auto,*" height="40%" width="40%" @tap="removePallet"
+      <GridLayout row="2" marginTop="15" columns="auto,*" height="33%" width="40%" @tap="deleteItem"
         style="text-align: center">
         <Label col="0" :text="'fa-times' | fonticon" class="fas colorIcons" fontSize="30" />
         <Label col="1" text="Eliminar" fontSize="22" class="p-l-10 colorIcons" />
@@ -28,25 +32,44 @@ import Alert from "~/alerts/Alerts";
 export default {
   name: 'ButtonSheet',
   props: {
+    generalOptions:{
+      type: Boolean
+    },
     item: {
       type: Object,
+    },
+    getInfo: {
+      type: Function
+    },
+    deleteRow: {
+      type: Function
+    },
+    component:{
+      type: Object
+    },
+    componentInfo: {
+      type: Object
     }
   },
   data() {
     return {
-      infoPallet: {}
+      info: {}
     }
   },
   methods: {
+    infoItem(){
+      this.$showModal(this.componentInfo, { props: { info: this.item } })
+    },
+
     navigate() {
       this.$closeBottomSheet()
-      this.$showModal(CreateEditPallet, { fullscreen: true, props: { infoPallet: this.infoPallet } })
+      this.$showModal(this.component, { fullscreen: true, props: { info: this.item } })
       //this.$router.push('editpallets.index')
       /* this.$closeBottomSheet()
       this.$navigateTo(CreateEditPallet) */
     },
 
-    async palletInfo() {
+    /* async palletInfo() {
       try {
         console.log("item ", this.item)
         const pallet = await getPallet(this.item)
@@ -64,24 +87,17 @@ export default {
       } catch (error) {
         console.log("error al traer los datos ", error)
       }
+    }, */
+
+    deleteItem(){
+      this.deleteRow()
+      this.$closeBottomSheet()
     },
 
-    async removePallet() {
-      let confirmated = await Alert.Danger()
-      if (confirmated) {
-        try {
-          const pallet = await deletePallet(this.item.id)
-          console.log("delete ", pallet)
-          this.$closeBottomSheet()
-        } catch (error) {
-          console.log("hubo un error al eliminar")
-        }
-      }
-    },
   },
 
   created() {
-    this.palletInfo()
+    /* this.palletInfo() */
   }
 }
 </script>

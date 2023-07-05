@@ -12,7 +12,7 @@
             <!-- <Label :text="'fa-times' | fonticon" class="fas colorTimes" fontSize="18" col="1" style="text-align: center;"
               @tap="deleteRow(item.id, index)" /> -->
             <Label :text="'fa-ellipsis-v' | fonticon" class="fas colorIcons" fontSize="18" col="1"
-              style="text-align: center;" @tap="navigateOptions(item)" />
+              style="text-align: center;" @tap="navigateOptions(item, index)" />
           </GridLayout>
         </v-template>
       </ListView>
@@ -27,6 +27,7 @@
 import Warehouses from "~/views/Warehouses/Warehouses.vue";
 import FloatingButton from "~/components/floatingButton/FloatingButton.vue";
 import CreateEditShip from "~/views/ships/createEditShip/CreateEditShip.vue";
+import infoShip from "~/views/ships/infoShips/infoShip.vue"
 import Header from "~/components/header/Header.vue";
 import { mapMutations, mapState } from 'vuex'
 const { getShips, deleteShip } = require('~/sqlite/database')
@@ -69,15 +70,19 @@ export default {
       this.$router.push('warehouses.index')
     },
 
-    navigateOptions(item) {
+    navigateOptions(item, index) {
+      item.action = true
       const options = {
         dismissOnBackgroundTap: true,
         dismissOnDraggingDownSheet: false,
         transparent: true,
         props: {
           item: item,
-          getInfo: this.getShips(),
-          deleteRow: this.deleteRow()
+          generalOptions: true,
+          component: CreateEditShip,
+          componentInfo: infoShip,
+          getInfo: () => this.getShips(),
+          deleteRow: () => this.deleteRow(item.id, index)
         },
         // listeners to be connected to MyComponent
         on: {
@@ -95,10 +100,7 @@ export default {
         {
           fullscreen: true, props: {
             textBar: 'Nuevo Barco',
-            textHint1: 'Nombre de Barco...',
-            textHint2: 'Viaje...',
-            item: {},
-            update: false,
+            info:{action:false},
           }
         })
     },

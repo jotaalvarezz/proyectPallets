@@ -15,7 +15,7 @@
           @tap="$modal.close"
         ></Label>
         <Label
-          :text="textBar"
+          text="Registro de Barco"
           fontSize="18"
           color="#F4F6F8"
           fontWeight="bold"
@@ -35,9 +35,9 @@
           />
           <TextField
             row="1"
-            v-model="model.nameShip"
+            v-model="model.text"
             padding="10"
-            :hint="textHint1"
+            hint="Nombre de Barco..."
             height="45"
             fontSize="18"
             boder="none"
@@ -58,7 +58,7 @@
             row="2"
             padding="10"
             v-model="model.journey"
-            :hint="textHint2"
+            hint="Viaje..."
             height="45"
             fontSize="18"
             boder="none"
@@ -69,7 +69,9 @@
               width: 80%;
             "
           />
+          <!-- Boton para Crear -->
           <Button
+            v-if="model.action == false"
             row="3"
             marginTop="14"
             backgroundColor="#0096b7"
@@ -78,6 +80,19 @@
             @tap="addShip"
             style="width: 80%"
           />
+          <!-- ******************* -->
+          <!-- Boton para Editar -->
+          <Button
+            v-if="model.action == true"
+            row="3"
+            marginTop="14"
+            backgroundColor="#0096b7"
+            color="#F4F6F8"
+            text="Actualizar"
+            @tap="updateShip"
+            style="width: 80%"
+          />
+          <!-- ******************* -->
         </GridLayout>
       </card-view>
     </StackLayout>
@@ -87,7 +102,8 @@
 import { fonticon } from "nativescript-fonticon";
 import Header from "~/components/header/Header.vue";
 import ListOptions from "~/components/listOptions/ListOptions.vue";
-const { insertShip, getShips } = require("~/sqlite/database");
+const { insertShip, getShips, updateShip } = require("~/sqlite/database");
+import Alerts from "~/alerts/Alerts";
 
 export default {
   components: {
@@ -98,28 +114,13 @@ export default {
       type: String,
       required: true,
     },
-    textHint1: {
-      type: String,
-      required: true,
-    },
-    textHint2: {
-      type: String,
-      required: true,
-    },
-    item: {
-      type: Object,
-    },
-    update: {
-      type: Boolean,
-      required: true,
+    info:{
+      type:Object
     },
   },
   data() {
     return {
-      model: {
-        nameShip: "",
-        journey: "",
-      },
+      model: {},
       options: ["Cala Pedra", "Cala Pino", "Cala Pula"],
       selectedIndex: 1,
     };
@@ -150,7 +151,26 @@ export default {
         console.log("al insertar error ", error);
       }
     },
+
+    async updateShip(){
+      let confirmated = await Alerts.confirmation()
+      if (confirmated) {
+        try {
+          if (this.model.journey.length > 0) {
+            const ship = await updateShip(this.model);
+            console.log("update ", ship)
+            this.$modal.close()
+          }
+        } catch(error) {
+          console.error("Hubo un error al editar ", error)
+        }
+      }
+    }
   },
+
+  created(){
+    this.model = this.info
+  }
 };
 </script>
 <style>

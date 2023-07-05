@@ -194,6 +194,18 @@ async function updatePallet(item){
     console.error("Error al editar el pallet ",error)
   }
 }
+
+async function updateShip(item){
+  try {
+    const db = await openDatabase();
+    let updateData = db.execSQL(`UPDATE ships
+                                      SET journey = (?)
+                                      WHERE id = (?)`,[item.observation, item.id]);
+  return updateData
+  } catch(error) {
+    console.error("Error al editar el barco ",error)
+  }
+}
 /* ************************************************************************************** */
 
 //Funcion para eliminar registros de una tabla
@@ -256,7 +268,8 @@ module.exports = {
   structure,
   getPalletsAll,
   getPallet,
-  updatePallet
+  updatePallet,
+  updateShip
 };
 
 
