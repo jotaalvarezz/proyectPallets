@@ -2,7 +2,7 @@
     <Page>
         <StackLayout backgroundColor="#F4F6F8">
             <StackLayout orientation="horizontal" style="background-color: #00acc1; text-align: center" height="70">
-                <Label :text="'fa-reply' | fonticon" fontSize="18" class="fas" width="20%" @tap="$modal.close"></Label>
+                <Label :text="'fa-reply' | fonticon" fontSize="18" class="fas" color="#F4F6F8" width="20%" @tap="$modal.close"></Label>
                 <Label :text="textBar" fontSize="18" color="#F4F6F8" fontWeight="bold" width="60%"></Label>
                 <!-- <Image src="~/assets/images/logobarco.png" stretch="aspectFit" width="60%"/> -->
                 <!-- <Label text="Nuevo Barco" width="20%"></Label> -->

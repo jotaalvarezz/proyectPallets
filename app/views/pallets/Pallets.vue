@@ -15,7 +15,7 @@
                     " />
         </GridLayout>
       </card-view>
-      <ListView for="(item, index) in pallets" @itemTap="onItemTap" row="1">
+      <ListView for="(item, index) in pallets" :class="spaceEnd" @itemLoading="scrolling" @loadMoreItems="onScroll" @itemTap="onItemTap" row="1">
         <v-template>
           <GridLayout columns="auto, *,50" @longPress="operations">
             <Label :text="'fa-pallet' | fonticon" class="fas" width="110" fontSize="70" col="0" color="#0096b7" />
@@ -25,9 +25,9 @@
           </GridLayout>
         </v-template>
       </ListView>
-      <fab row="2" @tap="getPallets" marginBottom="13%" :text="'fa-sync' | fonticon" class="fab-sync fas"
+      <!-- <fab row="2" @tap="getPallets" marginBottom="13%" :text="'fa-sync' | fonticon" class="fab-sync fas"
         rippleColor="#f1f1f1">
-      </fab>
+      </fab> -->
       <FloatingButton row="2" :add="openModal" />
     </grid-layout>
   </Page>
@@ -51,6 +51,7 @@ export default {
   },
   data() {
     return {
+      bandera:false,
       model: {
         codePallet: "",
         warehouse_id: "",
@@ -62,7 +63,14 @@ export default {
     };
   },
   computed: {
-    ...mapState(['item'])
+    ...mapState(['item']),
+
+    spaceEnd(){
+      return{
+        'e-height' : this.bandera == true,
+        'n-height' : this.bandera == false
+      }
+    }
   },
   watch: {
     code() {
@@ -71,6 +79,18 @@ export default {
     }
   },
   methods: {
+    scrolling(){
+      if(this.bandera){
+        this.bandera = false
+      }
+    },
+
+    onScroll(){
+      this.bandera = true
+      console.log(this.spaceEnd)
+      console.log("movimiento")
+    },
+
     onItemTap() {
       console.log("success");
     },
@@ -173,6 +193,13 @@ export default {
   vertical-align: bottom;
 }
 
+.n-height{
+  height: 100%;
+}
+
+.e-height{
+  height: 300px;
+}
 .colorIcons {
   color: #222a37;
 }

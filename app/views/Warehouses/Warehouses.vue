@@ -4,24 +4,26 @@
     <grid-layout rows="*" backgroundColor="#F4F6F8">
       <ListView for="(item, index) in warehouses" @itemTap="onItemTap">
         <v-template>
-          <GridLayout columns="auto, *,50" @tap="navigate(item)" @longPress="operations">
-            <Label :text="'fa-warehouse' | fonticon" class="fas" width="110" fontSize="70" col="0" color="#0096b7" />
-            <Label :text="item.text" class="p-l-10 colorIcons" width="auto" fontSize="25" col="1" />
-            <Label :text="'fa-times' | fonticon" class="fas colorTimes" fontSize="18" col="2"
+          <GridLayout columns="* ,70" @longPress="operations">
+            <StackLayout orientation="horizontal" @tap="navigate(item)" col="0">
+              <Label :text="'fa-warehouse' | fonticon" class="fas" width="110" fontSize="70" color="#0096b7" />
+              <Label :text="item.text" class="p-l-10 colorIcons" width="auto" fontSize="25" />
+            </StackLayout>
+            <Label :text="'fa-times' | fonticon" class="fas colorTimes" fontSize="18" col="1"
               @tap="deleteRow(item.id, index)" />
           </GridLayout>
         </v-template>
       </ListView>
-      <fab @tap="getWarehouses" marginBottom="13%" :text="'fa-sync' | fonticon" class="fab-sync fas"
+      <!-- <fab @tap="getWarehouses" marginBottom="13%" :text="'fa-sync' | fonticon" class="fab-sync fas"
         rippleColor="#f1f1f1">
-      </fab>
+      </fab> -->
       <FloatingButton row="2" :add="openModal" />
     </grid-layout>
   </Page>
 </template>
 
 <script>
-/* import { GridLayout } from "@nativescript/core"; */
+import Alert from '~/alerts/Alerts';
 import Header from '~/components/header/Header.vue'
 import FloatingButton from "~/components/floatingButton/FloatingButton.vue";
 import CreateEditWarehouse from './createEditWarehouse/CreateEditWarehouse.vue';

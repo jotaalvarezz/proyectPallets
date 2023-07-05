@@ -9,8 +9,10 @@
               <Label :text="'fa-ship' | fonticon" class="fas" width="110" fontSize="70" color="#0096b7" />
               <Label :text="item.text" class="p-l-10 colorIcons" width="auto" fontSize="25" />
             </StackLayout>
-            <Label :text="'fa-times' | fonticon" class="fas colorTimes" fontSize="18" col="1" style="text-align: center;"
-              @tap="deleteRow(item.id, index)" />
+            <!-- <Label :text="'fa-times' | fonticon" class="fas colorTimes" fontSize="18" col="1" style="text-align: center;"
+              @tap="deleteRow(item.id, index)" /> -->
+            <Label :text="'fa-ellipsis-v' | fonticon" class="fas colorIcons" fontSize="18" col="1"
+              style="text-align: center;" @tap="navigateOptions(item)" />
           </GridLayout>
         </v-template>
       </ListView>
@@ -29,6 +31,7 @@ import Header from "~/components/header/Header.vue";
 import { mapMutations, mapState } from 'vuex'
 const { getShips, deleteShip } = require('~/sqlite/database')
 import Alert from "~/alerts/Alerts";
+import ButtomSheet from '~/components/buttomSheet/ButtomSheet.vue';
 
 
 export default {
@@ -37,7 +40,8 @@ export default {
     FloatingButton,
     CreateEditShip,
     Warehouses,
-    Header
+    Header,
+    ButtomSheet
   },
   data() {
     return {
@@ -63,6 +67,27 @@ export default {
     navigate(item) {
       this.saveItem(item)
       this.$router.push('warehouses.index')
+    },
+
+    navigateOptions(item) {
+      const options = {
+        dismissOnBackgroundTap: true,
+        dismissOnDraggingDownSheet: false,
+        transparent: true,
+        props: {
+          item: item,
+          getInfo: this.getShips(),
+          deleteRow: this.deleteRow()
+        },
+        // listeners to be connected to MyComponent
+        on: {
+          someEvent: (value) => { console.log(value) }
+        }
+      }
+      this.$showBottomSheet(ButtomSheet, options)
+      .then(()=>{
+        this.getAll()
+      })
     },
 
     openModal() {

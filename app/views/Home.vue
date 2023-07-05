@@ -39,6 +39,7 @@ export default {
             return this.$refs
         }
     },
+
     methods: {
         /* async getAnimes() {
             try {

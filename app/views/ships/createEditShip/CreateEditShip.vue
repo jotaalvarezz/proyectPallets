@@ -10,6 +10,7 @@
           :text="'fa-reply' | fonticon"
           fontSize="18"
           class="fas"
+          color="#F4F6F8"
           width="20%"
           @tap="$modal.close"
         ></Label>
