@@ -13,14 +13,14 @@
                 <ListView for="(item, index) in array_filter" @itemTap="onItemTap">
                     <v-template>
                         <GridLayout columns="*,70">
-                            <StackLayout orientation="horizontal" @tap="operation1(item)" col="0">
+                            <StackLayout orientation="horizontal" @tap="navegate(item)" col="0">
                                 <Label :text="icons.iconLogo | fonticon" class="fas" width="110" fontSize="70"
                                     color="#0096b7" />
                                 <Label :text="item.text" class="p-l-10 colorIcons" textWrap="true" width="65%"
                                     fontSize="25" />
                             </StackLayout>
                             <Label :text="icons.iconOperations | fonticon" class="fas colorIcons" fontSize="18" col="1"
-                                style="text-align: center;" @tap="operation2(item)" />
+                                style="text-align: center;" @tap="operation2(item, index)" />
                         </GridLayout>
                     </v-template>
                 </ListView>
@@ -63,6 +63,11 @@ export default {
                 this.array_filter = this.data.filter(data => !this.textFieldValue || data.text.includes(this.textFieldValue))
             }
             console.log(this.array_filter)
+        },
+
+        navegate(item){
+            this.operation1(item)
+            this.$modal.close()
         },
 
         watchEpisodes(id) {

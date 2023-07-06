@@ -19,7 +19,8 @@
 		android:icon="@mipmap/barco_de_carga"
 		android:label="@string/app_name"
 		android:theme="@style/AppTheme"
-		android:hardwareAccelerated="true">
+		android:hardwareAccelerated="true"
+		android:usesCleartextTraffic="true">
 
 		<activity
 			android:name="com.tns.NativeScriptActivity"

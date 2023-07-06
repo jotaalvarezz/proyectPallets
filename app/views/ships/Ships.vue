@@ -1,6 +1,6 @@
 <template>
   <Page>
-    <Header :data="ships" :icons="icons" :operation1="navigate" :operation2="deleteRow" />
+    <Header :data="ships" :icons="icons" :operation1="navigate" :operation2="navigateOptions" />
     <grid-layout rows="*" backgroundColor="#F4F6F8">
       <ListView for="(item, index) in ships" @itemTap="onItemTap">
         <v-template>
@@ -51,7 +51,7 @@ export default {
       isChecked: false,
       icons: {
         iconLogo: 'fa-ship',
-        iconOperations: 'fa-trash-alt'
+        iconOperations: 'fa-ellipsis-v'
       }
     };
   },
