@@ -1,5 +1,5 @@
 <template>
-  <Page>
+  <Page @loaded="getShips">
     <Header :data="ships" :icons="icons" :operation1="navigate" :operation2="navigateOptions" />
     <grid-layout rows="*" backgroundColor="#F4F6F8">
       <ListView for="(item, index) in ships" @itemTap="onItemTap">
@@ -56,7 +56,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(['item'])
+    ...mapState(['item', 'shipsWarehouses'])
   },
   methods: {
     ...mapMutations(['saveItem', 'saveCollection']),
@@ -144,9 +144,9 @@ export default {
     }
   },
 
-  created() {
+  /* created() {
     this.getShips()
-  }
+  } */
   /* components: { GridLayout }, */
 };
 </script>

@@ -41,14 +41,10 @@ export default {
     },
 
     methods: {
-        /* async getAnimes() {
+        /* async getShipsWarehouses() {
             try {
-                console.log('wel ',this.welcome)
-                const animes = await axios.get('https://api.jikan.moe/v4/anime');
-                console.log(animes)
-                this.animes = animes.data.data
-                this.save_anime(this.animes)
-                this.popularities(this.animes)
+                const shipsWarehouses = await axios.get('http://172.70.8.122/mcp-backend/public/api/mobile/ships');
+                console.log(shipsWarehouses)
             } catch (error) {
                 console.log(error)
             }
@@ -59,6 +55,10 @@ export default {
             drawer.showDrawer()
         } */
     },
+
+    created(){
+        /* this.getShipsWarehouses() */
+    }
 };
 </script>
 

@@ -49,7 +49,8 @@ async function structure() {
 }
 
 // Función para crear las tablas
-async function createTable() {
+async function createTable(shipsWarehouses) {
+  console.log("EN DATABASE", shipsWarehouses)
   try {
     let database = [];
     const db = await openDatabase();
@@ -59,7 +60,7 @@ async function createTable() {
         []
       );
     }
-    insertDefaultData(db)
+    insertDefaultData(db, shipsWarehouses)
     console.log(db);
     return database;
   } catch (error) {
@@ -69,16 +70,16 @@ async function createTable() {
 /* ************************************************************************************** */
 
 //Creacion de datos por defecto
-async function insertDefaultData(db) {
+async function insertDefaultData(db, shipsWarehouses) {
   try {
     let postWarehouse = []
     let postData = []
     //const db = await openDatabase();
-    for (let i = 0; i < DefaultShips.length; i++) {
-      postData[i] = await db.execSQL("INSERT INTO ships (name, journey) VALUES (?, ?)", [DefaultShips[i].nameShip, DefaultShips[i].journey]);
-      for (let j = 0; j < DefaultWarehouses.length; j++) {
-        DefaultWarehouses[j].ship_id = postData[i]
-        postWarehouse = db.execSQL("INSERT INTO warehouses (name, ship_id) VALUES (?, ?)", [DefaultWarehouses[j].name, DefaultWarehouses[j].ship_id]);
+    for (let i = 0; i < shipsWarehouses.length; i++) {
+      postData[i] = await db.execSQL("INSERT INTO ships (name, journey) VALUES (?, ?)", [shipsWarehouses[i].name_ship, shipsWarehouses[i].journey]);
+      for (let j = 0; j < shipsWarehouses[i].warehouses.length; j++) {
+        shipsWarehouses[i].warehouses[j].ship_id = postData[i]
+        postWarehouse = db.execSQL("INSERT INTO warehouses (name, ship_id) VALUES (?, ?)", [shipsWarehouses[i].warehouses[j].name_warehouse,shipsWarehouses[i].warehouses[j].ship_id]);
       }
     }
     //return  {postShip:postData, postWarehouse:postWarehouse};

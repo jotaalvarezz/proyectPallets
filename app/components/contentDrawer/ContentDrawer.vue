@@ -31,14 +31,40 @@
 //import {createTable, openDatabase} from '~/sqlite/database'
 const { createTable, DBdelete, structure } = require('../../sqlite/database');
 import * as utils from "~/shared/util";
+import axios from "axios"
+import { mapState, mapMutations } from "vuex";
 
 export default {
     name: 'Content-Drawer',
 
+    data() {
+        return {
+
+        }
+    },
+
+    computed:{
+
+    },
+
     methods: {
-        async createTables() {
+        ...mapMutations(['saveShipsWarehouses']),
+
+        async getShipsWarehouses() {
             try {
-                const db = await createTable()
+                const shipsWarehouses = await axios.get('http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/ships');
+                this.saveShipsWarehouses(shipsWarehouses)
+                return shipsWarehouses
+            } catch (error) {
+                console.log(error)
+            }
+        },
+
+        async createTables() {
+            const shipsWarehouses = await this.getShipsWarehouses()
+           /*  console.log("*** ",aux) */
+            try {
+                const db = await createTable(shipsWarehouses.data.data)
                 alert({
                     title: 'Inicializando DB',
                     message: 'Actualizando Tablas...',
