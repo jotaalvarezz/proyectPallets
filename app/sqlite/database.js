@@ -201,7 +201,7 @@ async function updateShip(item){
     const db = await openDatabase();
     let updateData = db.execSQL(`UPDATE ships
                                       SET journey = (?)
-                                      WHERE id = (?)`,[item.observation, item.id]);
+                                      WHERE id = (?)`,[item.journey, item.id]);
   return updateData
   } catch(error) {
     console.error("Error al editar el barco ",error)
