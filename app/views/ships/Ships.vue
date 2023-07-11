@@ -33,6 +33,7 @@ import { mapMutations, mapState } from 'vuex'
 const { getShips, deleteShip } = require('~/sqlite/database')
 import Alert from "~/alerts/Alerts";
 import ButtomSheet from '~/components/buttomSheet/ButtomSheet.vue';
+import mixinMasters from "~/mixins/Master";
 
 
 export default {
@@ -55,6 +56,7 @@ export default {
       }
     };
   },
+  mixins: [mixinMasters],
   computed: {
     ...mapState(['item', 'shipsWarehouses'])
   },
@@ -144,9 +146,9 @@ export default {
     }
   },
 
-  /* created() {
-    this.getShips()
-  } */
+  created() {
+    /* this.loadingCharge() */
+  }
   /* components: { GridLayout }, */
 };
 </script>

@@ -1,22 +1,20 @@
 <template>
   <Page>
-    <Header :data="pallets" :icons="icons" :operation1="showInfo"
-            :operation2="navigate"
-    />
+    <Header :data="pallets" :icons="icons" :operation1="showInfo" :operation2="navigate" />
     <grid-layout rows="*" backgroundColor="#F4F6F8">
       <ListView for="(item, index) in pallets" @itemTap="onItemTap">
         <v-template>
           <GridLayout columns="*,70">
-            <StackLayout orientation="horizontal" @tap="showInfo(item)" col="0" >
+            <StackLayout orientation="horizontal" @tap="showInfo(item)" col="0">
               <Label :text="'fa-pallet' | fonticon" class="fas" width="110" fontSize="70" color="#0096b7" />
-              <Label :text="item.text" class="p-l-10 colorIcons" textWrap="true" width="65%" fontSize="25"/>
+              <Label :text="item.text" class="p-l-10 colorIcons" textWrap="true" width="65%" fontSize="25" />
             </StackLayout>
             <Label :text="'fa-ellipsis-v' | fonticon" class="fas colorIcons" fontSize="18" col="1"
-              style="text-align: center;"  @tap="navigate(item, index)" />
+              style="text-align: center;" @tap="navigate(item, index)" />
           </GridLayout>
         </v-template>
       </ListView>
-      <fab @tap="getAll" :text="'fa-sync' | fonticon" class="fab-sync fas" rippleColor="#f1f1f1">
+      <fab @tap="sendAll" :text="'fa-sync' | fonticon" class="fab-sync fas" rippleColor="#f1f1f1">
       </fab>
     </grid-layout>
   </Page>
@@ -24,11 +22,12 @@
 
 <script>
 import Header from "~/components/header/Header.vue";
-const { getPalletsAll, getPallet, deletePallet} = require("~/sqlite/database");
+const { getPalletsAll, getPallet, deletePallet, loadPallets } = require("~/sqlite/database");
 import ButtomSheet from '~/components/buttomSheet/ButtomSheet.vue';
 import InfoPallet from "./infoPallet/InfoPallet.vue";
 import CreateEditPallet from '~/views/pallets/CreateEditPallet/CreateEditPallet.vue'
 import Alert from "~/alerts/Alerts";
+import axios from "axios"
 
 export default {
   name: "Ships",
@@ -39,10 +38,11 @@ export default {
     return {
       pallets: [],
       infoPallet: {},
-      icons:{
-        iconLogo:'fa-pallet',
+      icons: {
+        iconLogo: 'fa-pallet',
         iconOperations: 'fa-ellipsis-v'
-      }
+      },
+      sendPallets: []
     };
   },
 
@@ -100,9 +100,9 @@ export default {
         }
       }
       this.$showBottomSheet(ButtomSheet, options)
-      .then(()=>{
-        this.getAll()
-      })
+        .then(() => {
+          this.getAll()
+        })
     },
 
     async getAll() {
@@ -116,6 +116,28 @@ export default {
 
       } catch (error) {
         console.error("error al traer lo datos ", error)
+      }
+    },
+
+    async sendAll() {
+      try {
+        const pallets = await loadPallets()
+        for (let i = 0; i < pallets.length; i++) {
+          this.sendPallets.push(
+            {
+              id: pallets[i][0],
+              code: pallets[i][1],
+              observation: pallets[i][2],
+              journey: pallets[i][3],
+              ship_id: pallets[i][4],
+              warehouse_id: pallets[i][5],
+              pallet_creation: pallets[i][6]
+            })
+        }
+        const postPallets = await axios.post('http://172.70.8.122/mcp-backend/public/api/mobile/loadpallets', this.sendPallets)
+        console.log("send ",postPallets.data)
+      } catch (error) {
+        console.log("se jodio lola")
       }
     },
 

@@ -3,7 +3,7 @@ const Sqlite = require("nativescript-sqlite");
 const Querys = [
   "CREATE TABLE IF NOT EXISTS ships (id INTEGER PRIMARY KEY, name TEXT, journey TEXT)",
   "CREATE TABLE IF NOT EXISTS warehouses (id INTEGER PRIMARY KEY, name TEXT,ship_id INTEGER , FOREIGN KEY (ship_id) REFERENCES ships(ship_id))",
-  "CREATE TABLE IF NOT EXISTS pallets (id INTEGER PRIMARY KEY, code TEXT, observation TEXT, warehouse_id INTEGER, FOREIGN KEY (warehouse_id) REFERENCES warehouses(warehouse_id))",
+  "CREATE TABLE IF NOT EXISTS pallets (id INTEGER PRIMARY KEY, code TEXT, observation TEXT, warehouse_id INTEGER, date_creation DATETIME,FOREIGN KEY (warehouse_id) REFERENCES warehouses(warehouse_id))",
 ];
 
 const DefaultShips = [
@@ -146,6 +146,21 @@ async function getPallet(item){
     console.log("error al traer los datos ", error);
   }
 }
+
+//carga los pallets que s evana  enviar al backend de MCP
+async function loadPallets(){
+  try {
+    const db = await openDatabase();
+    const data = await db.all(`SELECT p.id, p.code, p.observation, sh.name, sh.journey, w.name, p.date_creation
+                                        FROM pallets p
+                                        INNER JOIN warehouses w on w.id = p.warehouse_id
+                                        INNER JOIN ships sh on sh.id = w.ship_id`, []
+                            );
+    return data;
+  } catch (error) {
+    console.log("error al traer los datos ", error);
+  }
+}
 /* ************************************************************************************** */
 
 // Función para insertar datos en la tabla
@@ -173,7 +188,7 @@ async function insertWarehuse(data) {
 async function insertPallet(data) {
   try {
     const db = await openDatabase();
-    let postData = db.execSQL("INSERT INTO pallets (code, warehouse_id) VALUES (?, ?)", [data.codePallet, data.warehouse_id]);
+    let postData = db.execSQL("INSERT INTO pallets (code, warehouse_id, date_creation) VALUES (?, ?, ?)", [data.codePallet, data.warehouse_id, new Date()]);
     return postData;
   } catch (error) {
     console.log("ocurrio un problema al insertar la fila", error);
@@ -270,7 +285,8 @@ module.exports = {
   getPalletsAll,
   getPallet,
   updatePallet,
-  updateShip
+  updateShip,
+  loadPallets
 };
 
 

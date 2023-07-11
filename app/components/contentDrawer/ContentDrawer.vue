@@ -33,6 +33,7 @@ const { createTable, DBdelete, structure } = require('../../sqlite/database');
 import * as utils from "~/shared/util";
 import axios from "axios"
 import { mapState, mapMutations } from "vuex";
+import mixinMasters from "~/mixins/Master";
 
 export default {
     name: 'Content-Drawer',
@@ -46,6 +47,8 @@ export default {
     computed:{
 
     },
+
+    mixins: [mixinMasters],
 
     methods: {
         ...mapMutations(['saveShipsWarehouses']),
@@ -61,10 +64,11 @@ export default {
         },
 
         async createTables() {
-            const shipsWarehouses = await this.getShipsWarehouses()
-           /*  console.log("*** ",aux) */
             try {
+                /* this.loadingCharge(true) */
+                const shipsWarehouses = await this.getShipsWarehouses()
                 const db = await createTable(shipsWarehouses.data.data)
+                /* this.loadingCharge(false) */
                 alert({
                     title: 'Inicializando DB',
                     message: 'Actualizando Tablas...',
