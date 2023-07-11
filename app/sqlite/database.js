@@ -188,7 +188,7 @@ async function insertWarehuse(data) {
 async function insertPallet(data) {
   try {
     const db = await openDatabase();
-    let postData = db.execSQL("INSERT INTO pallets (code, warehouse_id, date_creation) VALUES (?, ?, ?)", [data.codePallet, data.warehouse_id, new Date()]);
+    let postData = db.execSQL("INSERT INTO pallets (code, warehouse_id, date_creation) VALUES (?, ?, ?)", [data.codePallet, data.warehouse_id, data.pallet_creation]);
     return postData;
   } catch (error) {
     console.log("ocurrio un problema al insertar la fila", error);

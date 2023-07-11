@@ -37,6 +37,7 @@ import { mapState } from 'vuex';
 import CreateEditPallet from "~/views/pallets/CreateEditPallet/CreateEditPallet.vue"
 const { getPallets, insertPallet, deletePallet } = require("~/sqlite/database");
 import Alert from '~/alerts/Alerts';
+import moment from 'moment';
 
 export default {
   name: "Ships",
@@ -135,6 +136,7 @@ export default {
           this.model.codePallet = this.code
           console.log("CUCH ", this.model.codePallet)
           this.model.warehouse_id = this.item.id
+          this.model.pallet_creation = moment().format("YYYY-MM-DD HH:mm:ss")
           const pallet = await insertPallet(this.model);
           console.log("save ", pallet);
           this.code = "";
