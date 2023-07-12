@@ -76,10 +76,10 @@ async function insertDefaultData(db, shipsWarehouses) {
     let postData = []
     //const db = await openDatabase();
     for (let i = 0; i < shipsWarehouses.length; i++) {
-      postData[i] = await db.execSQL("INSERT INTO ships (name, journey) VALUES (?, ?)", [shipsWarehouses[i].name_ship, shipsWarehouses[i].journey]);
+      postData[i] = await db.execSQL("INSERT INTO ships (id, name, journey) VALUES (?, ?, ?)", [shipsWarehouses[i].id, shipsWarehouses[i].name_ship, shipsWarehouses[i].journey]);
       for (let j = 0; j < shipsWarehouses[i].warehouses.length; j++) {
-        shipsWarehouses[i].warehouses[j].ship_id = postData[i]
-        postWarehouse = db.execSQL("INSERT INTO warehouses (name, ship_id) VALUES (?, ?)", [shipsWarehouses[i].warehouses[j].name_warehouse,shipsWarehouses[i].warehouses[j].ship_id]);
+        //shipsWarehouses[i].warehouses[j].ship_id = postData[i]
+        postWarehouse = db.execSQL("INSERT INTO warehouses (id, name, ship_id) VALUES (?, ?, ?)", [shipsWarehouses[i].warehouses[j].id, shipsWarehouses[i].warehouses[j].name_warehouse, shipsWarehouses[i].id]);
       }
     }
     //return  {postShip:postData, postWarehouse:postWarehouse};
@@ -151,10 +151,18 @@ async function getPallet(item){
 async function loadPallets(){
   try {
     const db = await openDatabase();
-    const data = await db.all(`SELECT p.id, p.code, p.observation, sh.name, sh.journey, w.name, p.date_creation
-                                        FROM pallets p
-                                        INNER JOIN warehouses w on w.id = p.warehouse_id
-                                        INNER JOIN ships sh on sh.id = w.ship_id`, []
+    const data = await db.all(`SELECT p.id,
+                                      p.code,
+                                      p.observation,
+                                      sh.id,
+                                      sh.name,
+                                      sh.journey,
+                                      p.warehouse_id,
+                                      w.name,
+                                      p.date_creation
+                                FROM pallets p
+                                INNER JOIN warehouses w on w.id = p.warehouse_id
+                                INNER JOIN ships sh on sh.id = w.ship_id`, []
                             );
     return data;
   } catch (error) {

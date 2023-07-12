@@ -128,10 +128,12 @@ export default {
               id: pallets[i][0],
               code: pallets[i][1],
               observation: pallets[i][2],
-              journey: pallets[i][3],
-              ship_id: pallets[i][4],
-              warehouse_id: pallets[i][5],
-              pallet_creation: pallets[i][6]
+              ship_id: pallets[i][3],
+              ship_name: pallets[i][4],
+              journey: pallets[i][5],
+              warehouse_id: pallets[i][6],
+              warehouse_name: pallets[i][7],
+              pallet_creation: pallets[i][8]
             })
         }
         const postPallets = await axios.post('http://172.70.8.122/mcp-backend/public/api/mobile/loadpallets', this.sendPallets)
