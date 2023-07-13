@@ -99,7 +99,15 @@ export default {
         const warehouses = await getWarehouses(this.item.id)
         console.log(warehouses)
         for (let i = 0; i < warehouses.length; i++) {
-          this.warehouses.push({ id: warehouses[i][0], text: warehouses[i][1], ship_id: warehouses[i][2] })
+          this.warehouses.push(
+                                {
+                                  id: warehouses[i][0],
+                                  text: warehouses[i][1],
+                                  warehouse_id: warehouses[i][2],
+                                  ship_id: warehouses[i][3],
+
+                                }
+                              )
         }
       } catch (error) {
         console.error("error al traer lo datos ", error)

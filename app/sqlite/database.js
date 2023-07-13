@@ -1,9 +1,36 @@
 const Sqlite = require("nativescript-sqlite");
 
 const Querys = [
-  "CREATE TABLE IF NOT EXISTS ships (id INTEGER PRIMARY KEY, name TEXT, journey TEXT)",
-  "CREATE TABLE IF NOT EXISTS warehouses (id INTEGER PRIMARY KEY, name TEXT,ship_id INTEGER , FOREIGN KEY (ship_id) REFERENCES ships(ship_id))",
-  "CREATE TABLE IF NOT EXISTS pallets (id INTEGER PRIMARY KEY, code TEXT, observation TEXT, warehouse_id INTEGER, date_creation DATETIME,FOREIGN KEY (warehouse_id) REFERENCES warehouses(warehouse_id))",
+  `CREATE TABLE IF NOT EXISTS ships
+    (
+      id INTEGER PRIMARY KEY,
+      name TEXT,
+      journey TEXT
+    )`,
+  `CREATE TABLE IF NOT EXISTS warehouses
+    (
+      id INTEGER PRIMARY KEY,
+      name TEXT,
+      warehouse_id TEXT,
+      ship_id INTEGER ,
+      FOREIGN KEY (ship_id) REFERENCES ships(ship_id)
+    )`,
+ /*  `CREATE TABLE IF NOT EXISTS ship_warehouses
+    (
+      id INTEGER PRIMARY KEY,
+      ship_id INTEGER ,
+      warehouse_id INTEGER,
+      FOREIGN KEY (ship_id) REFERENCES ships(ship_id),
+      FOREIGN KEY (warehouse_id) REFERENCES warehouses(warehouse_id)
+    )`, */
+  `CREATE TABLE IF NOT EXISTS pallets
+    (
+      id INTEGER PRIMARY KEY,
+      code TEXT, observation TEXT,
+      warehouse_id INTEGER,
+      date_creation DATETIME,
+      FOREIGN KEY (warehouse_id) REFERENCES warehouses(warehouse_id)
+    )`,
 ];
 
 const DefaultShips = [
@@ -74,15 +101,25 @@ async function insertDefaultData(db, shipsWarehouses) {
   try {
     let postWarehouse = []
     let postData = []
-    //const db = await openDatabase();
     for (let i = 0; i < shipsWarehouses.length; i++) {
-      postData[i] = await db.execSQL("INSERT INTO ships (id, name, journey) VALUES (?, ?, ?)", [shipsWarehouses[i].id, shipsWarehouses[i].name_ship, shipsWarehouses[i].journey]);
+      postData[i] = await db.execSQL("INSERT INTO ships (id, name, journey) VALUES (?, ?, ?)",
+                                      [
+                                        shipsWarehouses[i].id,
+                                        shipsWarehouses[i].name_ship,
+                                        shipsWarehouses[i].journey
+                                      ]
+                                    );
       for (let j = 0; j < shipsWarehouses[i].warehouses.length; j++) {
-        //shipsWarehouses[i].warehouses[j].ship_id = postData[i]
-        postWarehouse = db.execSQL("INSERT INTO warehouses (id, name, ship_id) VALUES (?, ?, ?)", [shipsWarehouses[i].warehouses[j].id, shipsWarehouses[i].warehouses[j].name_warehouse, shipsWarehouses[i].id]);
+      postWarehouse[j] = db.execSQL("INSERT INTO warehouses (name, warehouse_id, ship_id) VALUES (?, ?, ?)",
+                                        [
+                                          shipsWarehouses[i].warehouses[j].name_warehouse,
+                                          shipsWarehouses[i].warehouses[j].id,
+                                          shipsWarehouses[i].id,
+                                        ]
+                                      );
       }
     }
-    //return  {postShip:postData, postWarehouse:postWarehouse};
+    return  {postShip:postData, postWarehouse:postWarehouse};
   } catch (error) {
     console.log("ocurrio un problema al insertar la fila", error);
   }
@@ -157,7 +194,7 @@ async function loadPallets(){
                                       sh.id,
                                       sh.name,
                                       sh.journey,
-                                      p.warehouse_id,
+                                      w.warehouse_id,
                                       w.name,
                                       p.date_creation
                                 FROM pallets p

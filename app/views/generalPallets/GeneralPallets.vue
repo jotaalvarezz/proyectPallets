@@ -111,9 +111,15 @@ export default {
         const pallets = await getPalletsAll()
         console.log(pallets)
         for (let i = 0; i < pallets.length; i++) {
-          this.pallets.push({ id: pallets[i][0], text: pallets[i][1], observation: pallets[i][2], warehouse_id: pallets[i][3] })
+          this.pallets.push(
+            {
+              id: pallets[i][0],
+              text: pallets[i][1],
+              observation: pallets[i][2],
+              warehouse_id: pallets[i][3]
+            })
         }
-
+        console.log(this.pallets)
       } catch (error) {
         console.error("error al traer lo datos ", error)
       }
