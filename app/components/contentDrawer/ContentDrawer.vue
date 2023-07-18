@@ -1,12 +1,12 @@
 <template>
-    <GridLayout rows="auto,*" class="nt-drawer__content">
+    <GridLayout rows="auto, *" class="nt-drawer__content">
         <StackLayout row="0" class="nt-drawer__header" backgroundColor="#00acc1">
             <Image class="nt-drawer__header-image fas t-36" src="~/assets/images/logobarco.png" />
             <Label class="nt-drawer__header-brand coloIcons" color="#F4F6F8" fontWeight="bold" text="WSP" />
-            <!-- <Label class="nt-drawer__header-footnote" text="username@mail.com" /> -->
         </StackLayout>
         <ScrollView row="1" class="nt-drawer__body" backgroundColor="#F4F6F8">
             <StackLayout>
+                <Loading :show="loading"/>
                 <GridLayout columns="auto,*" class="nt-drawer__list-item" @tap="home">
                     <Label col="0" :text="'fa-home' | fonticon" class="fas colorIcons" fontSize="18" />
                     <Label col="1" text="Inicio" fontSize="15" class="p-l-10 colorIcons" />
@@ -23,6 +23,10 @@
                     <Label col="0" :text="'fa-trash-alt' | fonticon" class="fas colorIcons" fontSize="18" />
                     <Label col="1" text="Eliminar DB" fontSize="15" class="p-l-10 colorIcons" />
                 </GridLayout>
+                <GridLayout columns="auto,*" class="nt-drawer__list-item" @tap="prueba">
+                    <Label col="0" :text="'fa-trash-alt' | fonticon" class="fas colorIcons" fontSize="18" />
+                    <Label col="1" text="Prueba" fontSize="15" class="p-l-10 colorIcons" />
+                </GridLayout>
             </StackLayout>
         </ScrollView>
     </GridLayout>
@@ -34,13 +38,18 @@ import * as utils from "~/shared/util";
 import axios from "axios"
 import { mapState, mapMutations } from "vuex";
 import mixinMasters from "~/mixins/Master";
+import Loading from "../Loading/Loading.vue";
+/* https://chat.openai.com/?model=text-davinci-002-render-sha */
 
 export default {
     name: 'Content-Drawer',
+    components:{
+        Loading
+    },
 
     data() {
         return {
-
+            loading: false,
         }
     },
 
@@ -63,17 +72,25 @@ export default {
             }
         },
 
+        prueba(){
+            this.$router.pushClear('prueba.index')
+                utils.closeDrawer()
+        },
+
         async createTables() {
             try {
-                /* this.loadingCharge(true) */
+                this.loading = true
+                //this.loadingCharge(true)
                 const shipsWarehouses = await this.getShipsWarehouses()
                 const db = await createTable(shipsWarehouses.data.data)
-                /* this.loadingCharge(false) */
-                alert({
+                //
+                this.loading = false
+                //this.loadingCharge(false)
+                /* alert({
                     title: 'Inicializando DB',
                     message: 'Actualizando Tablas...',
                     okButtonText: "aceptar"
-                })
+                }) */
                 console.log(db)
             } catch (error) {
                 console.log('error intentando crear las tablas...')
@@ -91,7 +108,6 @@ export default {
 
         pallets() {
             try {
-                //this.$navigateTo(PalletsWarehouse)
                 this.$router.pushClear('generalpallets.index')
                 utils.closeDrawer()
                 /* const db = await structure()

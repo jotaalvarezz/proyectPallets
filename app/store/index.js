@@ -6,6 +6,7 @@ Vue.use(Vuex);
 const store = new Vuex.Store({
   state: {
     shipsWarehouses:[],
+    instance: {},
     count: 0,
     item: {},
     collection:[],
@@ -14,6 +15,10 @@ const store = new Vuex.Store({
   mutations: {
     increment(state) {
       state.count++;
+    },
+
+    async loadingInstance(state, payload){
+      state.instance = await payload
     },
 
     saveShipsWarehouses(state, payload){
