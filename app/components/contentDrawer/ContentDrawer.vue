@@ -39,6 +39,7 @@ import axios from "axios"
 import { mapState, mapMutations } from "vuex";
 import mixinMasters from "~/mixins/Master";
 import Loading from "../Loading/Loading.vue";
+import { ProgressDialog } from '@nativescript/core';
 /* https://chat.openai.com/?model=text-davinci-002-render-sha */
 
 export default {
@@ -79,18 +80,18 @@ export default {
 
         async createTables() {
             try {
-                this.loading = true
+                //this.loading = true
                 //this.loadingCharge(true)
                 const shipsWarehouses = await this.getShipsWarehouses()
                 const db = await createTable(shipsWarehouses.data.data)
                 //
-                this.loading = false
+                //this.loading = false
                 //this.loadingCharge(false)
-                /* alert({
+                alert({
                     title: 'Inicializando DB',
                     message: 'Actualizando Tablas...',
                     okButtonText: "aceptar"
-                }) */
+                })
                 console.log(db)
             } catch (error) {
                 console.log('error intentando crear las tablas...')
