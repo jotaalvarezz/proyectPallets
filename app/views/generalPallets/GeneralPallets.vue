@@ -28,6 +28,8 @@ import InfoPallet from "./infoPallet/InfoPallet.vue";
 import CreateEditPallet from '~/views/pallets/CreateEditPallet/CreateEditPallet.vue'
 import Alert from "~/alerts/Alerts";
 import axios from "axios"
+import { mapMutations } from "vuex";
+import mixinMasters from "~/mixins/Master";
 
 export default {
   name: "Ships",
@@ -46,7 +48,11 @@ export default {
     };
   },
 
+  mixins: [mixinMasters],
+
   methods: {
+    ...mapMutations(['indicatorState']),
+
     onItemTap() {
       console.log("success");
     },
@@ -127,6 +133,7 @@ export default {
 
     async sendAll() {
       try {
+        this.loadingCharge(true)
         const pallets = await loadPallets()
         for (let i = 0; i < pallets.length; i++) {
           this.sendPallets.push(
@@ -142,7 +149,8 @@ export default {
               pallet_creation: pallets[i][8]
             })
         }
-        const postPallets = await axios.post('http://172.70.8.122/mcp-backend/public/api/mobile/loadpallets', this.sendPallets)
+        const postPallets = await axios.post('http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/loadpallets', this.sendPallets)
+        this.indicatorState(false)
         console.log("send ",postPallets.data)
       } catch (error) {
         console.log("se jodio lola")

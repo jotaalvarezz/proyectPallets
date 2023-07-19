@@ -1,13 +1,14 @@
 <template>
-    <!-- <Page> -->
-        <GridLayout rows="auto, auto" margin="15" style="background-color: blue;">
-            <ActivityIndicator row="0" busy="true" :visibility="show ? 'visible' : 'collapse'" @busyChange="onBusyChanged" />
-            <Label row="1" text="Cargando Informacion" :visibility="show ? 'visible' : 'collapse'" style="text-align: center;" textWrap="true"/>
+    <Page>
+        <GridLayout rows="auto, auto" margin="15">
+            <ActivityIndicator row="0" :busy="controlIndicator"  @busyChange="onBusyChanged" />
+            <Label row="1" text="Cargando Informacion" style="text-align: center;" textWrap="true"/>
         </GridLayout>
-   <!--  </Page> -->
+    </Page>
 </template>
 
 <script>
+import { mapState, mapMutations } from 'vuex'
 export default {
     name:"loading",
     props:{
@@ -17,12 +18,29 @@ export default {
         msg:{
             type:String
         },
-        show:{
+        state:{
             type:Boolean,
             required: true,
         }
     },
+
+    computed:{
+        ...mapState(['indicator']),
+
+        controlIndicator(){
+            if(this.indicator == false){
+                console.log("dasctivate ",this.indicator)
+                this.indicatorState(this.indicator)
+                this.$modal.close()
+            }else{
+                return true
+            }
+        }
+    },
+
     methods:{
+        ...mapMutations(['indicatorState']),
+
         onBusyChanged(){
             /* console.log("charge tamplate") */
         },
@@ -35,7 +53,8 @@ export default {
     },
 
     created(){
-        console.log("control => ",this.control)
+        this.indicatorState(this.state)
+        console.log("control => ",this.indicator)
     }
 }
 </script>

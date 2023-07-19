@@ -88,7 +88,7 @@ async function createTable(shipsWarehouses) {
       );
     }
     insertDefaultData(db, shipsWarehouses)
-    console.log(db);
+    //console.log(db);
     return database;
   } catch (error) {
     console.log("error e la creacion de la tabla ", error);

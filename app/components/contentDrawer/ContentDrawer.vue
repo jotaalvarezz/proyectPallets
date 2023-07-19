@@ -6,7 +6,6 @@
         </StackLayout>
         <ScrollView row="1" class="nt-drawer__body" backgroundColor="#F4F6F8">
             <StackLayout>
-                <Loading :show="loading"/>
                 <GridLayout columns="auto,*" class="nt-drawer__list-item" @tap="home">
                     <Label col="0" :text="'fa-home' | fonticon" class="fas colorIcons" fontSize="18" />
                     <Label col="1" text="Inicio" fontSize="15" class="p-l-10 colorIcons" />
@@ -23,10 +22,10 @@
                     <Label col="0" :text="'fa-trash-alt' | fonticon" class="fas colorIcons" fontSize="18" />
                     <Label col="1" text="Eliminar DB" fontSize="15" class="p-l-10 colorIcons" />
                 </GridLayout>
-                <GridLayout columns="auto,*" class="nt-drawer__list-item" @tap="prueba">
+                <!-- <GridLayout columns="auto,*" class="nt-drawer__list-item" @tap="showProgressDialog">
                     <Label col="0" :text="'fa-trash-alt' | fonticon" class="fas colorIcons" fontSize="18" />
                     <Label col="1" text="Prueba" fontSize="15" class="p-l-10 colorIcons" />
-                </GridLayout>
+                </GridLayout> -->
             </StackLayout>
         </ScrollView>
     </GridLayout>
@@ -38,15 +37,15 @@ import * as utils from "~/shared/util";
 import axios from "axios"
 import { mapState, mapMutations } from "vuex";
 import mixinMasters from "~/mixins/Master";
-import Loading from "../Loading/Loading.vue";
-import { ProgressDialog } from '@nativescript/core';
+import { createProgressDialog } from '@nativescript/core';
+/* import { ProgressDialog } from '@nativescript/core'; */
 /* https://chat.openai.com/?model=text-davinci-002-render-sha */
 
 export default {
     name: 'Content-Drawer',
-    components:{
+    /* components: {
         Loading
-    },
+    }, */
 
     data() {
         return {
@@ -54,18 +53,19 @@ export default {
         }
     },
 
-    computed:{
-
+    computed: {
+        ...mapState(['indicator'])
     },
 
     mixins: [mixinMasters],
 
     methods: {
-        ...mapMutations(['saveShipsWarehouses']),
+
+        ...mapMutations(['saveShipsWarehouses', 'indicatorState']),
 
         async getShipsWarehouses() {
             try {
-                const shipsWarehouses = await axios.get('http://172.70.8.122/mcp-backend/public/api/mobile/ships');
+                const shipsWarehouses = await axios.get('http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/ships');
                 this.saveShipsWarehouses(shipsWarehouses)
                 return shipsWarehouses
             } catch (error) {
@@ -73,26 +73,28 @@ export default {
             }
         },
 
-        prueba(){
+        prueba() {
             this.$router.pushClear('prueba.index')
-                utils.closeDrawer()
+            utils.closeDrawer()
         },
 
         async createTables() {
             try {
                 //this.loading = true
-                //this.loadingCharge(true)
+                this.loadingCharge(true)
                 const shipsWarehouses = await this.getShipsWarehouses()
                 const db = await createTable(shipsWarehouses.data.data)
+                this.indicatorState(false)
+                console.log("indicadorr ", this.indicator)
                 //
                 //this.loading = false
                 //this.loadingCharge(false)
-                alert({
+                /* alert({
                     title: 'Inicializando DB',
                     message: 'Actualizando Tablas...',
                     okButtonText: "aceptar"
-                })
-                console.log(db)
+                }) */
+                //console.log(db)
             } catch (error) {
                 console.log('error intentando crear las tablas...')
             }
@@ -103,7 +105,7 @@ export default {
                 this.$router.pushClear('ship.index')
                 utils.closeDrawer()
             } catch (error) {
-                console.log("error al dirigirme a la ruta ",error)
+                console.log("error al dirigirme a la ruta ", error)
             }
         },
 
@@ -135,7 +137,7 @@ export default {
 }
 </script>
 <style>
-.colorIcons{
+.colorIcons {
     color: #222a37;
 }
 </style>

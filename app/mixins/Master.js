@@ -7,29 +7,25 @@ const mixinMasters = {
   },
 
   data() {
-    return {
-    };
+    return {};
   },
 
-  computed:{
-    ...mapState(['instance'])
+  computed: {
+    ...mapState(["instance"]),
   },
 
   methods: {
-    ...mapMutations(['loadingInstance']),
+    ...mapMutations(["loadingInstance"]),
 
-    async loadingCharge(activated = activated || false) {
-      /* if (activated) { */
-        var charger = await this.$showModal(Loading, {
-          fullscreen: false,
-          stretched: false,
-          dimAmount: 0.5,
-        });
-        console.log("charge ",charger.nativeView)
-      /* }else{ */
-        console.log("falso")
-        /* this.$modal.close(); */
-      /* } */
+    loadingCharge(activated = activated || true) {
+      this.$showModal(Loading, {
+        fullscreen: false,
+        stretched: false,
+        dimAmount: 0.5,
+        props: {
+          state: activated
+        },
+      });
     },
   },
 };
