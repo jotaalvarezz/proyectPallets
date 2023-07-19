@@ -84,16 +84,12 @@ export default {
                 this.loadingCharge(true)
                 const shipsWarehouses = await this.getShipsWarehouses()
                 const db = await createTable(shipsWarehouses.data.data)
-                this.indicatorState(false)
-                console.log("indicadorr ", this.indicator)
-                //
-                //this.loading = false
-                //this.loadingCharge(false)
-                /* alert({
+                this.loadingCharge()
+                alert({
                     title: 'Inicializando DB',
-                    message: 'Actualizando Tablas...',
+                    message: 'Tablas Actualizadas',
                     okButtonText: "aceptar"
-                }) */
+                })
                 //console.log(db)
             } catch (error) {
                 console.log('error intentando crear las tablas...')

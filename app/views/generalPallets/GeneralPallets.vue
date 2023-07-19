@@ -150,7 +150,7 @@ export default {
             })
         }
         const postPallets = await axios.post('http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/loadpallets', this.sendPallets)
-        this.indicatorState(false)
+        this.loadingCharge()
         console.log("send ",postPallets.data)
       } catch (error) {
         console.log("se jodio lola")
