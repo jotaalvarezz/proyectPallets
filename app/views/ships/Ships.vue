@@ -134,19 +134,24 @@ export default {
 
     async getShips() {
       try {
+        this.loadingCharge(true)
         this.ships = []
         const ships = await getShips()
         console.log(ships)
         for (let i = 0; i < ships.length; i++) {
           this.ships.push({ id: ships[i][0], text: ships[i][1], journey: ships[i][2] })
         }
+        this.loadingCharge()
       } catch (error) {
+        this.loadingCharge()
+        Alert.danger("Hubo un error",error)
         console.error("error al traer lo datos ", error)
       }
     }
   },
 
   created() {
+
     /* this.loadingCharge() */
   }
   /* components: { GridLayout }, */

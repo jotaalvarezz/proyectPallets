@@ -18,10 +18,10 @@
                     <Label col="0" :text="'fa-sync' | fonticon" class="fas colorIcons" fontSize="18" />
                     <Label col="1" text="Actualizar" fontSize="15" class="p-l-10 colorIcons" />
                 </GridLayout>
-                <GridLayout columns="auto,*" class="nt-drawer__list-item" @tap="deleteDB">
+               <!--  <GridLayout columns="auto,*" class="nt-drawer__list-item" @tap="deleteDB">
                     <Label col="0" :text="'fa-trash-alt' | fonticon" class="fas colorIcons" fontSize="18" />
                     <Label col="1" text="Eliminar DB" fontSize="15" class="p-l-10 colorIcons" />
-                </GridLayout>
+                </GridLayout> -->
                 <!-- <GridLayout columns="auto,*" class="nt-drawer__list-item" @tap="showProgressDialog">
                     <Label col="0" :text="'fa-trash-alt' | fonticon" class="fas colorIcons" fontSize="18" />
                     <Label col="1" text="Prueba" fontSize="15" class="p-l-10 colorIcons" />
@@ -37,9 +37,7 @@ import * as utils from "~/shared/util";
 import axios from "axios"
 import { mapState, mapMutations } from "vuex";
 import mixinMasters from "~/mixins/Master";
-import { createProgressDialog } from '@nativescript/core';
-/* import { ProgressDialog } from '@nativescript/core'; */
-/* https://chat.openai.com/?model=text-davinci-002-render-sha */
+import Alert from "~/alerts/Alerts";
 
 export default {
     name: 'Content-Drawer',
@@ -85,13 +83,10 @@ export default {
                 const shipsWarehouses = await this.getShipsWarehouses()
                 const db = await createTable(shipsWarehouses.data.data)
                 this.loadingCharge()
-                alert({
-                    title: 'Inicializando DB',
-                    message: 'Tablas Actualizadas',
-                    okButtonText: "aceptar"
-                })
+                Alert.success("Actualizacion de DB")
                 //console.log(db)
             } catch (error) {
+                Alert.danger("No se pudo actualizar la DB",error)
                 console.log('error intentando crear las tablas...')
             }
         },
@@ -121,14 +116,14 @@ export default {
             }
         },
 
-        async deleteDB() {
+        /* async deleteDB() {
             try {
                 const db = await DBdelete()
                 console.log("... ", db)
             } catch (error) {
                 console.log('delete exitoso!')
             }
-        }
+        } */
     },
 }
 </script>

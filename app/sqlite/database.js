@@ -62,7 +62,7 @@ async function openDatabase() {
 async function structure() {
   try {
     const db = await openDatabase();
-    db.all("SELECT name, sql FROM sqlite_master WHERE type='table'").then(
+    return db.all("SELECT name, sql FROM sqlite_master WHERE type='table'").then(
       (result) => {
         // Imprime la estructura de la base de datos en la consola
         result.forEach((table) => {
@@ -79,6 +79,7 @@ async function structure() {
 async function createTable(shipsWarehouses) {
   console.log("EN DATABASE", shipsWarehouses)
   try {
+    DBdelete()
     let database = [];
     const db = await openDatabase();
     for (let i = 0; i < Querys.length; i++) {

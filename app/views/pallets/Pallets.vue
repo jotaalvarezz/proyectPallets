@@ -15,12 +15,15 @@
                     " />
         </GridLayout>
       </card-view>
-      <ListView for="(item, index) in pallets" :class="spaceEnd" @itemLoading="scrolling" @loadMoreItems="onScroll" @itemTap="onItemTap" row="1">
+      <ListView for="(item, index) in pallets" :class="spaceEnd" @itemLoading="scrolling" @loadMoreItems="onScroll"
+        @itemTap="onItemTap" row="1">
         <v-template>
-          <GridLayout columns="auto, *,50" @longPress="operations">
-            <Label :text="'fa-pallet' | fonticon" class="fas" width="110" fontSize="70" col="0" color="#0096b7" />
-            <Label :text="item.text" class="p-l-10 colorIcons" textWrap="true" width="auto" fontSize="25" col="1" />
-            <Label :text="'fa-times' | fonticon" class="fas colorMinus" fontSize="18" col="2"
+          <GridLayout columns="*,70" @longPress="operations">
+            <StackLayout orientation="horizontal" @tap="addObservation(item)" col="0">
+              <Label :text="'fa-pallet' | fonticon" class="fas" width="110" fontSize="70" color="#0096b7" />
+              <Label :text="item.text" class="p-l-10 colorIcons" textWrap="true" width="auto" fontSize="25" />
+            </StackLayout>
+            <Label :text="'fa-times' | fonticon" class="fas colorMinus" fontSize="18" col="1"
               @tap="deleteRow(item.id, index)" />
           </GridLayout>
         </v-template>
@@ -32,10 +35,10 @@
 <script>
 import Header from '~/components/header/Header.vue'
 import FloatingButton from "~/components/floatingButton/FloatingButton.vue";
-/* import CreateEditShip from "./createEditShip/CreateEditShip.vue"; */
 import { mapState } from 'vuex';
 import CreateEditPallet from "~/views/pallets/CreateEditPallet/CreateEditPallet.vue"
-const { getPallets, insertPallet, deletePallet } = require("~/sqlite/database");
+import CustomInput from '~/components/pallets/inputObservation/CustomInput'
+const { getPallets, insertPallet, deletePallet, updatePallet } = require("~/sqlite/database");
 import Alert from '~/alerts/Alerts';
 import moment from 'moment';
 
@@ -48,24 +51,24 @@ export default {
   },
   data() {
     return {
-      bandera:false,
+      bandera: false,
       model: {
         codePallet: "",
         warehouse_id: "",
       },
       code: '',
       typingTimer: null,
-      typingTimeout: 1000,
+      typingTimeout: 500,
       pallets: [],
     };
   },
   computed: {
     ...mapState(['item']),
 
-    spaceEnd(){
-      return{
-        'e-height' : this.bandera == true,
-        'n-height' : this.bandera == false
+    spaceEnd() {
+      return {
+        'e-height': this.bandera == true,
+        'n-height': this.bandera == false
       }
     }
   },
@@ -76,16 +79,16 @@ export default {
     }
   },
   methods: {
-    scrolling(){
-      if(this.bandera){
+    scrolling() {
+      if (this.bandera) {
         this.bandera = false
       }
     },
 
-    onScroll(){
+    onScroll() {
       this.bandera = true
-      console.log(this.spaceEnd)
-      console.log("movimiento")
+      /* console.log(this.spaceEnd)
+      console.log("movimiento") */
     },
 
     onItemTap() {
@@ -94,6 +97,33 @@ export default {
 
     openModal() {
       this.$showModal(CreateEditPallet, { fullscreen: true, props: { item: this.item } });
+    },
+
+    addObservation(item) {
+      this.$showModal(
+        CustomInput
+        /* {
+          fullscreen: false,
+          props: {
+            item: item
+          }
+        } */
+      ).then((res) => {
+        if (res.option) {
+          item.observation = res.observation
+          this.editPallet(item)
+        }
+      })
+    },
+
+    async editPallet(item) {
+      try {
+        console.log("observacion ", item.observation)
+        const pallet = await updatePallet(item)
+        console.log("update ", pallet)
+      } catch (error) {
+        console.error("Hubo un error al editar ", error)
+      }
     },
 
     async deleteRow(id, index) {
@@ -178,6 +208,7 @@ export default {
     this.getPallets()
   }
   /* components: { GridLayout }, */
+
 };
 </script>
 <style lang="scss" scoped>
@@ -191,13 +222,14 @@ export default {
   vertical-align: bottom;
 }
 
-.n-height{
+.n-height {
   height: 100%;
 }
 
-.e-height{
+.e-height {
   height: 300px;
 }
+
 .colorIcons {
   color: #222a37;
 }
