@@ -23,6 +23,7 @@ const mixinMasters = {
           fullscreen: false,
           stretched: false,
           dimAmount: 0.5,
+          cancelable: false,
           props: {
             state: activated,
           },

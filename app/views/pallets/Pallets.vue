@@ -3,8 +3,12 @@
     <Header />
     <grid-layout rows="auto, *" backgroundColor="#F4F6F8">
       <card-view margin="10" elevation="2" radius="40" row="0">
-        <GridLayout rows="auto,auto,auto" padding="30">
-          <Image src="~/assets/images/logopallets.png" stretch="aspectFit" height="10%" width="30%" row="0" />
+        <GridLayout rows="auto,auto,auto,auto" padding="30">
+          <StackLayout row="0" orientation="horizontal">
+            <Image src="~/assets/images/logopallets.png" stretch="aspectFit" height="10%" width="40%" />
+            <Label text="N° de Pallets:" fontSize="18" margin="5" fontWeight="bold" style=" color: #3c495e; width: 40%;" />
+            <Label :text="pallets.length" fontSize="18" fontWeight="bold" style=" color: #3c495e; width: 20%;" />
+          </StackLayout>
           <Label row="1" text="Pallet:" fontSize="18" fontWeight="bold" style=" color: #3c495e; width: 80%;" />
           <TextField ref="field" row="2" v-model="code" padding="10" hint="code..." class="fas" height="45" fontSize="18"
             boder="none" style="

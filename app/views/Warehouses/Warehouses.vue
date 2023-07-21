@@ -1,6 +1,6 @@
 <template>
   <Page>
-    <Header />
+    <Header :disable="valor"/>
     <grid-layout rows="*" backgroundColor="#F4F6F8">
       <ListView for="(item, index) in warehouses" @itemTap="onItemTap">
         <v-template>
@@ -39,6 +39,7 @@ export default {
   },
   data() {
     return {
+      valor:true,
       warehouses: [],
     };
   },

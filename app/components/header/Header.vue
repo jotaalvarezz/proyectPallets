@@ -33,6 +33,9 @@ export default {
         },
         operation2:{
             type:Function
+        },
+        disable:{
+            type:Boolean
         }
     },
     computed: {
@@ -51,7 +54,7 @@ export default {
                                         data:this.data,
                                         icons:this.icons,
                                         operation1:this.operation1,
-                                        operation2:this.operation2
+                                        operation2:this.operation2,
                                     }
                             })
         }

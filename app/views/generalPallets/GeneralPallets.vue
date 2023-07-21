@@ -134,6 +134,7 @@ export default {
     async sendAll() {
       try {
         this.loadingCharge(true)
+        this.sendPallets = []
         const pallets = await loadPallets()
         for (let i = 0; i < pallets.length; i++) {
           this.sendPallets.push(
