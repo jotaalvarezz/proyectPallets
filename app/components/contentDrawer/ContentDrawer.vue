@@ -83,6 +83,7 @@ export default {
                 this.loadingCharge(true)
                 const shipsWarehouses = await this.getShipsWarehouses()
                 const db = await createTable(shipsWarehouses.data.data)
+                this.$router.pushClear('ship.index')
                 this.loadingCharge()
                 Alert.success("Actualizacion de DB")
                 //console.log(db)
