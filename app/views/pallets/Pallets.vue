@@ -4,10 +4,14 @@
     <grid-layout rows="auto, *" backgroundColor="#F4F6F8">
       <card-view margin="10" elevation="2" radius="40" row="0">
         <GridLayout rows="auto,auto,auto,auto" padding="30">
-          <StackLayout row="0" orientation="horizontal">
+          <StackLayout row="0" orientation="horizontal" >
             <Image src="~/assets/images/logopallets.png" stretch="aspectFit" height="10%" width="40%" />
-            <Label text="N° de Pallets:" fontSize="18" margin="5" fontWeight="bold" style=" color: #3c495e; width: 40%;" />
-            <Label :text="pallets.length" fontSize="18" fontWeight="bold" style=" color: #3c495e; width: 20%;" />
+            <StackLayout width="60%">
+              <Label text="N° de Pallets:" textAlignment="center" fontSize="18" margin="5" fontWeight="bold"
+                style=" color: #3c495e; width: 100%;" />
+              <Label :text="pallets.length" textAlignment="center" fontSize="18" fontWeight="bold"
+                style=" color: #3c495e; width: 100%;" backgroundColor="#c0c9d7"/>
+            </StackLayout>
           </StackLayout>
           <Label row="1" text="Pallet:" fontSize="18" fontWeight="bold" style=" color: #3c495e; width: 80%;" />
           <TextField ref="field" row="2" v-model="code" padding="10" hint="code..." class="fas" height="45" fontSize="18"

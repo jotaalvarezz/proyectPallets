@@ -64,6 +64,7 @@ export default {
         async getShipsWarehouses() {
             try {
                 const shipsWarehouses = await axios.get('http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/ships');
+                //const shipsWarehouses = await axios.get('http://172.70.8.122/mcp-backend/public/api/mobile/ships');
                 this.saveShipsWarehouses(shipsWarehouses)
                 return shipsWarehouses
             } catch (error) {
@@ -86,6 +87,7 @@ export default {
                 Alert.success("Actualizacion de DB")
                 //console.log(db)
             } catch (error) {
+                this.loadingCharge()
                 Alert.danger("No se pudo actualizar la DB",error)
                 console.log('error intentando crear las tablas...')
             }

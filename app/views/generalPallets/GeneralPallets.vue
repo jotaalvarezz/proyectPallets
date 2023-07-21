@@ -139,7 +139,6 @@ export default {
         for (let i = 0; i < pallets.length; i++) {
           this.sendPallets.push(
             {
-              id: pallets[i][0],
               code: pallets[i][1],
               observation: pallets[i][2],
               ship_id: pallets[i][3],
@@ -151,6 +150,7 @@ export default {
             })
         }
         const postPallets = await axios.post('http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/loadpallets', this.sendPallets)
+        //const postPallets = await axios.post('http://172.70.8.122/mcp-backend/public/api/mobile/loadpallets', this.sendPallets)
         this.loadingCharge()
         Alert.success("Cargue")
         console.log("send ", postPallets.data)
