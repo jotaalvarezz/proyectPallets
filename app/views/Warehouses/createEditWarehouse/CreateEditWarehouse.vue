@@ -2,7 +2,8 @@
     <Page>
         <StackLayout backgroundColor="#F4F6F8">
             <StackLayout orientation="horizontal" style="background-color: #00acc1; text-align: center" height="70">
-                <Label :text="'fa-reply' | fonticon" fontSize="18" class="fas" color="#F4F6F8" width="20%" @tap="$modal.close"></Label>
+                <Label :text="'fa-reply' | fonticon" fontSize="18" class="fas" color="#F4F6F8" width="20%"
+                    @tap="$modal.close"></Label>
                 <Label :text="textBar" fontSize="18" color="#F4F6F8" fontWeight="bold" width="60%"></Label>
                 <!-- <Image src="~/assets/images/logobarco.png" stretch="aspectFit" width="60%"/> -->
                 <!-- <Label text="Nuevo Barco" width="20%"></Label> -->
@@ -13,14 +14,14 @@
                     <TextField row="1" padding="10" v-model="model.nameWarehouse" hint="Nombre de Bodega..." height="40"
                         fontSize="15" boder="none"
                         style="placeholder-color: #3c495e; color: #3c495e; background-color: #c0c9d7; width: 80%;" />
-                    <GridLayout row="2" height="40" columns="auto, *,auto" padding="10" @tap="modalOption"
+                    <GridLayout row="2" height="50" columns="auto, *,auto" padding="10" @tap="modalOption"
                         style="background-color: #c0c9d7; width: 80%;">
                         <Label :text="'fa-ship' | fonticon" fontSize="18" class="fas" col="0" color="#3c495e" />
                         <Label :text="nameShip" ccolor="white" class="p-l-10" fontSize="15" col="1" color="#3c495e" />
                         <Label :text="'fa-sort-down' | fonticon" fontSize="18" class="fas" col="2" color="#3c495e" />
                     </GridLayout>
-                    <Button row="3" marginTop="14" backgroundColor="#0096b7" color="#F4F6F8" text="Agregar" @tap="addWarehouse"
-                        style="width: 80%;" />
+                    <Button row="3" marginTop="14" backgroundColor="#0096b7" color="#F4F6F8" text="Agregar"
+                        @tap="addWarehouse" style="width: 80%;" />
                 </GridLayout>
             </card-view>
         </StackLayout>
@@ -31,6 +32,7 @@ import { fonticon } from "nativescript-fonticon";
 import Header from "~/components/header/Header.vue";
 import ListOptions from "~/components/listOptions/ListOptions.vue";
 const { insertWarehuse, getShips } = require("~/sqlite/database");
+import Alerts from "~/alerts/Alerts";
 
 export default {
     components: {
@@ -85,9 +87,14 @@ export default {
 
         async addWarehouse() {
             try {
-                const warehouse = await insertWarehuse(this.model);
-                console.log("save ", warehouse);
-                this.model.nameWarehouse = "";
+                if (this.model.nameWarehouse.length > 0) {
+                    const warehouse = await insertWarehuse(this.model);
+                    console.log("save ", warehouse);
+                    this.model.nameWarehouse = "";
+                }else{
+                    Alerts.info("El campo nombre de Bodega esta vacio...")
+                }
+
             } catch (error) {
                 console.log("al insertar error ", error);
             }

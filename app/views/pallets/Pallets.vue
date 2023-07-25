@@ -4,14 +4,16 @@
     <grid-layout rows="auto, *" backgroundColor="#F4F6F8">
       <card-view margin="10" elevation="2" radius="40" row="0">
         <GridLayout rows="auto,auto,auto,auto" padding="30">
-          <StackLayout row="0" orientation="horizontal" >
+          <StackLayout row="0" orientation="horizontal">
             <Image src="~/assets/images/logopallets.png" stretch="aspectFit" height="10%" width="40%" />
-            <StackLayout width="60%">
-              <Label text="N° de Pallets:" textAlignment="center" fontSize="18" margin="5" fontWeight="bold"
-                style=" color: #3c495e; width: 100%;" />
-              <Label :text="pallets.length" textAlignment="center" fontSize="18" fontWeight="bold"
-                style=" color: #3c495e; width: 100%;" backgroundColor="#c0c9d7"/>
-            </StackLayout>
+            <card-view margin="22" elevation="18" radius="50" width="50%">
+              <StackLayout>
+                <Label text="N° de Pallets:" textAlignment="center" fontSize="18" margin="5" fontWeight="bold"
+                  style=" color: #3c495e; width: 100%;" />
+                <Label :text="pallets.length" textAlignment="center" fontSize="18" fontWeight="bold"
+                  style=" color: #000000; width: auto; margin: 0 15 0 15;" backgroundColor="#c0c9d7" borderRadius="5" />
+              </StackLayout>
+            </card-view>
           </StackLayout>
           <Label row="1" text="Pallet:" fontSize="18" fontWeight="bold" style=" color: #3c495e; width: 80%;" />
           <TextField ref="field" row="2" v-model="code" padding="10" hint="code..." class="fas" height="45" fontSize="18"
@@ -26,12 +28,13 @@
       <ListView for="(item, index) in pallets" :class="spaceEnd" @itemLoading="scrolling" @loadMoreItems="onScroll"
         @itemTap="onItemTap" row="1">
         <v-template>
-          <GridLayout columns="*,70" @longPress="operations">
-            <StackLayout orientation="horizontal" @tap="addObservation(item)" col="0">
+          <GridLayout columns="auto,*,50" @longPress="operations">
+            <Label row="0" :text="'#'+(index+1)" fontSize="18" fontWeight="bold" style=" color: #3c495e;" />
+            <StackLayout orientation="horizontal" @tap="addObservation(item)" col="1">
               <Label :text="'fa-pallet' | fonticon" class="fas" width="110" fontSize="70" color="#0096b7" />
               <Label :text="item.text" class="p-l-10 colorIcons" textWrap="true" width="auto" fontSize="25" />
             </StackLayout>
-            <Label :text="'fa-times' | fonticon" class="fas colorMinus" fontSize="18" col="1"
+            <Label :text="'fa-times' | fonticon" class="fas colorMinus" fontSize="18" col="2"
               @tap="deleteRow(item.id, index)" />
           </GridLayout>
         </v-template>
@@ -168,11 +171,18 @@ export default {
       }
     },
 
+    checkRepeated(){
+      const pallet = this.pallets.find(
+        (d) => d.text == this.code
+      )
+
+      return pallet;
+    },
+
     async savePallet() {
       try {
-        if (this.code.length > 0) {
+        if (this.code.length > 0 && !this.checkRepeated()) {
           this.model.codePallet = this.code
-          console.log("CUCH ", this.model.codePallet)
           this.model.warehouse_id = this.item.id
           this.model.pallet_creation = moment().format("YYYY-MM-DD HH:mm:ss")
           const pallet = await insertPallet(this.model);
@@ -181,9 +191,15 @@ export default {
           this.model.warehouse_id = "";
           this.$refs.field.nativeView.focus()
           this.getPallets()
+        }else if(this.checkRepeated()){
+          Alert.info("EL PALLET "+this.code+" YA FUE SCANNEADO! ",2)
+          .then(() => {
+            this.code = "";
+          })
+          console.log("repeat ",this.checkRepeated())
         }
       } catch (error) {
-        console.log("al insertar error ", error);
+        console.log("al insertar error ", error);0
       }
     },
 
@@ -229,7 +245,6 @@ export default {
   horizontal-align: right;
   vertical-align: bottom;
 }
-
 .n-height {
   height: 100%;
 }

@@ -63,11 +63,13 @@ export default {
 
         async getShipsWarehouses() {
             try {
-                const shipsWarehouses = await axios.get('http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/ships');
-                //const shipsWarehouses = await axios.get('http://172.70.8.122/mcp-backend/public/api/mobile/ships');
+                /* const shipsWarehouses = await axios.get('http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/ships'); */
+                const shipsWarehouses = await axios.get('http://172.70.8.122/mcp-backend/public/api/mobile/ships');
                 this.saveShipsWarehouses(shipsWarehouses)
                 return shipsWarehouses
             } catch (error) {
+                /* this.loadingCharge()
+                Alert.danger("No se pudieron cargados los datos de MCP a la DB",error) */
                 console.log(error)
             }
         },

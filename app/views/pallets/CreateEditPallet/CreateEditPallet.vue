@@ -20,7 +20,7 @@
                     <Label row="3" text="Observacion:" fontSize="18" fontWeight="bold"
                         style=" color: #3c495e; width: 80%;" />
                     <TextField ref="field" row="4" v-model="model.observation" padding="10" hint="observacion..."
-                        class="fas" height="45" fontSize="18" boder="none" style="
+                        class="fas" height="45" fontSize="18" keyboardType="number" boder="none" style="
                         placeholder-color: #3c495e;
                         color: #3c495e;
                         background-color: #c0c9d7;

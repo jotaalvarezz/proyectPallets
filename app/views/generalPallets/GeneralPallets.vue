@@ -4,12 +4,13 @@
     <grid-layout rows="*" backgroundColor="#F4F6F8">
       <ListView for="(item, index) in pallets" @itemTap="onItemTap">
         <v-template>
-          <GridLayout columns="*,70">
-            <StackLayout orientation="horizontal" @tap="showInfo(item)" col="0">
+          <GridLayout columns="auto,*,70">
+            <Label row="0" :text="'#'+(index+1)" fontSize="18" fontWeight="bold" style=" color: #3c495e;" />
+            <StackLayout orientation="horizontal" @tap="showInfo(item)" col="1">
               <Label :text="'fa-pallet' | fonticon" class="fas" width="110" fontSize="70" color="#0096b7" />
               <Label :text="item.text" class="p-l-10 colorIcons" textWrap="true" width="65%" fontSize="25" />
             </StackLayout>
-            <Label :text="'fa-ellipsis-v' | fonticon" class="fas colorIcons" fontSize="18" col="1"
+            <Label :text="'fa-ellipsis-v' | fonticon" class="fas colorIcons" fontSize="18" col="2"
               style="text-align: center;" @tap="navigate(item, index)" />
           </GridLayout>
         </v-template>
@@ -149,8 +150,8 @@ export default {
               pallet_creation: pallets[i][8]
             })
         }
-        const postPallets = await axios.post('http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/loadpallets', this.sendPallets)
-        //const postPallets = await axios.post('http://172.70.8.122/mcp-backend/public/api/mobile/loadpallets', this.sendPallets)
+        /* const postPallets = await axios.post('http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/loadpallets', this.sendPallets) */
+        const postPallets = await axios.post('http://172.70.8.122/mcp-backend/public/api/mobile/loadpallets', this.sendPallets)
         this.loadingCharge()
         Alert.success("Cargue")
         console.log("send ", postPallets.data)

@@ -47,12 +47,24 @@ class Alert {
     });
   }
 
-  static info(msg){
-    return alert({
-      title: "Campo Vacio!!",
-      message: msg,
-      okButtonText: "aceptar",
-    });
+  static info(msg, number){
+    switch(number){
+      case 1:
+        return alert({
+          title: "Campo Vacio!!",
+          message: msg,
+          okButtonText: "aceptar",
+        });
+      break;
+
+      case 2:
+        return alert({
+          title: "Pallet repetido!!",
+          message: msg,
+          okButtonText: "aceptar",
+        });
+      break;
+    }
   }
 }
 
