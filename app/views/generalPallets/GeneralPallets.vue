@@ -157,7 +157,7 @@ export default {
         console.log("send ", postPallets.data)
       } catch (error) {
         this.loadingCharge()
-        Alert.danger("Hubo un error en el cargue",error)
+        Alert.danger("Hubo un error en el cargue",error.message)
       }
     },
 
