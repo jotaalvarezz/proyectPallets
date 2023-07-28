@@ -20,8 +20,9 @@
                         <Label :text="nameShip" ccolor="white" class="p-l-10" fontSize="15" col="1" color="#3c495e" />
                         <Label :text="'fa-sort-down' | fonticon" fontSize="18" class="fas" col="2" color="#3c495e" />
                     </GridLayout>
-                    <Button row="3" marginTop="14" backgroundColor="#0096b7" color="#F4F6F8" text="Agregar"
-                        @tap="addWarehouse" style="width: 80%;" />
+                    <Button row="3" text="Agregar" backgroundColor="#F4F6F8" color="#222a37"
+                        fontSize="22" @tap="addWarehouse" borderWidth="1" borderColor="#222a37" borderRadius="30"
+                        marginTop="14" />
                 </GridLayout>
             </card-view>
         </StackLayout>
@@ -91,7 +92,7 @@ export default {
                     const warehouse = await insertWarehuse(this.model);
                     console.log("save ", warehouse);
                     this.model.nameWarehouse = "";
-                }else{
+                } else {
                     Alerts.info("El campo nombre de Bodega esta vacio...")
                 }
 

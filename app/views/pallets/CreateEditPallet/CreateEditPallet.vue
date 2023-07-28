@@ -41,7 +41,7 @@
                             color="#3c495e" />
                         <Label :text="'fa-sort-down' | fonticon" fontSize="18" class="fas" col="2" color="#3c495e" />
                     </GridLayout>
-                    <Button row="9" marginTop="30" backgroundColor="#0096b7" color="#F4F6F8" text="ENVIAR" @tap="editPallet"
+                    <Button row="9" marginTop="30" backgroundColor="#F4F6F8" color="#222a37" text="ENVIAR" @tap="editPallet"
                         style="width: 80%;" borderWidth="1" borderColor="#222a37" borderRadius="30" />
                 </GridLayout>
             </card-view>

@@ -2,10 +2,11 @@
   <Page>
     <Header :data="pallets" :icons="icons" :operation1="showInfo" :operation2="navigate" />
     <grid-layout rows="*" backgroundColor="#F4F6F8">
-      <ListView for="(item, index) in pallets" @itemTap="onItemTap">
+      <ListView for="(item, index) in pallets" @itemTap="onItemTap" @itemLoading="onScroll" @loadMoreItems="scrolling" :class="spaceButtom"
+        ref="listView">
         <v-template>
           <GridLayout columns="auto,*,70">
-            <Label row="0" :text="'#'+(index+1)" fontSize="18" fontWeight="bold" style=" color: #3c495e;" />
+            <Label row="0" :text="'#' + (index + 1)" fontSize="18" fontWeight="bold" style=" color: #3c495e;" />
             <StackLayout orientation="horizontal" @tap="showInfo(item)" col="1">
               <Label :text="'fa-pallet' | fonticon" class="fas" width="110" fontSize="70" color="#0096b7" />
               <Label :text="item.text" class="p-l-10 colorIcons" textWrap="true" width="65%" fontSize="25" />
@@ -37,6 +38,7 @@ export default {
   components: {
     Header
   },
+
   data() {
     return {
       pallets: [],
@@ -45,17 +47,47 @@ export default {
         iconLogo: 'fa-pallet',
         iconOperations: 'fa-ellipsis-v'
       },
-      sendPallets: []
+      sendPallets: [],
+      showSpace: true,
+      space: false,
     };
   },
 
   mixins: [mixinMasters],
+
+  computed: {
+    spaceButtom() {
+      return {
+        'n-buttom': this.space == false,
+        'm-buttom': this.space == true
+      }
+    }
+  },
 
   methods: {
     ...mapMutations(['indicatorState']),
 
     onItemTap() {
       console.log("success");
+    },
+
+    onScroll(args) {
+      console.log("index ",args.index)
+      if(args.index < this.pallets.length - 1){
+        this.space = false
+      }else if(args.index == this.pallets.length - 1){
+        this.space = true
+      }
+      console.log("loading ",this.space)
+    },
+
+    scrolling() {
+     /*  console.log("REF ", this.$refs.listView.nativeView)
+      if (!this.space) {
+        this.space = true
+      }
+      console.log("hide scroll", this.space) */
+
     },
 
     async palletInfo(item) {
@@ -126,7 +158,8 @@ export default {
               warehouse_id: pallets[i][3]
             })
         }
-        console.log(this.pallets)
+        //this.total = true
+        console.log(this.total)
       } catch (error) {
         console.error("error al traer lo datos ", error)
       }
@@ -150,14 +183,14 @@ export default {
               pallet_creation: pallets[i][8]
             })
         }
-        /* const postPallets = await axios.post('http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/loadpallets', this.sendPallets) */
-        const postPallets = await axios.post('http://172.70.8.122/mcp-backend/public/api/mobile/loadpallets', this.sendPallets)
+        const postPallets = await axios.post('http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/loadpallets', this.sendPallets)
+        /* const postPallets = await axios.post('http://172.70.8.122/mcp-backend/public/api/mobile/loadpallets', this.sendPallets) */
         this.loadingCharge()
         Alert.success("Cargue")
         console.log("send ", postPallets.data)
       } catch (error) {
         this.loadingCharge()
-        Alert.danger("Hubo un error en el cargue",error.message)
+        Alert.danger("Hubo un error en el cargue", error.message)
       }
     },
 
@@ -182,12 +215,12 @@ export default {
   /* components: { GridLayout }, */
 };
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .fab-sync {
   height: 70;
   width: 70; /// this is required on iOS - Android does not require width so you might need to adjust styles
   margin: 15;
-  background-color: #00acc1;
+  background-color: 	#EAB14D;
   color: #F4F6F8;
   horizontal-align: right;
   vertical-align: bottom;
@@ -195,5 +228,13 @@ export default {
 
 .colorIcons {
   color: #303947;
+}
+
+.m-buttom {
+  margin-bottom: 50;
+}
+
+.n-bottom {
+  margin-bottom: 0;
 }
 </style>

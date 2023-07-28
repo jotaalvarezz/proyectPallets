@@ -3,16 +3,16 @@
     <!-- <ScrollView> -->
     <GridLayout rows="auto,auto,auto" margin="15" padding="5" style="width: 100%; height:65%;">
       <GridLayout row="0" v-if="generalOptions" columns="50,*" @tap="infoItem" height="33%" width="50%">
-        <Label col="0" :text="'fa-eye' | fonticon" class="fas colorIcons" fontSize="30" />
+        <Label col="0" :text="'fa-eye' | fonticon" class="fas iconDetalles" fontSize="30" />
         <Label col="1" text="Detalles" fontSize="22" class="p-l-10 colorIcons" />
       </GridLayout>
       <GridLayout row="1" columns="50,*" @tap="navigate()" height="33%" width="50%" >
-        <Label col="0" :text="'fa-edit' | fonticon" class="fas colorIcons" fontSize="30" />
+        <Label col="0" :text="'fa-edit' | fonticon" class="fas iconEdit" fontSize="30" />
         <Label col="1" text="Editar" fontSize="22" class="p-l-10 colorIcons" />
       </GridLayout>
       <GridLayout row="2" columns="50,*" height="33%" width="50%" @tap="deleteItem"
         style="text-align: center">
-        <Label col="0" :text="'fa-times' | fonticon" class="fas colorIcons" fontSize="30" />
+        <Label col="0" :text="'fa-times' | fonticon" class="fas iconDelete" fontSize="30" />
         <Label col="1" text="Eliminar" fontSize="22" class="p-l-10 colorIcons" />
       </GridLayout>
     </GridLayout>
@@ -105,5 +105,17 @@ export default {
 <style scoped>
 .colorIcons {
   color: #222a37;
+}
+
+.iconDelete{
+  color:#FB404B;
+}
+
+.iconEdit{
+  color: #EAB14D;
+}
+
+.iconDetalles{
+  color: #0096b7;
 }
 </style>

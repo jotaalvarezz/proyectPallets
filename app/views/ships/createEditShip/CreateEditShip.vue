@@ -32,12 +32,16 @@
               width: 80%;
             " />
           <!-- Boton para Crear -->
-          <Button v-if="model.action == false" row="3" marginTop="14" backgroundColor="#0096b7" color="#F4F6F8"
-            text="Agregar" @tap="addShip" style="width: 80%" class="btn" />
+          <Button v-if="model.action == false" row="3" text="Agregar" backgroundColor="#F4F6F8" color="#222a37"
+            fontSize="22" @tap="addShip" borderWidth="1" borderColor="#222a37" borderRadius="30" marginTop="14" />
+          <!-- <Button v-if="model.action == false" row="3" marginTop="14" backgroundColor="#0096b7" color="#F4F6F8"
+            text="Agregar" @tap="addShip" style="width: 80%" class="btn" / -->>
           <!-- ******************* -->
           <!-- Boton para Editar -->
-          <Button v-if="model.action == true" row="3" marginTop="14" backgroundColor="#0096b7" color="#F4F6F8"
-            text="Actualizar" @tap="updateShip" style="width: 80%" />
+          <Button v-if="model.action == true" row="3" text="Actualizar" backgroundColor="#F4F6F8" color="#222a37"
+            fontSize="22" @tap="addShip" borderWidth="1" borderColor="#222a37" borderRadius="30" marginTop="14" />
+          <!-- <Button v-if="model.action == true" row="3" marginTop="14" backgroundColor="#0096b7" color="#F4F6F8"
+            text="Actualizar" @tap="updateShip" style="width: 80%" /> -->
           <!-- ******************* -->
         </GridLayout>
       </card-view>
@@ -94,7 +98,7 @@ export default {
           console.log("save ", ship);
           this.model.nameShip = "";
           this.model.journey = "";
-        }else{
+        } else {
           Alerts.info("La campo nombre de Barco vacio...")
         }
       } catch (error) {

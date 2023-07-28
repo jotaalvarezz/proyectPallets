@@ -9,15 +9,11 @@
               <Label :text="'fa-ship' | fonticon" class="fas" width="110" fontSize="70" color="#0096b7" />
               <Label :text="item.text" class="p-l-10 colorIcons" width="auto" fontSize="25" />
             </StackLayout>
-            <!-- <Label :text="'fa-times' | fonticon" class="fas colorTimes" fontSize="18" col="1" style="text-align: center;"
-              @tap="deleteRow(item.id, index)" /> -->
             <Label :text="'fa-ellipsis-v' | fonticon" class="fas colorIcons" fontSize="18" col="1"
               style="text-align: center;" @tap="navigateOptions(item, index)" />
           </GridLayout>
         </v-template>
       </ListView>
-      <fab @tap="getShips" marginBottom="13%" :text="'fa-sync' | fonticon" class="fab-sync fas" rippleColor="#f1f1f1">
-      </fab>
       <FloatingButton row="2" :add="openModal" />
     </grid-layout>
   </Page>
@@ -157,12 +153,12 @@ export default {
   /* components: { GridLayout }, */
 };
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .fab-sync {
   height: 70;
   width: 70; /// this is required on iOS - Android does not require width so you might need to adjust styles
   margin: 15;
-  background-color: #00acc1;
+  background-color: #EAB14D;
   color: #F4F6F8;
   horizontal-align: right;
   vertical-align: bottom;
