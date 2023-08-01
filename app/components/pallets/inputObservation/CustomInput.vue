@@ -37,7 +37,7 @@ export default {
                     }
                 )
             }else{
-                Alerts.info("La observacion esta vacia...")
+                Alerts.info("La observacion esta vacia...", 1)
             }
         },
 

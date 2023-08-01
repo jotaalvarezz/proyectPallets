@@ -11,7 +11,7 @@
       <card-view margin="10" elevation="40" radius="15">
         <GridLayout rows="auto,auto,auto,auto" padding="30">
           <Image row="0" src="~/assets/images/logobarco.png" stretch="aspectFit" height="30%" width="60%" />
-          <TextField row="1" v-model="model.text" padding="10" hint="Nombre de Barco..." height="45" fontSize="18"
+          <TextField row="1" v-model="model.nameShip" padding="10" hint="Nombre de Barco..." height="45" fontSize="18"
             boder="none" style="
               placeholder-color: #3c495e;
               color: #3c495e;
@@ -93,13 +93,16 @@ export default {
 
     async addShip() {
       try {
-        if (this.model.text > 0) {
+        console.log(this.model.nameShip)
+        if (this.model.nameShip.length > 0) {
           const ship = await insertShip(this.model);
           console.log("save ", ship);
+          const newShip = this.model
           this.model.nameShip = "";
           this.model.journey = "";
+          this.$modal.close()
         } else {
-          Alerts.info("La campo nombre de Barco vacio...")
+          Alerts.info("La campo nombre de Barco vacio...",1)
         }
       } catch (error) {
         console.log("al insertar error ", error);

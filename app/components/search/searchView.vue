@@ -12,12 +12,12 @@
             <grid-layout v-if="this.array_filter.length > 0" rows="*" backgroundColor="#F4F6F8">
                 <ListView for="(item, index) in array_filter" @itemTap="onItemTap">
                     <v-template>
-                        <GridLayout columns="*,70">
+                        <GridLayout columns="*,40">
                             <StackLayout orientation="horizontal" @tap="navegate(item)" col="0">
                                 <Label :text="icons.iconLogo | fonticon" class="fas" width="110" fontSize="70"
                                     color="#0096b7" />
-                                <Label :text="item.text" class="p-l-10 colorIcons" textWrap="true" width="65%"
-                                    fontSize="25" />
+                                <Label :text="item.text" class="p-l-10 colorIcons" textWrap="true" width="auto"
+                                        fontSize="18" />
                             </StackLayout>
                             <Label :text="icons.iconOperations | fonticon" class="fas colorIcons" fontSize="18" col="1"
                                 style="text-align: center;" @tap="operation2(item, index)" />

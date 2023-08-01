@@ -1,15 +1,15 @@
 <template>
   <Page @loaded="addFocus">
-    <Header />
+    <Header :search="false" />
     <grid-layout rows="auto, *" backgroundColor="#F4F6F8">
       <card-view margin="10" elevation="2" radius="40" row="0">
         <GridLayout rows="auto,auto,auto,auto" padding="30">
           <StackLayout row="0" orientation="horizontal">
             <Image src="~/assets/images/logopallets.png" stretch="aspectFit" height="10%" width="40%" />
-            <card-view margin="22" elevation="18" radius="50" width="50%">
+            <card-view margin="22" elevation="18" radius="50" width="155">
               <StackLayout>
                 <Label text="N° de Pallets:" textAlignment="center" fontSize="18" margin="5" fontWeight="bold"
-                  style=" color: #3c495e; width: 100%;" />
+                  style=" color: #3c495e;" width="145" />
                 <Label :text="pallets.length" textAlignment="center" fontSize="18" fontWeight="bold"
                   style=" color: #000000; width: auto; margin: 0 15 0 15;" backgroundColor="#c0c9d7" borderRadius="5" />
               </StackLayout>
@@ -28,14 +28,18 @@
       <ListView for="(item, index) in pallets" :class="spaceEnd" @itemLoading="scrolling" @loadMoreItems="onScroll"
         @itemTap="onItemTap" row="1">
         <v-template>
-          <GridLayout columns="auto,*,50" @longPress="operations">
-            <Label row="0" :text="'#'+(index+1)" fontSize="18" fontWeight="bold" style=" color: #3c495e;" />
-            <StackLayout orientation="horizontal" @tap="addObservation(item)" col="1">
-              <Label :text="'fa-pallet' | fonticon" class="fas" width="110" fontSize="70" color="#0096b7" />
-              <Label :text="item.text" class="p-l-10 colorIcons" textWrap="true" width="auto" fontSize="25" />
+          <GridLayout columns="30,*,50" @longPress="operations">
+            <Label col="0" :text="'#' + (index + 1)" fontSize="18" textWrap="true" fontWeight="bold"
+                  class="styleIndex"/>
+            <StackLayout col="1" orientation="horizontal" @tap="addObservation(item)">
+              <Label :text="'fa-pallet' | fonticon" class="fas" width="110" fontSize="70" color="#0096b7"/>
+              <StackLayout>
+                <Label text="Codigo:" class="p-l-10 subTittle" textWrap="true" width="auto" fontSize="18" />
+                <Label :text="item.text" class="p-l-10 colorIcons" textWrap="true" width="auto" fontSize="18" />
+              </StackLayout>
             </StackLayout>
             <Label :text="'fa-times' | fonticon" class="fas colorMinus" fontSize="18" col="2"
-              @tap="deleteRow(item.id, index)" />
+                    @tap="deleteRow(item.id, index)" />
           </GridLayout>
         </v-template>
       </ListView>
@@ -171,7 +175,7 @@ export default {
       }
     },
 
-    checkRepeated(){
+    checkRepeated() {
       const pallet = this.pallets.find(
         (d) => d.text == this.code
       )
@@ -191,15 +195,15 @@ export default {
           this.model.warehouse_id = "";
           this.$refs.field.nativeView.focus()
           this.getPallets()
-        }else if(this.checkRepeated()){
-          Alert.info("EL PALLET "+this.code+" YA FUE SCANNEADO! ",2)
-          .then(() => {
-            this.code = "";
-          })
-          console.log("repeat ",this.checkRepeated())
+        } else if (this.checkRepeated()) {
+          Alert.info("EL PALLET " + this.code + " YA FUE SCANNEADO! ", 2)
+            .then(() => {
+              this.code = "";
+            })
+          console.log("repeat ", this.checkRepeated())
         }
       } catch (error) {
-        console.log("al insertar error ", error);0
+        console.log("al insertar error ", error); 0
       }
     },
 
@@ -245,6 +249,7 @@ export default {
   horizontal-align: right;
   vertical-align: bottom;
 }
+
 .n-height {
   height: 100%;
 }
@@ -257,7 +262,20 @@ export default {
   color: #222a37;
 }
 
+.subTittle{
+  color: #222a37;
+  text-decoration: underline;
+}
+
+.styleIndex{
+  /* background-color: #0096b7; */
+  color: #3c495e;
+  text-align: center;
+  border-radius: 15px;
+}
 .colorMinus {
   color: #e92222;
+  height: 300px;
+  text-align: center;
 }
 </style>

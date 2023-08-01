@@ -1,18 +1,21 @@
 <template>
   <Page>
-    <Header :data="pallets" :icons="icons" :operation1="showInfo" :operation2="navigate" />
+    <Header :data="pallets" :icons="icons" :operation1="showInfo" :operation2="navigate" :search="true" />
     <grid-layout rows="*" backgroundColor="#F4F6F8">
-      <ListView for="(item, index) in pallets" @itemTap="onItemTap" @itemLoading="onScroll" @loadMoreItems="scrolling" :class="spaceButtom"
-        ref="listView">
+      <ListView for="(item, index) in pallets" @itemTap="onItemTap" @itemLoading="onScroll" @loadMoreItems="scrolling"
+        :class="spaceButtom" ref="listView">
         <v-template>
-          <GridLayout columns="auto,*,70">
-            <Label row="0" :text="'#' + (index + 1)" fontSize="18" fontWeight="bold" style=" color: #3c495e;" />
+          <GridLayout columns="30,*,40">
+            <Label row="0" :text="'#' + (index + 1)" fontSize="18" textWrap="true" fontWeight="bold" class="styleIndex" />
             <StackLayout orientation="horizontal" @tap="showInfo(item)" col="1">
               <Label :text="'fa-pallet' | fonticon" class="fas" width="110" fontSize="70" color="#0096b7" />
-              <Label :text="item.text" class="p-l-10 colorIcons" textWrap="true" width="65%" fontSize="25" />
+              <StackLayout>
+                <Label text="Codigo:" class="p-l-10 subTittle" textWrap="true" width="auto" fontSize="18" />
+                <Label :text="item.text" class="p-l-10 colorIcons" textWrap="true" width="auto" fontSize="18" />
+              </StackLayout>
             </StackLayout>
-            <Label :text="'fa-ellipsis-v' | fonticon" class="fas colorIcons" fontSize="18" col="2"
-              style="text-align: center;" @tap="navigate(item, index)" />
+            <Label :text="'fa-ellipsis-v' | fonticon" class="fas iconOptions" fontSize="18" col="2"
+                  @tap="navigate(item, index)" />
           </GridLayout>
         </v-template>
       </ListView>
@@ -72,21 +75,21 @@ export default {
     },
 
     onScroll(args) {
-      console.log("index ",args.index)
-      if(args.index < this.pallets.length - 1){
+      console.log("index ", args.index)
+      if (args.index < this.pallets.length - 1) {
         this.space = false
-      }else if(args.index == this.pallets.length - 1){
+      } else if (args.index == this.pallets.length - 1) {
         this.space = true
       }
-      console.log("loading ",this.space)
+      console.log("loading ", this.space)
     },
 
     scrolling() {
-     /*  console.log("REF ", this.$refs.listView.nativeView)
-      if (!this.space) {
-        this.space = true
-      }
-      console.log("hide scroll", this.space) */
+      /*  console.log("REF ", this.$refs.listView.nativeView)
+       if (!this.space) {
+         this.space = true
+       }
+       console.log("hide scroll", this.space) */
 
     },
 
@@ -183,8 +186,8 @@ export default {
               pallet_creation: pallets[i][8]
             })
         }
-        const postPallets = await axios.post('http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/loadpallets', this.sendPallets)
-        /* const postPallets = await axios.post('http://172.70.8.122/mcp-backend/public/api/mobile/loadpallets', this.sendPallets) */
+        //const postPallets = await axios.post('http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/loadpallets', this.sendPallets)
+        const postPallets = await axios.post('http://172.70.8.122/mcp-backend/public/api/mobile/loadpallets', this.sendPallets)
         this.loadingCharge()
         Alert.success("Cargue")
         console.log("send ", postPallets.data)
@@ -220,7 +223,7 @@ export default {
   height: 70;
   width: 70; /// this is required on iOS - Android does not require width so you might need to adjust styles
   margin: 15;
-  background-color: 	#EAB14D;
+  background-color: #EAB14D;
   color: #F4F6F8;
   horizontal-align: right;
   vertical-align: bottom;
@@ -228,6 +231,23 @@ export default {
 
 .colorIcons {
   color: #303947;
+}
+
+.subTittle{
+  color: #222a37;
+  text-decoration: underline;
+}
+
+.styleIndex {
+  color: #3c495e;
+  text-align: center;
+  border-radius: 15px;
+}
+
+.iconOptions{
+  color: #303947;
+  height: 300px;
+  text-align: center;
 }
 
 .m-buttom {

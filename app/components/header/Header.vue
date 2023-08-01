@@ -10,7 +10,7 @@
             <Label col="0" class="fas" text.decode="&#xf0c9;" color="white" @tap="openDrawer" fontSize="25" />
         </GridLayout>
         <!-- <ActionItem android.systemIcon="ic_menu_camera" ios.position="left" text="scan code" @tap="readCode" /> -->
-        <ActionItem android.systemIcon="ic_menu_search" ios.position="right" text="delete" @tap="modalSearch" />
+        <ActionItem v-show="search" android.systemIcon="ic_menu_search" ios.position="right" text="delete" @tap="modalSearch" />
     </ActionBar>
 </template>
 
@@ -34,7 +34,7 @@ export default {
         operation2:{
             type:Function
         },
-        disable:{
+        search:{
             type:Boolean
         }
     },
@@ -71,9 +71,9 @@ export default {
          }, */
     },
 
-    /* created() {
-        this.getAnimes()
-    }, */
+    created() {
+        console.log("search ",typeof this.search)
+    },
 };
 </script>
 
