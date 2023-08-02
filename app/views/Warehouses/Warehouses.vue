@@ -1,13 +1,20 @@
 <template>
   <Page>
     <Header :search="false" />
-    <grid-layout rows="*" backgroundColor="#F4F6F8">
-      <ListView for="(item, index) in warehouses" @itemTap="onItemTap">
+    <grid-layout rows="55, *" backgroundColor="#F4F6F8">
+      <StackLayout class="header" row="0">
+        <!-- <Label text="Bodegas de Barco" class="tittle" fontSize="18" textWrap="true" /> -->
+        <Label :text="'Bodegas '+shipName" class="tittle" fontSize="18" textWrap="true" />
+      </StackLayout>
+      <ListView for="(item, index) in warehouses" @itemTap="onItemTap" row="2">
         <v-template>
           <GridLayout columns="* ,40" @longPress="operations">
             <StackLayout orientation="horizontal" @tap="navigate(item)" col="0">
               <Label :text="'fa-warehouse' | fonticon" class="fas" width="110" fontSize="70" color="#0096b7" />
-              <Label :text="item.text" class="p-l-10 colorIcons" width="auto" fontSize="18" />
+              <StackLayout>
+                <Label text="Bodega:" class="p-l-10 subTittle" textWrap="true" width="auto" fontSize="18" />
+                <Label :text="item.text" class="p-l-10 colorIcons" width="auto" fontSize="18" />
+              </StackLayout>
             </StackLayout>
             <Label :text="'fa-times' | fonticon" class="fas colorMinus" fontSize="18" col="1"
               @tap="deleteRow(item.id, index)" />
@@ -39,8 +46,9 @@ export default {
   },
   data() {
     return {
-      valor:true,
+      valor: true,
       warehouses: [],
+      shipName: ''
     };
   },
   computed: {
@@ -101,14 +109,14 @@ export default {
         console.log(warehouses)
         for (let i = 0; i < warehouses.length; i++) {
           this.warehouses.push(
-                                {
-                                  id: warehouses[i][0],
-                                  text: warehouses[i][1],
-                                  warehouse_id: warehouses[i][2],
-                                  ship_id: warehouses[i][3],
+            {
+              id: warehouses[i][0],
+              text: warehouses[i][1],
+              warehouse_id: warehouses[i][2],
+              ship_id: warehouses[i][3],
 
-                                }
-                              )
+            }
+          )
         }
       } catch (error) {
         console.error("error al traer lo datos ", error)
@@ -117,6 +125,7 @@ export default {
   },
 
   created() {
+    this.shipName = this.item.text
     this.getWarehouses()
   },
   /* components: { GridLayout }, */
@@ -141,5 +150,22 @@ export default {
   color: #e92222;
   height: 300px;
   text-align: center;
+}
+
+.header {
+  background-color: #F4F6F8;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.tittle{
+  color:"#3c495e";
+  /* text-shadow: 2px 12px 5px rgba(0, 0, 0, 0.5); */
+  margin: 10;
+}
+
+.subTittle {
+  color: #222a37;
+  text-decoration: underline;
 }
 </style>

@@ -6,7 +6,7 @@
         :class="spaceButtom" ref="listView">
         <v-template>
           <GridLayout columns="30,*,40">
-            <Label row="0" :text="'#' + (index + 1)" fontSize="18" textWrap="true" fontWeight="bold" class="styleIndex" />
+            <Label row="0" :text="(index + 1)" fontSize="10" textWrap="true" fontWeight="bold" class="styleIndex" />
             <StackLayout orientation="horizontal" @tap="showInfo(item)" col="1">
               <Label :text="'fa-pallet' | fonticon" class="fas" width="110" fontSize="70" color="#0096b7" />
               <StackLayout>
@@ -239,9 +239,10 @@ export default {
 }
 
 .styleIndex {
-  color: #3c495e;
+  background-color: #3c495e;
+  color: #f4f6f8;
   text-align: center;
-  border-radius: 15px;
+  border-radius: 50px;
 }
 
 .iconOptions{

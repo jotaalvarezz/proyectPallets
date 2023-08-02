@@ -7,7 +7,7 @@
           <StackLayout row="0" orientation="horizontal">
             <Image src="~/assets/images/logopallets.png" stretch="aspectFit" height="10%" width="40%" />
             <card-view margin="22" elevation="18" radius="50" width="155">
-              <StackLayout>
+              <StackLayout height="88">
                 <Label text="N° de Pallets:" textAlignment="center" fontSize="18" margin="5" fontWeight="bold"
                   style=" color: #3c495e;" width="145" />
                 <Label :text="pallets.length" textAlignment="center" fontSize="18" fontWeight="bold"
@@ -16,20 +16,15 @@
             </card-view>
           </StackLayout>
           <Label row="1" text="Pallet:" fontSize="18" fontWeight="bold" style=" color: #3c495e; width: 80%;" />
-          <TextField ref="field" row="2" v-model="code" padding="10" hint="code..." class="fas" height="45" fontSize="18"
-            boder="none" style="
-                        placeholder-color: #3c495e;
-                        color: #3c495e;
-                        background-color: #c0c9d7;
-                        width: 80%;
-                    " />
+          <TextField ref="field" row="2" v-model="code" padding="10" hint="code..." class="fas inputStyle" height="45" fontSize="18"
+                    boder="none" />
         </GridLayout>
       </card-view>
       <ListView for="(item, index) in pallets" :class="spaceEnd" @itemLoading="scrolling" @loadMoreItems="onScroll"
-        @itemTap="onItemTap" row="1">
+                @itemTap="onItemTap" row="1">
         <v-template>
           <GridLayout columns="30,*,50" @longPress="operations">
-            <Label col="0" :text="'#' + (index + 1)" fontSize="18" textWrap="true" fontWeight="bold"
+            <Label col="0" :text="(index + 1)" fontSize="10" textWrap="true" fontWeight="bold"
                   class="styleIndex"/>
             <StackLayout col="1" orientation="horizontal" @tap="addObservation(item)">
               <Label :text="'fa-pallet' | fonticon" class="fas" width="110" fontSize="70" color="#0096b7"/>
@@ -267,11 +262,18 @@ export default {
   text-decoration: underline;
 }
 
-.styleIndex{
-  /* background-color: #0096b7; */
+.inputStyle{
+  placeholder-color: #3c495e;
   color: #3c495e;
+  background-color: #c0c9d7;
+  width: 80%;
+}
+
+.styleIndex{
+  background-color: #3c495e;
+  color: #f4f6f8;
   text-align: center;
-  border-radius: 15px;
+  border-radius: 50px;
 }
 .colorMinus {
   color: #e92222;

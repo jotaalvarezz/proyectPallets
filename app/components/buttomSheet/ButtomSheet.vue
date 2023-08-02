@@ -2,18 +2,29 @@
   <StackLayout style="text-align: center" height="300" backgroundColor="#F4F6F8">
     <!-- <ScrollView> -->
     <GridLayout rows="auto,auto,auto" margin="15" padding="5" style="width: 100%; height:65%;">
-      <GridLayout row="0" v-if="generalOptions" columns="50,*" @tap="infoItem" height="33%" width="50%">
-        <Label col="0" :text="'fa-eye' | fonticon" class="fas iconDetalles" fontSize="30" />
-        <Label col="1" text="Detalles" fontSize="22" class="p-l-10 colorIcons" />
+      <!-- **** -->
+      <GridLayout id="1" row="0" v-if="generalOptions" columns="*,50,*,*" @tap="infoItem" @touch="onTouch(1)"
+                  height="33%" width="100%" class="hover-label"
+                  :class="isHovered && itemSelector == 1 ? 'hovered' : ''">
+        <Label col="1" :text="'fa-eye' | fonticon" class="fas iconDetalles" fontSize="30"/>
+        <Label col="2" text="Detalles" fontSize="22" class="p-l-10 colorIcons"
+              :class="isHovered && itemSelector == 1 ? 'underline' : ''"/>
       </GridLayout>
-      <GridLayout row="1" columns="50,*" @tap="navigate()" height="33%" width="50%" >
-        <Label col="0" :text="'fa-edit' | fonticon" class="fas iconEdit" fontSize="30" />
-        <Label col="1" text="Editar" fontSize="22" class="p-l-10 colorIcons" />
+      <!-- **** -->
+      <GridLayout id="2" row="1" columns="*,50,*,*" @tap="navigate()" height="33%" width="100%"
+                  @touch="onTouch(2)" class="hover-label"
+                  :class="isHovered && itemSelector == 2 ? 'hovered' : ''">
+        <Label col="1" :text="'fa-edit' | fonticon" class="fas iconEdit" fontSize="30"/>
+        <Label col="2" text="Editar" fontSize="22" class="p-l-10 colorIcons"
+              :class="isHovered && itemSelector == 2 ? 'underline' : ''"/>
       </GridLayout>
-      <GridLayout row="2" columns="50,*" height="33%" width="50%" @tap="deleteItem"
-        style="text-align: center">
-        <Label col="0" :text="'fa-times' | fonticon" class="fas iconDelete" fontSize="30" />
-        <Label col="1" text="Eliminar" fontSize="22" class="p-l-10 colorIcons" />
+      <!-- **** -->
+      <GridLayout id="3" row="2" columns="*,50,*,*" height="33%" width="100%" @tap="deleteItem"
+                  style="text-align: center" @touch="onTouch(3)" class="hover-label"
+                  :class="isHovered && itemSelector == 3 ? 'hovered' : ''">
+        <Label col="1" :text="'fa-times' | fonticon" class="fas iconDelete" fontSize="30"/>
+        <Label col="2" text="Eliminar" fontSize="22" class="p-l-10 colorIcons"
+              :class="isHovered && itemSelector == 3 ? 'underline' : ''"/>
       </GridLayout>
     </GridLayout>
     <GridLayout columns="*" style="height: 25%;">
@@ -53,7 +64,9 @@ export default {
   },
   data() {
     return {
-      info: {}
+      info: {},
+      isHovered: false,
+      itemSelector: 0
     }
   },
   methods: {
@@ -69,6 +82,14 @@ export default {
       this.$navigateTo(CreateEditPallet) */
     },
 
+    onTouch(n){
+        this.itemSelector = n
+        if(!this.isHovered){
+            this.isHovered = true;
+        }else{
+            this.isHovered = false;
+        }
+    },
     /* async palletInfo() {
       try {
         console.log("item ", this.item)
@@ -117,5 +138,19 @@ export default {
 
 .iconDetalles{
   color: #0096b7;
+}
+
+.underline{
+  text-decoration: underline;
+}
+.hover-label {
+  /* padding-left: 120%; */
+  font-size: 24;
+  color: #222a37;
+}
+
+.hovered {
+  background-color: lightgray;
+  text-decoration: underline;
 }
 </style>

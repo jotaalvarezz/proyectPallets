@@ -1,16 +1,18 @@
 <template>
   <Page @loaded="getShips">
-    <Header :data="ships" :icons="icons" :operation1="navigate" :operation2="navigateOptions"
-            :search="true"/>
+    <Header :data="ships" :icons="icons" :operation1="navigate" :operation2="navigateOptions" :search="true" />
     <grid-layout rows="*" backgroundColor="#F4F6F8">
       <ListView for="(item, index) in ships" @itemTap="onItemTap">
         <v-template>
-          <GridLayout columns="*,70" @longPress="operations">
+          <GridLayout columns="*,40" @longPress="operations">
             <StackLayout orientation="horizontal" @tap="navigate(item)" col="0">
               <Label :text="'fa-ship' | fonticon" class="fas" width="110" fontSize="70" color="#0096b7" />
-              <Label :text="item.text" class="p-l-10 colorIcons" width="auto" fontSize="18" />
+              <StackLayout>
+                <Label text="Barco:" class="p-l-10 subTittle" textWrap="true" width="auto" fontSize="18" />
+                <Label :text="item.text" class="p-l-10 colorIcons" width="auto" fontSize="18" />
+              </StackLayout>
             </StackLayout>
-            <Label :text="'fa-ellipsis-v' | fonticon" class="fas colorIcons" fontSize="18" col="1"
+            <Label :text="'fa-ellipsis-v' | fonticon" class="fas iconOptions" fontSize="18" col="1"
               style="text-align: center;" @tap="navigateOptions(item, index)" />
           </GridLayout>
         </v-template>
@@ -89,9 +91,9 @@ export default {
         }
       }
       this.$showBottomSheet(ButtomSheet, options)
-      .then(()=>{
-        this.getAll()
-      })
+        .then(() => {
+          this.getAll()
+        })
     },
 
     openModal() {
@@ -99,7 +101,7 @@ export default {
         {
           fullscreen: true, props: {
             textBar: 'Nuevo Barco',
-            info:{action:false},
+            info: { action: false },
           }
         })
         .then((res) => {
@@ -144,7 +146,7 @@ export default {
         this.loadingCharge()
       } catch (error) {
         this.loadingCharge()
-        Alert.danger("Hubo un error",error)
+        Alert.danger("Hubo un error", error)
         console.error("error al traer lo datos ", error)
       }
     }
@@ -166,6 +168,17 @@ export default {
   color: #F4F6F8;
   horizontal-align: right;
   vertical-align: bottom;
+}
+
+.subTittle {
+  color: #222a37;
+  text-decoration: underline;
+}
+
+.iconOptions {
+  color: #303947;
+  height: 300px;
+  text-align: center;
 }
 
 .colorIcons {

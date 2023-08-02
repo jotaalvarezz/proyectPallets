@@ -73,10 +73,8 @@ export default {
             this.itemSelector = n
             if(!this.isHovered){
                 this.isHovered = true;
-                console.log("El Pangue Maestre dentro")
             }else{
                 this.isHovered = false;
-                console.log("El Pangue Maestre fuera")
             }
         },
 
