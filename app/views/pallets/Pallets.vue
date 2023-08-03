@@ -6,8 +6,8 @@
         <GridLayout rows="auto,auto,auto,auto" padding="30">
           <StackLayout row="0" orientation="horizontal">
             <Image src="~/assets/images/logopallets.png" stretch="aspectFit" height="10%" width="40%" />
-            <card-view margin="22" elevation="18" radius="50" width="155">
-              <StackLayout height="88">
+            <card-view margin="22" elevation="18" radius="25" width="155" style="height: 88;">
+              <StackLayout>
                 <Label text="N° de Pallets:" textAlignment="center" fontSize="18" margin="5" fontWeight="bold"
                   style=" color: #3c495e;" width="145" />
                 <Label :text="pallets.length" textAlignment="center" fontSize="18" fontWeight="bold"
@@ -28,7 +28,7 @@
                   class="styleIndex"/>
             <StackLayout col="1" orientation="horizontal" @tap="addObservation(item)">
               <Label :text="'fa-pallet' | fonticon" class="fas" width="110" fontSize="70" color="#0096b7"/>
-              <StackLayout>
+              <StackLayout class="heigth">
                 <Label text="Codigo:" class="p-l-10 subTittle" textWrap="true" width="auto" fontSize="18" />
                 <Label :text="item.text" class="p-l-10 colorIcons" textWrap="true" width="auto" fontSize="18" />
               </StackLayout>
@@ -245,6 +245,9 @@ export default {
   vertical-align: bottom;
 }
 
+.heigth{
+  height: 70%;
+}
 .n-height {
   height: 100%;
 }
@@ -277,7 +280,7 @@ export default {
 }
 .colorMinus {
   color: #e92222;
-  height: 300px;
+  height: auto;
   text-align: center;
 }
 </style>

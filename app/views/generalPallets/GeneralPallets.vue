@@ -6,10 +6,10 @@
         :class="spaceButtom" ref="listView">
         <v-template>
           <GridLayout columns="30,*,40">
-            <Label row="0" :text="(index + 1)" fontSize="10" textWrap="true" fontWeight="bold" class="styleIndex" />
+            <Label col="0" :text="(index + 1)" fontSize="10" textWrap="true" fontWeight="bold" class="styleIndex" />
             <StackLayout orientation="horizontal" @tap="showInfo(item)" col="1">
               <Label :text="'fa-pallet' | fonticon" class="fas" width="110" fontSize="70" color="#0096b7" />
-              <StackLayout>
+              <StackLayout class="heigth">
                 <Label text="Codigo:" class="p-l-10 subTittle" textWrap="true" width="auto" fontSize="18" />
                 <Label :text="item.text" class="p-l-10 colorIcons" textWrap="true" width="auto" fontSize="18" />
               </StackLayout>
@@ -187,7 +187,7 @@ export default {
             })
         }
         const postPallets = await axios.post('http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/loadpallets', this.sendPallets)
-        //const postPallets = await axios.post('http://172.70.8.122/mcp-backend/public/api/mobile/loadpallets', this.sendPallets)
+        //const postPallets = await axios.post('http://172.104.11.252/mcp-backend/public/api/mobile/loadpallets', this.sendPallets)
         this.loadingCharge()
         Alert.success("Cargue")
         console.log("send ", postPallets.data)
@@ -229,6 +229,9 @@ export default {
   vertical-align: bottom;
 }
 
+.heigth{
+  height: 70%;
+}
 .colorIcons {
   color: #303947;
 }
@@ -247,7 +250,7 @@ export default {
 
 .iconOptions{
   color: #303947;
-  height: 300px;
+  height: 230px;
   text-align: center;
 }
 

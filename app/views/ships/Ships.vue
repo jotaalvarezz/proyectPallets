@@ -1,24 +1,24 @@
 <template>
   <Page @loaded="getShips">
     <Header :data="ships" :icons="icons" :operation1="navigate" :operation2="navigateOptions" :search="true" />
-    <grid-layout rows="*" backgroundColor="#F4F6F8">
+    <GridLayout rows="*" backgroundColor="#F4F6F8">
       <ListView for="(item, index) in ships" @itemTap="onItemTap">
         <v-template>
           <GridLayout columns="*,40" @longPress="operations">
             <StackLayout orientation="horizontal" @tap="navigate(item)" col="0">
-              <Label :text="'fa-ship' | fonticon" class="fas" width="110" fontSize="70" color="#0096b7" />
-              <StackLayout>
+              <Label :text="'fa-ship' | fonticon" class="fas" width="110" fontSize="70" color="#0096b7"/>
+              <StackLayout class="heigth">
                 <Label text="Barco:" class="p-l-10 subTittle" textWrap="true" width="auto" fontSize="18" />
-                <Label :text="item.text" class="p-l-10 colorIcons" width="auto" fontSize="18" />
+                <Label :text="item.text" class="p-l-10 colorIcons" fontSize="18"/>
               </StackLayout>
             </StackLayout>
             <Label :text="'fa-ellipsis-v' | fonticon" class="fas iconOptions" fontSize="18" col="1"
-              style="text-align: center;" @tap="navigateOptions(item, index)" />
+              style="text-align: center;" @tap="navigateOptions(item, index)"/>
           </GridLayout>
         </v-template>
       </ListView>
       <FloatingButton row="2" :add="openModal" />
-    </grid-layout>
+    </GridLayout>
   </Page>
 </template>
 
@@ -170,6 +170,10 @@ export default {
   vertical-align: bottom;
 }
 
+.heigth{
+  height: 70%;
+}
+
 .subTittle {
   color: #222a37;
   text-decoration: underline;
@@ -177,7 +181,7 @@ export default {
 
 .iconOptions {
   color: #303947;
-  height: 300px;
+  height: auto;
   text-align: center;
 }
 

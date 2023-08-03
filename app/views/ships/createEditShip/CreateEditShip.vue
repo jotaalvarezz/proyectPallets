@@ -17,12 +17,8 @@
               color: #3c495e;
               background-color: #c0c9d7;
               width: 80%;
-            " />
-          <!-- <GridLayout row="1"  height="40" columns="auto, *,auto" padding="10" @tap="modalOption" style="background-color: #c0c9d7; width: 80%;">
-            <Label :text="'fa-ship' | fonticon" fontSize="18" class="fas" col="0" color="#3c495e"/>
-            <Label text="item" ccolor="white" class="p-l-10" fontSize="15" col="1" color="#3c495e"/>
-            <Label :text="'fa-sort-down' | fonticon" fontSize="18" class="fas" col="2" color="#3c495e"/>
-          </GridLayout> -->
+            "
+            :isEnabled="model.action == false ? 'true' : 'false'" />
 
           <TextField row="2" padding="10" v-model="model.journey" hint="Viaje..." height="45" fontSize="18" boder="none"
             style="
@@ -34,14 +30,10 @@
           <!-- Boton para Crear -->
           <Button v-if="model.action == false" row="3" text="Agregar" backgroundColor="#F4F6F8" color="#222a37"
             fontSize="22" @tap="addShip" borderWidth="1" borderColor="#222a37" borderRadius="30" marginTop="14" />
-          <!-- <Button v-if="model.action == false" row="3" marginTop="14" backgroundColor="#0096b7" color="#F4F6F8"
-            text="Agregar" @tap="addShip" style="width: 80%" class="btn" / -->>
           <!-- ******************* -->
           <!-- Boton para Editar -->
           <Button v-if="model.action == true" row="3" text="Actualizar" backgroundColor="#F4F6F8" color="#222a37"
-            fontSize="22" @tap="addShip" borderWidth="1" borderColor="#222a37" borderRadius="30" marginTop="14" />
-          <!-- <Button v-if="model.action == true" row="3" marginTop="14" backgroundColor="#0096b7" color="#F4F6F8"
-            text="Actualizar" @tap="updateShip" style="width: 80%" /> -->
+            fontSize="22" @tap="updateShip" borderWidth="1" borderColor="#222a37" borderRadius="30" marginTop="14" />
           <!-- ******************* -->
         </GridLayout>
       </card-view>
@@ -127,6 +119,7 @@ export default {
 
   created() {
     this.model = this.info
+    this.model.nameShip = this.model.text
   }
 };
 </script>
