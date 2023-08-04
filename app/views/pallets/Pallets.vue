@@ -16,15 +16,21 @@
             </card-view>
           </StackLayout>
           <Label row="1" text="Pallet:" fontSize="18" fontWeight="bold" style=" color: #3c495e; width: 80%;" />
-          <TextField ref="field" row="2" v-model="code" padding="10" hint="code..." class="fas inputStyle" height="45" fontSize="18"
+          <TextField ref="field" row="2" v-model="code" padding="10" hint="codigo..." class="fas inputStyle" height="45" fontSize="18"
                     boder="none" />
         </GridLayout>
       </card-view>
+      <Label class="info" v-if="pallets.length == 0" row="1">
+        <FormattedString>
+          <Span class="fas" text.decode="&#x1F4E6; " />
+          <Span :text="message" />
+        </FormattedString>
+      </Label>
       <ListView for="(item, index) in pallets" :class="spaceEnd" @itemLoading="scrolling" @loadMoreItems="onScroll"
-                @itemTap="onItemTap" row="1">
+                @itemTap="onItemTap" row="1" v-if="pallets.length > 0">
         <v-template>
           <GridLayout columns="30,*,50" @longPress="operations">
-            <Label col="0" :text="(index + 1)" fontSize="10" textWrap="true" fontWeight="bold"
+            <Label col="0" :text="(index + 1)" fontSize="11" textWrap="true" fontWeight="bold"
                   class="styleIndex"/>
             <StackLayout col="1" orientation="horizontal" @tap="addObservation(item)">
               <Label :text="'fa-pallet' | fonticon" class="fas" width="110" fontSize="70" color="#0096b7"/>
@@ -61,6 +67,7 @@ export default {
   },
   data() {
     return {
+      message:'No hay Pallets Escaneados',
       bandera: false,
       model: {
         codePallet: "",
@@ -263,6 +270,7 @@ export default {
 .subTittle{
   color: #222a37;
   text-decoration: underline;
+  font-weight: bold;
 }
 
 .inputStyle{
@@ -282,5 +290,11 @@ export default {
   color: #e92222;
   height: auto;
   text-align: center;
+}
+
+.info {
+  font-size: 20;
+  horizontal-align: center;
+  vertical-align: center;
 }
 </style>

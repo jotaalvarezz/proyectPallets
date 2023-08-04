@@ -2,11 +2,17 @@
   <Page>
     <Header :data="pallets" :icons="icons" :operation1="showInfo" :operation2="navigate" :search="true" />
     <grid-layout rows="*" backgroundColor="#F4F6F8">
+      <Label class="info" v-if="pallets.length == 0">
+        <FormattedString>
+          <Span class="fas" text.decode="&#x1F6A2; " />
+          <Span :text="message" />
+        </FormattedString>
+      </Label>
       <ListView for="(item, index) in pallets" @itemTap="onItemTap" @itemLoading="onScroll" @loadMoreItems="scrolling"
-        :class="spaceButtom" ref="listView">
+        :class="spaceButtom" ref="listView" v-if="pallets.length > 0">
         <v-template>
           <GridLayout columns="30,*,40">
-            <Label col="0" :text="(index + 1)" fontSize="10" textWrap="true" fontWeight="bold" class="styleIndex" />
+            <Label col="0" :text="(index + 1)" fontSize="11" textWrap="true" fontWeight="bold" class="styleIndex" />
             <StackLayout orientation="horizontal" @tap="showInfo(item)" col="1">
               <Label :text="'fa-pallet' | fonticon" class="fas" width="110" fontSize="70" color="#0096b7" />
               <StackLayout class="heigth">
@@ -15,7 +21,7 @@
               </StackLayout>
             </StackLayout>
             <Label :text="'fa-ellipsis-v' | fonticon" class="fas iconOptions" fontSize="18" col="2"
-                  @tap="navigate(item, index)" />
+              @tap="navigate(item, index)" />
           </GridLayout>
         </v-template>
       </ListView>
@@ -44,6 +50,7 @@ export default {
 
   data() {
     return {
+      message:'No hay Pallets Escaneados',
       pallets: [],
       infoPallet: {},
       icons: {
@@ -162,7 +169,7 @@ export default {
             })
         }
         //this.total = true
-        console.log(this.total)
+        /* console.log(this.total) */
       } catch (error) {
         console.error("error al traer lo datos ", error)
       }
@@ -186,7 +193,8 @@ export default {
               pallet_creation: pallets[i][8]
             })
         }
-        const postPallets = await axios.post('http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/loadpallets', this.sendPallets)
+        const postPallets = await axios.post('http://186.1.181.146:8811/mcp-backend/public/api/mobile/loadpallets', this.sendPallets)
+        //const postPallets = await axios.post('http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/loadpallets', this.sendPallets)
         //const postPallets = await axios.post('http://172.104.11.252/mcp-backend/public/api/mobile/loadpallets', this.sendPallets)
         this.loadingCharge()
         Alert.success("Cargue")
@@ -203,7 +211,7 @@ export default {
         try {
           const pallet = await deletePallet(id)
           this.pallets.splice(index, 1)
-          console.log("delete ", pallet)
+          /* console.log("delete ", pallet) */
           this.$closeBottomSheet()
         } catch (error) {
           console.log("hubo un error al eliminar")
@@ -219,6 +227,7 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+@import '@nativescript/theme/scss/variables/blue';
 .fab-sync {
   height: 70;
   width: 70; /// this is required on iOS - Android does not require width so you might need to adjust styles
@@ -229,16 +238,18 @@ export default {
   vertical-align: bottom;
 }
 
-.heigth{
+.heigth {
   height: 70%;
 }
+
 .colorIcons {
   color: #303947;
 }
 
-.subTittle{
+.subTittle {
   color: #222a37;
   text-decoration: underline;
+  font-weight: bold;
 }
 
 .styleIndex {
@@ -248,7 +259,7 @@ export default {
   border-radius: 50px;
 }
 
-.iconOptions{
+.iconOptions {
   color: #303947;
   height: 230px;
   text-align: center;
@@ -260,5 +271,16 @@ export default {
 
 .n-bottom {
   margin-bottom: 0;
+}
+
+// Custom styles
+/* .fas {
+  @include colorize($color: accent);
+} */
+
+.info {
+  font-size: 20;
+  horizontal-align: center;
+  vertical-align: center;
 }
 </style>

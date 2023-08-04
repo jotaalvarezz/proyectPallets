@@ -177,6 +177,7 @@ export default {
 .subTittle {
   color: #222a37;
   text-decoration: underline;
+  font-weight: bold;
 }
 
 .iconOptions {
