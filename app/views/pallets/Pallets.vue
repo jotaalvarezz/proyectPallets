@@ -144,7 +144,7 @@ export default {
     },
 
     async deleteRow(id, index) {
-      let confirmated = await Alert.Danger()
+      let confirmated = await Alert.Danger(1)
       if (confirmated) {
         try {
           const record = await deletePallet(id);
@@ -224,6 +224,7 @@ export default {
               warehouse_id: pallets[i][3]
             });
         }
+        this.pallets.reverse()
       } catch (error) {
         console.error("error", error);
       }

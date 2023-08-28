@@ -9,14 +9,31 @@ class Alert {
     return res;
   }
 
-  static async Danger() {
-    const res = await confirm({
-      title: "Eliminar registro",
-      message: "Esta seguro que desea borrarlo!",
-      okButtonText: "Aceptar",
-      cancelButtonText: "Cancelar",
-    });
-    return res;
+  static async Danger(number) {
+    let res = ''
+    switch (number){
+      case 1:
+        res = await confirm({
+          title: "Eliminar registro",
+          message: "Esta seguro que desea borrarlo!",
+          okButtonText: "Aceptar",
+          cancelButtonText: "Cancelar",
+        });
+        return res;
+      break;
+
+      case 2:
+        res = await confirm({
+          title: "Actualizar aplicacion",
+          message: `Tenga en cuenta que esta opcion solo debe utilizarse antes de empezar la operacion en el barco.
+                    \n* Por favor verifique que de ser el caso, haya realizado la sincronizacion de la informacion con MCP.
+                    \n* Nota: Se realizara un reseteo y de borraran los pallets escaneados de forma permanente!!`,
+          okButtonText: "Aceptar",
+          cancelButtonText: "Cancelar",
+        });
+        return res;
+      break;
+    }
   }
 
   static async Promp(data){

@@ -25,14 +25,14 @@
           </GridLayout>
         </v-template>
       </ListView>
-      <fab @tap="sendAll" :text="'fa-sync' | fonticon" class="fab-sync fas" rippleColor="#f1f1f1">
-      </fab>
+      <FloatingButton :icon="'fa-cloud-upload-alt'" :method="sendAll" />
     </grid-layout>
   </Page>
 </template>
 
 <script>
 import Header from "~/components/header/Header.vue";
+import FloatingButton from "~/components/floatingButton/FloatingButton.vue";
 const { getPalletsAll, getPallet, deletePallet, loadPallets } = require("~/sqlite/database");
 import ButtomSheet from '~/components/buttomSheet/ButtomSheet.vue';
 import InfoPallet from "./infoPallet/InfoPallet.vue";
@@ -45,12 +45,13 @@ import mixinMasters from "~/mixins/Master";
 export default {
   name: "Ships",
   components: {
-    Header
+    Header,
+    FloatingButton
   },
 
   data() {
     return {
-      message:'No hay Pallets Escaneados',
+      message: 'No hay Pallets Escaneados',
       pallets: [],
       infoPallet: {},
       icons: {
@@ -180,25 +181,30 @@ export default {
         this.loadingCharge(true)
         this.sendPallets = []
         const pallets = await loadPallets()
-        for (let i = 0; i < pallets.length; i++) {
-          this.sendPallets.push(
-            {
-              code: pallets[i][1],
-              observation: pallets[i][2],
-              ship_id: pallets[i][3],
-              ship_name: pallets[i][4],
-              journey: pallets[i][5],
-              warehouse_id: pallets[i][6],
-              warehouse_name: pallets[i][7],
-              pallet_creation: pallets[i][8]
-            })
+        if (pallets.length > 0) {
+          for (let i = 0; i < pallets.length; i++) {
+            this.sendPallets.push(
+              {
+                code: pallets[i][1],
+                observation: pallets[i][2],
+                ship_id: pallets[i][3],
+                ship_name: pallets[i][4],
+                journey: pallets[i][5],
+                warehouse_id: pallets[i][6],
+                warehouse_name: pallets[i][7],
+                pallet_creation: pallets[i][8]
+              })
+          }
+          //const postPallets = await axios.post('http://186.1.181.146:8811/mcp-backend/public/api/mobile/loadpallets', this.sendPallets)
+          const postPallets = await axios.post('http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/loadpallets', this.sendPallets)
+          //const postPallets = await axios.post('http://172.28.25.153/mcp-backend/public/api/mobile/loadpallets', this.sendPallets)
+          this.loadingCharge()
+          Alert.success("Cargue")
+          console.log("send ", postPallets.data)
+        }else{
+          this.loadingCharge()
+          Alert.danger("No se encontraron pallets", "por favor asegurese antes de sincronizar")
         }
-        const postPallets = await axios.post('http://186.1.181.146:8811/mcp-backend/public/api/mobile/loadpallets', this.sendPallets)
-        //const postPallets = await axios.post('http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/loadpallets', this.sendPallets)
-        //const postPallets = await axios.post('http://172.104.11.252/mcp-backend/public/api/mobile/loadpallets', this.sendPallets)
-        this.loadingCharge()
-        Alert.success("Cargue")
-        console.log("send ", postPallets.data)
       } catch (error) {
         this.loadingCharge()
         Alert.danger("Hubo un error en el cargue", error.message)
@@ -206,7 +212,7 @@ export default {
     },
 
     async removePallet(id, index) {
-      let confirmated = await Alert.Danger()
+      let confirmated = await Alert.Danger(1)
       if (confirmated) {
         try {
           const pallet = await deletePallet(id)
@@ -226,17 +232,8 @@ export default {
   /* components: { GridLayout }, */
 };
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
 @import '@nativescript/theme/scss/variables/blue';
-.fab-sync {
-  height: 70;
-  width: 70; /// this is required on iOS - Android does not require width so you might need to adjust styles
-  margin: 15;
-  background-color: #EAB14D;
-  color: #F4F6F8;
-  horizontal-align: right;
-  vertical-align: bottom;
-}
 
 .heigth {
   height: 70%;

@@ -17,7 +17,7 @@
           </GridLayout>
         </v-template>
       </ListView>
-      <FloatingButton row="2" :add="openModal" />
+      <FloatingButton row="2" :icon="'fa-plus'" :method="openModal" />
     </GridLayout>
   </Page>
 </template>
@@ -110,7 +110,7 @@ export default {
     },
 
     async deleteRow(id, index) {
-      let confirmated = await Alert.Danger()
+      let confirmated = await Alert.Danger(1)
       if (confirmated) {
         try {
           const record = await deleteShip(id)
@@ -160,16 +160,6 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-.fab-sync {
-  height: 70;
-  width: 70; /// this is required on iOS - Android does not require width so you might need to adjust styles
-  margin: 15;
-  background-color: #EAB14D;
-  color: #F4F6F8;
-  horizontal-align: right;
-  vertical-align: bottom;
-}
-
 .heigth{
   height: 70%;
 }
