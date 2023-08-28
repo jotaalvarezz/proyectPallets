@@ -79,8 +79,8 @@ export default {
 
         async getShipsWarehouses() {
             try {
-                //const shipsWarehouses = await axios.get('http://186.1.181.146:8811/mcp-backend/public/api/mobile/ships');
-                const shipsWarehouses = await axios.get('http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/ships');
+                const shipsWarehouses = await axios.get('http://186.1.181.146:8811/mcp-backend/public/api/mobile/ships');
+                //const shipsWarehouses = await axios.get('http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/ships');
                 //const shipsWarehouses = await axios.get('http://172.28.25.153/mcp-backend/public/api/mobile/ships');
                 this.saveShipsWarehouses(shipsWarehouses)
                 return shipsWarehouses
