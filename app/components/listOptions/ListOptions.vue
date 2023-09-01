@@ -4,11 +4,7 @@
             <ListView for="(item, index) in ships" @itemTap="onItemTap">
                 <v-template>
                     <GridLayout columns="auto">
-                        <!-- <Label :text="'fa-ship' | fonticon" class="fas" width="110" fontSize="70" col="0"
-                            backgroundColor="#222A37" color="white" /> -->
                         <Label :text="item" class="p-l-10" width="auto" color="black" fontSize="25" col="0" />
-                        <!-- <Label :text="'fa-trash-alt' | fonticon" class="fas" fontSize="18" col="2"
-                            @tap="deleteRow(item.id, index)" /> -->
                     </GridLayout>
                 </v-template>
             </ListView>
@@ -46,10 +42,8 @@ export default {
   },
 
   created(){
-    //console.log("componente ",this.ships)
     this.getShips()
   }
-  /* components: { GridLayout }, */
 };
 </script>
 <style lang="scss">

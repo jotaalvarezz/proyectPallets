@@ -60,7 +60,7 @@ export default {
     ...mapState(['item', 'shipsWarehouses'])
   },
   methods: {
-    ...mapMutations(['saveItem', 'saveCollection']),
+    ...mapMutations(['saveItem', 'setShip']),
 
     onItemTap() {
       console.log("success");
@@ -68,6 +68,7 @@ export default {
 
     navigate(item) {
       this.saveItem(item)
+      this.setShip(item)
       this.$router.push('warehouses.index')
     },
 
@@ -101,7 +102,11 @@ export default {
         {
           fullscreen: true, props: {
             textBar: 'Nuevo Barco',
-            info: { action: false },
+            info: {
+              text:"",
+              journey:"",
+              action: false
+            },
           }
         })
         .then((res) => {
@@ -123,15 +128,7 @@ export default {
     },
 
     operations() {
-      try {
-        /* const btnShip = document.querySelector('#ship');
-        btnShip.addEventListener('mouseup', (e)=>{
-          console.log('hola mouseup')
-        }) */
-        console.log('por fuera')
-      } catch (error) {
-        console.log('hubo un error con el evento ', error)
-      }
+      /* menu de opciones */
     },
 
     async getShips() {

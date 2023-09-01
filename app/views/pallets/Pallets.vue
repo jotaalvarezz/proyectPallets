@@ -212,7 +212,7 @@ export default {
     async getPallets() {
       try {
         this.pallets = [];
-        console.log("item ", this.item)
+        console.log("item p", this.item)
         const pallets = await getPallets(this.item.id);
         console.log(pallets);
         for (let i = 0; i < pallets.length; i++) {

@@ -34,6 +34,7 @@ import Header from "~/components/header/Header.vue";
 import ListOptions from "~/components/listOptions/ListOptions.vue";
 const { insertWarehuse, getShips } = require("~/sqlite/database");
 import Alerts from "~/alerts/Alerts";
+import { mapState } from "vuex";
 
 export default {
     components: {
@@ -48,7 +49,7 @@ export default {
             type: String,
             required: true,
         },
-        textHint2: {
+        shipName: {
             type: String,
             required: true,
         },
@@ -71,14 +72,15 @@ export default {
         };
     },
     computed: {
+        ...mapState(['ship']),
         nameShip() {
-            this.model.ship_id = this.item.id;
-            return this.item.text;
+            this.model.ship_id = this.ship.id;
+            return this.ship.text;
         },
     },
     methods: {
         modalOption() {
-            this.$showModal(ListOptions);
+            /* this.$showModal(ListOptions); */
         },
 
         onSelectedIndexChanged(event) {
@@ -92,10 +94,10 @@ export default {
                     const warehouse = await insertWarehuse(this.model);
                     console.log("save ", warehouse);
                     this.model.nameWarehouse = "";
+                    this.$modal.close()
                 } else {
-                    Alerts.info("El campo nombre de Bodega esta vacio...")
+                    Alerts.info("El campo nombre de Bodega esta vacio...", 1)
                 }
-
             } catch (error) {
                 console.log("al insertar error ", error);
             }

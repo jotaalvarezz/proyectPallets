@@ -90,25 +90,6 @@ export default {
             this.isHovered = false;
         }
     },
-    /* async palletInfo() {
-      try {
-        console.log("item ", this.item)
-        const pallet = await getPallet(this.item)
-        console.log("info ", pallet)
-        for (let i = 0; i < pallet.length; i++) {
-          this.infoPallet = Object.assign({},
-            {
-              id: pallet[i][0],
-              code: pallet[i][1],
-              observation: pallet[i][2],
-              ship_id: pallet[i][3],
-              warehouse_id: pallet[i][4]
-            })
-        }
-      } catch (error) {
-        console.log("error al traer los datos ", error)
-      }
-    }, */
 
     deleteItem(){
       this.deleteRow()
@@ -118,7 +99,7 @@ export default {
   },
 
   created() {
-    /* this.palletInfo() */
+
   }
 }
 </script>

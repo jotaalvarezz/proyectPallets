@@ -190,17 +190,18 @@ export default {
                 ship_id: pallets[i][3],
                 ship_name: pallets[i][4],
                 journey: pallets[i][5],
-                warehouse_id: pallets[i][6],
+                warehouse_id: pallets[i][6] || 0,
                 warehouse_name: pallets[i][7],
                 pallet_creation: pallets[i][8]
               })
           }
-          const postPallets = await axios.post('http://186.1.181.146:8811/mcp-backend/public/api/mobile/loadpallets', this.sendPallets)
+          console.log("send ",this.sendPallets)
+          //const postPallets = await axios.post('http://186.1.181.146:8811/mcp-backend/public/api/mobile/loadpallets', this.sendPallets)
           //const postPallets = await axios.post('http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/loadpallets', this.sendPallets)
-          //const postPallets = await axios.post('http://172.28.25.153/mcp-backend/public/api/mobile/loadpallets', this.sendPallets)
+          const postPallets = await axios.post('http://172.70.8.122/mcp-backend/public/api/mobile/loadpallets', this.sendPallets)
           this.loadingCharge()
           Alert.success("Cargue")
-          console.log("send ", postPallets.data)
+          //console.log("send ", postPallets.data)
         }else{
           this.loadingCharge()
           Alert.danger("No se encontraron pallets", "por favor asegurese antes de sincronizar")

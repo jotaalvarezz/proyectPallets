@@ -22,7 +22,7 @@
 
           <TextField row="2" padding="10" v-model="model.journey" hint="Viaje..." height="45" fontSize="18" boder="none"
             style="
-              placeholder-color: #3c495e;
+              placeholder- : #3c495e;
               color: #3c495e;
               background-color: #c0c9d7;
               width: 80%;
@@ -94,7 +94,7 @@ export default {
           this.model.journey = "";
           this.$modal.close()
         } else {
-          Alerts.info("La campo nombre de Barco vacio...",1)
+          Alerts.info("La campo nombre de Barco vacio...", 1)
         }
       } catch (error) {
         console.log("al insertar error ", error);
@@ -109,6 +109,8 @@ export default {
             const ship = await updateShip(this.model);
             console.log("update ", ship)
             this.$modal.close()
+          }else{
+            Alerts.info("Debe llenar el campo ' Viaje... ' ", 1)
           }
         } catch (error) {
           console.error("Hubo un error al editar ", error)

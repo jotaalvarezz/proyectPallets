@@ -5,7 +5,7 @@
                 <TextField v-model="textFieldValue" height="40" borderWidth="1" backgroundColor="#F4F6F8" width="70%"
                     borderRadius="5" borderColor="#F4F6F8" horizontalAlignment="left"
                     style="placeholder-color:#3c495e; color: #3c495e;" hint="Buscar Pallet..." paddingLeft="10"
-                    fontSize="15" @textChange="filterAnime" />
+                    fontSize="15" @textChange="filter" />
                 <Label :text="'fa-window-close' | fonticon" class="fas" color="#222a37" fontSize="40" alignItems="flex-end"
                     @tap="$modal.close" />
             </StackLayout>
@@ -57,7 +57,7 @@ export default {
     },
 
     methods: {
-        filterAnime() {
+        filter() {
             //console.log(this.data)
             if (this.textFieldValue.length > 0) {
                 this.array_filter = this.data.filter(data => !this.textFieldValue || data.text.includes(this.textFieldValue))
@@ -68,11 +68,6 @@ export default {
         navegate(item){
             this.operation1(item)
             this.$modal.close()
-        },
-
-        watchEpisodes(id) {
-            /* this.$navigateTo(AnimeInfo, { props: { anime_id: id } })
-            this.$modal.close() */
         },
     },
 }

@@ -35,7 +35,6 @@
     </GridLayout>
 </template>
 <script>
-//import {createTable, openDatabase} from '~/sqlite/database'
 const { createTable, DBdelete, structure } = require('../../sqlite/database');
 import * as utils from "~/shared/util";
 import axios from "axios"
@@ -46,10 +45,6 @@ import Alert from "~/alerts/Alerts";
 
 export default {
     name: 'Content-Drawer',
-    /* components: {
-        Loading
-    }, */
-
     data() {
         return {
             loading: false,
@@ -79,9 +74,9 @@ export default {
 
         async getShipsWarehouses() {
             try {
-                const shipsWarehouses = await axios.get('http://186.1.181.146:8811/mcp-backend/public/api/mobile/ships');
+                //const shipsWarehouses = await axios.get('http://186.1.181.146:8811/mcp-backend/public/api/mobile/ships');
                 //const shipsWarehouses = await axios.get('http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/ships');
-                //const shipsWarehouses = await axios.get('http://172.28.25.153/mcp-backend/public/api/mobile/ships');
+                const shipsWarehouses = await axios.get('http://172.70.8.122/mcp-backend/public/api/mobile/ships');
                 this.saveShipsWarehouses(shipsWarehouses)
                 return shipsWarehouses
             } catch (error) {
@@ -89,15 +84,6 @@ export default {
                 Alert.danger("No se pudieron cargados los datos de MCP a la DB",error) */
                 console.log(error)
             }
-        },
-
-        prueba() {
-            this.$router.pushClear('prueba.index')
-            utils.closeDrawer()
-        },
-
-        guardarArchivo() {
-            console.log('fs ',fs)
         },
 
         async createTables() {
@@ -143,15 +129,6 @@ export default {
                 console.log('error intentando crear las tablas...')
             }
         },
-
-        /* async deleteDB() {
-            try {
-                const db = await DBdelete()
-                console.log("... ", db)
-            } catch (error) {
-                console.log('delete exitoso!')
-            }
-        } */
     },
 }
 </script>

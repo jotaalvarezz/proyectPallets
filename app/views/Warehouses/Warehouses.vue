@@ -49,7 +49,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(['item'])
+    ...mapState(['item', 'ship'])
   },
   methods: {
     ...mapMutations(['saveItem']),
@@ -67,10 +67,12 @@ export default {
         fullscreen: true, props: {
           textBar: 'Nueva Bodega',
           textHint1: 'Nombre de Bodega...',
-          textHint2: 'Barco...',
+          shipName: this.shipName,
           item: this.item,
           update: false,
         }
+      }).then(() => {
+        this.getWarehouses()
       })
     },
 
@@ -102,7 +104,7 @@ export default {
     async getWarehouses() {
       try {
         this.warehouses = []
-        const warehouses = await getWarehouses(this.item.id)
+        const warehouses = await getWarehouses(this.ship.id)
         console.log(warehouses)
         for (let i = 0; i < warehouses.length; i++) {
           this.warehouses.push(
@@ -122,6 +124,7 @@ export default {
   },
 
   created() {
+    console.log("en warehouse ", this.item)
     this.shipName = this.item.text
     this.getWarehouses()
   },
@@ -151,7 +154,7 @@ export default {
 }
 
 .tittle{
-  color:"#3c495e";
+  color:#3c495e;
   /* text-shadow: 2px 12px 5px rgba(0, 0, 0, 0.5); */
   margin: 10;
 }

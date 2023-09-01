@@ -1,12 +1,10 @@
 <template>
     <ActionBar backgroundColor="#00acc1">
-        <!-- <NavigationButton /> -->
         <GridLayout columns="50, *">
             <StackLayout col="1" orientation="horizontal" class="action-bar-title cardtitle" colSpan="2" style="margin-left: 27%;">
                 <Image src="~/assets/images/logobarco.png" width="40" height="40" verticalAlignment="center" />
                 <Label text="WSP" fontSize="24" color="#F4F6F8" fontWeight="bold" verticalAlignment="center" />
             </StackLayout>
-            <!-- <Label text="WSP" class="action-bar-title cardtitle" fontSize="18" colSpan="2" /> -->
             <Label col="0" class="fas" text.decode="&#xf0c9;" color="white" @tap="openDrawer" fontSize="25" />
         </GridLayout>
         <!-- <ActionItem android.systemIcon="ic_menu_camera" ios.position="left" text="scan code" @tap="readCode" /> -->
@@ -58,21 +56,10 @@ export default {
                                     }
                             })
         }
-        /*  async getAnimes() {
-             try {
-                 const animes = await axios.get('https://api.jikan.moe/v4/anime');
-                 console.log(animes)
-                 this.animes = animes.data.data
-                 this.save_anime(this.animes)
-                 this.popularities(this.animes)
-             } catch (error) {
-                 console.log(error)
-             }
-         }, */
     },
 
     created() {
-        console.log("search ",typeof this.search)
+        console.log("search ", this.search)
     },
 };
 </script>
