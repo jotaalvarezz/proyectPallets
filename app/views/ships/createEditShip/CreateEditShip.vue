@@ -22,7 +22,7 @@
 
           <TextField row="2" padding="10" v-model="model.journey" hint="Viaje..." height="45" fontSize="18" boder="none"
             style="
-              placeholder- : #3c495e;
+              placeholder-color : #3c495e;
               color: #3c495e;
               background-color: #c0c9d7;
               width: 80%;
