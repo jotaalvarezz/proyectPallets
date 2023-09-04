@@ -196,12 +196,12 @@ export default {
               })
           }
           console.log("send ",this.sendPallets)
-          //const postPallets = await axios.post('http://186.1.181.146:8811/mcp-backend/public/api/mobile/loadpallets', this.sendPallets)
+          const postPallets = await axios.post('http://186.1.181.146:8811/mcp-backend/public/api/mobile/loadpallets', this.sendPallets)
           //const postPallets = await axios.post('http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/loadpallets', this.sendPallets)
-          const postPallets = await axios.post('http://172.70.8.122/mcp-backend/public/api/mobile/loadpallets', this.sendPallets)
+          //const postPallets = await axios.post('http://172.70.8.122/mcp-backend/public/api/mobile/loadpallets', this.sendPallets)
           this.loadingCharge()
           Alert.success("Cargue")
-          //console.log("send ", postPallets.data)
+          console.log("send ", postPallets.data)
         }else{
           this.loadingCharge()
           Alert.danger("No se encontraron pallets", "por favor asegurese antes de sincronizar")
