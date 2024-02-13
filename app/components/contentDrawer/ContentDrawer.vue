@@ -21,11 +21,11 @@
                     <Label col="0" :text="'fa-sync' | fonticon" class="fas" color="#24D311" fontSize="22" />
                     <Label col="1" text="Actualizar" fontSize="17" class="p-l-10 colorIcons" />
                 </GridLayout>
-                <!-- <GridLayout id="3" columns="40,*" class="nt-drawer__list-item" @tap="guardarArchivo"
+                <GridLayout id="3" columns="40,*" class="nt-drawer__list-item" @tap="signature"
                     :class="isHovered && itemSelector == 4 ? 'hovered' : ''" @touch="onTouch(4)">
-                    <Label col="0" :text="'fa-trash-alt' | fonticon" class="fas colorIcons" fontSize="22" />
-                    <Label col="1" text="BK DB" fontSize="15" class="p-l-10 colorIcons" />
-                </GridLayout> -->
+                    <Label col="0" :text="'fa-file-signature' | fonticon" class="fas colorIcons" fontSize="22" />
+                    <Label col="1" text="Firma" fontSize="15" class="p-l-10 colorIcons" />
+                </GridLayout>
                 <!-- <GridLayout columns="auto,*" class="nt-drawer__list-item" @tap="showProgressDialog">
                     <Label col="0" :text="'fa-trash-alt' | fonticon" class="fas colorIcons" fontSize="18" />
                     <Label col="1" text="Prueba" fontSize="15" class="p-l-10 colorIcons" />
@@ -74,9 +74,9 @@ export default {
 
         async getShipsWarehouses() {
             try {
-                const shipsWarehouses = await axios.get('http://186.1.181.146:8811/mcp-backend/public/api/mobile/ships');
+                //const shipsWarehouses = await axios.get('http://186.1.181.146:8811/mcp-backend/public/api/mobile/ships');
                 //const shipsWarehouses = await axios.get('http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/ships');
-                //const shipsWarehouses = await axios.get('http://172.70.8.122/mcp-backend/public/api/mobile/ships');
+                const shipsWarehouses = await axios.get('http://172.70.8.122/mcp-backend/public/api/mobile/ships');
                 this.saveShipsWarehouses(shipsWarehouses)
                 return shipsWarehouses
             } catch (error) {
@@ -129,6 +129,15 @@ export default {
                 console.log('error intentando crear las tablas...')
             }
         },
+
+        signature(){
+            try {
+                this.$router.pushClear('evidence.index')
+                utils.closeDrawer()
+            } catch (error) {
+                console.log("error al dirigirme a la ruta ", error)
+            }
+        }
     },
 }
 </script>
