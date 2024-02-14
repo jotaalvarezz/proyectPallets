@@ -1,19 +1,47 @@
 <template>
   <Page @loaded="getShips">
-    <Header :data="ships" :icons="icons" :operation1="navigate" :operation2="navigateOptions" :search="true" />
+    <Header
+      :data="ships"
+      :icons="icons"
+      :operation1="navigate"
+      :operation2="navigateOptions"
+      :search="true"
+    />
     <GridLayout rows="*" backgroundColor="#F4F6F8">
       <ListView for="(item, index) in ships" @itemTap="onItemTap">
         <v-template>
           <GridLayout columns="*,40" @longPress="operations">
             <StackLayout orientation="horizontal" @tap="navigate(item)" col="0">
-              <Label :text="'fa-ship' | fonticon" class="fas" width="110" fontSize="70" color="#0096b7"/>
+              <Label
+                :text="'fa-ship' | fonticon"
+                class="fas"
+                width="110"
+                fontSize="70"
+                color="#0096b7"
+              />
               <StackLayout class="heigth">
-                <Label text="Barco:" class="p-l-10 subTittle" textWrap="true" width="auto" fontSize="18" />
-                <Label :text="item.text" class="p-l-10 colorIcons" fontSize="18"/>
+                <Label
+                  text="Barco:"
+                  class="p-l-10 subTittle"
+                  textWrap="true"
+                  width="auto"
+                  fontSize="18"
+                />
+                <Label
+                  :text="item.text"
+                  class="p-l-10 colorIcons"
+                  fontSize="18"
+                />
               </StackLayout>
             </StackLayout>
-            <Label :text="'fa-ellipsis-v' | fonticon" class="fas iconOptions" fontSize="18" col="1"
-              style="text-align: center;" @tap="navigateOptions(item, index)"/>
+            <Label
+              :text="'fa-ellipsis-v' | fonticon"
+              class="fas iconOptions"
+              fontSize="18"
+              col="1"
+              style="text-align: center"
+              @tap="navigateOptions(item, index)"
+            />
           </GridLayout>
         </v-template>
       </ListView>
@@ -26,14 +54,13 @@
 import Warehouses from "~/views/Warehouses/Warehouses.vue";
 import FloatingButton from "~/components/floatingButton/FloatingButton.vue";
 import CreateEditShip from "~/views/ships/createEditShip/CreateEditShip.vue";
-import infoShip from "~/views/ships/infoShips/infoShip.vue"
+import infoShip from "~/views/ships/infoShips/infoShip.vue";
 import Header from "~/components/header/Header.vue";
-import { mapMutations, mapState } from 'vuex'
-const { getShips, deleteShip } = require('~/sqlite/database')
+import { mapMutations, mapState } from "vuex";
+const { getShips, deleteShip } = require("~/sqlite/database");
 import Alert from "~/alerts/Alerts";
-import ButtomSheet from '~/components/buttomSheet/ButtomSheet.vue';
+import ButtomSheet from "~/components/buttomSheet/ButtomSheet.vue";
 import mixinMasters from "~/mixins/Master";
-
 
 export default {
   name: "Ships",
@@ -42,7 +69,7 @@ export default {
     CreateEditShip,
     Warehouses,
     Header,
-    ButtomSheet
+    ButtomSheet,
   },
   data() {
     return {
@@ -50,30 +77,30 @@ export default {
       selectedOption: null,
       isChecked: false,
       icons: {
-        iconLogo: 'fa-ship',
-        iconOperations: 'fa-ellipsis-v'
-      }
+        iconLogo: "fa-ship",
+        iconOperations: "fa-ellipsis-v",
+      },
     };
   },
   mixins: [mixinMasters],
   computed: {
-    ...mapState(['item', 'shipsWarehouses'])
+    ...mapState(["item", "shipsWarehouses"]),
   },
   methods: {
-    ...mapMutations(['saveItem', 'setShip']),
+    ...mapMutations(["saveItem", "setShip"]),
 
     onItemTap() {
       console.log("success");
     },
 
     navigate(item) {
-      this.saveItem(item)
-      this.setShip(item)
-      this.$router.push('warehouses.index')
+      this.saveItem(item);
+      this.setShip(item);
+      this.$router.push("warehouses.index");
     },
 
     navigateOptions(item, index) {
-      item.action = true
+      item.action = true;
       const options = {
         dismissOnBackgroundTap: true,
         dismissOnDraggingDownSheet: false,
@@ -84,45 +111,45 @@ export default {
           component: CreateEditShip,
           componentInfo: infoShip,
           getInfo: () => this.getShips(),
-          deleteRow: () => this.deleteRow(item.id, index)
+          deleteRow: () => this.deleteRow(item.id, index),
         },
         // listeners to be connected to MyComponent
         on: {
-          someEvent: (value) => { console.log(value) }
-        }
-      }
-      this.$showBottomSheet(ButtomSheet, options)
-        .then(() => {
-          this.getAll()
-        })
+          someEvent: (value) => {
+            console.log(value);
+          },
+        },
+      };
+      this.$showBottomSheet(ButtomSheet, options).then(() => {
+        this.getAll();
+      });
     },
 
     openModal() {
-      this.$showModal(CreateEditShip,
-        {
-          fullscreen: true, props: {
-            textBar: 'Nuevo Barco',
-            info: {
-              text:"",
-              journey:"",
-              action: false
-            },
-          }
-        })
-        .then((res) => {
-          this.getShips()
-        })
+      this.$showModal(CreateEditShip, {
+        fullscreen: true,
+        props: {
+          textBar: "Nuevo Barco",
+          info: {
+            text: "",
+            journey: "",
+            action: false,
+          },
+        },
+      }).then((res) => {
+        this.getShips();
+      });
     },
 
     async deleteRow(id, index) {
-      let confirmated = await Alert.Danger(1)
+      let confirmated = await Alert.Danger(1);
       if (confirmated) {
         try {
-          const record = await deleteShip(id)
-          this.ships.splice(index, 1)
-          console.log(record)
+          const record = await deleteShip(id);
+          this.ships.splice(index, 1);
+          console.log(record);
         } catch (error) {
-          console.log("eleminacion fallida ", error)
+          console.log("eleminacion fallida ", error);
         }
       }
     },
@@ -133,31 +160,34 @@ export default {
 
     async getShips() {
       try {
-        this.loadingCharge(true)
-        this.ships = []
-        const ships = await getShips()
-        console.log(ships)
+        this.loadingCharge(true);
+        this.ships = [];
+        const ships = await getShips();
+        console.log(ships);
         for (let i = 0; i < ships.length; i++) {
-          this.ships.push({ id: ships[i][0], text: ships[i][1], journey: ships[i][2] })
+          this.ships.push({
+            id: ships[i][0],
+            text: ships[i][1],
+            journey: ships[i][2],
+          });
         }
-        this.loadingCharge()
+        this.loadingCharge();
       } catch (error) {
-        this.loadingCharge()
-        Alert.danger("Hubo un error", error)
-        console.error("error al traer lo datos ", error)
+        this.loadingCharge();
+        Alert.danger("Hubo un error", error);
+        console.error("error al traer lo datos ", error);
       }
-    }
+    },
   },
 
   created() {
-
     /* this.loadingCharge() */
-  }
+  },
   /* components: { GridLayout }, */
 };
 </script>
 <style lang="scss" scoped>
-.heigth{
+.heigth {
   height: 70%;
 }
 
