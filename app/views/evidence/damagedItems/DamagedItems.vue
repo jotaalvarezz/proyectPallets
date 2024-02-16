@@ -148,7 +148,7 @@
           text="REPARACION :"
           fontSize="18"
           fontWeight="bold"
-          style="color: #3c495e; margin-top: 25px; width: 80%"
+          style="color: #3c495e; margin-top: 25px; width: 90%"
         />
         <Switch horizontalAlignment="left" width="50" checked="true" />
         <Button
