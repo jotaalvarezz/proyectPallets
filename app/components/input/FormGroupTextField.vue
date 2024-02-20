@@ -1,5 +1,5 @@
 <template>
-  <StackLayout>
+  <StackLayout marginTop="10">
     <Label
       :text="label"
       :fontSize="fontsize"
@@ -7,6 +7,7 @@
       style="color: #3c495e; width: 90%"
     />
     <TextField
+      v-if="!textArea"
       ref="field"
       :isEnabled="enable"
       :value="value"
@@ -22,6 +23,17 @@
         width: 90%;
       "
       @textChange="onTextChange"
+    />
+    <TextView
+      v-if="textArea"
+      :value="value"
+      fontSize="18"
+      style="
+        placeholder-color: #3c495e;
+        color: #3c495e;
+        background-color: #c0c9d7;
+        width: 90%;
+      "
     />
   </StackLayout>
 </template>
@@ -47,6 +59,10 @@ export default {
     },
     value: {
       type: String,
+    },
+    textArea: {
+      type: Boolean,
+      default: false,
     },
   },
 

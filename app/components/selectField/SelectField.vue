@@ -1,5 +1,5 @@
 <template>
-  <StackLayout>
+  <StackLayout marginTop="10">
     <Label
       colSpan="2"
       :text="label"
