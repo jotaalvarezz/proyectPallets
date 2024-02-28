@@ -1,23 +1,41 @@
 <template>
   <page>
     <Header :data="info" :icons="icons" :search="false" />
-    <TabView
-      :selectedIndex="selectedIndex"
-      androidTabsPosition="buttom"
-      tabBackgroundColor="#F4F6F8"
-      @selectedIndexChange="onSelectedIndexChanged"
-    >
-      <TabViewItem :title="'fa-file-invoice' | fonticon" class="fas">
-        <!-- :title="'fa-file-invoice' | fonticon" class="fas" -->
-        <Evidence v-show="selectedIndex === 0" />
-      </TabViewItem>
-      <TabViewItem :title="'fa-mosque' | fonticon" class="fas">
-        <Label text="Tab 2" v-show="selectedIndex === 1" />
-      </TabViewItem>
-      <TabViewItem :title="'fa-layer-group' | fonticon" class="fas">
-        <Label text="Tab 3" v-show="selectedIndex === 2" />
-      </TabViewItem>
-    </TabView>
+    <MDTabs :selectedIndex="selectedIndex" tabsPosition="bottom">
+      <!-- The bottom tab UI is created via TabStrip (the containier) and TabStripItem (for each tab)-->
+      <MDTabStrip>
+        <MDTabStripItem>
+          <Label text="Home"></Label>
+          <Image src="~/assets/images/evidenceForm.png" class="fas"></Image>
+        </MDTabStripItem>
+        <MDTabStripItem class="special">
+          <Label text="Account"></Label>
+          <Image src="~/assets/images/contenedores.png" class="fas"></Image>
+        </MDTabStripItem>
+        <MDTabStripItem class="special">
+          <Label text="Search"></Label>
+          <Image src="~/assets/images/instrucciones.png" class="fas"></Image>
+        </MDTabStripItem>
+      </MDTabStrip>
+
+      <!-- The number of TabContentItem components should corespond to the number of TabStripItem components -->
+      <MDTabContentItem>
+
+        <GridLayout rows="*" style="background-color: red">
+          <Evidence />
+        </GridLayout>
+      </MDTabContentItem>
+      <MDTabContentItem>
+        <GridLayout>
+          <Label text="Account Page" class="h2 text-center"></Label>
+        </GridLayout>
+      </MDTabContentItem>
+      <MDTabContentItem>
+        <GridLayout>
+          <Label text="Search Page" class="h2 text-center"></Label>
+        </GridLayout>
+      </MDTabContentItem>
+    </MDTabs>
   </page>
 </template>
 
@@ -32,7 +50,7 @@ export default {
   },
   data() {
     return {
-      selectedIndex: null,
+      selectedIndex: 1,
       bandera: 0,
     };
   },
@@ -45,6 +63,4 @@ export default {
 };
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

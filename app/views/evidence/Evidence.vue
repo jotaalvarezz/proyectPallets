@@ -1,8 +1,7 @@
 <template>
-  <page @loaded="InfoSelect">
-    <Header :data="info" :icons="icons" :search="false" />
+  <!-- <page @loaded="InfoSelect"> -->
     <ScrollView>
-      <StackLayout backgroundColor="#F4F6F8">
+      <StackLayout @loaded="InfoSelect" backgroundColor="#F4F6F8">
         <StackLayout
           backgroundColor="#F4F6F8"
           margin="20"
@@ -141,7 +140,7 @@
         </StackLayout>
       </StackLayout>
     </ScrollView>
-  </page>
+  <!-- </page> -->
 </template>
 
 <script>

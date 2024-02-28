@@ -4,9 +4,7 @@ import store from "./store/index";
 import router from "./Routes/Routes";
 import RadSideDrawer from "nativescript-ui-sidedrawer/vue";
 import CanvasPlugin from '@nativescript-community/ui-canvas/vue';
-import TabsPlugin from '@nativescript-community/ui-material-tabs/vue';
 
-Vue.use(TabsPlugin);
 Vue.use(RadSideDrawer);
 Vue.use(CanvasPlugin);
 
@@ -25,6 +23,10 @@ Vue.registerElement("CheckBox", () => CheckBox, {
     event: "checkedChange",
   },
 });
+
+import TabsPlugin from '@nativescript-community/ui-material-tabs/vue';
+
+Vue.use(TabsPlugin);
 
 Vue.registerElement(
   "Fab",
