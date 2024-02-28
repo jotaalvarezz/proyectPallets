@@ -62,7 +62,6 @@ export default {
             if (this.textFieldValue.length > 0) {
                 this.array_filter = this.data.filter(data => !this.textFieldValue || data.text.includes(this.textFieldValue))
             }
-            console.log(this.array_filter)
         },
 
         navegate(item){

@@ -29,7 +29,7 @@ export default {
 
         controlIndicator(){
             if(this.indicator == false){
-                console.log("dasctivate ",this.indicator)
+                /* console.log("dasctivate ",this.indicator) */
                 //this.indicatorState(this.indicator)
                 this.$modal.close()
             }else{
@@ -54,7 +54,6 @@ export default {
 
     created(){
         this.indicatorState(this.state)
-        console.log("control => ",this.indicator)
     }
 }
 </script>

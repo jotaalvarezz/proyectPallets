@@ -15,7 +15,7 @@
       <v-template>
         <GridLayout columns="*,auto">
           <Label
-            :text="item"
+            :text="item[labelIterator]"
             class="p-l-10"
             color="black"
             fontSize="18"
@@ -23,9 +23,9 @@
           />
           <Label
             col="1"
-            :text="selectedItem === item && 'fa-check' | fonticon"
+            :text="selectedItem === item.id && 'fa-check' | fonticon"
             class="fas"
-            :class="item === selectedItem ? 'check' : 'nocheck'"
+            :class="item.id === selectedItem ? 'check' : 'nocheck'"
             color="#F4F6F8"
           />
         </GridLayout>
@@ -48,6 +48,10 @@ export default {
     item: {
       type: Array,
       required: true,
+    },
+    labelIterator: {
+      type: String,
+      default:'name',
     },
   },
 
@@ -75,7 +79,6 @@ export default {
       try {
         this.ships = [];
         const ships = await getShips();
-        console.log(ships);
         for (let i = 0; i < ships.length; i++) {
           this.ships.push(ships[i][1]);
         }
@@ -87,6 +90,7 @@ export default {
 
   created() {
     this.selectedItem = this.item
+    /* this.$refs.listView.nativeView.refresh(); */
   },
 };
 </script>
@@ -108,7 +112,7 @@ export default {
   padding: 6;
   border-radius: 9999px;
   border-width: 1px;
-  background-color: #081a36;
+  background-color: #EAB14D;
 }
 
 .fab-sync {

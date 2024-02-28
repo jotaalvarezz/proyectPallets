@@ -1,5 +1,5 @@
 <template>
-  <page>
+  <page @loaded="InfoSelect">
     <StackLayout backgroundColor="#F4F6F8">
       <StackLayout
         orientation="horizontal"
@@ -22,14 +22,20 @@
           width="60%"
         ></Label>
       </StackLayout>
-      <StackLayout backgroundColor="#F4F6F8" margin="20">
+      <StackLayout
+        backgroundColor="#F4F6F8"
+        margin="20"
+        borderWidth="1"
+        borderColor="#3c495e"
+        borderRadius="5"
+      >
         <SelectField
           row="4"
-          :value="model.element"
+          :value="model.container_element_id"
           :items="elements"
           label="ELEMENTO:"
           icon="fa-toolbox"
-          @value="model.element = $event"
+          @value="model.container_element_id = $event"
         />
         <FormGroupTextField
           label="UBICACION:"
@@ -51,9 +57,10 @@
         />
         <WrapLayout style="width: 90%">
           <check-box
-            v-for="(item, index) in damages"
-            :key="index"
-            :text="item"
+            v-for="item in damages"
+            :key="item.id"
+            :id="item.id"
+            :text="item.name"
             :checked="isChecked"
             @checkedChange="onCheckedChange"
             style="color: #3c495e; width: 30%"
@@ -66,14 +73,19 @@
           fontWeight="bold"
           style="color: #3c495e; margin-top: 25px; width: 90%"
         />
-        <Switch horizontalAlignment="left" width="50" :checked="model.state"/>
+        <Switch
+          horizontalAlignment="left"
+          :class="model.state === true ? 'switchEnable' : 'switchDisable'"
+          width="50"
+          v-model="model.state"
+        />
+        <Stripe color="#3c495e"/>
         <Button
-          marginTop="30"
           backgroundColor="#F4F6F8"
           color="#222a37"
           text="Agregar"
           @tap="addRepair"
-          style="width: 80%"
+          style="width: 80%; margin-bottom: 20px"
           borderWidth="1"
           borderColor="#222a37"
           borderRadius="30"
@@ -84,71 +96,85 @@
 </template>
 
 <script>
+const { getDamage } = require("~/sqlite/database");
+import mixinMasters from "~/mixins/Master";
 import FormGroupTextField from "~/components/input/FormGroupTextField";
 import SelectField from "~/components/selectField/SelectField";
+import Stripe from '~/components/stripe/Stripe'
 
 export default {
-  components: { FormGroupTextField, SelectField },
+  components: { FormGroupTextField, SelectField, Stripe },
+  props: {
+    container_elements: {
+      type: Array,
+      default: [],
+    },
+  },
   data() {
     return {
       row: 1,
       col: 0,
       model: {
-        element: "",
+        container_element_id: null,
         location: "",
         position: "",
-        damaged_selected: [],
+        damage_id: [],
         state: false,
       },
       isChecked: null,
-      damages: [
-        "AB - ABOLLADO",
-        "DO - DOBLADO",
-        "OX - OXIDADO",
-        "SU - SUMIDO",
-        "SC - SUCIO",
-        "CO - CORTADO",
-        "FA - FALTA",
-        "RO - ROTO",
-        "ZA - ZAFO",
-        "AC - MANCHAS DE ACEITE",
-      ],
-      elements: [
-        "Viga Frontal",
-        "Travesaño",
-        "Ventilador",
-        "Soporte de Uña",
-        "Manija de Puerta",
-        "Barra de Cierre",
-        "Empaque de Puerta",
-        "Bisagras",
-        "Seguro de Puerta",
-      ],
+      damages: [],
+      elements: [],
     };
   },
 
-  methods: {
-    editPallet() {
-      console.log("variable ", this.auxiliar);
-    },
+  mixins: [mixinMasters],
 
+  methods: {
     onCheckedChange(args) {
       const checkbox = args.object;
       if (checkbox.checked) {
-        this.model.damaged_selected.push({
+        this.model.damage_id.push({
+          id: checkbox.id,
           text: checkbox.text,
           checked: checkbox.checked,
         });
-      }else{
-        const index = this.model.damaged_selected.findIndex(prev => prev.text === checkbox.text)
-        this.model.damaged_selected.splice(index,1)
+      } else {
+        const index = this.model.damage_id.findIndex(
+          (prev) => prev.text === checkbox.text
+        );
+        this.model.damage_id.splice(index, 1);
       }
-      console.log("model ", this.model.damaged_selected);
     },
 
-    addRepair(){
-      this.$modal.close({model:this.model})
-    }
+    async addRepair() {
+      /* console.log({ model: this.model }); */
+      this.$modal.close({ model: this.model, elements: this.elements });
+    },
+
+    async InfoSelect() {
+      try {
+        this.loadingCharge(true);
+        const res2 = await getDamage();
+        this.damages = res2.data;
+        this.elements = this.container_elements;
+      } catch (error) {
+        console.log(error);
+      } finally {
+        this.loadingCharge();
+      }
+    },
   },
 };
 </script>
+
+<style scoped>
+.switchEnable {
+  color: #0dcaf0;
+  background-color: #cef4fc;
+}
+
+.switchDisable {
+  color: #e92222;
+  background-color: #fad2d2;
+}
+</style>

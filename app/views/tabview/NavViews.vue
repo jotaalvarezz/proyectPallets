@@ -1,48 +1,50 @@
 <template>
-  <Page>
-    <Header/>
-    <TabView :selectedIndex="selectedIndex" @selectedIndexChange="indexChange" androidTabsPosition="buttom"
-      tabBackgroundColor="#222A37">
-      <TabViewItem :title="'fa-list' | fonticon" class="fas" style="font-size: 24">
-        <!-- <Frame> -->
-          <Ships/>
-        <!-- </Frame> -->
+  <page>
+    <Header :data="info" :icons="icons" :search="false" />
+    <TabView
+      :selectedIndex="selectedIndex"
+      androidTabsPosition="buttom"
+      tabBackgroundColor="#F4F6F8"
+      @selectedIndexChange="onSelectedIndexChanged"
+    >
+      <TabViewItem :title="'fa-file-invoice' | fonticon" class="fas">
+        <!-- :title="'fa-file-invoice' | fonticon" class="fas" -->
+        <Evidence v-show="selectedIndex === 0" />
       </TabViewItem>
-      <TabViewItem :title="'fa-list' | fonticon" class="fas" style="font-size: 24">
-        <Frame>
-          <PalletsWarehouse/>
-        </Frame>
-        <!-- <label text="laksjdlajds"/> -->
+      <TabViewItem :title="'fa-mosque' | fonticon" class="fas">
+        <Label text="Tab 2" v-show="selectedIndex === 1" />
+      </TabViewItem>
+      <TabViewItem :title="'fa-layer-group' | fonticon" class="fas">
+        <Label text="Tab 3" v-show="selectedIndex === 2" />
       </TabViewItem>
     </TabView>
-  </Page>
+  </page>
 </template>
 
 <script>
-import Ships from "~/views/ships/Ships.vue";
 import Header from "~/components/header/Header.vue";
-import PalletsWarehouse from "./palletsWarehouse/PalletsWarehouse.vue";
+import Evidence from "~/views/evidence/Evidence";
 
 export default {
   components: {
-    Ships,
     Header,
-    PalletsWarehouse
-},
+    Evidence,
+  },
   data() {
     return {
-
-    }
+      selectedIndex: null,
+      bandera: 0,
+    };
   },
   methods: {
-    onButtonTap() {
-      this.$navigateTo(Ships);
+    onSelectedIndexChanged(args) {
+      const index = args.value;
+      this.selectedIndex = index;
     },
-
-    /* evento(){
-      const rootView = getRootView();
-      console.log("=> ",rootView.mainContent)
-    } */
   },
 };
 </script>
+
+<style scoped>
+
+</style>

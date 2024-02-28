@@ -11,6 +11,7 @@
       height="45"
       columns="auto, *,auto"
       padding="10"
+      borderRadius="2"
       @tap="infoSelect"
       style="background-color: #c0c9d7; width: 90%"
     >
@@ -22,7 +23,7 @@
         color="#3c495e"
       />
       <Label
-        :text="value"
+        :text="itemLabel"
         class="p-l-10"
         :fontSize="fontsize"
         fontWeight="none"
@@ -65,18 +66,30 @@ export default {
       type: Array,
       default: [],
     },
+    labelIterator: {
+      type: String,
+      default:'name',
+    },
   },
 
   data() {
     return {
-      model: {},
+      object:{},
     };
+  },
+
+  computed:{
+    itemLabel(){
+      if(this.items.length !== 0 && this.value != null){
+        const label = this.items.find(item => item.id === this.value);
+        return label[this.labelIterator];
+      }
+    }
   },
 
   methods: {
     onTextChange(args) {
       const newValue = args.object.text;
-      console.log("Nuevo valor:", newValue);
       this.$emit("input", newValue);
     },
 
@@ -85,10 +98,11 @@ export default {
         props: {
           listOfItems: this.items,
           item: this.value,
+          labelIterator: this.labelIterator
         },
       }).then((res) => {
         this.value = res.selectedItem;
-        this.$emit("value", this.value);
+        this.$emit("value", this.value.id);
       });
     },
   },

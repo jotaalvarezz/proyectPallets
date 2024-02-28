@@ -8,7 +8,7 @@
             </Frame>
         </StackLayout>
         <!-- Contenido del Drawer -->
-        <StackLayout ~drawerContent>
+        <StackLayout ~drawerContent style="opacity: 0.9;">
             <!-- Agrega tus elementos de contenido del Drawer aquí -->
             <ContentDrawer></ContentDrawer>
         </StackLayout>

@@ -143,10 +143,10 @@ export default {
     async getShipsWarehouses() {
       try {
         //const shipsWarehouses = await axios.get('http://186.1.181.146:8811/mcp-backend/public/api/mobile/ships');
-        //const shipsWarehouses = await axios.get('http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/ships');
-        const shipsWarehouses = await axios.get(
-          "http://172.70.8.122/mcp-backend/public/api/mobile/ships"
-        );
+        const shipsWarehouses = await axios.get('http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/ships');
+        /* const shipsWarehouses = await axios.get(
+          "http://192.168.20.38/mcp-backend/public/api/mobile/ships"
+        ); */
         this.saveShipsWarehouses(shipsWarehouses);
         return shipsWarehouses;
       } catch (error) {
@@ -184,17 +184,17 @@ export default {
       }
     },
 
-    pallets() {
+    async pallets() {
       try {
         this.$router.pushClear("generalpallets.index");
         utils.closeDrawer();
-        /* const db = await structure()
-                alert({
+       /*  const db = await structure() */
+                /* alert({
                     title:'Inicializando DB',
                     message:'Actualizando Tablas...',
                     okButtonText:"aceptar"
-                })
-                console.log(db) */
+                }) */
+                /* console.log(db) */
       } catch (error) {
         console.log("error intentando crear las tablas...");
       }

@@ -86,7 +86,7 @@ export default {
   },
 
   created() {
-    console.log("search ", this.search);
+
   },
 };
 </script>

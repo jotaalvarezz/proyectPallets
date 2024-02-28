@@ -8,6 +8,7 @@ import GeneralPallets from '~/views/generalPallets/GeneralPallets.vue'
 import Pallets from '~/views/pallets/Pallets'
 import CreateEditPallet from '~/views/pallets/CreateEditPallet/CreateEditPallet'
 import Evidence from '~/views/evidence/Evidence'
+import NavViews from '~/views/tabview/NavViews'
 
 Vue.use(NSVueRouter)
 
@@ -39,9 +40,9 @@ const routes = [
   },
   {
     name: 'evidence.index',
-    component: Evidence,
+    component: NavViews,
     meta: { guest: true }
-  }
+  },
 ]
 
 const router = new NSVueRouter({

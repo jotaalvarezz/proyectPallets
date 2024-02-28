@@ -10,12 +10,13 @@
       v-if="!textArea"
       ref="field"
       :isEnabled="enable"
-      :value="value"
+      :text="value"
       padding="10"
       :hint="placeholder"
       height="45"
       fontSize="18"
       border="none"
+      borderRadius="2"
       style="
         placeholder-color: #3c495e;
         color: #3c495e;
@@ -26,14 +27,17 @@
     />
     <TextView
       v-if="textArea"
-      :value="value"
+      :text="value"
+      padding="10"
       fontSize="18"
+      borderRadius="2"
       style="
         placeholder-color: #3c495e;
         color: #3c495e;
         background-color: #c0c9d7;
         width: 90%;
       "
+      @textChange="onTextChange"
     />
   </StackLayout>
 </template>
@@ -69,7 +73,7 @@ export default {
   methods: {
     onTextChange(args) {
       const newValue = args.object.text;
-      console.log("Nuevo valor:", newValue);
+      /* console.log('text ',this.$props) */
       this.$emit("input", newValue);
     },
   },
@@ -77,5 +81,9 @@ export default {
   data() {
     return {};
   },
+
+  created(){
+
+  }
 };
 </script>
