@@ -6,6 +6,24 @@ const getContainerReport = async () => {
     const db = await openDatabase();
     const data = await db.all("SELECT * FROM container_reports", []);
     const dataFormatted = await showData('container_reports', data)
+    /* consulta para traer los reparaciones */
+    for (let i = 0; i < dataFormatted.length; i++) {
+      let repairs = await db.all(`SELECT r.id, r.container_element_id, e.name, r.state
+                                    FROM  repairs r
+                                    INNER JOIN container_elements e on e.id = r.container_element_id
+                                    WHERE container_report_id = ?`, [dataFormatted[i].id]);
+      const repairsFormatted = await showData('repairs', repairs, ['id', 'container_element_id' ,'name', 'state'])
+      /* consulta para traer los daños */
+      for (let i = 0; i < repairsFormatted.length; i++) {
+        let damages = await db.all(`SELECT rd.damage_id, d.name
+                                    FROM  repair_damage rd
+                                    INNER JOIN damage d on d.id = rd.damage_id
+                                    WHERE rd.repair_id = ?`, [repairsFormatted[i].id]);
+        const damagesFormatted = await showData('repair_damage', damages, ['id', 'name'])
+        repairsFormatted[i].repair_damage = damagesFormatted
+      }
+      dataFormatted[i].repairs = repairsFormatted
+    }
     return { data: dataFormatted };
   } catch (error) {
     console.log("error al traer los datos ", error);
@@ -26,7 +44,7 @@ const getRepairs = async () => {
 const getRepairDamage = async () => {
   try {
     const db = await openDatabase();
-    const data = await db.all("SELECT * FROM repair_damage", []);
+    const data = await db.all("SELECT * FROM repair_damage WHERE repair_id = 2", []);
     const dataFormatted = await showData('repair_damage', data)
     return { data: dataFormatted };
   } catch (error) {

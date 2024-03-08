@@ -1,17 +1,17 @@
 <template>
-  <page @loaded="InfoSelect">
-    <StackLayout backgroundColor="#F4F6F8">
+  <ScrollView>
+    <StackLayout @loaded="InfoSelect" backgroundColor="#F4F6F8">
       <StackLayout
         orientation="horizontal"
         style="background-color: #00acc1; text-align: center"
         height="70"
       >
         <Label
-          :text="'fa-tools' | fonticon"
+          :text="'fa-reply' | fonticon"
           fontSize="15"
           color="#F4F6F8"
           class="fas"
-          width="10%"
+          width="15%"
           @tap="$modal.close"
         ></Label>
         <Label
@@ -19,10 +19,18 @@
           fontSize="18"
           color="#F4F6F8"
           fontWeight="bold"
-          width="60%"
+          width="70%"
+        ></Label>
+        <Label
+          :text="'fa-tools' | fonticon"
+          fontSize="18"
+          color="#F4F6F8"
+          class="fas"
+          width="15%"
         ></Label>
       </StackLayout>
       <StackLayout
+        class="shadow"
         backgroundColor="#F4F6F8"
         margin="20"
         borderWidth="1"
@@ -40,6 +48,7 @@
         <FormGroupTextField
           label="UBICACION:"
           placeholder="ubicacion..."
+          validate="true"
           v-model="model.location"
         />
         <FormGroupTextField
@@ -55,17 +64,25 @@
           fontWeight="bold"
           style="color: #3c495e; width: 90%"
         />
-        <WrapLayout style="width: 90%">
+        <FlexboxLayout flexWrap="wrap" style="width: 90%">
           <check-box
             v-for="item in damages"
+            height="30"
             :key="item.id"
             :id="item.id"
             :text="item.name"
             :checked="isChecked"
             @checkedChange="onCheckedChange"
-            style="color: #3c495e; width: 30%"
+            style="color: #3c495e; width: 45%"
           />
-        </WrapLayout>
+        </FlexboxLayout>
+        <Image
+          margin="25"
+          backgroundColor="#D8E2E8"
+          class="nt-drawer__header-image fas"
+          src="~/assets/images/camara.png"
+          @tap="onTakePictureTap"
+        />
         <Label
           row="1"
           text="REPARACION :"
@@ -75,11 +92,12 @@
         />
         <Switch
           horizontalAlignment="left"
-          :class="model.state === true ? 'switchEnable' : 'switchDisable'"
+          :class="model.state"
           width="50"
+          height="auto"
           v-model="model.state"
         />
-        <Stripe color="#3c495e"/>
+        <Stripe color="#3c495e" margin="20" />
         <Button
           backgroundColor="#F4F6F8"
           color="#222a37"
@@ -92,7 +110,7 @@
         />
       </StackLayout>
     </StackLayout>
-  </page>
+  </ScrollView>
 </template>
 
 <script>
@@ -100,7 +118,11 @@ const { getDamage } = require("~/sqlite/database");
 import mixinMasters from "~/mixins/Master";
 import FormGroupTextField from "~/components/input/FormGroupTextField";
 import SelectField from "~/components/selectField/SelectField";
-import Stripe from '~/components/stripe/Stripe'
+import Stripe from "~/components/stripe/Stripe";
+import Alert from "~/alerts/Alerts";
+import { requestPermissions } from "@nativescript/camera";
+import * as camera from "@nativescript/camera";
+import { Image } from "@nativescript/core";
 
 export default {
   components: { FormGroupTextField, SelectField, Stripe },
@@ -124,6 +146,14 @@ export default {
       isChecked: null,
       damages: [],
       elements: [],
+      imagenCapturada: null,
+      saveToGallery: false,
+      allowsEditing: false,
+      keepAspectRatio: true,
+      width: 320,
+      height: 240,
+      cameraImage: null,
+      labelText: "",
     };
   },
 
@@ -147,21 +177,53 @@ export default {
     },
 
     async addRepair() {
-      /* console.log({ model: this.model }); */
-      this.$modal.close({ model: this.model, elements: this.elements });
+      try {
+        let confirmated = await Alert.info(
+          "¡¿Desea sequir añadiendo daños?!",
+          3
+        );
+        if (confirmated) {
+          this.$modal.close({
+            model: this.model,
+            elements: this.elements,
+          });
+        }
+      } catch (error) {}
     },
 
     async InfoSelect() {
+      console.log("damages items");
       try {
         this.loadingCharge(true);
         const res2 = await getDamage();
         this.damages = res2.data;
         this.elements = this.container_elements;
       } catch (error) {
-        console.log(error);
+        console.log("solucion de errores ", error);
       } finally {
         this.loadingCharge();
       }
+    },
+
+    onTakePictureTap() {
+      requestPermissions().then(
+        function success() {
+          camera.takePicture()
+          .then((imageAsset) => {
+            console.log("Result is an image asset instance");
+            var image = new Image();
+            image.src = imageAsset;
+          })
+          .catch((err) => {
+            console.log("Error -> " + err.message);
+          });
+        },
+        function failure() {
+          // permission request rejected
+          // ... tell the user ...
+          console.log("denegado");
+        }
+      );
     },
   },
 };
@@ -176,5 +238,9 @@ export default {
 .switchDisable {
   color: #e92222;
   background-color: #fad2d2;
+}
+
+.shadow {
+  box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 </style>

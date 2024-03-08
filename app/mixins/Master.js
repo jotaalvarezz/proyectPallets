@@ -11,18 +11,17 @@ const mixinMasters = {
   },
 
   computed: {
-    ...mapState(["instance"]),
+    ...mapState(["showError"]),
   },
 
   methods: {
-    ...mapMutations(["indicatorState"]),
+    ...mapMutations(["indicatorState", "setShowError"]),
 
     loadingCharge(activated = false) {
       if (activated) {
         this.$showModal(Loading, {
           fullscreen: false,
-          stretched: false,
-          dimAmount: 0.5,
+          animated:true,
           cancelable: false,
           props: {
             state: activated,
@@ -32,6 +31,19 @@ const mixinMasters = {
         this.indicatorState(activated)
       }
     },
+
+    showMessageError(){
+      if(!this.showError){
+        this.setShowError(true)
+        setTimeout(() => {
+          this.setShowError(false)
+        }, 10000);
+
+        return true;
+      }
+
+      return false;
+    }
   },
 };
 

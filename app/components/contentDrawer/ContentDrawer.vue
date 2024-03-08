@@ -94,7 +94,13 @@
             class="fas colorIcons"
             fontSize="22"
           />
-          <Label col="1" text="Firma" fontSize="15" class="p-l-10 colorIcons" />
+          <Label
+            col="1"
+            text="Reportes/Evidencias"
+            textWrap="true"
+            fontSize="15"
+            class="p-l-10 colorIcons"
+          />
         </GridLayout>
         <!-- <GridLayout columns="auto,*" class="nt-drawer__list-item" @tap="showProgressDialog">
                     <Label col="0" :text="'fa-trash-alt' | fonticon" class="fas colorIcons" fontSize="18" />
@@ -143,7 +149,9 @@ export default {
     async getShipsWarehouses() {
       try {
         //const shipsWarehouses = await axios.get('http://186.1.181.146:8811/mcp-backend/public/api/mobile/ships');
-        const shipsWarehouses = await axios.get('http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/ships');
+        const shipsWarehouses = await axios.get(
+          "http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/ships"
+        );
         /* const shipsWarehouses = await axios.get(
           "http://192.168.20.38/mcp-backend/public/api/mobile/ships"
         ); */
@@ -188,13 +196,13 @@ export default {
       try {
         this.$router.pushClear("generalpallets.index");
         utils.closeDrawer();
-       /*  const db = await structure() */
-                /* alert({
+        /*  const db = await structure() */
+        /* alert({
                     title:'Inicializando DB',
                     message:'Actualizando Tablas...',
                     okButtonText:"aceptar"
                 }) */
-                /* console.log(db) */
+        /* console.log(db) */
       } catch (error) {
         console.log("error intentando crear las tablas...");
       }

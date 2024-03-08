@@ -1,7 +1,11 @@
 <template>
   <page>
-    <Header :data="info" :icons="icons" :search="false" />
-    <MDTabs :selectedIndex="selectedIndex" tabsPosition="bottom">
+    <Header :search="false" />
+    <MDTabs
+      :selectedIndex="selectedIndex"
+      tabsPosition="bottom"
+      @selectedIndexChanged="onSelectedIndexChanged"
+    >
       <!-- The bottom tab UI is created via TabStrip (the containier) and TabStripItem (for each tab)-->
       <MDTabStrip>
         <MDTabStripItem>
@@ -20,14 +24,13 @@
 
       <!-- The number of TabContentItem components should corespond to the number of TabStripItem components -->
       <MDTabContentItem>
-
-        <GridLayout rows="*" style="background-color: red">
-          <Evidence />
+        <GridLayout>
+          <Evidence v-if="selectedIndex === 0"/>
         </GridLayout>
       </MDTabContentItem>
       <MDTabContentItem>
         <GridLayout>
-          <Label text="Account Page" class="h2 text-center"></Label>
+          <EvidenceList/>
         </GridLayout>
       </MDTabContentItem>
       <MDTabContentItem>
@@ -42,22 +45,24 @@
 <script>
 import Header from "~/components/header/Header.vue";
 import Evidence from "~/views/evidence/Evidence";
+import EvidenceList from "~/views/evidence/EvidenceList.vue";
 
 export default {
   components: {
     Header,
     Evidence,
+    EvidenceList,
   },
   data() {
     return {
-      selectedIndex: 1,
-      bandera: 0,
+      selectedIndex: 0,
+      bandera: 0
     };
   },
   methods: {
-    onSelectedIndexChanged(args) {
-      const index = args.value;
-      this.selectedIndex = index;
+    onSelectedIndexChanged(arg) {
+      const index = arg.object;
+      this.selectedIndex = index.selectedIndex;
     },
   },
 };

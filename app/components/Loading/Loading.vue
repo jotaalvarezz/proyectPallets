@@ -1,6 +1,6 @@
 <template>
     <Page>
-        <GridLayout rows="auto, auto" margin="15">
+        <GridLayout rows="auto, auto" columns="115" margin="40">
             <ActivityIndicator row="0" :busy="controlIndicator"  @busyChange="onBusyChanged" />
             <Label row="1" text="Cargando Informacion" style="text-align: center;" textWrap="true"/>
         </GridLayout>
@@ -29,10 +29,11 @@ export default {
 
         controlIndicator(){
             if(this.indicator == false){
-                /* console.log("dasctivate ",this.indicator) */
+                console.log("dasctivate ",this.indicator)
                 //this.indicatorState(this.indicator)
                 this.$modal.close()
             }else{
+                console.log("activate ",this.indicator)
                 return true
             }
         }

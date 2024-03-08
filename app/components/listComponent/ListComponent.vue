@@ -22,18 +22,42 @@
       ></Label>
     </StackLayout>
     <GridLayout rows="*" backgroundColor="#F4F6F8">
-      <ListView ref="listView" for="(item, index) in listOfItems">
+      <Label
+        textWrap="true"
+        class="info"
+        v-if="listOfItems.length == 0"
+        verticalAlignment="center"
+      >
+        <FormattedString>
+          <Span class="fas" text.decode="&#x1f6e0; " />
+          <Span :text="message" />
+        </FormattedString>
+      </Label>
+      <!-- Lista de daños -->
+      <ListView
+        ref="listView"
+        for="(item, index) in listOfItems"
+        v-if="listOfItems.length > 0"
+      >
         <v-template>
           <GridLayout columns="*,40">
             <StackLayout orientation="horizontal" col="0">
-              <Label
+              <!-- <Label
                 :text="icon | fonticon"
                 class="fas"
-                width="110"
+                width="auto"
                 fontSize="70"
                 color="#EAB14D"
-              />
+              /> -->
               <StackLayout class="heigth" width="100%">
+                <Label
+                  :text="icon | fonticon"
+                  class="fas text-center"
+                  width="auto"
+                  fontSize="70"
+                  color="#EAB14D"
+                  backgroundColor="#D8E2E8"
+                />
                 <Label
                   text="Daño:"
                   class="p-l-10 subTittle"
@@ -41,38 +65,32 @@
                   width="auto"
                   fontSize="18"
                 />
-                <StackLayout
-                  style="padding-top: 0px; padding-bottom: 0px"
-                  v-for="(info, index) in item"
-                  :key="index"
-                >
-                  <WrapLayout v-if="Array.isArray(info) && info.length > 0">
-                    <Label
-                      v-for="(subInfo, index) in info"
-                      :key="index"
-                      class="tag"
-                      :text="subInfo.text"
+                <Label textWrap="true">
+                  <FormattedString>
+                    <Span text="Elemento: " fontWeight="bold" fontSize="15" />
+                    <Span
+                      :text="elementName(item.container_element_id) + '\n'"
+                      fontSize="15"
                     />
-                  </WrapLayout>
-                  <Label
-                    v-else-if="typeof info === 'number'"
-                    :text="elementName(info)"
-                    style="padding-bottom: 0px; padding-top: 0px"
-                  />
-                  <Switch
-                    v-else-if="typeof info === 'boolean'"
-                    :class="info === true ? 'switchEnable':'switchDisable'"
-                    isEnabled="false"
-                    horizontalAlignment="right"
-                    width="50"
-                    :checked="info"
-                  />
-                  <Label
-                    v-else
-                    :text="info"
-                    style="padding-bottom: 0px; padding-top: 0px"
-                  />
-                </StackLayout>
+                    <Span text="Ubicacion: " fontWeight="bold" fontSize="15" />
+                    <Span :text="item.location + '\n'" fontSize="15" />
+                    <Span text="Posicion: " fontWeight="bold" fontSize="15" />
+                    <Span :text="item.position + '\n'" fontSize="15" />
+                    <Span
+                      text="Tipo de Daño:"
+                      fontWeight="bold"
+                      fontSize="15"
+                    />
+                  </FormattedString>
+                </Label>
+                <Stripe margin="0" />
+                <Tag :items="item.damage_id" labelIterator="text" />
+                <Stripe margin="0" />
+                <Switch
+                  width="50"
+                  v-model="item.state"
+                  horizontalAlignment="right"
+                />
               </StackLayout>
             </StackLayout>
             <Label
@@ -90,7 +108,15 @@
 </template>
 
 <script>
+import Tag from "~/components/tag/Tag.vue";
+import Stripe from "~/components/stripe/Stripe";
+
 export default {
+  components: {
+    Tag,
+    Stripe,
+  },
+
   props: {
     listOfItems: {
       type: Array,
@@ -116,6 +142,7 @@ export default {
 
   data() {
     return {
+      message: "No hay reparaciones para mostrar",
       isSwitchEnabled: false,
       elements: [],
       switche: false,
@@ -182,7 +209,7 @@ export default {
               id: 3,
               text: "OX - OXIDADO",
               checked: true,
-            }
+            },
           ],
           state: false,
         },
@@ -190,15 +217,13 @@ export default {
     };
   },
 
-  computed: {
-
-  },
+  computed: {},
 
   methods: {
     elementName(id) {
       const element = this.elements.find((prev) => prev.id === id);
-      if(element === null || element === undefined){
-        return id
+      if (element === null || element === undefined) {
+        return id;
       }
       return element.name;
     },

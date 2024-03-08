@@ -90,6 +90,7 @@ export default {
   methods: {
     onTextChange(args) {
       const newValue = args.object.text;
+      /* console.log("selected <=> ",newValue) */
       this.$emit("input", newValue);
     },
 
@@ -97,12 +98,13 @@ export default {
       this.$showModal(ListOptions, {
         props: {
           listOfItems: this.items,
-          item: this.value,
+          value: this.value,
           labelIterator: this.labelIterator
         },
       }).then((res) => {
         this.value = res.selectedItem;
-        this.$emit("value", this.value.id);
+        console.log("select <=> ",this.value)
+        this.$emit("value", this.value);
       });
     },
   },

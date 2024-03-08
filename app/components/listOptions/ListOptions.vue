@@ -45,7 +45,7 @@ export default {
       type: Array,
       required: true,
     },
-    item: {
+    value: {
       type: Array,
       required: true,
     },
@@ -69,9 +69,10 @@ export default {
   methods: {
     onItemTap(event) {
       this.selectedItem = event.item;
+      console.log("selected <=> ",this.selectedItem)
       this.$refs.listView.nativeView.refresh();
       this.$modal.close({
-        selectedItem: this.selectedItem
+        selectedItem: this.selectedItem.id
       });
     },
 
@@ -89,7 +90,7 @@ export default {
   },
 
   created() {
-    this.selectedItem = this.item
+    this.selectedItem = this.value
     /* this.$refs.listView.nativeView.refresh(); */
   },
 };

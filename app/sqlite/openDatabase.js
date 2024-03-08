@@ -22,6 +22,12 @@ export const showData = async (nameTable, data, keys = []) => {
       columnNames = keys
     }
 
+    if(data.length === 0){
+      return objectData;
+    }
+    /* console.log("columns ", columnNames)
+    console.log("data ", data[0].length)
+    console.log("data name ", data[0]) */
     if(columnNames.length !== data[0].length){
       throw new Error('verifique que las claves y la data coincidan...');
     }

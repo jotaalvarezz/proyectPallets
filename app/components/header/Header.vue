@@ -50,11 +50,14 @@ export default {
   props: {
     data: {
       type: Array,
-      required: true,
+      default: [],
     },
     icons: {
       type: Object,
-      required: true,
+      default: {
+        iconLogo: "fa-exclamation-triangle",
+        iconOperations: "fa-ellipsis-v",
+      },
     },
     operation1: {
       type: Function,

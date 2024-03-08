@@ -5,6 +5,7 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
   state: {
+    showError:false,
     shipsWarehouses:[],
     indicator:false,
     instance: {},
@@ -41,6 +42,10 @@ const store = new Vuex.Store({
 
     saveCollection(state, payload){
       state.collection = payload;
+    },
+
+    setShowError(state, payload){
+      state.showError = payload
     }
   },
 });

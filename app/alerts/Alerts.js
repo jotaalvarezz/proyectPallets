@@ -64,7 +64,8 @@ class Alert {
     });
   }
 
-  static info(msg, number){
+  static async info(msg, number){
+    let res = ''
     switch(number){
       case 1:
         return alert({
@@ -81,6 +82,14 @@ class Alert {
           okButtonText: "aceptar",
         });
       break;
+      case 3:
+        res = await confirm({
+          title: "Seguir",
+          message: msg,
+          okButtonText: "Aceptar",
+          cancelButtonText: "Cancelar",
+        });
+        return res;
     }
   }
 }
