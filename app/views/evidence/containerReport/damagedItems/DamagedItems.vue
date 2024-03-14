@@ -1,34 +1,34 @@
 <template>
-  <ScrollView>
-    <StackLayout @loaded="InfoSelect" backgroundColor="#F4F6F8">
-      <StackLayout
-        orientation="horizontal"
-        style="background-color: #00acc1; text-align: center"
-        height="70"
-      >
-        <Label
-          :text="'fa-reply' | fonticon"
-          fontSize="15"
-          color="#F4F6F8"
-          class="fas"
-          width="15%"
-          @tap="$modal.close"
-        ></Label>
-        <Label
-          text="Registro de Daños/Reparaciones"
-          fontSize="18"
-          color="#F4F6F8"
-          fontWeight="bold"
-          width="70%"
-        ></Label>
-        <Label
-          :text="'fa-tools' | fonticon"
-          fontSize="18"
-          color="#F4F6F8"
-          class="fas"
-          width="15%"
-        ></Label>
-      </StackLayout>
+  <StackLayout @loaded="InfoSelect" backgroundColor="#F4F6F8">
+    <StackLayout
+      orientation="horizontal"
+      style="background-color: #00acc1; text-align: center"
+      height="70"
+    >
+      <Label
+        :text="'fa-reply' | fonticon"
+        fontSize="15"
+        color="#F4F6F8"
+        class="fas"
+        width="15%"
+        @tap="$modal.close"
+      ></Label>
+      <Label
+        text="Registro de Daños/Reparaciones"
+        fontSize="18"
+        color="#F4F6F8"
+        fontWeight="bold"
+        width="70%"
+      ></Label>
+      <Label
+        :text="'fa-tools' | fonticon"
+        fontSize="18"
+        color="#F4F6F8"
+        class="fas"
+        width="15%"
+      ></Label>
+    </StackLayout>
+    <ScrollView>
       <StackLayout
         class="shadow"
         backgroundColor="#F4F6F8"
@@ -42,25 +42,27 @@
           :value="model.container_element_id"
           :items="elements"
           label="ELEMENTO:"
+          fontsize="14"
           icon="fa-toolbox"
           @value="model.container_element_id = $event"
         />
         <FormGroupTextField
           label="UBICACION:"
           placeholder="ubicacion..."
+          fontsize="14"
           validate="true"
           v-model="model.location"
         />
         <FormGroupTextField
           label="POSICION:"
           placeholder="posicion..."
+          fontsize="14"
           v-model="model.position"
         />
         <Label
           text="DAÑO:"
-          textWrap="true"
           marginTop="5"
-          fontSize="18"
+          fontsize="14"
           fontWeight="bold"
           style="color: #3c495e; width: 90%"
         />
@@ -71,24 +73,41 @@
             :key="item.id"
             :id="item.id"
             :text="item.name"
+            fontsize="14"
             :checked="isChecked"
             @checkedChange="onCheckedChange"
             style="color: #3c495e; width: 45%"
           />
         </FlexboxLayout>
-        <Image
+        <!-- <Label
           margin="25"
           backgroundColor="#D8E2E8"
           class="nt-drawer__header-image fas"
-          src="~/assets/images/camara.png"
+          fontSize="55"
+          :text="'fa-camera' | fonticon"
+          color="#EAB14D"
           @tap="onTakePictureTap"
+        /> -->
+        <FloatingButton
+          style="margin: 60px"
+          :icon="'fa-camera'"
+          alignX="center"
+          iconSize="md"
+          :method="onTakePictureTap"
+        />
+        <Image
+          ref="imageRef"
+          v-if="cameraImage.length > 0"
+          margin="25"
+          backgroundColor="#D8E2E8"
+          :src="cameraImage"
+          loadMode="sync"
         />
         <Label
-          row="1"
-          text="REPARACION :"
-          fontSize="18"
+          text="REPARACION:"
+          fontsize="14"
           fontWeight="bold"
-          style="color: #3c495e; margin-top: 25px; width: 90%"
+          style="color: #3c495e; width: 90%"
         />
         <Switch
           horizontalAlignment="left"
@@ -109,8 +128,8 @@
           borderRadius="30"
         />
       </StackLayout>
-    </StackLayout>
-  </ScrollView>
+    </ScrollView>
+  </StackLayout>
 </template>
 
 <script>
@@ -122,10 +141,11 @@ import Stripe from "~/components/stripe/Stripe";
 import Alert from "~/alerts/Alerts";
 import { requestPermissions } from "@nativescript/camera";
 import * as camera from "@nativescript/camera";
-import { Image } from "@nativescript/core";
+import FloatingButton from "~/components/floatingButton/FloatingButton.vue";
+import { ImageSource, knownFolders, path } from "@nativescript/core";
 
 export default {
-  components: { FormGroupTextField, SelectField, Stripe },
+  components: { FormGroupTextField, SelectField, Stripe, FloatingButton },
   props: {
     container_elements: {
       type: Array,
@@ -147,12 +167,12 @@ export default {
       damages: [],
       elements: [],
       imagenCapturada: null,
-      saveToGallery: false,
+      saveToGallery: true,
       allowsEditing: false,
       keepAspectRatio: true,
       width: 320,
       height: 240,
-      cameraImage: null,
+      cameraImage: "",
       labelText: "",
     };
   },
@@ -206,24 +226,38 @@ export default {
     },
 
     onTakePictureTap() {
-      requestPermissions().then(
-        function success() {
-          camera.takePicture()
-          .then((imageAsset) => {
-            console.log("Result is an image asset instance");
-            var image = new Image();
-            image.src = imageAsset;
-          })
-          .catch((err) => {
-            console.log("Error -> " + err.message);
-          });
-        },
-        function failure() {
-          // permission request rejected
-          // ... tell the user ...
-          console.log("denegado");
+      requestPermissions().then(this.takePhoto(), function failure() {
+        // permission request rejected
+        // ... tell the user ...
+      });
+    },
+
+    async takePhoto() {
+      const options = {
+        saveToGallery: this.saveToGallery,
+        allowsEditing: this.allowsEditing,
+        keepAspectRatio: this.keepAspectRatio,
+        width: this.width,
+        height: this.height,
+      };
+
+      try {
+        const imageAsset = await camera.takePicture(options);
+        let pathSplit = imageAsset._android.split("/");
+        let photo = pathSplit[pathSplit.length - 1];
+        const imageSource = await ImageSource.fromAsset(imageAsset);
+        const folderPath = knownFolders.documents().path;
+        const filePath = path.join(folderPath, photo);
+        const saved = imageSource.saveToFile(filePath, "jpg");
+        this.cameraImage = filePath;
+        if (saved) {
+          console.log("Gallery: " + this._dataItem);
+          console.log("Saved: " + filePath);
+          console.log("Image saved successfully!");
         }
-      );
+      } catch (error) {
+        console.log("Error -> " + error.message);
+      }
     },
   },
 };

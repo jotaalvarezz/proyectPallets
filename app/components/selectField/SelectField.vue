@@ -13,7 +13,7 @@
       padding="10"
       borderRadius="2"
       @tap="infoSelect"
-      style="background-color: #c0c9d7; width: 90%"
+      style="background-color: #c0c9d7; width: 90%; opacity: 0.9;"
     >
       <Label
         :text="icon | fonticon"
@@ -52,7 +52,7 @@ export default {
     },
     fontsize: {
       type: Number,
-      default: 18,
+      default: 14,
     },
     icon: {
       type: String,

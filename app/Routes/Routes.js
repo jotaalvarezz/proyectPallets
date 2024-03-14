@@ -7,8 +7,8 @@ import Ship from '~/views/ships/Ships'
 import GeneralPallets from '~/views/generalPallets/GeneralPallets.vue'
 import Pallets from '~/views/pallets/Pallets'
 import CreateEditPallet from '~/views/pallets/CreateEditPallet/CreateEditPallet'
-import Evidence from '~/views/evidence/Evidence'
-import NavViews from '~/views/tabview/NavViews'
+import Evidence from '~/views/evidence/Evidence.vue'
+import NavViews from '~/views/evidence/tabview/NavViews.vue'
 
 Vue.use(NSVueRouter)
 
@@ -39,9 +39,20 @@ const routes = [
     meta: { guest: true }
   },
   {
-    name: 'evidence.index',
+    name: 'report.index',
     component: NavViews,
     meta: { guest: true }
+  },
+  {
+    name: 'evidence.index',
+    component: Evidence,
+    meta: { guest: true },
+    /* children: [
+      {
+        name: 'ship.details',
+        component: ShipDetails // Componente para los detalles de un barco
+      }
+    ] */
   },
 ]
 

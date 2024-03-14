@@ -32,7 +32,7 @@
           <Label
             col="1"
             text="Inicio"
-            fontSize="17"
+            fontSize="14"
             class="p-l-10 colorIcons"
           />
         </GridLayout>
@@ -54,7 +54,7 @@
           <Label
             col="1"
             text="Pallets"
-            fontSize="17"
+            fontSize="14"
             class="p-l-10 colorIcons"
           />
         </GridLayout>
@@ -76,7 +76,7 @@
           <Label
             col="1"
             text="Actualizar"
-            fontSize="17"
+            fontSize="14"
             class="p-l-10 colorIcons"
           />
         </GridLayout>
@@ -98,7 +98,7 @@
             col="1"
             text="Reportes/Evidencias"
             textWrap="true"
-            fontSize="15"
+            fontSize="14"
             class="p-l-10 colorIcons"
           />
         </GridLayout>

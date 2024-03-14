@@ -1,37 +1,66 @@
 <template>
   <Page>
     <Header :search="false" />
-    <grid-layout rows="55, *" backgroundColor="#F4F6F8">
-      <StackLayout class="header" row="0">
-        <!-- <Label text="Bodegas de Barco" class="tittle" fontSize="18" textWrap="true" /> -->
-        <Label :text="'Bodegas '+shipName" class="tittle" fontSize="18" textWrap="true" />
-      </StackLayout>
+    <GridLayout rows="auto, auto ,*" backgroundColor="#F4F6F8">
+      <Label
+        row="0"
+        :text="'Bodegas ' + shipName"
+        class="tittle text-center"
+        fontSize="18"
+        fontWeight="bold"
+        textWrap="true"
+      />
+      <Stripe row="1" color="#3c495e" />
       <ListView for="(item, index) in warehouses" @itemTap="onItemTap" row="2">
         <v-template>
           <GridLayout columns="* ,40" @longPress="operations">
             <StackLayout orientation="horizontal" @tap="navigate(item)" col="0">
-              <Label :text="'fa-warehouse' | fonticon" class="fas" width="110" fontSize="70" color="#0096b7" />
+              <Label
+                backgroundColor="#D8E2E8"
+                :text="'fa-warehouse' | fonticon"
+                class="nt-drawer__header-image fas"
+                fontSize="45"
+                color="#EAB14D"
+              />
+              <!-- color="#0096b7" -->
               <StackLayout class="heigth">
-                <Label text="Bodega:" class="p-l-10 subTittle" textWrap="true" width="auto" fontSize="18" />
-                <Label :text="item.text" class="p-l-10 colorIcons" width="auto" fontSize="18" />
+                <Label
+                  text="Bodega:"
+                  class="p-l-10 subTittle"
+                  textWrap="true"
+                  width="auto"
+                  fontSize="14"
+                />
+                <Label
+                  :text="item.text"
+                  class="p-l-10 colorIcons"
+                  width="auto"
+                  fontSize="14"
+                />
               </StackLayout>
             </StackLayout>
-            <Label :text="'fa-times' | fonticon" class="fas colorMinus" fontSize="18" col="1"
-              @tap="deleteRow(item.id, index)" />
+            <Label
+              :text="'fa-times' | fonticon"
+              class="fas colorMinus"
+              fontSize="15"
+              col="1"
+              @tap="deleteRow(item.id, index)"
+            />
           </GridLayout>
         </v-template>
       </ListView>
       <FloatingButton row="2" :icon="'fa-plus'" :method="openModal" />
-    </grid-layout>
+    </GridLayout>
   </Page>
 </template>
 
 <script>
-import Alert from '~/alerts/Alerts';
-import Header from '~/components/header/Header.vue'
+import Alert from "~/alerts/Alerts";
+import Header from "~/components/header/Header.vue";
 import FloatingButton from "~/components/floatingButton/FloatingButton.vue";
-import CreateEditWarehouse from './createEditWarehouse/CreateEditWarehouse.vue';
-const { getWarehouses, deleteWarehouse } = require('~/sqlite/database')
+import CreateEditWarehouse from "./createEditWarehouse/CreateEditWarehouse.vue";
+import Stripe from "~/components/stripe/Stripe";
+const { getWarehouses, deleteWarehouse } = require("~/sqlite/database");
 import { mapState, mapMutations } from "vuex";
 
 export default {
@@ -39,52 +68,54 @@ export default {
   components: {
     FloatingButton,
     /*  CreateEditShip, */
-    Header
+    Stripe,
+    Header,
   },
   data() {
     return {
       valor: true,
       warehouses: [],
-      shipName: ''
+      shipName: "",
     };
   },
   computed: {
-    ...mapState(['item', 'ship'])
+    ...mapState(["item", "ship"]),
   },
   methods: {
-    ...mapMutations(['saveItem']),
+    ...mapMutations(["saveItem"]),
     onItemTap() {
       console.log("success");
     },
 
     navigate(item) {
-      this.saveItem(item)
-      this.$router.push('pallets.index')
+      this.saveItem(item);
+      this.$router.push("pallets.index");
     },
 
     openModal() {
       this.$showModal(CreateEditWarehouse, {
-        fullscreen: true, props: {
-          textBar: 'Nueva Bodega',
-          textHint1: 'Nombre de Bodega...',
+        fullscreen: true,
+        props: {
+          textBar: "Nueva Bodega",
+          textHint1: "Nombre de Bodega...",
           shipName: this.shipName,
           item: this.item,
           update: false,
-        }
+        },
       }).then(() => {
-        this.getWarehouses()
-      })
+        this.getWarehouses();
+      });
     },
 
     async deleteRow(id, index) {
-      let confirmated = await Alert.Danger(1)
+      let confirmated = await Alert.Danger(1);
       if (confirmated) {
         try {
-          const record = await deleteWarehouse(id)
-          this.warehouses.splice(index, 1)
-          console.log(record)
+          const record = await deleteWarehouse(id);
+          this.warehouses.splice(index, 1);
+          console.log(record);
         } catch (error) {
-          console.log("eleminacion fallida ", error)
+          console.log("eleminacion fallida ", error);
         }
       }
     },
@@ -95,45 +126,41 @@ export default {
         btnShip.addEventListener('mouseup', (e)=>{
           console.log('hola mouseup')
         }) */
-        console.log('por fuera')
+        console.log("por fuera");
       } catch (error) {
-        console.log('hubo un error con el evento ', error)
+        console.log("hubo un error con el evento ", error);
       }
     },
 
     async getWarehouses() {
       try {
-        this.warehouses = []
-        const warehouses = await getWarehouses(this.ship.id)
-        console.log(warehouses)
+        this.warehouses = [];
+        const warehouses = await getWarehouses(this.ship.id);
+        console.log(warehouses);
         for (let i = 0; i < warehouses.length; i++) {
-          this.warehouses.push(
-            {
-              id: warehouses[i][0],
-              text: warehouses[i][1],
-              warehouse_id: warehouses[i][2],
-              ship_id: warehouses[i][3],
-
-            }
-          )
+          this.warehouses.push({
+            id: warehouses[i][0],
+            text: warehouses[i][1],
+            warehouse_id: warehouses[i][2],
+            ship_id: warehouses[i][3],
+          });
         }
       } catch (error) {
-        console.error("error al traer lo datos ", error)
+        console.error("error al traer lo datos ", error);
       }
-    }
+    },
   },
 
   created() {
-    console.log("en warehouse ", this.item)
-    this.shipName = this.item.text
-    this.getWarehouses()
+    console.log("en warehouse ", this.item);
+    this.shipName = this.item.text;
+    this.getWarehouses();
   },
   /* components: { GridLayout }, */
 };
 </script>
 <style lang="scss">
-
-.heigth{
+.heigth {
   height: 70%;
 }
 
@@ -148,13 +175,13 @@ export default {
 }
 
 .header {
-  background-color: #F4F6F8;
+  background-color: #f4f6f8;
   text-align: center;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
 }
 
-.tittle{
-  color:#3c495e;
+.tittle {
+  color: #3c495e;
   /* text-shadow: 2px 12px 5px rgba(0, 0, 0, 0.5); */
   margin: 10;
 }

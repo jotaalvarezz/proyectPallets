@@ -35,11 +35,11 @@
             />
             <StackLayout orientation="horizontal" @tap="showInfo(item)" col="1">
               <Label
+                backgroundColor="#D8E2E8"
                 :text="'fa-pallet' | fonticon"
-                class="fas"
-                width="110"
-                fontSize="70"
-                color="#0096b7"
+                class="nt-drawer__header-image fas"
+                fontSize="45"
+                color="#EAB14D"
               />
               <StackLayout class="heigth">
                 <Label
@@ -47,21 +47,21 @@
                   class="p-l-10 subTittle"
                   textWrap="true"
                   width="auto"
-                  fontSize="18"
+                  fontSize="14"
                 />
                 <Label
                   :text="item.text"
                   class="p-l-10 colorIcons"
                   textWrap="true"
                   width="auto"
-                  fontSize="18"
+                  fontSize="14"
                 />
               </StackLayout>
             </StackLayout>
             <Label
               :text="'fa-ellipsis-v' | fonticon"
               class="fas iconOptions"
-              fontSize="18"
+              fontSize="15"
               col="2"
               @tap="navigate(item, index)"
             />

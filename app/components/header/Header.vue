@@ -1,44 +1,51 @@
 <template>
-  <ActionBar backgroundColor="#00acc1">
-    <GridLayout columns="50, *">
-      <StackLayout
-        col="1"
-        orientation="horizontal"
-        class="action-bar-title cardtitle"
-        colSpan="2"
-        style="margin-left: 27%"
-      >
-        <Image
-          src="~/assets/images/logobarco.png"
-          width="40"
-          height="40"
-          verticalAlignment="center"
-        />
-        <Label
-          text="WSP"
-          fontSize="24"
-          color="#F4F6F8"
-          fontWeight="bold"
-          verticalAlignment="center"
-        />
-      </StackLayout>
+  <ActionBar backgroundColor="#00acc1" flat="true">
+    <GridLayout
+      rows="*"
+      columns="auto, 3*, auto"
+      height="100%"
+    >
+      <!-- Contenido de tu GridLayout aquí -->
       <Label
+        row="0"
         col="0"
-        class="fas"
+        class="fas text-left"
         text.decode="&#xf0c9;"
         color="white"
         @tap="openDrawer"
-        fontSize="25"
+        fontSize="20"
+      />
+      <StackLayout
+        row="0"
+        col="1"
+        style="width: 100%"
+      >
+        <Image
+          src="~/assets/images/logobarco.png"
+          width="30"
+          height="30"
+          horizontalAlignment="center"
+        />
+        <Label
+          text="WSP"
+          fontSize="12"
+          padding="0"
+          color="#F4F6F8"
+          fontWeight="bold"
+          horizontalAlignment="center"
+        />
+      </StackLayout>
+      <Label
+        v-show="search"
+        row="0"
+        col="2"
+        class="fas iconSearch"
+        :text="'fa-search' | fonticon"
+        color="white"
+        fontSize="20"
+        @tap="modalSearch"
       />
     </GridLayout>
-    <!-- <ActionItem android.systemIcon="ic_menu_camera" ios.position="left" text="scan code" @tap="readCode" /> -->
-    <ActionItem
-      v-show="search"
-      android.systemIcon="ic_menu_search"
-      ios.position="right"
-      text="delete"
-      @tap="modalSearch"
-    />
   </ActionBar>
 </template>
 
@@ -88,9 +95,7 @@ export default {
     },
   },
 
-  created() {
-
-  },
+  created() {},
 };
 </script>
 
@@ -106,5 +111,11 @@ export default {
   font-size: 20;
   horizontal-align: center;
   vertical-align: center;
+}
+
+.iconSearch {
+  padding-right: 0px;
+  margin-left: 5px;
+  opacity: 0.8;
 }
 </style>

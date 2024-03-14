@@ -1,5 +1,5 @@
 <template>
-  <page>
+  <Page>
     <Header :search="false" />
     <MDTabs
       :selectedIndex="selectedIndex"
@@ -25,12 +25,12 @@
       <!-- The number of TabContentItem components should corespond to the number of TabStripItem components -->
       <MDTabContentItem>
         <GridLayout>
-          <Evidence v-if="selectedIndex === 0"/>
+          <ContainerReport v-if="selectedIndex === 0"/>
         </GridLayout>
       </MDTabContentItem>
       <MDTabContentItem>
         <GridLayout>
-          <EvidenceList/>
+          <ContainerReportList/>
         </GridLayout>
       </MDTabContentItem>
       <MDTabContentItem>
@@ -39,19 +39,20 @@
         </GridLayout>
       </MDTabContentItem>
     </MDTabs>
-  </page>
+  </Page>
 </template>
 
 <script>
 import Header from "~/components/header/Header.vue";
-import Evidence from "~/views/evidence/Evidence";
-import EvidenceList from "~/views/evidence/EvidenceList.vue";
+import ContainerReport from "~/views/evidence/containerReport/ContainerReport.vue";
+import ContainerReportList from "~/views/evidence/containerReport/ContainerReportList.vue";
 
 export default {
+  name: "Reports",
   components: {
     Header,
-    Evidence,
-    EvidenceList,
+    ContainerReport,
+    ContainerReportList,
   },
   data() {
     return {

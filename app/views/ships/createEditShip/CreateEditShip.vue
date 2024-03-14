@@ -1,42 +1,130 @@
 <template>
   <Page>
     <StackLayout backgroundColor="#F4F6F8">
-      <StackLayout orientation="horizontal" style="background-color: #00acc1; text-align: center" height="70">
-        <Label :text="'fa-reply' | fonticon" fontSize="18" class="fas" color="#F4F6F8" width="20%"
-          @tap="$modal.close"></Label>
-        <Label text="Registro de Barco" fontSize="18" color="#F4F6F8" fontWeight="bold" width="60%"></Label>
-        <!-- <Image src="~/assets/images/logobarco.png" stretch="aspectFit" width="60%"/> -->
-        <!-- <Label text="Nuevo Barco" width="20%"></Label> -->
-      </StackLayout>
-      <card-view margin="10" elevation="40" radius="15">
-        <GridLayout rows="auto,auto,auto,auto" padding="30">
-          <Image row="0" src="~/assets/images/logobarco.png" stretch="aspectFit" height="30%" width="60%" />
-          <TextField row="1" v-model="model.nameShip" padding="10" hint="Nombre de Barco..." height="45" fontSize="18"
-            boder="none" style="
+      <GridLayout
+        height="65"
+        rows="*"
+        columns="50, 3*, 50"
+        backgroundColor="#00acc1"
+      >
+        <Label
+          row="0"
+          col="0"
+          :text="'fa-reply' | fonticon"
+          fontSize="16"
+          class="fas text-center"
+          color="#F4F6F8"
+          @tap="$modal.close"
+        />
+        <Label
+          row="0"
+          col="1"
+          class="text-center"
+          text="Registro de Barco"
+          fontSize="15"
+          color="#F4F6F8"
+          fontWeight="bold"
+        ></Label>
+      </GridLayout>
+      <GridLayout
+        rows="auto,auto,auto,auto,auto"
+        class="shadow"
+        backgroundColor="#F4F6F8"
+        margin="20"
+        borderWidth="1"
+        borderColor="#c0c9d7"
+        borderRadius="5"
+        padding="30"
+      >
+        <Image
+          row="0"
+          src="~/assets/images/logobarco.png"
+          stretch="aspectFit"
+          height="30%"
+          width="60%"
+        />
+        <FormGroupTextField
+          row="1"
+          label="Barco:"
+          placeholder="nombre de barco..."
+          fontsize="14"
+          v-model="model.nameShip"
+          :enable="model.action == false ? 'true' : 'false'"
+        />
+        <!-- <TextField
+            row="1"
+            v-model="model.nameShip"
+            padding="10"
+            hint="Nombre de Barco..."
+            height="45"
+            fontSize="18"
+            boder="none"
+            style="
               placeholder-color: #3c495e;
               color: #3c495e;
               background-color: #c0c9d7;
               width: 80%;
             "
-            :isEnabled="model.action == false ? 'true' : 'false'" />
-
-          <TextField row="2" padding="10" v-model="model.journey" hint="Viaje..." height="45" fontSize="18" boder="none"
+            :isEnabled="model.action == false ? 'true' : 'false'"
+          /> -->
+        <FormGroupTextField
+          row="2"
+          label="Viaje:"
+          placeholder="viaje..."
+          fontsize="14"
+          v-model="model.journey"
+        />
+        <!-- <TextField
+            row="2"
+            padding="10"
+            v-model="model.journey"
+            hint="Viaje..."
+            height="45"
+            fontSize="18"
+            boder="none"
             style="
-              placeholder-color : #3c495e;
+              placeholder-color: #3c495e;
               color: #3c495e;
               background-color: #c0c9d7;
               width: 80%;
-            " />
-          <!-- Boton para Crear -->
-          <Button v-if="model.action == false" row="3" text="Agregar" backgroundColor="#F4F6F8" color="#222a37"
-            fontSize="22" @tap="addShip" borderWidth="1" borderColor="#222a37" borderRadius="30" marginTop="14" />
-          <!-- ******************* -->
-          <!-- Boton para Editar -->
-          <Button v-if="model.action == true" row="3" text="Actualizar" backgroundColor="#F4F6F8" color="#222a37"
-            fontSize="22" @tap="updateShip" borderWidth="1" borderColor="#222a37" borderRadius="30" marginTop="14" />
-          <!-- ******************* -->
-        </GridLayout>
-      </card-view>
+            "
+          /> -->
+        <Stripe
+          row="3"
+          class="stripe"
+          color="#3c495e"
+          marginTop="20"
+          marginBottom="20"
+        />
+        <!-- Boton para Crear -->
+        <Button
+          v-if="model.action == false"
+          row="4"
+          text="Agregar"
+          backgroundColor="#F4F6F8"
+          color="#222a37"
+          style="width: 80%; margin-bottom: 20px"
+          @tap="addShip"
+          borderWidth="1"
+          borderColor="#222a37"
+          borderRadius="30"
+        />
+        <!-- ******************* -->
+        <!-- Boton para Editar -->
+        <Button
+          v-if="model.action == true"
+          row="4"
+          text="Actualizar"
+          backgroundColor="#F4F6F8"
+          color="#222a37"
+          style="width: 80%; margin-bottom: 20px"
+          @tap="updateShip"
+          borderWidth="1"
+          borderColor="#222a37"
+          borderRadius="30"
+        />
+        <!-- ******************* -->
+      </GridLayout>
     </StackLayout>
   </Page>
 </template>
@@ -44,12 +132,16 @@
 import { fonticon } from "nativescript-fonticon";
 import Header from "~/components/header/Header.vue";
 import ListOptions from "~/components/listOptions/ListOptions.vue";
+import FormGroupTextField from "~/components/input/FormGroupTextField";
+import Stripe from "~/components/stripe/Stripe";
 const { insertShip, getShips, updateShip } = require("~/sqlite/database");
 import Alerts from "~/alerts/Alerts";
 
 export default {
   components: {
     Header,
+    FormGroupTextField,
+    Stripe,
   },
   props: {
     textBar: {
@@ -57,7 +149,7 @@ export default {
       required: true,
     },
     info: {
-      type: Object
+      type: Object,
     },
   },
   data() {
@@ -85,16 +177,16 @@ export default {
 
     async addShip() {
       try {
-        console.log(this.model.nameShip)
+        console.log(this.model.nameShip);
         if (this.model.nameShip.length > 0) {
           const ship = await insertShip(this.model);
           console.log("save ", ship);
-          const newShip = this.model
+          const newShip = this.model;
           this.model.nameShip = "";
           this.model.journey = "";
-          this.$modal.close()
+          this.$modal.close();
         } else {
-          Alerts.info("La campo nombre de Barco vacio...", 1)
+          Alerts.info("La campo nombre de Barco vacio...", 1);
         }
       } catch (error) {
         console.log("al insertar error ", error);
@@ -102,27 +194,27 @@ export default {
     },
 
     async updateShip() {
-      let confirmated = await Alerts.confirmation()
+      let confirmated = await Alerts.confirmation();
       if (confirmated) {
         try {
           if (this.model.journey.length > 0) {
             const ship = await updateShip(this.model);
-            console.log("update ", ship)
-            this.$modal.close()
-          }else{
-            Alerts.info("Debe llenar el campo ' Viaje... ' ", 1)
+            console.log("update ", ship);
+            this.$modal.close();
+          } else {
+            Alerts.info("Debe llenar el campo ' Viaje... ' ", 1);
           }
         } catch (error) {
-          console.error("Hubo un error al editar ", error)
+          console.error("Hubo un error al editar ", error);
         }
       }
-    }
+    },
   },
 
   created() {
-    this.model = this.info
-    this.model.nameShip = this.model.text
-  }
+    this.model = this.info;
+    this.model.nameShip = this.model.text;
+  },
 };
 </script>
 <style>
@@ -134,5 +226,13 @@ export default {
 
 .btn:focus {
   background-color: red;
+}
+
+.shadow {
+  box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.stripe {
+  width: 80%;
 }
 </style>

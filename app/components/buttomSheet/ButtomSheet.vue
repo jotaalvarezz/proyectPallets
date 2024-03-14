@@ -1,36 +1,100 @@
 <template>
-  <StackLayout style="text-align: center" height="300" backgroundColor="#F4F6F8">
+  <StackLayout backgroundColor="#F4F6F8"
+    ><!-- backgroundColor="#F4F6F8" -->
     <!-- <ScrollView> -->
-    <GridLayout rows="auto,auto,auto" margin="15" padding="5" style="width: 100%; height:65%;">
-      <!-- **** -->
-      <GridLayout id="1" row="0" v-if="generalOptions" columns="*,50,*,*" @tap="infoItem" @touch="onTouch(1)"
-                  height="33%" width="100%" class="hover-label"
-                  :class="isHovered && itemSelector == 1 ? 'hovered' : ''">
-        <Label col="1" :text="'fa-eye' | fonticon" class="fas iconDetalles" fontSize="30"/>
-        <Label col="2" text="Detalles" fontSize="22" class="p-l-10 colorIcons"
-              :class="isHovered && itemSelector == 1 ? 'underline' : ''"/>
-      </GridLayout>
-      <!-- **** -->
-      <GridLayout id="2" row="1" columns="*,50,*,*" @tap="navigate()" height="33%" width="100%"
-                  @touch="onTouch(2)" class="hover-label"
-                  :class="isHovered && itemSelector == 2 ? 'hovered' : ''">
-        <Label col="1" :text="'fa-edit' | fonticon" class="fas iconEdit" fontSize="30"/>
-        <Label col="2" text="Editar" fontSize="22" class="p-l-10 colorIcons"
-              :class="isHovered && itemSelector == 2 ? 'underline' : ''"/>
-      </GridLayout>
-      <!-- **** -->
-      <GridLayout id="3" row="2" columns="*,50,*,*" height="33%" width="100%" @tap="deleteItem"
-                  style="text-align: center" @touch="onTouch(3)" class="hover-label"
-                  :class="isHovered && itemSelector == 3 ? 'hovered' : ''">
-        <Label col="1" :text="'fa-times' | fonticon" class="fas iconDelete" fontSize="30"/>
-        <Label col="2" text="Eliminar" fontSize="22" class="p-l-10 colorIcons"
-              :class="isHovered && itemSelector == 3 ? 'underline' : ''"/>
-      </GridLayout>
+    <!-- <GridLayout rows="auto,auto,auto" margin="15" padding="5" style="width: 100%; height:65%;" backgroundColor="#3c495e"> -->
+    <!-- **** -->
+    <GridLayout
+      id="1"
+      row="0"
+      v-if="generalOptions"
+      columns="*,50,120,*"
+      @tap="infoItem"
+      @touch="onTouch(1)"
+      height="70"
+      width="100%"
+      class="hover-label"
+      :class="isHovered && itemSelector == 1 ? 'hovered' : ''"
+    >
+      <Label
+        col="1"
+        :text="'fa-eye' | fonticon"
+        class="fas iconDetalles"
+        fontSize="20"
+      />
+      <Label
+        col="2"
+        text="Detalles"
+        fontSize="14"
+        class="colorIcons"
+        :class="isHovered && itemSelector == 1 ? 'underline' : ''"
+      />
     </GridLayout>
-    <GridLayout columns="*" style="height: 25%;">
-      <Button text="CERRAR" backgroundColor="#F4F6F8" color="#222a37" fontSize="22" @tap="$closeBottomSheet()"
-        borderWidth="1" borderColor="#222a37" borderRadius="30" />
+    <!-- **** -->
+    <GridLayout
+      id="2"
+      row="1"
+      columns="*,50,120,*"
+      @tap="navigate()"
+      height="70"
+      width="100%"
+      @touch="onTouch(2)"
+      class="hover-label"
+      :class="isHovered && itemSelector == 2 ? 'hovered' : ''"
+    >
+      <Label
+        col="1"
+        :text="'fa-redo' | fonticon"
+        class="fas iconEdit"
+        fontSize="20"
+      />
+      <Label
+        col="2"
+        text="Editar"
+        fontSize="14"
+        class="colorIcons"
+        :class="isHovered && itemSelector == 2 ? 'underline' : ''"
+      />
     </GridLayout>
+    <!-- **** -->
+    <GridLayout
+      id="3"
+      row="2"
+      columns="*,50,120,*"
+      height="70"
+      width="100%"
+      @tap="deleteItem"
+      @touch="onTouch(3)"
+      class="hover-label"
+      :class="isHovered && itemSelector == 3 ? 'hovered' : ''"
+    >
+      <Label
+        col="1"
+        :text="'fa-times' | fonticon"
+        class="fas iconDelete"
+        fontSize="20"
+      />
+      <Label
+        col="2"
+        text="Eliminar"
+        fontSize="14"
+        class="colorIcons"
+        :class="isHovered && itemSelector == 3 ? 'underline' : ''"
+      />
+    </GridLayout>
+    <!-- </GridLayout> -->
+    <!-- <GridLayout columns="*" style="height: 25%;"> -->
+    <Button
+      text="CERRAR"
+      row="3"
+      backgroundColor="#F4F6F8"
+      color="#222a37"
+      @tap="$closeBottomSheet()"
+      borderWidth="1"
+      borderColor="#222a37"
+      borderRadius="30"
+    />
+    <!-- </GridLayout> -->
     <!-- </ScrollView> -->
   </StackLayout>
 </template>
@@ -41,67 +105,67 @@ import CreateEditPallet from "~/views/pallets/CreateEditPallet/CreateEditPallet.
 import Alert from "~/alerts/Alerts";
 
 export default {
-  name: 'ButtonSheet',
+  name: "ButtonSheet",
   props: {
-    generalOptions:{
-      type: Boolean
+    generalOptions: {
+      type: Boolean,
     },
     item: {
       type: Object,
     },
     getInfo: {
-      type: Function
+      type: Function,
     },
     deleteRow: {
-      type: Function
+      type: Function,
     },
-    component:{
-      type: Object
+    component: {
+      type: Object,
     },
     componentInfo: {
-      type: Object
-    }
+      type: Object,
+    },
   },
   data() {
     return {
       info: {},
       isHovered: false,
-      itemSelector: 0
-    }
+      itemSelector: 0,
+    };
   },
   methods: {
-    infoItem(){
-      this.$showModal(this.componentInfo, { props: { info: this.item } })
+    infoItem() {
+      this.$showModal(this.componentInfo, { props: { info: this.item } });
     },
 
     navigate() {
-      this.$closeBottomSheet()
-      this.$showModal(this.component, { fullscreen: true, props: { info: this.item } })
+      this.$closeBottomSheet();
+      this.$showModal(this.component, {
+        fullscreen: true,
+        props: { info: this.item },
+      });
       //this.$router.push('editpallets.index')
       /* this.$closeBottomSheet()
       this.$navigateTo(CreateEditPallet) */
     },
 
-    onTouch(n){
-        this.itemSelector = n
-        if(!this.isHovered){
-            this.isHovered = true;
-        }else{
-            this.isHovered = false;
-        }
+    onTouch(n) {
+      this.itemSelector = n;
+      if (!this.isHovered) {
+        this.isHovered = true;
+      } else {
+        this.isHovered = false;
+      }
     },
 
-    deleteItem(){
-      this.deleteRow()
-      this.$closeBottomSheet()
+    deleteItem() {
+      this.deleteRow();
+      this.$closeBottomSheet();
     },
-
   },
 
-  created() {
-
-  }
-}
+  created() {},
+};
 </script>
 
 <style scoped>
@@ -109,19 +173,19 @@ export default {
   color: #222a37;
 }
 
-.iconDelete{
-  color:#FB404B;
+.iconDelete {
+  color: #fb404b;
 }
 
-.iconEdit{
-  color: #EAB14D;
+.iconEdit {
+  color: #eab14d;
 }
 
-.iconDetalles{
+.iconDetalles {
   color: #0096b7;
 }
 
-.underline{
+.underline {
   text-decoration: underline;
 }
 .hover-label {

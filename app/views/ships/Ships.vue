@@ -13,11 +13,11 @@
           <GridLayout columns="*,40" @longPress="operations">
             <StackLayout orientation="horizontal" @tap="navigate(item)" col="0">
               <Label
+                backgroundColor="#D8E2E8"
                 :text="'fa-ship' | fonticon"
-                class="fas"
-                width="110"
-                fontSize="70"
-                color="#0096b7"
+                class="nt-drawer__header-image fas"
+                fontSize="45"
+                color="#EAB14D"
               />
               <StackLayout class="heigth">
                 <Label
@@ -25,19 +25,19 @@
                   class="p-l-10 subTittle"
                   textWrap="true"
                   width="auto"
-                  fontSize="18"
+                  fontSize="14"
                 />
                 <Label
                   :text="item.text"
                   class="p-l-10 colorIcons"
-                  fontSize="18"
+                  fontSize="14"
                 />
               </StackLayout>
             </StackLayout>
             <Label
               :text="'fa-ellipsis-v' | fonticon"
               class="fas iconOptions"
-              fontSize="18"
+              fontSize="15"
               col="1"
               style="text-align: center"
               @tap="navigateOptions(item, index)"

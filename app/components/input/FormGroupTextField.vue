@@ -12,10 +12,11 @@
       class="input"
       :isEnabled="enable"
       :text="value"
+      :keyboardType="typeInput"
       padding="10"
       :hint="placeholder"
       height="45"
-      fontSize="18"
+      :fontSize="fontsize"
       border="none"
       borderRadius="2"
       @textChange="onTextChange"
@@ -25,7 +26,7 @@
       class="input"
       :text="value"
       padding="10"
-      fontSize="18"
+      :fontSize="fontsize"
       borderRadius="2"
       @textChange="onTextChange"
     />
@@ -48,7 +49,7 @@ export default {
     },
     fontsize: {
       type: Number,
-      default: 18,
+      default: 14,
     },
     enable: {
       type: Boolean,
@@ -69,6 +70,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    typeInput:{
+      type: String,
+      default: "text",
+    }
   /*   showError:{
       type:Boolean,
       default:false
@@ -117,6 +122,7 @@ export default {
   color: #3c495e;
   background-color: #c0c9d7;
   width: 90%;
+  opacity: 0.9;
 }
 
 .label-error {
