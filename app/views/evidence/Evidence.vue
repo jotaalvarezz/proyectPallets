@@ -1,42 +1,25 @@
 <template>
-  <page>
+  <page @loaded="typesManagement">
     <Header :search="false" />
     <GridLayout rows="*, *" backgroundColor="#F4F6F8" padding="30">
-      <card-view
-        row="0"
+      <card-view v-for="(item, index) in types_management"
+        :key="index"
+        :row="index"
         ripple="true"
         margin="30"
         elevation="10"
         radius="10"
-        @tap="navigate()"
+        @tap="navigate(item.id)"
       >
         <StackLayout>
           <Image
             height="85%"
             ref="imageRef"
-            src="~/assets/images/barco-de-carga.png"
+            :src="item.icon"
             loadMode="sync"
             style="border-bottom-color: #3c495e; border-bottom-width: 1px"
           />
-          <Label height="15%" text="Gestion en Barco" class="text-center" />
-        </StackLayout>
-      </card-view>
-      <card-view
-        row="1"
-        ripple="true"
-        margin="30"
-        elevation="5"
-        radius="10"
-      >
-        <StackLayout>
-          <Image
-            height="85%"
-            ref="imageRef"
-            src="~/assets/images/exportar.png"
-            loadMode="sync"
-            style="border-bottom-color: #3c495e; border-bottom-width: 1px"
-          />
-          <Label height="15%" text="Gestion en Patio" class="text-center" />
+          <Label height="15%" :text="item.name" class="text-center" />
         </StackLayout>
       </card-view>
     </GridLayout>
@@ -46,19 +29,37 @@
 <script>
 import Header from "~/components/header/Header.vue";
 import NavViews from "~/views/evidence/tabview/NavViews.vue";
+const {getTypesManagement} = require("~/sqlite/database");
+import Alert from "~/alerts/Alerts";
 
 export default {
   name: "Evidences",
   components: { Header, NavViews },
 
   data() {
-    return {};
+    return {
+      types_management:[]
+    };
   },
 
   methods: {
-    navigate() {
-      this.$router.push("report.index");
+    navigate(id) {
+      this.$router.push("verification.details",{
+        props:{
+          management_id: id
+        }
+      });
     },
+
+    async typesManagement() {
+      try {
+        const res = await getTypesManagement()
+        console.log("res ", res)
+        this.types_management = res.data
+      } catch (error) {
+        Alert.danger("Hubo un error al traer los datos ", error.message);
+      }
+    }
   },
 
   mounted() {

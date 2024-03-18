@@ -5,7 +5,7 @@
       <StackLayout
         class="shadow"
         backgroundColor="#F4F6F8"
-        margin="20"
+        margin="10"
         borderWidth="1"
         borderColor="#3c495e"
         borderRadius="5"

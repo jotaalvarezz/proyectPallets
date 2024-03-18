@@ -30,7 +30,7 @@
         rows="auto,auto,auto,auto,auto"
         class="shadow"
         backgroundColor="#F4F6F8"
-        margin="20"
+        margin="10"
         borderWidth="1"
         borderColor="#c0c9d7"
         borderRadius="5"

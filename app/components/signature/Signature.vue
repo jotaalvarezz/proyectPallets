@@ -1,26 +1,29 @@
 <template>
-  <StackLayout>
+  <StackLayout marginTop="10">
     <Label
       text="Firma :"
-      fontSize="18"
+      fontSize="14"
       fontWeight="bold"
-      style="color: #3c495e; width: 80%"
+      style="color: #3c495e; width: 90%"
     />
     <CanvasView
       ref="canvas"
-      width="430"
+      width="90%"
       height="200"
-      borderWidth="2"
+      borderWidth="1"
+      borderRadius="5"
       borderColor="#3c495e"
       @draw="onDraw"
       @touch="onTouch"
     />
-    <button @tap="clean">Limpiar</button>
+    <button @tap="capturar" style="width: 90%">Limpiar</button>
   </StackLayout>
 </template>
 
 <script>
 import { Canvas, Paint } from "@nativescript-community/ui-canvas";
+import { getViewById } from "@nativescript/core";
+import { Image } from "@nativescript/core";
 
 export default {
   data() {
@@ -95,6 +98,13 @@ export default {
       this.currentPoint = [];
       this.points = [];
       this.$refs.canvas.nativeView.invalidate();
+    },
+
+    async capturar() {
+      const canvas = getViewById(this.$refs.canvas.nativeView, "canvas");
+      this.signatureData = canvas.toDataURL(); // Convertir la firma a formato base64
+      console.log("Firma guardada:", this.signatureData);
+      // Aquí puedes guardar la firma en la base de datos u otro almacenamiento
     },
   },
 };

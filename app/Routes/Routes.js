@@ -9,6 +9,7 @@ import Pallets from '~/views/pallets/Pallets'
 import CreateEditPallet from '~/views/pallets/CreateEditPallet/CreateEditPallet'
 import Evidence from '~/views/evidence/Evidence.vue'
 import NavViews from '~/views/evidence/tabview/NavViews.vue'
+import ManagementForm from '~/views/evidence/managementForm/ManagementForm'
 
 Vue.use(NSVueRouter)
 
@@ -49,10 +50,15 @@ const routes = [
     meta: { guest: true },
     /* children: [
       {
-        name: 'ship.details',
-        component: ShipDetails // Componente para los detalles de un barco
+        name: 'verification.details',
+        component: ManagementForm // Componente para los detalles de un barco
       }
     ] */
+  },
+  {
+    name: 'verification.details',
+    component: ManagementForm,
+    meta: { guest: true }
   },
 ]
 

@@ -13,6 +13,8 @@ const {
   getRepairDamage,
 } = require('~/sqlite/queries/evidence')
 
+const {getTypesManagement} = require('~/sqlite/queries/management')
+
 const Querys = [
   `CREATE TABLE IF NOT EXISTS ships
     (
@@ -74,17 +76,36 @@ const Querys = [
         date_creation DATETIME
       )`,
 
-   `CREATE TABLE IF NOT EXISTS container_reports
+  `CREATE TABLE IF NOT EXISTS types_management
+      (
+        id INTEGER PRIMARY KEY,
+        name TEXT,
+        icon TEXT,
+        date_creation DATETIME
+      )`,
+
+  `CREATE TABLE IF NOT EXISTS management
+      (
+        id INTEGER PRIMARY KEY,
+        type_management_id INTEGER,
+        name TEXT,
+        journey TEXT,
+        signature BLOB,
+        date_creation DATETIME,
+        FOREIGN KEY (type_management_id) REFERENCES types_management(id)
+      )`,
+
+  `CREATE TABLE IF NOT EXISTS container_reports
   (
     id INTEGER PRIMARY KEY,
-    vessel TEXT,
-    journey TEXT,
+    management_id INTEGER,
     code TEXT,
     type_id INTEGER,
     role TEXT,
     additional_damage_id INTEGER,
     observation TEXT,
     date_creation DATETIME,
+    FOREIGN KEY (management_id) REFERENCES management(id),
     FOREIGN KEY (type_id) REFERENCES types(id),
     FOREIGN KEY (additional_damage_id) REFERENCES additional_damage(id)
   )`,
@@ -157,6 +178,11 @@ const DefaultSelects = {
   ]
 }
 
+const DefaultTypesManagement = [
+  { name: "Gestion en Barco", icon: "~/assets/images/barco-de-carga.png", date_creation: new Date() },
+  { name: "Gestion en Patio", icon: "~/assets/images/exportar.png", date_creation: new Date() }
+]
+
 // Función para abrir o crear la base de datos
 /* ************************************************************************************** */
 const openDatabase = async () => {
@@ -227,6 +253,25 @@ const insertSeletsData = async (db) => {
   }
 }
 
+//datos por defecto de tipos de gestion
+const insertTypesManagement = async (db) => {
+  try {
+    let post = []
+    for (let i = 0; i < DefaultTypesManagement.length; i++) {
+      post[i] = db.execSQL(`INSERT INTO types_management (name, icon, date_creation) VALUES (?, ?, ?)`,
+        [
+          DefaultTypesManagement[i].name,
+          DefaultTypesManagement[i].icon,
+          DefaultTypesManagement[i].date_creation
+        ]
+      );
+    }
+    return post
+  } catch (error) {
+    console.log("error al crear registro en types management ", error)
+  }
+}
+
 //Creacion de datos por defecto
 const insertDefaultData = async (db, shipsWarehouses) => {
   try {
@@ -252,6 +297,7 @@ const insertDefaultData = async (db, shipsWarehouses) => {
       }
     }
     insertSeletsData(db)
+    insertTypesManagement(db)
     return { postShip: postData, postWarehouse: postWarehouse };
   } catch (error) {
     console.log("ocurrio un problema al insertar la fila", error);
@@ -471,7 +517,8 @@ module.exports = {
   storeContainerReport,
   getContainerReport,
   getRepairs,
-  getRepairDamage
+  getRepairDamage,
+  getTypesManagement
 };
 
 

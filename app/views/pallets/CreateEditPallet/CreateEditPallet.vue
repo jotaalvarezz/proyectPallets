@@ -1,27 +1,31 @@
 <template>
   <Page>
     <StackLayout backgroundColor="#F4F6F8">
-      <StackLayout
-        orientation="horizontal"
-        style="background-color: #00acc1; text-align: center"
-        height="70"
+      <GridLayout
+        height="65"
+        rows="*"
+        columns="50, 3*, 50"
+        backgroundColor="#00acc1"
       >
         <Label
+          row="0"
+          col="0"
           :text="'fa-reply' | fonticon"
-          fontSize="18"
+          fontSize="16"
+          class="fas text-center"
           color="#F4F6F8"
-          class="fas"
-          width="20%"
           @tap="$modal.close"
-        ></Label>
+        />
         <Label
-          text="Registro de Pallet"
-          fontSize="18"
+          row="0"
+          col="1"
+          class="text-center"
+          text="Registro de Pallets"
+          fontSize="15"
           color="#F4F6F8"
           fontWeight="bold"
-          width="60%"
         ></Label>
-      </StackLayout>
+      </GridLayout>
       <card-view margin="10" elevation="2" radius="5">
         <GridLayout
           rows="auto,auto,auto,auto,auto,auto,auto,auto,auto,auto"
@@ -142,7 +146,13 @@
               color="#3c495e"
             />
           </GridLayout> -->
-          <Stripe row="5" class="stripe" color="#3c495e" marginTop="20" marginBottom="20"/>
+          <Stripe
+            row="5"
+            class="stripe"
+            color="#3c495e"
+            marginTop="20"
+            marginBottom="20"
+          />
           <Button
             row="6"
             backgroundColor="#F4F6F8"
