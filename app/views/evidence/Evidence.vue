@@ -15,6 +15,7 @@
           <Image
             height="85%"
             ref="imageRef"
+            stretch="fill"
             :src="item.icon"
             loadMode="sync"
             style="border-bottom-color: #3c495e; border-bottom-width: 1px"

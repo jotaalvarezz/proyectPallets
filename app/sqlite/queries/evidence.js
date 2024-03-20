@@ -1,11 +1,16 @@
 //Consulta para los select del modulo de evidencias
 const { openDatabase, showData } = require('~/sqlite/openDatabase');
 
-const getContainerReport = async () => {
+const getContainerReport = async (management_id) => {
   try {
     const db = await openDatabase();
-    const data = await db.all("SELECT * FROM container_reports", []);
-    const dataFormatted = await showData('container_reports', data)
+    const data = await db.all(`SELECT cr.id, m.name, m.journey, cr.management_id,
+                                      cr.code, cr.type_id, cr.role, cr.additional_damage_id,
+                                      cr.observation, cr.date_creation
+                                FROM container_reports cr
+                                INNER JOIN management m on m.id = cr.management_id
+                                WHERE cr.management_id = ?`, [management_id]);
+    const dataFormatted = await showData('container_reports', data, ['id', 'vessel', 'journey', 'management_id', 'code', 'type_id', 'role', 'additional_damage_id', 'observation', 'date_creation'])
     /* consulta para traer los reparaciones */
     for (let i = 0; i < dataFormatted.length; i++) {
       let repairs = await db.all(`SELECT r.id, r.container_element_id, e.name, r.state
@@ -57,16 +62,15 @@ const storeContainerReport = async (data) => {
     const db = await openDatabase();
     let postData = await db.execSQL(
       `INSERT INTO container_reports (
-                          vessel,
-                          journey,
+                          management_id,
                           code,
                           type_id,
                           role,
                           additional_damage_id,
                           observation,
                           date_creation)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [data.vessel, data.journey, data.code, data.type_id,
+      VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [data.management_id, data.code, data.type_id,
       data.role, data.additional_damage_id, data.observation,
       new Date()]
     );

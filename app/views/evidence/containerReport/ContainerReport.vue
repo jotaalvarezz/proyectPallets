@@ -1,7 +1,7 @@
 <template>
   <!-- <page @loaded="InfoSelect"> -->
   <ScrollView>
-    <StackLayout @loaded="InfoSelect" backgroundColor="#F4F6F8">
+    <StackLayout @loaded="initialMethods" backgroundColor="#F4F6F8">
       <StackLayout
         class="shadow"
         backgroundColor="#F4F6F8"
@@ -12,7 +12,7 @@
       >
         <GridLayout
           ref="form"
-          rows="auto,auto,auto,auto,auto,auto,auto,auto,60,auto,auto,auto,auto"
+          rows="auto,auto,auto,auto,auto,auto,60,auto,auto,auto,auto"
           padding="30"
         >
           <Label
@@ -23,7 +23,7 @@
             fontWeight="bold"
           ></Label>
           <Stripe row="1" margin="20" />
-          <FormGroupTextField
+          <!-- <FormGroupTextField
             row="2"
             label="BUQUE:"
             placeholder="Buque..."
@@ -34,15 +34,15 @@
             label="VIAJE:"
             placeholder="Viaje..."
             v-model="model.journey"
-          />
+          /> -->
           <FormGroupTextField
-            row="4"
+            row="2"
             label="No. CONTAINER:"
             placeholder="Code..."
             v-model="model.code"
           />
           <SelectField
-            row="5"
+            row="3"
             :value="model.type_id"
             :items="types"
             label="TIPO:"
@@ -50,14 +50,14 @@
             @value="model.type_id = $event"
           />
           <FormGroupTextField
-            row="6"
+            row="4"
             label="CARGO:"
             placeholder="Cargo..."
             v-model="model.role"
           />
           <!-- tabla de descripcion de daños y elementos -->
           <Label
-            row="7"
+            row="5"
             textWrap="true"
             marginTop="5"
             style="
@@ -76,7 +76,7 @@
             </FormattedString>
           </Label>
           <GridLayout
-            row="8"
+            row="6"
             columns="35,auto,*,35,auto"
             style="width: 80%; margin-top: 15px"
           >
@@ -112,7 +112,7 @@
             />
           </GridLayout>
           <SelectField
-            row="9"
+            row="7"
             :value="model.additional_damage_id"
             :items="additionalDamage"
             label="DAÑO ADICIONAL:"
@@ -120,15 +120,15 @@
             @value="model.additional_damage_id = $event"
           />
           <FormGroupTextField
-            row="10"
+            row="8"
             label="OBSERVACION:"
             textArea="true"
             placeholder="Observaciones..."
             v-model="model.observation"
           />
-          <Stripe row="11" margin="20" />
+          <Stripe row="9" margin="20" />
           <Button
-            row="12"
+            row="10"
             backgroundColor="#F4F6F8"
             color="#222a37"
             text="Enviar"
@@ -165,6 +165,7 @@ import FormGroupTextField from "~/components/input/FormGroupTextField";
 import ListComponent from "~/components/listComponent/ListComponent";
 import Stripe from "~/components/stripe/Stripe";
 import Alert from "~/alerts/Alerts";
+import { mapState } from "vuex";
 
 export default {
   components: {
@@ -180,8 +181,7 @@ export default {
   data() {
     return {
       model: {
-        vessel: "Cala Pino",
-        journey: "U.S.A",
+        management_id: null,
         code: "MSG1112020000567896",
         type_id: 1,
         role: "Mecanico",
@@ -267,6 +267,10 @@ export default {
 
   mixins: [mixinMasters],
 
+  computed:{
+    ...mapState('evidenceStore',['managementModel'])
+  },
+
   methods: {
     openFormDamaged() {
       this.$showModal(DamagedItems, {
@@ -284,7 +288,7 @@ export default {
     async ver() {
       /* console.log("model ", this.model); */
       try {
-        if (this.model.vessel.trim() !== "" && this.model.code.trim() !== "") {
+        if (this.model.code.trim() !== "") {
           this.loadingCharge(true);
           const res = await storeContainerReport(this.model);
           Alert.success("Reporte creado")
@@ -327,6 +331,11 @@ export default {
         this.loadingCharge();
       }
     },
+
+    initialMethods(){
+      this.model.management_id = this.managementModel.id
+      this.InfoSelect()
+    }
   },
 };
 </script>

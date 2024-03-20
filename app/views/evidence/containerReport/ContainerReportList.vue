@@ -85,6 +85,7 @@ import mixinMasters from "~/mixins/Master";
 import Alert from "~/alerts/Alerts";
 import Tag from "~/components/tag/Tag.vue";
 import Stripe from "~/components/stripe/Stripe";
+import { mapState } from "vuex";
 
 export default {
   components: {
@@ -102,13 +103,15 @@ export default {
   },
   mixins: [mixinMasters],
 
-  computed: {},
+  computed: {
+    ...mapState('evidenceStore',['managementModel'])
+  },
 
   methods: {
     async getEvidences() {
       try {
         this.loadingCharge(true);
-        const res = await getContainerReport();
+        const res = await getContainerReport(this.managementModel.id);
         this.container_reports = res.data;
         console.log("reports ", this.container_reports);
         /* const aux = await getRepairDamage()

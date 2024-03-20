@@ -1,33 +1,30 @@
 <template>
   <StackLayout @loaded="InfoSelect" backgroundColor="#F4F6F8">
-    <StackLayout
-      orientation="horizontal"
-      style="background-color: #00acc1; text-align: center"
-      height="70"
+    <GridLayout
+      height="65"
+      rows="*"
+      columns="50, 3*, 50"
+      backgroundColor="#00acc1"
     >
       <Label
+        row="0"
+        col="0"
         :text="'fa-reply' | fonticon"
+        fontSize="16"
+        class="fas text-center"
+        color="#F4F6F8"
+        @tap="$modal.close"
+      />
+      <Label
+        row="0"
+        col="1"
+        class="text-center"
+        text="Registro de Daños/Reparaciones"
         fontSize="15"
         color="#F4F6F8"
-        class="fas"
-        width="15%"
-        @tap="$modal.close"
-      ></Label>
-      <Label
-        text="Registro de Daños/Reparaciones"
-        fontSize="18"
-        color="#F4F6F8"
         fontWeight="bold"
-        width="70%"
       ></Label>
-      <Label
-        :text="'fa-tools' | fonticon"
-        fontSize="18"
-        color="#F4F6F8"
-        class="fas"
-        width="15%"
-      ></Label>
-    </StackLayout>
+    </GridLayout>
     <ScrollView>
       <StackLayout
         class="shadow"

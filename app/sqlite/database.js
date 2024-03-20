@@ -13,7 +13,7 @@ const {
   getRepairDamage,
 } = require('~/sqlite/queries/evidence')
 
-const {getTypesManagement} = require('~/sqlite/queries/management')
+const { getTypesManagement, storeManagement, getManagements, getAllManagements } = require('~/sqlite/queries/management')
 
 const Querys = [
   `CREATE TABLE IF NOT EXISTS ships
@@ -117,6 +117,7 @@ const Querys = [
     location TEXT,
     position TEXT,
     container_report_id INTEGER,
+    photo BLOB,
     state BOOLEAN,
     date_creation DATETIME,
     FOREIGN KEY (container_element_id) REFERENCES container_elements(id),
@@ -179,8 +180,8 @@ const DefaultSelects = {
 }
 
 const DefaultTypesManagement = [
-  { name: "Gestion en Barco", icon: "~/assets/images/barco-de-carga.png", date_creation: new Date() },
-  { name: "Gestion en Patio", icon: "~/assets/images/exportar.png", date_creation: new Date() }
+  { name: "Gestion en Barco", icon: "~/assets/images/gestion_barco.jpg", date_creation: new Date() },
+  { name: "Gestion en Patio", icon: "~/assets/images/gestion_patio.jpg", date_creation: new Date() }
 ]
 
 // Función para abrir o crear la base de datos
@@ -518,7 +519,10 @@ module.exports = {
   getContainerReport,
   getRepairs,
   getRepairDamage,
-  getTypesManagement
+  getTypesManagement,
+  storeManagement,
+  getManagements,
+  getAllManagements
 };
 
 

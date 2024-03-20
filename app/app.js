@@ -24,6 +24,9 @@ Vue.registerElement("CheckBox", () => CheckBox, {
   },
 });
 
+import { DrawingPad } from '@nativescript-community/drawingpad';
+Vue.registerElement('DrawingPad', () => DrawingPad);
+
 import TabsPlugin from '@nativescript-community/ui-material-tabs/vue';
 
 Vue.use(TabsPlugin);

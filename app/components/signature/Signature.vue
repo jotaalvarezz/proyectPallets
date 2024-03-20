@@ -1,31 +1,61 @@
 <template>
-  <StackLayout marginTop="10">
+  <StackLayout margin="10" backgroundColor="#F4F6F8">
     <Label
       text="Firma :"
       fontSize="14"
       fontWeight="bold"
       style="color: #3c495e; width: 90%"
     />
-    <CanvasView
-      ref="canvas"
-      width="90%"
+    <DrawingPad
+      ref="drawingPad"
       height="200"
+      width="90%"
+      penWidth="3"
       borderWidth="1"
       borderRadius="5"
       borderColor="#3c495e"
-      @draw="onDraw"
-      @touch="onTouch"
+    >
+    </DrawingPad>
+    <Stripe color="#3c495e" mt="10" mb="10" />
+    <Button
+      text="Guardar"
+      backgroundColor="#F4F6F8"
+      color="#222a37"
+      style="width: 90%; margin-bottom: 5px"
+      @tap="getMyDrawing"
+      borderWidth="1"
+      borderColor="#222a37"
+      borderRadius="30"
     />
-    <button @tap="capturar" style="width: 90%">Limpiar</button>
+    <Button
+      text="Limpiar"
+      backgroundColor="#F4F6F8"
+      color="#222a37"
+      style="width: 90%"
+      @tap="clean"
+      borderWidth="1"
+      borderColor="#222a37"
+      borderRadius="30"
+    />
   </StackLayout>
 </template>
 
 <script>
-import { Canvas, Paint } from "@nativescript-community/ui-canvas";
-import { getViewById } from "@nativescript/core";
-import { Image } from "@nativescript/core";
+import { ImageSource } from "@nativescript/core";
+import Stripe from "~/components/stripe/Stripe";
 
 export default {
+  components: {
+    Stripe,
+  },
+
+  props:{
+    signature:{
+      type:String,
+      default:""
+    }
+  },
+
   data() {
     return {
       isDrawing: false,
@@ -35,76 +65,26 @@ export default {
     };
   },
   methods: {
-    onDraw(event) {
-      const canvas = event.canvas;
-      const paint = new Paint();
-      paint.setStrokeWidth(5);
-      paint.setColor("#000000");
-      console.log("currentpoints ", this.currentPoint);
-      // Dibujar los trazos anteriores
-      for (let i = 1; i < this.currentPoint.length; i++) {
-        const previousPoint = this.currentPoint[i - 1];
-        const currentPoint = this.currentPoint[i];
-        canvas.drawLine(
-          previousPoint.x,
-          previousPoint.y,
-          currentPoint.x,
-          currentPoint.y,
-          paint
-        );
-      }
-
-      for (let i = 1; i < this.points.length; i++) {
-        const previousPoint = this.points[i - 1];
-        const currentPoint = this.points[i];
-        canvas.drawLine(
-          previousPoint.x,
-          previousPoint.y,
-          currentPoint.x,
-          currentPoint.y,
-          paint
-        );
-      }
-    },
-
-    onTouch(args) {
-      console.log("points ", this.points.length);
-      const action = args.android.getAction();
-      const x = args.getX();
-      const y = args.getY();
-
-      switch (action) {
-        case android.view.MotionEvent.ACTION_DOWN:
-          this.isDrawing = true;
-          this.points.push({ x, y });
-          break;
-
-        case android.view.MotionEvent.ACTION_MOVE:
-          if (this.isDrawing) {
-            this.points.push({ x, y });
-            this.$refs.canvas.nativeView.invalidate();
-          }
-          break;
-
-        case android.view.MotionEvent.ACTION_UP:
-          this.isDrawing = false;
-          this.currentPoint = this.points;
-          this.points = [];
-          break;
-      }
-    },
-
     clean() {
-      this.currentPoint = [];
-      this.points = [];
-      this.$refs.canvas.nativeView.invalidate();
+      this.$refs.drawingPad.nativeView.clearDrawing();
     },
 
-    async capturar() {
-      const canvas = getViewById(this.$refs.canvas.nativeView, "canvas");
-      this.signatureData = canvas.toDataURL(); // Convertir la firma a formato base64
-      console.log("Firma guardada:", this.signatureData);
-      // Aquí puedes guardar la firma en la base de datos u otro almacenamiento
+    async getMyDrawing(args) {
+      // get reference to the drawing pad
+      try {
+        const pad = this.$refs.drawingPad.nativeView;
+        const res = await pad.getDrawing();
+        const img = new ImageSource(res);
+        const base64imageString = img.toBase64String("jpg");
+        this.$modal.close({
+          signature: base64imageString,
+        });
+      } catch (error) {
+        this.$modal.close({
+          signature: "",
+        });
+        console.log("err ", error);
+      }
     },
   },
 };
