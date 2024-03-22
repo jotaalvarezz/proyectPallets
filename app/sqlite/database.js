@@ -13,7 +13,13 @@ const {
   getRepairDamage,
 } = require('~/sqlite/queries/evidence')
 
-const { getTypesManagement, storeManagement, getManagements, getAllManagements } = require('~/sqlite/queries/management')
+const {
+  getTypesManagement,
+  storeManagement,
+  getManagements,
+  getAllManagements,
+  deleteManagement
+} = require('~/sqlite/queries/management')
 
 const Querys = [
   `CREATE TABLE IF NOT EXISTS ships
@@ -90,6 +96,7 @@ const Querys = [
         type_management_id INTEGER,
         name TEXT,
         journey TEXT,
+        titular_name TEXT,
         signature BLOB,
         date_creation DATETIME,
         FOREIGN KEY (type_management_id) REFERENCES types_management(id)
@@ -522,7 +529,8 @@ module.exports = {
   getTypesManagement,
   storeManagement,
   getManagements,
-  getAllManagements
+  getAllManagements,
+  deleteManagement
 };
 
 

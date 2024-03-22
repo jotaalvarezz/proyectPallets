@@ -28,7 +28,9 @@ const mixinMasters = {
           },
         });
       }else{
-        this.indicatorState(activated)
+        setTimeout(() => {
+          this.indicatorState(activated)
+        }, 1000);
       }
     },
 

@@ -4,6 +4,7 @@ const { openDatabase, showData } = require('~/sqlite/openDatabase');
 const getContainerReport = async (management_id) => {
   try {
     const db = await openDatabase();
+    console.log("managementsss ", management_id)
     const data = await db.all(`SELECT cr.id, m.name, m.journey, cr.management_id,
                                       cr.code, cr.type_id, cr.role, cr.additional_damage_id,
                                       cr.observation, cr.date_creation

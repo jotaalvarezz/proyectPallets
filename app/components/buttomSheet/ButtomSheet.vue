@@ -115,15 +115,18 @@ export default {
     },
     getInfo: {
       type: Function,
+      default : () => {alert("En construccion...!")}
     },
     deleteRow: {
       type: Function,
     },
     component: {
       type: Object,
+      default: {}
     },
     componentInfo: {
       type: Object,
+      default: {}
     },
   },
   data() {

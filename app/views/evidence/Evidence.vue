@@ -8,19 +8,19 @@
         ripple="true"
         margin="30"
         elevation="10"
-        radius="10"
+        radius="5"
         @tap="navigate(item.id)"
       >
         <StackLayout>
           <Image
-            height="85%"
+            height="88%"
             ref="imageRef"
             stretch="fill"
             :src="item.icon"
             loadMode="sync"
             style="border-bottom-color: #3c495e; border-bottom-width: 1px"
           />
-          <Label height="15%" :text="item.name" class="text-center" />
+          <Label height="12%" :text="item.name" class="text-center" />
         </StackLayout>
       </card-view>
     </GridLayout>
@@ -55,7 +55,6 @@ export default {
     async typesManagement() {
       try {
         const res = await getTypesManagement()
-        console.log("res ", res)
         this.types_management = res.data
       } catch (error) {
         Alert.danger("Hubo un error al traer los datos ", error.message);
@@ -64,7 +63,7 @@ export default {
   },
 
   mounted() {
-    console.log("router ", this.$router);
+
   },
 };
 </script>

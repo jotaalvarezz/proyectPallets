@@ -11,7 +11,7 @@
           borderWidth="1"
           borderColor="#c0c9d7"
           borderRadius="5"
-          padding="30"
+          padding="20"
         >
           <Label
             row="0"
@@ -31,6 +31,14 @@
             v-model="model.name"
           />
           <FormGroupTextField
+            v-if="management_id === 2"
+            row="2"
+            label="Patio:"
+            placeholder="nombre del patio..."
+            fontsize="14"
+            v-model="model.name"
+          />
+          <FormGroupTextField
             v-if="management_id === 1"
             row="3"
             label="Viaje:"
@@ -38,7 +46,14 @@
             fontsize="14"
             v-model="model.journey"
           />
-          <GridLayout
+          <FormGroupTextField
+            row="4"
+            label="Titular:"
+            placeholder="nombre de titular..."
+            fontsize="14"
+            v-model="model.titular_name"
+          />
+          <!-- <GridLayout
             row="4"
             columns="35,auto"
             style="width: 80%; margin-top: 15px"
@@ -57,7 +72,7 @@
               class="colorIcons"
               @tap="signatureCaptain"
             />
-          </GridLayout>
+          </GridLayout> -->
           <!-- <Signature row="4" /> -->
           <Stripe row="5" color="#3c495e" mt="20" mb="20" />
           <!-- Boton para Crear -->
@@ -119,6 +134,8 @@
                     <Span :text="item.name + '\n'" fontSize="15" />
                     <Span text="Viaje: " fontWeight="bold" fontSize="15" />
                     <Span :text="item.journey + '\n'" fontSize="15" />
+                    <Span text="Nombre del Capitan: " fontWeight="bold" fontSize="15" />
+                    <Span :text="item.titular_name + '\n'" fontSize="15" />
                     <Span
                       text="Contenedores: "
                       fontWeight="bold"
@@ -128,7 +145,9 @@
                   <!-- en patio -->
                   <FormattedString v-if="management_id === 2">
                     <Span text="Patio: " fontWeight="bold" fontSize="15" />
-                    <Span :text="'Serteba' + '\n'" fontSize="15" />
+                    <Span :text="'Alieva' + '\n'" fontSize="15" />
+                    <Span text="Nombre del Conductor: " fontWeight="bold" fontSize="15" />
+                    <Span :text="item.titular_name + '\n'" fontSize="15" />
                     <Span
                       text="Contenedores: "
                       fontWeight="bold"
@@ -148,6 +167,7 @@
               fontSize="14"
               col="1"
               style="text-align: center"
+              @tap="navigateOptions(item, index)"
             />
           </GridLayout>
         </v-template>
@@ -161,6 +181,7 @@ const {
   getTypesManagement,
   storeManagement,
   getManagements,
+  deleteManagement,
 } = require("~/sqlite/database");
 import Header from "~/components/header/Header.vue";
 import Stripe from "~/components/stripe/Stripe";
@@ -169,6 +190,7 @@ import Signature from "~/components/signature/Signature.vue";
 import Collapse from "~/components/collapse/Collapse";
 import NavViews from "~/views/evidence/tabview/NavViews";
 import Tag from "~/components/tag/Tag.vue";
+import ButtomSheet from "~/components/buttomSheet/ButtomSheet.vue";
 import mixinMasters from "~/mixins/Master";
 import { ImageSource, Utils } from "@nativescript/core";
 import Alert from "~/alerts/Alerts";
@@ -183,6 +205,7 @@ export default {
     Signature,
     Collapse,
     Tag,
+    ButtomSheet,
   },
 
   props: {
@@ -198,6 +221,7 @@ export default {
         type_management_id: null,
         name: "Cala Pino",
         journey: "U.S.A",
+        titular_name: "Gerson Calvo",
         signature: "",
       },
       managments: [],
@@ -216,6 +240,10 @@ export default {
     index() {
       this.model.type_management_id = this.management_id;
       this.getManagements(this.model.type_management_id);
+      /* this.loadingCharge(true);
+      setTimeout(() => {
+        this.loadingCharge();
+      }, 2000); */
     },
 
     signatureCaptain() {
@@ -235,25 +263,33 @@ export default {
         this.loadingCharge(true);
         const res = await getManagements(id);
         this.managments = res.data;
-        this.loadingCharge();
       } catch (error) {
-        console.log("Error -> " + error.message);
+        Alert.danger("Hubo un error al traer los datos ", error.message);
+        /* this.loadingCharge(); */
+      } finally {
         this.loadingCharge();
       }
     },
 
     async addManagement() {
-      console.log("modelo ", this.model);
-      // Crear una instancia de ImageSource con la imagen desencriptada
       try {
-        if (this.model.signature.trim() !== "") {
+        if (this.model.titular_name.trim() !== "" || this.model.name.trim() !== "") {
+          this.loadingCharge(true);
           const res = await storeManagement(this.model);
-          this.managments.push(this.model);
+          this.managments.push(res.data);
         } else {
           Alert.info("¡Por favor firmar!", 1);
         }
+        this.model = {
+          type_management_id: this.management_id,
+          name: "",
+          journey: "",
+          signature: "",
+        };
       } catch (error) {
-        console.log("Error -> " + error.message);
+        Alert.danger("Hubo un error al traer los datos ", error.message);
+      } finally {
+        this.loadingCharge();
       }
     },
 
@@ -265,16 +301,45 @@ export default {
       });
     },
 
+    navigateOptions(item, index) {
+      item.action = true;
+      const options = {
+        dismissOnBackgroundTap: true,
+        dismissOnDraggingDownSheet: false,
+        transparent: true,
+        props: {
+          item: item,
+          generalOptions: true,
+          deleteRow: () => this.deleteRow(item.id, index),
+        },
+        // listeners to be connected to MyComponent
+        on: {
+          someEvent: (value) => {
+            console.log(value);
+          },
+        },
+      };
+      this.$showBottomSheet(ButtomSheet, options);
+    },
+
+    async deleteRow(id, index) {
+      let confirmated = await Alert.Danger(1);
+      if (confirmated) {
+        try {
+          const record = await deleteManagement(id);
+          this.managments.splice(index, 1);
+        } catch (error) {
+          Alert.danger("eleminacion fallida ", error.message);
+        }
+      }
+    },
+
     desencriptarImagen(base64Encriptado) {
       const imageData = ImageSource.fromBase64Sync(this.model.signature);
       console.log("desencriptando ", imageData);
       let myImg = this.$refs.imageRef.nativeView;
       myImg.src = imageData;
     },
-  },
-
-  mounted() {
-    /* console.log("router ", this.$router); */
   },
 };
 </script>

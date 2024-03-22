@@ -381,7 +381,7 @@ export default {
 }
 
 .info {
-  font-size: 20;
+  font-size: 16;
   horizontal-align: center;
   vertical-align: center;
 }

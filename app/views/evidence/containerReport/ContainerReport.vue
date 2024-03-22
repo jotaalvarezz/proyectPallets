@@ -111,7 +111,7 @@
               @tap="listRepairs"
             />
           </GridLayout>
-          <SelectField
+          <SelectFieldMul
             row="7"
             :value="model.additional_damage_id"
             :items="additionalDamage"
@@ -161,6 +161,7 @@ import Header from "~/components/header/Header.vue";
 import Signature from "~/components/signature/Signature.vue";
 import DamagedItems from "~/views/evidence/containerReport/damagedItems/DamagedItems.vue";
 import SelectField from "~/components/selectField/SelectField";
+import SelectFieldMul from "~/components/selectFieldMultiple/SelectFieldMultiple.vue";
 import FormGroupTextField from "~/components/input/FormGroupTextField";
 import ListComponent from "~/components/listComponent/ListComponent";
 import Stripe from "~/components/stripe/Stripe";
@@ -176,6 +177,7 @@ export default {
     SelectField,
     ListComponent,
     Stripe,
+    SelectFieldMul
   },
 
   data() {
@@ -253,7 +255,7 @@ export default {
             state: false,
           },
         ],
-        additional_damage_id: 3,
+        additional_damage_id: [2,3,4],
         observation: "Testing",
       },
       types: [],
@@ -286,8 +288,8 @@ export default {
     },
 
     async ver() {
-      /* console.log("model ", this.model); */
-      try {
+      console.log("model ", this.model);
+      /* try {
         if (this.model.code.trim() !== "") {
           this.loadingCharge(true);
           const res = await storeContainerReport(this.model);
@@ -300,7 +302,7 @@ export default {
         Alert.danger("Hubo un error al guardar ", error.message);
       } finally {
         this.loadingCharge();
-      }
+      } */
     },
 
     listRepairs() {
@@ -316,7 +318,7 @@ export default {
 
     async InfoSelect() {
       try {
-        this.loadingCharge(true);
+        /* this.loadingCharge(true); */
         const types = await getTypes();
         const additionalDamage = await getAdditionalDamage();
         const containerElements = await getContainerElements();
@@ -328,7 +330,7 @@ export default {
       } catch (error) {
         Alert.danger("Hubo un error al traer informacion", error.message);
       } finally {
-        this.loadingCharge();
+        /* this.loadingCharge(); */
       }
     },
 

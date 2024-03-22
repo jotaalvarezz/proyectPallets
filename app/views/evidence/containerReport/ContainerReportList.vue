@@ -109,6 +109,7 @@ export default {
 
   methods: {
     async getEvidences() {
+      console.log("management model ", this.managementModel)
       try {
         this.loadingCharge(true);
         const res = await getContainerReport(this.managementModel.id);
@@ -154,7 +155,7 @@ export default {
 
 <style scoped>
 .info {
-  font-size: 20;
+  font-size: 16;
   horizontal-align: center;
   vertical-align: center;
 }

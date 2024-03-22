@@ -1,13 +1,13 @@
 <template>
   <StackLayout style="padding: 0px">
-    <!-- <Label
-      :text="label"
-      fontWeight="bold"
+    <Label
+    v-if="items.length === 0"
+      text="No hay elementos..."
       fontSize="13"
-      style="padding: 0px;"
-    /> -->
+      style="margin-left: 15px;"
+    />
     <!-- <Stripe /> -->
-    <WrapLayout>
+    <WrapLayout style="margin-left: 15px;" v-if="items.length > 0">
       <Label
         v-for="(item, index) in items"
         :key="index"
@@ -50,7 +50,7 @@ export default {
   margin: 3px 6px 3px 0px;
   border-radius: 5px;
   border-width: 1px;
-  /* background-color: #eab14d; */
+  background-color: rgba(0, 172, 193, 0.19);
   border-color: #00acc1;
   color: #00acc1;
 }
