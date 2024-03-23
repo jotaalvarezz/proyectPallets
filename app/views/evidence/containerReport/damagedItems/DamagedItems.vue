@@ -43,18 +43,23 @@
           icon="fa-toolbox"
           @value="model.container_element_id = $event"
         />
-        <FormGroupTextField
+        <SelectField
+          :value="model.location"
+          :items="locations"
           label="UBICACION:"
-          placeholder="ubicacion..."
+          labelIterator="location"
           fontsize="14"
-          validate="true"
-          v-model="model.location"
+          icon="fa-arrows-alt-h"
+          @value="model.location = $event"
         />
-        <FormGroupTextField
+        <SelectField
+          :value="model.position"
+          :items="positions"
           label="POSICION:"
-          placeholder="posicion..."
+          labelIterator="position"
           fontsize="14"
-          v-model="model.position"
+          icon="fa-arrows-alt-v"
+          @value="model.position = $event"
         />
         <Label
           text="DAÑO:"
@@ -155,14 +160,22 @@ export default {
       col: 0,
       model: {
         container_element_id: null,
-        location: "",
-        position: "",
+        location: null,
+        position: null,
         damage_id: [],
         state: false,
       },
       isChecked: null,
       damages: [],
       elements: [],
+      locations:[
+        {id:1, location: "Izquierda"},
+        {id:2, location: "Derecha"}
+      ],
+      positions:[
+        {id:1, position: "Arriba"},
+        {id:2, position: "Abajo"}
+      ],
       imagenCapturada: null,
       saveToGallery: true,
       allowsEditing: false,
@@ -194,7 +207,8 @@ export default {
     },
 
     async addRepair() {
-      try {
+      console.log("modelo r ", this.model)
+      /* try {
         let confirmated = await Alert.info(
           "¡¿Desea sequir añadiendo daños?!",
           3
@@ -205,7 +219,7 @@ export default {
             elements: this.elements,
           });
         }
-      } catch (error) {}
+      } catch (error) {} */
     },
 
     async InfoSelect() {

@@ -1,14 +1,15 @@
 <template>
   <!-- <Page> -->
-  <grid-layout
-    rows="*"
+  <GridLayout
+    rows="auto, *"
     columns="300,auto"
     style="max-height: 300px"
     backgroundColor="white"
   >
     <ListView
+      row="1"
       ref="listView"
-      for="(item, index) in listOfItems"
+      for="(item, index) in listOfItemsLocal "
       @itemTap="onItemTap"
       :selectedItem="selectedItem"
     >
@@ -23,15 +24,25 @@
           />
           <Label
             col="1"
-            :text="selectedItem === item.id && 'fa-check' | fonticon"
+            :text="item.check && 'fa-check' | fonticon"
             class="fas"
-            :class="item.id === selectedItem ? 'check' : 'nocheck'"
+            :class="item.check ? 'check' : 'nocheck'"
             color="#F4F6F8"
           />
         </GridLayout>
       </v-template>
     </ListView>
-  </grid-layout>
+    <Label
+      v-if="multiple === true"
+      row="0"
+      :text="'fa-times' | fonticon"
+      margin="10"
+      class="fas text-right"
+      color="#3c495e"
+      fontSize="18"
+      @tap="successSelecteds"
+    />
+  </GridLayout>
   <!-- </Page> -->
 </template>
 <script>
@@ -51,7 +62,11 @@ export default {
     },
     labelIterator: {
       type: String,
-      default:'name',
+      default: "name",
+    },
+    multiple: {
+      type: Boolean,
+      default: false,
     },
   },
 
@@ -59,20 +74,62 @@ export default {
     return {
       ships: [],
       selectedItem: null,
+      selectedsItem: [],
     };
   },
   computed: {
     selected() {
       return {};
     },
+
+    listOfItemsLocal() {
+      let newCollection = [];
+      let item;
+      for (let i = 0; i < this.listOfItems.length; i++) {
+        item = this.listOfItems[i];
+        item.check = false;
+        if (!this.multiple) {
+          if (this.listOfItems[i].id === this.value) {
+            item.check = true;
+          }
+        } else {
+          for (let j = 0; j < this.value.length; j++) {
+            if (this.listOfItems[i].id === this.value[j]) {
+              item.check = true;
+            }
+          }
+        }
+        newCollection.push(item);
+      }
+      return newCollection;
+    },
   },
   methods: {
     onItemTap(event) {
-      this.selectedItem = event.item;
-      console.log("selected <=> ",this.selectedItem)
-      this.$refs.listView.nativeView.refresh();
+      if (!this.multiple) {
+        this.selectedItem = event.item;
+        this.$refs.listView.nativeView.refresh();
+        this.$modal.close({
+          selectedItem: this.selectedItem.id,
+        });
+      } else {
+        if (event.item.check) {
+          event.item.check = false;
+          let index = this.selectedsItem.findIndex(
+            (prev) => prev === event.item.id
+          );
+          this.selectedsItem.splice(index, 1);
+        } else {
+          this.selectedsItem.push(event.item.id);
+        }
+        this.$refs.listView.nativeView.refresh();
+      }
+    },
+
+    successSelecteds() {
       this.$modal.close({
-        selectedItem: this.selectedItem.id
+        selectedItem: this.selectedsItem,
+        mensaje: "cerrado sin botton",
       });
     },
 
@@ -90,7 +147,11 @@ export default {
   },
 
   created() {
-    this.selectedItem = this.value
+    if (this.multiple) {
+      this.selectedsItem = this.value;
+    } else {
+      this.selectedItem = this.value;
+    }
     /* this.$refs.listView.nativeView.refresh(); */
   },
 };
@@ -113,7 +174,7 @@ export default {
   padding: 6;
   border-radius: 9999px;
   border-width: 1px;
-  background-color: #EAB14D;
+  background-color: #eab14d;
 }
 
 .fab-sync {

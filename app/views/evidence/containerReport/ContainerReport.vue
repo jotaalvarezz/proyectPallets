@@ -23,18 +23,6 @@
             fontWeight="bold"
           ></Label>
           <Stripe row="1" margin="20" />
-          <!-- <FormGroupTextField
-            row="2"
-            label="BUQUE:"
-            placeholder="Buque..."
-            v-model="model.vessel"
-          />
-          <FormGroupTextField
-            row="3"
-            label="VIAJE:"
-            placeholder="Viaje..."
-            v-model="model.journey"
-          /> -->
           <FormGroupTextField
             row="2"
             label="No. CONTAINER:"
@@ -111,11 +99,12 @@
               @tap="listRepairs"
             />
           </GridLayout>
-          <SelectFieldMul
+          <SelectField
             row="7"
             :value="model.additional_damage_id"
             :items="additionalDamage"
             label="DAÑO ADICIONAL:"
+            :multiple="true"
             icon="fa-tools"
             @value="model.additional_damage_id = $event"
           />
@@ -289,7 +278,7 @@ export default {
 
     async ver() {
       console.log("model ", this.model);
-      /* try {
+      try {
         if (this.model.code.trim() !== "") {
           this.loadingCharge(true);
           const res = await storeContainerReport(this.model);
@@ -302,7 +291,7 @@ export default {
         Alert.danger("Hubo un error al guardar ", error.message);
       } finally {
         this.loadingCharge();
-      } */
+      }
     },
 
     listRepairs() {
@@ -354,5 +343,15 @@ export default {
 
 .shadow {
   box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.tag {
+  height: 23rem;
+  margin: 3px 6px 3px 0px;
+  border-radius: 5px;
+  border-width: 1px;
+  /* background-color: rgba(60, 73, 94, 0.19); */
+  border-color: #3c495e;
+  color: #3c495e;
 }
 </style>
