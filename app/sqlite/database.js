@@ -109,12 +109,10 @@ const Querys = [
     code TEXT,
     type_id INTEGER,
     role TEXT,
-    additional_damage_id INTEGER,
     observation TEXT,
     date_creation DATETIME,
     FOREIGN KEY (management_id) REFERENCES management(id),
-    FOREIGN KEY (type_id) REFERENCES types(id),
-    FOREIGN KEY (additional_damage_id) REFERENCES additional_damage(id)
+    FOREIGN KEY (type_id) REFERENCES types(id)
   )`,
 
   `CREATE TABLE IF NOT EXISTS repairs
@@ -140,7 +138,17 @@ const Querys = [
       FOREIGN KEY (repair_id) REFERENCES repairs(id),
       FOREIGN KEY (damage_id) REFERENCES damage(id)
     )
-  `
+  `,
+
+  `CREATE TABLE IF NOT EXISTS container_reports_additional_damage
+    (
+      id INTEGER PRIMARY KEY,
+      container_report_id INTEGER,
+      additional_damage_id INTEGER,
+      date_creation DATETIME,
+      FOREIGN KEY (container_report_id) REFERENCES container_reports(id),
+      FOREIGN KEY (additional_damage_id) REFERENCES additional_damage(id)
+    )`
 ];
 
 const DefaultSelects = {
