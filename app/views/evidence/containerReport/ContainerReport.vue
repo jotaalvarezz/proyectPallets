@@ -155,7 +155,7 @@ import FormGroupTextField from "~/components/input/FormGroupTextField";
 import ListComponent from "~/components/listComponent/ListComponent";
 import Stripe from "~/components/stripe/Stripe";
 import Alert from "~/alerts/Alerts";
-import { mapState } from "vuex";
+import { mapState, mapMutations } from "vuex";
 
 export default {
   components: {
