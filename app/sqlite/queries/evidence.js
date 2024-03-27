@@ -20,11 +20,11 @@ const getContainerReport = async (management_id) => {
       const additionalDamageFormatted = await showData('additional_damage', additionalDamage, ['id', 'name', 'date_creation'])
       dataFormatted[i].additionalDamage = additionalDamageFormatted
       /* consulta para traer los reparaciones */
-      let repairs = await db.all(`SELECT r.id, r.container_element_id, e.name, r.state
+      let repairs = await db.all(`SELECT r.id, r.container_element_id, e.name, r.location, r.position, r.photo
                                     FROM  repairs r
                                     INNER JOIN container_elements e on e.id = r.container_element_id
                                     WHERE container_report_id = ?`, [dataFormatted[i].id]);
-      const repairsFormatted = await showData('repairs', repairs, ['id', 'container_element_id', 'name', 'state'])
+      const repairsFormatted = await showData('repairs', repairs, ['id', 'container_element_id', 'name', 'loaction', 'position', 'photo'])
       /* consulta para traer los daños */
       for (let i = 0; i < repairsFormatted.length; i++) {
         let damages = await db.all(`SELECT rd.damage_id, d.name
@@ -120,11 +120,11 @@ const storeRepairs = async (data) => {
                           location,
                           position,
                           container_report_id,
-                          state,
+                          photo,
                           date_creation)
         VALUES (?, ?, ?, ?, ?, ?)`,
         [repairs[i].container_element_id, repairs[i].location, repairs[i].position,
-        data.container_report_id, repairs[i].state, new Date()]
+        data.container_report_id, repairs[i].photo, new Date()]
       );
       storeRepairDamage({ repair_id: postData[i], damage_id: repairs[i].damage_id })
     }

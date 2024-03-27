@@ -123,7 +123,6 @@ const Querys = [
     position TEXT,
     container_report_id INTEGER,
     photo BLOB,
-    state BOOLEAN,
     date_creation DATETIME,
     FOREIGN KEY (container_element_id) REFERENCES container_elements(id),
     FOREIGN KEY (container_report_id) REFERENCES container_reports(id)

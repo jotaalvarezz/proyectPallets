@@ -176,74 +176,7 @@ export default {
         code: "MSG1112020000567896",
         type_id: 1,
         role: "Mecanico",
-        damages_repairs: [
-          {
-            container_element_id: 1,
-            location: "Abajo",
-            position: "Derecha",
-            damage_id: [
-              {
-                id: 1,
-                text: "AB - ABOLLADO",
-                checked: true,
-              },
-              {
-                id: 2,
-                text: "DO - DOBLADO",
-                checked: true,
-              },
-              {
-                id: 3,
-                text: "OX - OXIDADO",
-                checked: true,
-              },
-              {
-                id: 3,
-                text: "OX - OXIDADO",
-                checked: true,
-              },
-              {
-                id: 3,
-                text: "OX - OXIDADO",
-                checked: true,
-              },
-              {
-                id: 3,
-                text: "OX - OXIDADO",
-                checked: true,
-              },
-              {
-                id: 3,
-                text: "OX - OXIDADO",
-                checked: true,
-              },
-            ],
-            state: true,
-          },
-          {
-            container_element_id: 3,
-            location: "Arriba",
-            position: "Derecha",
-            damage_id: [
-              {
-                id: 1,
-                text: "AB - ABOLLADO",
-                checked: true,
-              },
-              {
-                id: 2,
-                text: "DO - DOBLADO",
-                checked: true,
-              },
-              {
-                id: 3,
-                text: "OX - OXIDADO",
-                checked: true,
-              },
-            ],
-            state: false,
-          },
-        ],
+        damages_repairs: [],
         additional_damage_id: [2,3,4],
         observation: "Testing",
       },
@@ -259,10 +192,11 @@ export default {
   mixins: [mixinMasters],
 
   computed:{
-    ...mapState('evidenceStore',['managementModel'])
+    ...mapState('evidenceStore',['managementModel', 'damagedItems'])
   },
 
   methods: {
+    ...mapMutations('evidenceStore',['setDamagedItem', 'cleanDamagedItems']),
     openFormDamaged() {
       this.$showModal(DamagedItems, {
         fullscreen: true,
@@ -271,8 +205,6 @@ export default {
         props: {
           container_elements: this.elements,
         },
-      }).then((res) => {
-        this.model.damages_repairs.push(res.model);
       });
     },
 
@@ -280,6 +212,7 @@ export default {
       console.log("model ", this.model);
       try {
         if (this.model.code.trim() !== "") {
+          this.model.damages_repairs = this.damagedItems
           this.loadingCharge(true);
           const res = await storeContainerReport(this.model);
           Alert.success("Reporte creado")
@@ -324,6 +257,7 @@ export default {
     },
 
     initialMethods(){
+      this.cleanDamagedItems()
       this.model.management_id = this.managementModel.id
       this.InfoSelect()
     }

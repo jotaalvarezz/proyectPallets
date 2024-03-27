@@ -83,14 +83,12 @@
                     />
                   </FormattedString>
                 </Label>
-                <Stripe margin="0" />
                 <Tag :items="item.damage_id" labelIterator="text" />
-                <Stripe margin="0" />
-                <Switch
+                <!-- <Switch
                   width="50"
                   v-model="item.state"
                   horizontalAlignment="right"
-                />
+                /> -->
               </StackLayout>
             </StackLayout>
             <Label
@@ -187,8 +185,7 @@ export default {
               text: "OX - OXIDADO",
               checked: true,
             },
-          ],
-          state: true,
+          ]
         },
         {
           container_element_id: 3,
@@ -210,8 +207,7 @@ export default {
               text: "OX - OXIDADO",
               checked: true,
             },
-          ],
-          state: false,
+          ]
         },
       ],
     };

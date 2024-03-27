@@ -103,7 +103,7 @@ export default {
           label = this.items.find((item) => item.id === this.value);
           return label[this.labelIterator];
         } else if(!this.multiple && this.value === null){
-          return label[this.labelIterator];
+          return ' ';
         }
         for (let i = 0; i < this.value.length; i++) {
           label = this.items.find((item) => item.id === this.value[i]);

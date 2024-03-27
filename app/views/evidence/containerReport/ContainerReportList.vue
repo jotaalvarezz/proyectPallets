@@ -53,11 +53,9 @@
                 :key="index"
                 style="padding: 0px 5px 5px 8px;"
               >
-                <Stripe margin="0"/>
                 <Label :text="repair.name" class="subTittle" fontSize="12"/>
                 <Tag :items="repair.repair_damage" labelIterator="name" />
-                <Switch width="50" v-model="repair.state" horizontalAlignment="right"/>
-                <Stripe margin="0"/>
+                <!-- <Switch width="50" v-model="repair.state" horizontalAlignment="right"/> -->
               </StackLayout>
             </StackLayout>
           </StackLayout>

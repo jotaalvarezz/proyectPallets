@@ -9,7 +9,7 @@
       <Label
         row="0"
         col="0"
-        :text="'fa-reply' | fonticon"
+        :text="'fa-arrow-left' | fonticon"
         fontSize="16"
         class="fas text-center"
         color="#F4F6F8"
@@ -63,7 +63,7 @@
         />
         <Label
           text="DAÑO:"
-          marginTop="5"
+          marginTop="10"
           fontsize="14"
           fontWeight="bold"
           style="color: #3c495e; width: 90%"
@@ -71,6 +71,7 @@
         <FlexboxLayout flexWrap="wrap" style="width: 90%">
           <check-box
             v-for="item in damages"
+            ref="checkbok"
             height="30"
             :key="item.id"
             :id="item.id"
@@ -81,15 +82,6 @@
             style="color: #3c495e; width: 45%"
           />
         </FlexboxLayout>
-        <!-- <Label
-          margin="25"
-          backgroundColor="#D8E2E8"
-          class="nt-drawer__header-image fas"
-          fontSize="55"
-          :text="'fa-camera' | fonticon"
-          color="#EAB14D"
-          @tap="onTakePictureTap"
-        /> -->
         <FloatingButton
           style="margin: 60px"
           :icon="'fa-camera'"
@@ -97,27 +89,38 @@
           iconSize="md"
           :method="onTakePictureTap"
         />
-        <Image
+        <!-- <Image
           ref="imageRef"
           v-if="cameraImage.length > 0"
           margin="25"
           backgroundColor="#D8E2E8"
           :src="cameraImage"
           loadMode="sync"
-        />
-        <Label
-          text="REPARACION:"
-          fontsize="14"
-          fontWeight="bold"
-          style="color: #3c495e; width: 90%"
-        />
-        <Switch
-          horizontalAlignment="left"
-          :class="model.state"
-          width="50"
-          height="auto"
-          v-model="model.state"
-        />
+        /> -->
+        <DockLayout
+          v-if="cameraImage.length > 0"
+          stretchLastChild="true"
+          backgroundColor="#F4F6F8"
+        >
+          <GridLayout
+            dock="left"
+            width="50%"
+            marginLeft="20"
+            columns="auto, auto"
+            backgroundColor="#F4F6F8"
+            class="picture"
+            @tap="showPhoto"
+          >
+            <Label
+              col="0"
+              class="fas"
+              fontSize="20"
+              :text="'fa-image' | fonticon"
+            />
+            <Label col="1" fontSize="14" :text="namePhoto" color="#3c495e" />
+          </GridLayout>
+          <Label dock="bottom" height="auto" />
+        </DockLayout>
         <Stripe color="#3c495e" margin="20" />
         <Button
           backgroundColor="#F4F6F8"
@@ -140,14 +143,22 @@ import mixinMasters from "~/mixins/Master";
 import FormGroupTextField from "~/components/input/FormGroupTextField";
 import SelectField from "~/components/selectField/SelectField";
 import Stripe from "~/components/stripe/Stripe";
+import Signature from "~/components/signature/Signature.vue";
 import Alert from "~/alerts/Alerts";
 import { requestPermissions } from "@nativescript/camera";
 import * as camera from "@nativescript/camera";
 import FloatingButton from "~/components/floatingButton/FloatingButton.vue";
 import { ImageSource, knownFolders, path } from "@nativescript/core";
+import { mapMutations, mapState } from "vuex";
 
 export default {
-  components: { FormGroupTextField, SelectField, Stripe, FloatingButton },
+  components: {
+    FormGroupTextField,
+    SelectField,
+    Stripe,
+    FloatingButton,
+    Signature,
+  },
   props: {
     container_elements: {
       type: Array,
@@ -163,35 +174,42 @@ export default {
         location: null,
         position: null,
         damage_id: [],
-        state: false,
+        photo: "",
       },
-      isChecked: null,
+      isChecked: false,
       damages: [],
       elements: [],
-      locations:[
-        {id:1, location: "Izquierda"},
-        {id:2, location: "Derecha"}
+      locations: [
+        { id: 1, location: "Izquierda" },
+        { id: 2, location: "Derecha" },
       ],
-      positions:[
-        {id:1, position: "Arriba"},
-        {id:2, position: "Abajo"}
+      positions: [
+        { id: 1, position: "Arriba" },
+        { id: 2, position: "Abajo" },
       ],
       imagenCapturada: null,
-      saveToGallery: true,
+      saveToGallery: false,
       allowsEditing: false,
       keepAspectRatio: true,
       width: 320,
       height: 240,
       cameraImage: "",
-      labelText: "",
+      namePhoto: "",
     };
   },
 
   mixins: [mixinMasters],
 
+  computed:{
+    ...mapState('evidenceStore',['damagedItems'])
+  },
+
   methods: {
+    ...mapMutations('evidenceStore',['setDamagedItem']),
+
     onCheckedChange(args) {
       const checkbox = args.object;
+      console.log("checkbox ", checkbox)
       if (checkbox.checked) {
         this.model.damage_id.push({
           id: checkbox.id,
@@ -206,20 +224,35 @@ export default {
       }
     },
 
+    unCheckAll(){
+      const checkbox = this.$refs.checkbok
+      for (let i = 0; i < checkbox.length; i++) {
+        checkbox[i].nativeView.checked = false
+      }
+    },
+
     async addRepair() {
-      console.log("modelo r ", this.model)
-      /* try {
+      try {
+        this.setDamagedItem(this.model)
         let confirmated = await Alert.info(
-          "¡¿Desea sequir añadiendo daños?!",
+          "¡¿Desea sequir añadiendo reparaciones?!",
           3
         );
         if (confirmated) {
-          this.$modal.close({
-            model: this.model,
-            elements: this.elements,
-          });
+          this.model = {
+            container_element_id: null,
+            location: null,
+            position: null,
+            damage_id: [],
+            photo: "",
+          };
+          this.unCheckAll()
+          console.log("store damage ", this.damagedItems)
+          Alert.success("Reparacion agrgada")
+        } else {
+          this.$modal.close();
         }
-      } catch (error) {} */
+      } catch (error) {}
     },
 
     async InfoSelect() {
@@ -229,6 +262,7 @@ export default {
         const res2 = await getDamage();
         this.damages = res2.data;
         this.elements = this.container_elements;
+        console.log("damages []", this.damages)
       } catch (error) {
         console.log("solucion de errores ", error);
       } finally {
@@ -254,22 +288,41 @@ export default {
 
       try {
         const imageAsset = await camera.takePicture(options);
+        const imageSource = await ImageSource.fromAsset(imageAsset);
+        const base64Image = imageSource.toBase64String("jpeg");
+        this.model.photo = base64Image;
+        console.log("base ", this.cameraImage);
+        /* console.log("testimonio ",imageAsset)
+        this.model.photo = imageAsset;
         let pathSplit = imageAsset._android.split("/");
         let photo = pathSplit[pathSplit.length - 1];
+        this.namePhoto = photo;
         const imageSource = await ImageSource.fromAsset(imageAsset);
         const folderPath = knownFolders.documents().path;
         const filePath = path.join(folderPath, photo);
         const saved = imageSource.saveToFile(filePath, "jpg");
-        this.cameraImage = filePath;
-        if (saved) {
+        this.cameraImage = filePath; */
+        /* if (saved) {
           console.log("Gallery: " + this._dataItem);
           console.log("Saved: " + filePath);
           console.log("Image saved successfully!");
-        }
+        } */
       } catch (error) {
         console.log("Error -> " + error.message);
       }
     },
+
+    async getImageBase64(imageAsset) {
+      try {
+        /*  const imageSource = imageAsset.getImageAsync(); */
+        const base64Image = imageAsset.toBase64String("jpeg"); // Cambia 'jpeg' según el formato de tu imagen
+        console.log("base 64 ", base64Image);
+      } catch (error) {
+        console.log("error 64 ", error);
+      }
+    },
+
+    showPhoto() {},
   },
 };
 </script>
@@ -287,5 +340,10 @@ export default {
 
 .shadow {
   box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.picture {
+  width: auto;
+  text-align: left;
 }
 </style>
