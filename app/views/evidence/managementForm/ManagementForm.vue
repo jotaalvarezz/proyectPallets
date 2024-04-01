@@ -185,6 +185,7 @@ const {
 } = require("~/sqlite/database");
 import Header from "~/components/header/Header.vue";
 import Stripe from "~/components/stripe/Stripe";
+import ContainerReport from "~/views/evidence/containerReport/ContainerReport.vue";
 import FormGroupTextField from "~/components/input/FormGroupTextField";
 import Signature from "~/components/signature/Signature.vue";
 import Collapse from "~/components/collapse/Collapse";
@@ -206,6 +207,7 @@ export default {
     Collapse,
     Tag,
     ButtomSheet,
+    ContainerReport
   },
 
   props: {
@@ -295,10 +297,14 @@ export default {
 
     navigate(item) {
       this.setManagementModel(item);
-      this.$showModal(NavViews, {
+      this.$showModal(ContainerReport, {
         fullscreen: true,
         animated: true,
       });
+      /* this.$showModal(NavViews, {
+        fullscreen: true,
+        animated: true,
+      }); */
     },
 
     navigateOptions(item, index) {
