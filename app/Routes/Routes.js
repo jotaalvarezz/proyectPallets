@@ -40,7 +40,7 @@ const routes = [
     meta: { guest: true }
   },
   {
-    name: 'report.index',
+    name: 'reportsnav.index',
     component: NavViews,
     meta: { guest: true }
   },

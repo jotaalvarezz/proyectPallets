@@ -72,6 +72,7 @@ import { ImageSource } from "@nativescript/core";
 import Stripe from "~/components/stripe/Stripe";
 
 export default {
+  name:"Signature",
   components: {
     Stripe,
   },

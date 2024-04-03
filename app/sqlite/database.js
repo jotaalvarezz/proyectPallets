@@ -18,7 +18,8 @@ const {
   storeManagement,
   getManagements,
   getAllManagements,
-  deleteManagement
+  deleteManagement,
+  updateManagement
 } = require('~/sqlite/queries/management')
 
 const Querys = [
@@ -537,7 +538,8 @@ module.exports = {
   storeManagement,
   getManagements,
   getAllManagements,
-  deleteManagement
+  deleteManagement,
+  updateManagement
 };
 
 

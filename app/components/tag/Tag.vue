@@ -23,6 +23,7 @@
 import Stripe from "~/components/stripe/Stripe";
 
 export default {
+  name:"Tag",
   components: {
     Stripe,
   },

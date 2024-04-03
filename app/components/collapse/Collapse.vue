@@ -18,16 +18,17 @@
         dock="right"
         width="auto"
       />
-      <Label dock="bottom" height="auto"/>
+      <Label dock="bottom" height="auto" />
     </DockLayout>
     <!-- <StackLayout v-if="value === true"> -->
-      <slot v-if="value === true"></slot>
+    <slot v-if="value === true"></slot>
     <!-- </StackLayout> -->
   </StackLayout>
 </template>
 
 <script>
 export default {
+  name: "Collapse",
   props: {
     title: String,
     color: {
@@ -54,28 +55,30 @@ export default {
       type: Number,
       default: 15,
     },
-    value:{
-        type: Boolean,
-        default: false
-    }
+    value: {
+      type: Boolean,
+      default: false,
+    },
   },
 
-  computed:{
-    iconValue(){
-        return{
-            'fa-angle-right': this.value === false,
-            'fa-angle-down': this.value === true,
-        }
-    }
+  computed: {
+    iconValue() {
+      return {
+        "fa-angle-right": this.value === false,
+        "fa-angle-down": this.value === true,
+      };
+    },
   },
 
   methods: {
-    activated(){
-        if(this.value === true){
-            return this.value = false
-        }
-        return this.value = true
-    }
+    activated() {
+      if (this.value === true) {
+        this.$emit("value", false);
+        return (this.value = false);
+      }
+      this.$emit("value", true);
+      return (this.value = true);
+    },
   },
 };
 </script>

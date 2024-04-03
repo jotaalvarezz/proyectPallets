@@ -85,10 +85,26 @@ const deleteManagement = async (id) => {
   }
 }
 
+const updateManagement = async (item) => {
+  try {
+    const db = await openDatabase();
+    let updateData = db.execSQL(`UPDATE management
+                                      SET name = (?),
+                                          journey = (?),
+                                          titular_name = (?),
+                                          signature = (?)
+                                      WHERE id = (?)`, [item.name, item.journey, item.titular_name, item.signature, item.id]);
+    return updateData
+  } catch (error) {
+    console.error("Error al editar el barco ", error)
+  }
+}
+
 module.exports = {
   getTypesManagement,
   storeManagement,
   getAllManagements,
   getManagements,
-  deleteManagement
+  deleteManagement,
+  updateManagement
 }

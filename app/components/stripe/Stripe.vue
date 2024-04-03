@@ -11,6 +11,7 @@
 
 <script>
 export default {
+    name:"Stripe",
     props:{
         color:{
             type: String,

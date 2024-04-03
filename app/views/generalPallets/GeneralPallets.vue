@@ -190,7 +190,7 @@ export default {
           item: this.infoPallet,
           generalOptions: false,
           component: CreateEditPallet,
-          getInfo: () => this.getAll(),
+          updateRegister: () => this.palletEdit(this.infoPallet),
           deleteRow: () => this.removePallet(item.id, index),
         },
         // listeners to be connected to MyComponent
@@ -264,6 +264,16 @@ export default {
         this.loadingCharge();
         Alert.danger("Hubo un error en el cargue", error.message);
       }
+    },
+
+    palletEdit(item) {
+      this.$showModal(CreateEditPallet, {
+        fullscreen: true,
+        props: { info: item },
+      }).then((res) => {
+        console.log("respuesta ", res);
+        this.$emit("someEvent", "Valor de ejemplo");
+      });
     },
 
     async removePallet(id, index) {

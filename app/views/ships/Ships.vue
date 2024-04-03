@@ -110,7 +110,7 @@ export default {
           generalOptions: true,
           component: CreateEditShip,
           componentInfo: infoShip,
-          getInfo: () => this.getShips(),
+          updateRegister: () => this.shipEdit(item),
           deleteRow: () => this.deleteRow(item.id, index),
         },
         // listeners to be connected to MyComponent
@@ -138,6 +138,16 @@ export default {
         },
       }).then((res) => {
         this.getShips();
+      });
+    },
+
+    shipEdit(item){
+      this.$showModal(CreateEditShip, {
+        fullscreen: true,
+        props: { info: item },
+      }).then((res) => {
+        console.log("respuesta ",res)
+        this.$emit('someEvent', 'Valor de ejemplo');
       });
     },
 

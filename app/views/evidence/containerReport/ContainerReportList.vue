@@ -81,15 +81,9 @@ const {
 } = require("~/sqlite/database");
 import mixinMasters from "~/mixins/Master";
 import Alert from "~/alerts/Alerts";
-import Tag from "~/components/tag/Tag.vue";
-import Stripe from "~/components/stripe/Stripe";
 import { mapState } from "vuex";
 
 export default {
-  components: {
-    Tag,
-    Stripe
-  },
 
   data() {
     return {

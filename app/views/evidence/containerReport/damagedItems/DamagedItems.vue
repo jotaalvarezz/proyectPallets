@@ -140,25 +140,13 @@
 <script>
 const { getDamage } = require("~/sqlite/database");
 import mixinMasters from "~/mixins/Master";
-import FormGroupTextField from "~/components/input/FormGroupTextField";
-import SelectField from "~/components/selectField/SelectField";
-import Stripe from "~/components/stripe/Stripe";
-import Signature from "~/components/signature/Signature.vue";
 import Alert from "~/alerts/Alerts";
 import { requestPermissions } from "@nativescript/camera";
 import * as camera from "@nativescript/camera";
-import FloatingButton from "~/components/floatingButton/FloatingButton.vue";
 import { ImageSource, knownFolders, path } from "@nativescript/core";
 import { mapMutations, mapState } from "vuex";
 
 export default {
-  components: {
-    FormGroupTextField,
-    SelectField,
-    Stripe,
-    FloatingButton,
-    Signature,
-  },
   props: {
     container_elements: {
       type: Array,

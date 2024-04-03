@@ -146,27 +146,15 @@ const {
   getDamage,
 } = require("~/sqlite/database");
 import mixinMasters from "~/mixins/Master";
-import Header from "~/components/header/Header.vue";
-import Signature from "~/components/signature/Signature.vue";
 import DamagedItems from "~/views/evidence/containerReport/damagedItems/DamagedItems.vue";
-import SelectField from "~/components/selectField/SelectField";
-import SelectFieldMul from "~/components/selectFieldMultiple/SelectFieldMultiple.vue";
-import FormGroupTextField from "~/components/input/FormGroupTextField";
 import ListComponent from "~/components/listComponent/ListComponent";
-import Stripe from "~/components/stripe/Stripe";
 import Alert from "~/alerts/Alerts";
 import { mapState, mapMutations } from "vuex";
 
 export default {
   components: {
-    Header,
-    Signature,
     DamagedItems,
-    FormGroupTextField,
-    SelectField,
-    ListComponent,
-    Stripe,
-    SelectFieldMul
+    ListComponent
   },
 
   data() {

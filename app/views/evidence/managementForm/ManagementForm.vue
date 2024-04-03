@@ -1,8 +1,8 @@
 <template>
   <page @loaded="index">
     <Header :search="false" />
-    <GridLayout rows="auto, *" backgroundColor="#F4F6F8">
-      <Collapse row="0" title="Gestion de Contenedor">
+    <GridLayout rows="auto, auto, *" backgroundColor="#F4F6F8">
+      <Collapse row="0" title="Gestion de Contenedor" @value="collapseValue = $event">
         <!-- Contenido que se insertará dentro del componente -->
         <GridLayout
           rows="auto,auto,auto,auto,auto,auto,auto,auto,auto"
@@ -92,6 +92,16 @@
       </Collapse>
       <Label
         row="1"
+        margin="5"
+        :text="'fa-sync-alt' | fonticon"
+        class="fas"
+        width="40"
+        color="#222a37"
+        fontSize="22"
+        @tap="navigateBack"
+      />
+      <Label
+        row="2"
         textWrap="true"
         class="info"
         v-if="managments.length == 0"
@@ -103,7 +113,7 @@
         </FormattedString>
       </Label>
       <ListView
-        row="1"
+        row="2"
         ref="listView"
         for="item in managments"
         @itemTap="onItemTap"
@@ -127,6 +137,7 @@
                   width="auto"
                   fontSize="15"
                 />
+                <Label :text="aux" textWrap="true" width="auto" fontSize="15" />
                 <Label textWrap="true">
                   <!-- en barco -->
                   <FormattedString v-if="management_id === 1">
@@ -134,7 +145,11 @@
                     <Span :text="item.name + '\n'" fontSize="15" />
                     <Span text="Viaje: " fontWeight="bold" fontSize="15" />
                     <Span :text="item.journey + '\n'" fontSize="15" />
-                    <Span text="Nombre del Capitan: " fontWeight="bold" fontSize="15" />
+                    <Span
+                      text="Nombre del Capitan: "
+                      fontWeight="bold"
+                      fontSize="15"
+                    />
                     <Span :text="item.titular_name + '\n'" fontSize="15" />
                     <Span
                       text="Contenedores: "
@@ -146,7 +161,11 @@
                   <FormattedString v-if="management_id === 2">
                     <Span text="Patio: " fontWeight="bold" fontSize="15" />
                     <Span :text="'Alieva' + '\n'" fontSize="15" />
-                    <Span text="Nombre del Conductor: " fontWeight="bold" fontSize="15" />
+                    <Span
+                      text="Nombre del Conductor: "
+                      fontWeight="bold"
+                      fontSize="15"
+                    />
                     <Span :text="item.titular_name + '\n'" fontSize="15" />
                     <Span
                       text="Contenedores: "
@@ -159,6 +178,12 @@
                   <Label text="Contenedores:" class="subTittle" fontSize="12" /> -->
                 <Tag :items="item.container_reports" labelIterator="code" />
                 <!-- </StackLayout> -->
+                <ViewImage
+                  ref="viewImage"
+                  label="Firma: "
+                  encrypted="true"
+                  :url="item.signature"
+                />
               </StackLayout>
             </StackLayout>
             <Label
@@ -183,13 +208,7 @@ const {
   getManagements,
   deleteManagement,
 } = require("~/sqlite/database");
-import Header from "~/components/header/Header.vue";
-import Stripe from "~/components/stripe/Stripe";
-import FormGroupTextField from "~/components/input/FormGroupTextField";
-import Signature from "~/components/signature/Signature.vue";
-import Collapse from "~/components/collapse/Collapse";
-import NavViews from "~/views/evidence/tabview/NavViews";
-import Tag from "~/components/tag/Tag.vue";
+import ManagementEdit from "~/views/evidence/managementForm/ManagementEdit";
 import ButtomSheet from "~/components/buttomSheet/ButtomSheet.vue";
 import mixinMasters from "~/mixins/Master";
 import { ImageSource, Utils } from "@nativescript/core";
@@ -199,12 +218,6 @@ import { mapState, mapMutations } from "vuex";
 export default {
   name: "Management",
   components: {
-    Header,
-    Stripe,
-    FormGroupTextField,
-    Signature,
-    Collapse,
-    Tag,
     ButtomSheet,
   },
 
@@ -216,6 +229,8 @@ export default {
 
   data() {
     return {
+      collapseValue: false,
+      aux: "defecto",
       message: "No hay registros para mostrar",
       model: {
         type_management_id: null,
@@ -240,6 +255,7 @@ export default {
     index() {
       this.model.type_management_id = this.management_id;
       this.getManagements(this.model.type_management_id);
+      console.log("route ", this.$router);
       /* this.loadingCharge(true);
       setTimeout(() => {
         this.loadingCharge();
@@ -263,6 +279,8 @@ export default {
         this.loadingCharge(true);
         const res = await getManagements(id);
         this.managments = res.data;
+        await this.$refs.listView.nativeView.refresh();
+        console.log("managenmentss ", this.managments);
       } catch (error) {
         Alert.danger("Hubo un error al traer los datos ", error.message);
         /* this.loadingCharge(); */
@@ -273,7 +291,10 @@ export default {
 
     async addManagement() {
       try {
-        if (this.model.titular_name.trim() !== "" || this.model.name.trim() !== "") {
+        if (
+          this.model.titular_name.trim() !== "" ||
+          this.model.name.trim() !== ""
+        ) {
           this.loadingCharge(true);
           const res = await storeManagement(this.model);
           this.managments.push(res.data);
@@ -295,10 +316,20 @@ export default {
 
     navigate(item) {
       this.setManagementModel(item);
-      this.$showModal(NavViews, {
+      this.$router.push("reportsnav.index");
+      /* this.$showModal(NavViews, {
         fullscreen: true,
         animated: true,
-      });
+      }); */
+    },
+
+    navigateBack() {
+      /* this.$router.push("evidence.index"); */
+      /* this.index() */
+      this.aux = "valor recargado";
+      console.log("image ", this.$refs.viewImage.index())
+      console.log("list ", this.$refs.listView.nativeView)
+      this.$refs.listView.nativeView.refresh();
     },
 
     navigateOptions(item, index) {
@@ -310,16 +341,32 @@ export default {
         props: {
           item: item,
           generalOptions: true,
+          component: ManagementEdit,
+          updateRegister: () => this.managementEdit(item),
           deleteRow: () => this.deleteRow(item.id, index),
         },
         // listeners to be connected to MyComponent
         on: {
           someEvent: (value) => {
             console.log(value);
+            console.log("item ", item);
+            this.getManagements(item.type_management_id);
+            /* this.$refs.listView.nativeView.refresh(); */
           },
         },
       };
       this.$showBottomSheet(ButtomSheet, options);
+    },
+
+    managementEdit(item){
+      this.$showModal(ManagementEdit, {
+        fullscreen: true,
+        props: { info: item },
+      }).then((res) => {
+        console.log("respuesta ",res)
+        this.getManagements(res.model.type_management_id);
+        this.$emit('someEvent', 'Valor de ejemplo');
+      });
     },
 
     async deleteRow(id, index) {
@@ -335,10 +382,10 @@ export default {
     },
 
     desencriptarImagen(base64Encriptado) {
-      const imageData = ImageSource.fromBase64Sync(this.model.signature);
-      console.log("desencriptando ", imageData);
-      let myImg = this.$refs.imageRef.nativeView;
-      myImg.src = imageData;
+      return ImageSource.fromBase64Sync(base64Encriptado);
+      console.log("desencriptando ", this.model);
+      /* let myImg = this.$refs.imageRef.nativeView;
+      myImg.src = imageData; */
     },
   },
 };
