@@ -1,13 +1,18 @@
 <template>
   <StackLayout style="padding: 0px">
+    <Label textWrap="true">
+      <FormattedString>
+        <Span :text="label + ': '" fontWeight="bold" fontSize="14" />
+      </FormattedString>
+    </Label>
     <Label
-    v-if="items.length === 0"
+      v-if="items.length === 0"
       text="No hay elementos..."
       fontSize="13"
-      style="margin-left: 15px;"
+      style="margin-left: 15px"
     />
     <!-- <Stripe /> -->
-    <WrapLayout style="margin-left: 15px;" v-if="items.length > 0">
+    <WrapLayout style="margin-left: 15px" v-if="items.length > 0">
       <Label
         v-for="(item, index) in items"
         :key="index"
@@ -23,7 +28,7 @@
 import Stripe from "~/components/stripe/Stripe";
 
 export default {
-  name:"Tag",
+  name: "Tag",
   components: {
     Stripe,
   },
@@ -35,7 +40,7 @@ export default {
     },
     label: {
       type: String,
-      default: "cucho:",
+      default: "sin label",
     },
     labelIterator: {
       type: String,
@@ -51,6 +56,8 @@ export default {
   margin: 3px 6px 3px 0px;
   border-radius: 5px;
   border-width: 1px;
+  padding-left: 5px;
+  padding-right: 5px;
   background-color: rgba(0, 172, 193, 0.19);
   border-color: #00acc1;
   color: #00acc1;

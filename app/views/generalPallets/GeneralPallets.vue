@@ -83,12 +83,13 @@ const {
   loadPallets,
 } = require("~/sqlite/database");
 import ButtomSheet from "~/components/buttomSheet/ButtomSheet.vue";
-import InfoPallet from "./infoPallet/InfoPallet.vue";
 import CreateEditPallet from "~/views/pallets/CreateEditPallet/CreateEditPallet.vue";
 import Alert from "~/alerts/Alerts";
 import axios from "axios";
 import { mapMutations } from "vuex";
 import mixinMasters from "~/mixins/Master";
+import ListModal from "~/components/listModal/ListModal.vue";
+import GeneralPalletList from "~/views/generalPallets/GeneralPalletList";
 
 export default {
   name: "Ships",
@@ -172,8 +173,15 @@ export default {
 
     async showInfo(item) {
       try {
+        const listRows = GeneralPalletList.listRows;
         await this.palletInfo(item);
-        this.$showModal(InfoPallet, { props: { infoPallet: this.infoPallet } });
+        this.$showModal(ListModal, {
+          props: {
+            title: "Infomacion del Pallet",
+            info: this.infoPallet,
+            listRows: listRows,
+          },
+        });
         console.log(this.infoPallet);
       } catch (error) {
         console.log("error al traer los datos ", error);

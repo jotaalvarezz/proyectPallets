@@ -153,6 +153,7 @@ export default {
 
   methods: {
     index() {
+      console.log("info ", this.info)
       this.model = {
         id: this.info.id,
         type_management_id: this.info.type_management_id,
@@ -167,8 +168,9 @@ export default {
       try {
         this.loadingCharge(true);
         const res = await updateManagement(this.model);
+        console.log("res edit ",res)
         this.$modal.close({
-          model: this.model
+          model: res.data
         });
       } catch (error) {
         Alert.danger("Hubo un error al traer los datos ", error.message);

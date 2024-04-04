@@ -94,7 +94,8 @@ const updateManagement = async (item) => {
                                           titular_name = (?),
                                           signature = (?)
                                       WHERE id = (?)`, [item.name, item.journey, item.titular_name, item.signature, item.id]);
-    return updateData
+    const management = showManagement(item.id)
+    return management
   } catch (error) {
     console.error("Error al editar el barco ", error)
   }

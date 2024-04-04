@@ -2,7 +2,12 @@
   <page @loaded="index">
     <Header :search="false" />
     <GridLayout rows="auto, auto, *" backgroundColor="#F4F6F8">
-      <Collapse row="0" title="Gestion de Contenedor" @value="collapseValue = $event">
+      <Collapse
+        ref="Collapse"
+        row="0"
+        title="Gestion de Contenedor"
+        @value="collapseValue = $event"
+      >
         <!-- Contenido que se insertará dentro del componente -->
         <GridLayout
           rows="auto,auto,auto,auto,auto,auto,auto,auto,auto"
@@ -90,7 +95,7 @@
           <!-- <Image row="7" ref="imageRef" margin="25" src="" loadMode="sync" /> -->
         </GridLayout>
       </Collapse>
-      <Label
+      <!-- <Label
         row="1"
         margin="5"
         :text="'fa-sync-alt' | fonticon"
@@ -98,8 +103,8 @@
         width="40"
         color="#222a37"
         fontSize="22"
-        @tap="navigateBack"
-      />
+        @tap="refreshManagments"
+      /> -->
       <Label
         row="2"
         textWrap="true"
@@ -137,7 +142,6 @@
                   width="auto"
                   fontSize="15"
                 />
-                <Label :text="aux" textWrap="true" width="auto" fontSize="15" />
                 <Label textWrap="true">
                   <!-- en barco -->
                   <FormattedString v-if="management_id === 1">
@@ -150,12 +154,7 @@
                       fontWeight="bold"
                       fontSize="15"
                     />
-                    <Span :text="item.titular_name + '\n'" fontSize="15" />
-                    <Span
-                      text="Contenedores: "
-                      fontWeight="bold"
-                      fontSize="15"
-                    />
+                    <Span :text="item.titular_name" fontSize="15" />
                   </FormattedString>
                   <!-- en patio -->
                   <FormattedString v-if="management_id === 2">
@@ -166,24 +165,23 @@
                       fontWeight="bold"
                       fontSize="15"
                     />
-                    <Span :text="item.titular_name + '\n'" fontSize="15" />
-                    <Span
-                      text="Contenedores: "
-                      fontWeight="bold"
-                      fontSize="15"
-                    />
+                    <Span :text="item.titular_name" fontSize="15" />
                   </FormattedString>
                 </Label>
                 <!-- <StackLayout style="padding: 0px 5px 5px 8px">
                   <Label text="Contenedores:" class="subTittle" fontSize="12" /> -->
-                <Tag :items="item.container_reports" labelIterator="code" />
+                <Tag
+                  label="Contenedores"
+                  :items="item.container_reports"
+                  labelIterator="code"
+                />
                 <!-- </StackLayout> -->
-                <ViewImage
+                <!-- <ViewImage
                   ref="viewImage"
                   label="Firma: "
                   encrypted="true"
                   :url="item.signature"
-                />
+                /> -->
               </StackLayout>
             </StackLayout>
             <Label
@@ -214,6 +212,8 @@ import mixinMasters from "~/mixins/Master";
 import { ImageSource, Utils } from "@nativescript/core";
 import Alert from "~/alerts/Alerts";
 import { mapState, mapMutations } from "vuex";
+import ListModal from "~/components/listModal/ListModal.vue";
+import ManagmentShipList from "~/views/evidence/managementForm/ManagmentShipList";
 
 export default {
   name: "Management",
@@ -230,7 +230,6 @@ export default {
   data() {
     return {
       collapseValue: false,
-      aux: "defecto",
       message: "No hay registros para mostrar",
       model: {
         type_management_id: null,
@@ -255,11 +254,6 @@ export default {
     index() {
       this.model.type_management_id = this.management_id;
       this.getManagements(this.model.type_management_id);
-      console.log("route ", this.$router);
-      /* this.loadingCharge(true);
-      setTimeout(() => {
-        this.loadingCharge();
-      }, 2000); */
     },
 
     signatureCaptain() {
@@ -279,8 +273,7 @@ export default {
         this.loadingCharge(true);
         const res = await getManagements(id);
         this.managments = res.data;
-        await this.$refs.listView.nativeView.refresh();
-        console.log("managenmentss ", this.managments);
+        /* console.log("managments ",res) */
       } catch (error) {
         Alert.danger("Hubo un error al traer los datos ", error.message);
         /* this.loadingCharge(); */
@@ -298,6 +291,7 @@ export default {
           this.loadingCharge(true);
           const res = await storeManagement(this.model);
           this.managments.push(res.data);
+          console.log("res ", res);
         } else {
           Alert.info("¡Por favor firmar!", 1);
         }
@@ -307,6 +301,7 @@ export default {
           journey: "",
           signature: "",
         };
+        this.$refs.Collapse.activated();
       } catch (error) {
         Alert.danger("Hubo un error al traer los datos ", error.message);
       } finally {
@@ -323,16 +318,12 @@ export default {
       }); */
     },
 
-    navigateBack() {
-      /* this.$router.push("evidence.index"); */
-      /* this.index() */
-      this.aux = "valor recargado";
-      console.log("image ", this.$refs.viewImage.index())
-      console.log("list ", this.$refs.listView.nativeView)
-      this.$refs.listView.nativeView.refresh();
+    refreshManagments() {
+      this.getManagements(this.model.type_management_id);
     },
 
     navigateOptions(item, index) {
+      console.log("item ", item);
       item.action = true;
       const options = {
         dismissOnBackgroundTap: true,
@@ -342,50 +333,61 @@ export default {
           item: item,
           generalOptions: true,
           component: ManagementEdit,
+          infoRegister: () => this.managmentInfo(item),
           updateRegister: () => this.managementEdit(item),
-          deleteRow: () => this.deleteRow(item.id, index),
+          deleteRow: () => this.deleteRow(item.id),
         },
         // listeners to be connected to MyComponent
         on: {
           someEvent: (value) => {
             console.log(value);
-            console.log("item ", item);
-            this.getManagements(item.type_management_id);
-            /* this.$refs.listView.nativeView.refresh(); */
           },
         },
       };
       this.$showBottomSheet(ButtomSheet, options);
     },
 
-    managementEdit(item){
-      this.$showModal(ManagementEdit, {
-        fullscreen: true,
-        props: { info: item },
-      }).then((res) => {
-        console.log("respuesta ",res)
-        this.getManagements(res.model.type_management_id);
-        this.$emit('someEvent', 'Valor de ejemplo');
+    managmentInfo(item) {
+      let listRows = [];
+      if (item.type_management_id === 1) {
+        listRows = ManagmentShipList.listRowsShip;
+      } else if (item.type_management_id === 2) {
+        listRows = ManagmentShipList.listRowsPatio;
+      }
+      this.$showModal(ListModal, {
+        props: {
+          title: "Informacion del reporte",
+          info: item,
+          listRows: listRows,
+          showTags: "container_reports",
+          iteratorTags: "code",
+        },
       });
     },
 
-    async deleteRow(id, index) {
+    managementEdit(item) {
+      this.$showModal(ManagementEdit, {
+        fullscreen: true,
+        props: { info: item },
+      }).then(async (res) => {
+        this.getManagements(res.model.type_management_id);
+        /* const index = this.managments.findIndex(prev => prev.id === res.model.id)
+        this.managments[index] = res.model
+        this.$refs.listView.nativeView.refresh(); */
+      });
+    },
+
+    async deleteRow(id) {
       let confirmated = await Alert.Danger(1);
       if (confirmated) {
         try {
           const record = await deleteManagement(id);
+          const index = this.managments.findIndex((prev) => prev.id === id);
           this.managments.splice(index, 1);
         } catch (error) {
           Alert.danger("eleminacion fallida ", error.message);
         }
       }
-    },
-
-    desencriptarImagen(base64Encriptado) {
-      return ImageSource.fromBase64Sync(base64Encriptado);
-      console.log("desencriptando ", this.model);
-      /* let myImg = this.$refs.imageRef.nativeView;
-      myImg.src = imageData; */
     },
   },
 };
