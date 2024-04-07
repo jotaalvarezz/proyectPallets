@@ -283,22 +283,28 @@ export default {
     },
 
     async addManagement() {
+      console.log("modelo ",this.model)
       try {
         if (
-          this.model.titular_name.trim() !== "" ||
-          this.model.name.trim() !== ""
+          this.model.titular_name !== "" &&
+          this.model.name !== ""
         ) {
           this.loadingCharge(true);
           const res = await storeManagement(this.model);
-          this.managments.push(res.data);
+          if(res.status === 500){
+            Alert.info(res.message, 1, "Ya existe");
+          }else{
+            this.managments.push(res.data);
+          }
           console.log("res ", res);
         } else {
-          Alert.info("¡Por favor firmar!", 1);
+          Alert.info("¡Revise que los campos no se encuentren vacios!", 1);
         }
         this.model = {
           type_management_id: this.management_id,
           name: "",
           journey: "",
+          titular_name: "",
           signature: "",
         };
         this.$refs.Collapse.activated();
