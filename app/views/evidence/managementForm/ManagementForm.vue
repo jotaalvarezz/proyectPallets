@@ -126,7 +126,7 @@
         <v-template>
           <!-- Shows the list item label in the default color and style. -->
           <GridLayout columns="*, 40">
-            <StackLayout orientation="horizontal" col="0" @tap="navigate(item)">
+            <StackLayout orientation="horizontal" col="0">
               <Label
                 backgroundColor="#D8E2E8"
                 :text="'fa-file-alt' | fonticon"
@@ -251,6 +251,12 @@ export default {
   methods: {
     ...mapMutations("evidenceStore", ["setManagementModel"]),
 
+    onItemTap(event) {
+      /* console.log(event.index)
+      console.log(event.item); */
+      this.navigate(event.item)
+    },
+
     index() {
       this.model.type_management_id = this.management_id;
       this.getManagements(this.model.type_management_id);
@@ -283,17 +289,14 @@ export default {
     },
 
     async addManagement() {
-      console.log("modelo ",this.model)
+      console.log("modelo ", this.model);
       try {
-        if (
-          this.model.titular_name !== "" &&
-          this.model.name !== ""
-        ) {
+        if (this.model.titular_name !== "" && this.model.name !== "") {
           this.loadingCharge(true);
           const res = await storeManagement(this.model);
-          if(res.status === 500){
+          if (res.status === 500) {
             Alert.info(res.message, 1, "Ya existe");
-          }else{
+          } else {
             this.managments.push(res.data);
           }
           console.log("res ", res);
@@ -317,7 +320,7 @@ export default {
 
     navigate(item) {
       this.setManagementModel(item);
-      this.$router.push("reportsnav.index");
+      this.$router.push("container_report.index");
       /* this.$showModal(NavViews, {
         fullscreen: true,
         animated: true,

@@ -10,6 +10,7 @@ import CreateEditPallet from '~/views/pallets/CreateEditPallet/CreateEditPallet'
 import Evidence from '~/views/evidence/Evidence.vue'
 import NavViews from '~/views/evidence/tabview/NavViews.vue'
 import ManagementForm from '~/views/evidence/managementForm/ManagementForm'
+import ContainerReportList from '~/views/evidence/containerReport/ContainerReportList.vue'
 
 Vue.use(NSVueRouter)
 
@@ -58,6 +59,11 @@ const routes = [
   {
     name: 'verification.details',
     component: ManagementForm,
+    meta: { guest: true }
+  },
+  {
+    name: 'container_report.index',
+    component: ContainerReportList,
     meta: { guest: true }
   },
 ]
