@@ -1,5 +1,5 @@
 //Consulta para los select del modulo de gestion y tipos de gestion
-const { openDatabase, showData, showOneData } = require('~/sqlite/openDatabase');
+const { openDatabase, showData, showOneData, getRegister } = require('~/sqlite/openDatabase');
 
 const getTypesManagement = async () => {
   try {
@@ -56,16 +56,21 @@ const showManagement = async (id) => {
 
 const storeManagement = async (data) => {
   try {
+    const register = await getRegister('management', 'name', data.name, 'type_management_id', data.type_management_id)
+    if (Object.keys(register.data).length > 0) {
+      return { status: 500 , message: "Ya existe un registro creado con el mismo nombre!" }
+    }
+
     const db = await openDatabase();
     let postData = await db.execSQL(
       `INSERT INTO management (
-                            type_management_id,
-                            name,
-                            journey,
-                            titular_name,
-                            signature,
-                            date_creation)
-        VALUES (?, ?, ?, ?, ?, ?)`,
+                              type_management_id,
+                              name,
+                              journey,
+                              titular_name,
+                              signature,
+                              date_creation)
+          VALUES (?, ?, ?, ?, ?, ?)`,
       [data.type_management_id, data.name, data.journey, data.titular_name, data.signature, new Date()]
     );
     const management = showManagement(postData)
@@ -85,10 +90,27 @@ const deleteManagement = async (id) => {
   }
 }
 
+const updateManagement = async (item) => {
+  try {
+    const db = await openDatabase();
+    let updateData = db.execSQL(`UPDATE management
+                                      SET name = (?),
+                                          journey = (?),
+                                          titular_name = (?),
+                                          signature = (?)
+                                      WHERE id = (?)`, [item.name, item.journey, item.titular_name, item.signature, item.id]);
+    const management = showManagement(item.id)
+    return management
+  } catch (error) {
+    console.error("Error al editar el barco ", error)
+  }
+}
+
 module.exports = {
   getTypesManagement,
   storeManagement,
   getAllManagements,
   getManagements,
-  deleteManagement
+  deleteManagement,
+  updateManagement
 }

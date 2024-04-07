@@ -35,7 +35,7 @@
       id="2"
       row="1"
       columns="*,50,120,*"
-      @tap="navigate()"
+      @tap="update()"
       height="70"
       width="100%"
       @touch="onTouch(2)"
@@ -113,9 +113,13 @@ export default {
     item: {
       type: Object,
     },
-    getInfo: {
+    updateRegister: {
       type: Function,
-      default : () => {alert("En construccion...!")}
+      default : () => {Alert("En construccion...!")}
+    },
+    infoRegister:{
+      type: Function,
+      default : () => {Alert("En construccion...!")}
     },
     deleteRow: {
       type: Function,
@@ -138,18 +142,26 @@ export default {
   },
   methods: {
     infoItem() {
-      this.$showModal(this.componentInfo, { props: { info: this.item } });
+      this.infoRegister()
     },
 
     navigate() {
-      this.$closeBottomSheet();
+      /* this.$closeBottomSheet(); */
       this.$showModal(this.component, {
         fullscreen: true,
         props: { info: this.item },
+      }).then(() => {
+        this.$emit('someEvent', 'Valor de ejemplo');
+        this.$closeBottomSheet();
       });
       //this.$router.push('editpallets.index')
       /* this.$closeBottomSheet()
       this.$navigateTo(CreateEditPallet) */
+    },
+
+    update(){
+      this.updateRegister()
+      this.$closeBottomSheet();
     },
 
     onTouch(n) {

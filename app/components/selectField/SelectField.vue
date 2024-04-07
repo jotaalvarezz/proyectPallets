@@ -57,6 +57,7 @@
 import ListOptions from "~/components/listOptions/ListOptions.vue";
 
 export default {
+  name:"SelectField",
   props: {
     label: {
       type: String,

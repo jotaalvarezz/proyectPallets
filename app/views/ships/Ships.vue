@@ -54,13 +54,14 @@
 import Warehouses from "~/views/Warehouses/Warehouses.vue";
 import FloatingButton from "~/components/floatingButton/FloatingButton.vue";
 import CreateEditShip from "~/views/ships/createEditShip/CreateEditShip.vue";
-import infoShip from "~/views/ships/infoShips/infoShip.vue";
 import Header from "~/components/header/Header.vue";
 import { mapMutations, mapState } from "vuex";
 const { getShips, deleteShip } = require("~/sqlite/database");
 import Alert from "~/alerts/Alerts";
 import ButtomSheet from "~/components/buttomSheet/ButtomSheet.vue";
 import mixinMasters from "~/mixins/Master";
+import ListModal from "~/components/listModal/ListModal.vue";
+import ShipList from "~/views/ships/ShipList";
 
 export default {
   name: "Ships",
@@ -109,8 +110,8 @@ export default {
           item: item,
           generalOptions: true,
           component: CreateEditShip,
-          componentInfo: infoShip,
-          getInfo: () => this.getShips(),
+          infoRegister: () => this.shipInfo(item),
+          updateRegister: () => this.shipEdit(item),
           deleteRow: () => this.deleteRow(item.id, index),
         },
         // listeners to be connected to MyComponent
@@ -138,6 +139,23 @@ export default {
         },
       }).then((res) => {
         this.getShips();
+      });
+    },
+
+    shipInfo(item) {
+      const listRows = ShipList.listRows;
+      this.$showModal(ListModal, {
+        props: { title: "Informacion del Barco", info: item, listRows: listRows },
+      });
+    },
+
+    shipEdit(item) {
+      this.$showModal(CreateEditShip, {
+        fullscreen: true,
+        props: { info: item },
+      }).then((res) => {
+        console.log("respuesta ", res);
+        this.$emit("someEvent", "Valor de ejemplo");
       });
     },
 

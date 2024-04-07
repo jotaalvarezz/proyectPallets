@@ -7,12 +7,20 @@
         padding="11"
         height="70"
       >
+        <Label
+          :text="'fa-chevron-left' | fonticon"
+          class="fas exitIcon"
+          width="40"
+          color="#222a37"
+          fontSize="22"
+          @tap="$modal.close"
+        />
         <TextField
           v-model="textFieldValue"
           height="40"
           borderWidth="1"
           backgroundColor="#F4F6F8"
-          width="70%"
+          width="85%"
           borderRadius="5"
           borderColor="#F4F6F8"
           horizontalAlignment="left"
@@ -21,14 +29,6 @@
           paddingLeft="10"
           fontSize="15"
           @textChange="filter"
-        />
-        <Label
-          :text="'fa-reply' | fonticon"
-          class="fas exitIcon"
-          width="50"
-          color="#222a37"
-          fontSize="22"
-          @tap="$modal.close"
         />
       </StackLayout>
       <grid-layout
@@ -84,6 +84,7 @@
 
 <script>
 export default {
+  name:"searchView",
   props: {
     data: {
       type: Array,
@@ -126,7 +127,7 @@ export default {
 };
 </script>
 <style scoped>
-.exitIcon{
-    opacity: 0.8;
+.exitIcon {
+  opacity: 0.8;
 }
 </style>

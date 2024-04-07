@@ -64,12 +64,12 @@ class Alert {
     });
   }
 
-  static async info(msg, number){
+  static async info(msg, number, title = "Campo Vacio!!"){
     let res = ''
     switch(number){
       case 1:
         return alert({
-          title: "Campo Vacio!!",
+          title: title,
           message: msg,
           okButtonText: "aceptar",
         });

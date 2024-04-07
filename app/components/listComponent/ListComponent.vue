@@ -106,14 +106,9 @@
 </template>
 
 <script>
-import Tag from "~/components/tag/Tag.vue";
-import Stripe from "~/components/stripe/Stripe";
 
 export default {
-  components: {
-    Tag,
-    Stripe,
-  },
+  name:"ListComponent",
 
   props: {
     listOfItems: {

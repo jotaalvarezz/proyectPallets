@@ -42,6 +42,7 @@
 import { mapState } from "vuex";
 
 export default {
+  name:"FormGroupTextField",
   props: {
     label: {
       type: String,

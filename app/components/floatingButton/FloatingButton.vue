@@ -13,6 +13,7 @@
 import { fonticon } from "nativescript-fonticon";
 
 export default {
+  name:"FloatingButton",
   props: {
     method: {
       type: Function,

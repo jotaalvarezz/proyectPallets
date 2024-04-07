@@ -28,14 +28,11 @@
 </template>
 
 <script>
-import Header from "~/components/header/Header.vue";
-import NavViews from "~/views/evidence/tabview/NavViews.vue";
 const {getTypesManagement} = require("~/sqlite/database");
 import Alert from "~/alerts/Alerts";
 
 export default {
   name: "Evidences",
-  components: { Header, NavViews },
 
   data() {
     return {
@@ -63,7 +60,7 @@ export default {
   },
 
   mounted() {
-
+    console.log("routss ", this.$router)
   },
 };
 </script>

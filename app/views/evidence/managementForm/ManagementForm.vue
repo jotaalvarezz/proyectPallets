@@ -1,8 +1,13 @@
 <template>
   <page @loaded="index">
     <Header :search="false" />
-    <GridLayout rows="auto, *" backgroundColor="#F4F6F8">
-      <Collapse row="0" title="Gestion de Contenedor">
+    <GridLayout rows="auto, auto, *" backgroundColor="#F4F6F8">
+      <Collapse
+        ref="Collapse"
+        row="0"
+        title="Gestion de Contenedor"
+        @value="collapseValue = $event"
+      >
         <!-- Contenido que se insertará dentro del componente -->
         <GridLayout
           rows="auto,auto,auto,auto,auto,auto,auto,auto,auto"
@@ -90,8 +95,18 @@
           <!-- <Image row="7" ref="imageRef" margin="25" src="" loadMode="sync" /> -->
         </GridLayout>
       </Collapse>
-      <Label
+      <!-- <Label
         row="1"
+        margin="5"
+        :text="'fa-sync-alt' | fonticon"
+        class="fas"
+        width="40"
+        color="#222a37"
+        fontSize="22"
+        @tap="refreshManagments"
+      /> -->
+      <Label
+        row="2"
         textWrap="true"
         class="info"
         v-if="managments.length == 0"
@@ -103,7 +118,7 @@
         </FormattedString>
       </Label>
       <ListView
-        row="1"
+        row="2"
         ref="listView"
         for="item in managments"
         @itemTap="onItemTap"
@@ -134,31 +149,39 @@
                     <Span :text="item.name + '\n'" fontSize="15" />
                     <Span text="Viaje: " fontWeight="bold" fontSize="15" />
                     <Span :text="item.journey + '\n'" fontSize="15" />
-                    <Span text="Nombre del Capitan: " fontWeight="bold" fontSize="15" />
-                    <Span :text="item.titular_name + '\n'" fontSize="15" />
                     <Span
-                      text="Contenedores: "
+                      text="Nombre del Capitan: "
                       fontWeight="bold"
                       fontSize="15"
                     />
+                    <Span :text="item.titular_name" fontSize="15" />
                   </FormattedString>
                   <!-- en patio -->
                   <FormattedString v-if="management_id === 2">
                     <Span text="Patio: " fontWeight="bold" fontSize="15" />
                     <Span :text="'Alieva' + '\n'" fontSize="15" />
-                    <Span text="Nombre del Conductor: " fontWeight="bold" fontSize="15" />
-                    <Span :text="item.titular_name + '\n'" fontSize="15" />
                     <Span
-                      text="Contenedores: "
+                      text="Nombre del Conductor: "
                       fontWeight="bold"
                       fontSize="15"
                     />
+                    <Span :text="item.titular_name" fontSize="15" />
                   </FormattedString>
                 </Label>
                 <!-- <StackLayout style="padding: 0px 5px 5px 8px">
                   <Label text="Contenedores:" class="subTittle" fontSize="12" /> -->
-                <Tag :items="item.container_reports" labelIterator="code" />
+                <Tag
+                  label="Contenedores"
+                  :items="item.container_reports"
+                  labelIterator="code"
+                />
                 <!-- </StackLayout> -->
+                <!-- <ViewImage
+                  ref="viewImage"
+                  label="Firma: "
+                  encrypted="true"
+                  :url="item.signature"
+                /> -->
               </StackLayout>
             </StackLayout>
             <Label
@@ -183,29 +206,18 @@ const {
   getManagements,
   deleteManagement,
 } = require("~/sqlite/database");
-import Header from "~/components/header/Header.vue";
-import Stripe from "~/components/stripe/Stripe";
-import ContainerReport from "~/views/evidence/containerReport/ContainerReport.vue";
-import FormGroupTextField from "~/components/input/FormGroupTextField";
-import Signature from "~/components/signature/Signature.vue";
-import Collapse from "~/components/collapse/Collapse";
-import NavViews from "~/views/evidence/tabview/NavViews";
-import Tag from "~/components/tag/Tag.vue";
+import ManagementEdit from "~/views/evidence/managementForm/ManagementEdit";
 import ButtomSheet from "~/components/buttomSheet/ButtomSheet.vue";
 import mixinMasters from "~/mixins/Master";
 import { ImageSource, Utils } from "@nativescript/core";
 import Alert from "~/alerts/Alerts";
 import { mapState, mapMutations } from "vuex";
+import ListModal from "~/components/listModal/ListModal.vue";
+import ManagmentShipList from "~/views/evidence/managementForm/ManagmentShipList";
 
 export default {
   name: "Management",
   components: {
-    Header,
-    Stripe,
-    FormGroupTextField,
-    Signature,
-    Collapse,
-    Tag,
     ButtomSheet,
     ContainerReport
   },
@@ -218,6 +230,7 @@ export default {
 
   data() {
     return {
+      collapseValue: false,
       message: "No hay registros para mostrar",
       model: {
         type_management_id: null,
@@ -242,10 +255,6 @@ export default {
     index() {
       this.model.type_management_id = this.management_id;
       this.getManagements(this.model.type_management_id);
-      /* this.loadingCharge(true);
-      setTimeout(() => {
-        this.loadingCharge();
-      }, 2000); */
     },
 
     signatureCaptain() {
@@ -265,6 +274,7 @@ export default {
         this.loadingCharge(true);
         const res = await getManagements(id);
         this.managments = res.data;
+        /* console.log("managments ",res) */
       } catch (error) {
         Alert.danger("Hubo un error al traer los datos ", error.message);
         /* this.loadingCharge(); */
@@ -274,20 +284,31 @@ export default {
     },
 
     async addManagement() {
+      console.log("modelo ",this.model)
       try {
-        if (this.model.titular_name.trim() !== "" || this.model.name.trim() !== "") {
+        if (
+          this.model.titular_name !== "" &&
+          this.model.name !== ""
+        ) {
           this.loadingCharge(true);
           const res = await storeManagement(this.model);
-          this.managments.push(res.data);
+          if(res.status === 500){
+            Alert.info(res.message, 1, "Ya existe");
+          }else{
+            this.managments.push(res.data);
+          }
+          console.log("res ", res);
         } else {
-          Alert.info("¡Por favor firmar!", 1);
+          Alert.info("¡Revise que los campos no se encuentren vacios!", 1);
         }
         this.model = {
           type_management_id: this.management_id,
           name: "",
           journey: "",
+          titular_name: "",
           signature: "",
         };
+        this.$refs.Collapse.activated();
       } catch (error) {
         Alert.danger("Hubo un error al traer los datos ", error.message);
       } finally {
@@ -297,17 +318,19 @@ export default {
 
     navigate(item) {
       this.setManagementModel(item);
-      this.$showModal(ContainerReport, {
-        fullscreen: true,
-        animated: true,
-      });
+      this.$router.push("reportsnav.index");
       /* this.$showModal(NavViews, {
         fullscreen: true,
         animated: true,
       }); */
     },
 
+    refreshManagments() {
+      this.getManagements(this.model.type_management_id);
+    },
+
     navigateOptions(item, index) {
+      console.log("item ", item);
       item.action = true;
       const options = {
         dismissOnBackgroundTap: true,
@@ -316,7 +339,10 @@ export default {
         props: {
           item: item,
           generalOptions: true,
-          deleteRow: () => this.deleteRow(item.id, index),
+          component: ManagementEdit,
+          infoRegister: () => this.managmentInfo(item),
+          updateRegister: () => this.managementEdit(item),
+          deleteRow: () => this.deleteRow(item.id),
         },
         // listeners to be connected to MyComponent
         on: {
@@ -328,23 +354,47 @@ export default {
       this.$showBottomSheet(ButtomSheet, options);
     },
 
-    async deleteRow(id, index) {
+    managmentInfo(item) {
+      let listRows = [];
+      if (item.type_management_id === 1) {
+        listRows = ManagmentShipList.listRowsShip;
+      } else if (item.type_management_id === 2) {
+        listRows = ManagmentShipList.listRowsPatio;
+      }
+      this.$showModal(ListModal, {
+        props: {
+          title: "Informacion del reporte",
+          info: item,
+          listRows: listRows,
+          showTags: "container_reports",
+          iteratorTags: "code",
+        },
+      });
+    },
+
+    managementEdit(item) {
+      this.$showModal(ManagementEdit, {
+        fullscreen: true,
+        props: { info: item },
+      }).then(async (res) => {
+        this.getManagements(res.model.type_management_id);
+        /* const index = this.managments.findIndex(prev => prev.id === res.model.id)
+        this.managments[index] = res.model
+        this.$refs.listView.nativeView.refresh(); */
+      });
+    },
+
+    async deleteRow(id) {
       let confirmated = await Alert.Danger(1);
       if (confirmated) {
         try {
           const record = await deleteManagement(id);
+          const index = this.managments.findIndex((prev) => prev.id === id);
           this.managments.splice(index, 1);
         } catch (error) {
           Alert.danger("eleminacion fallida ", error.message);
         }
       }
-    },
-
-    desencriptarImagen(base64Encriptado) {
-      const imageData = ImageSource.fromBase64Sync(this.model.signature);
-      console.log("desencriptando ", imageData);
-      let myImg = this.$refs.imageRef.nativeView;
-      myImg.src = imageData;
     },
   },
 };
