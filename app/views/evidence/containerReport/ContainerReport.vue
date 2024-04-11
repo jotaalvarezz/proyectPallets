@@ -38,7 +38,7 @@
         >
           <GridLayout
             ref="form2"
-            rows="auto,auto,auto,auto,auto,auto,60,auto,auto,auto,auto"
+            rows="auto,auto,auto,auto,auto,auto,60,auto,auto,auto,auto,auto"
             padding="30"
           >
             <Label
@@ -144,7 +144,7 @@
             <Stripe row="9" margin="20" />
             <!-- Boton para Crear -->
             <Button
-              v-if="action == false"
+              v-if="containerReportEdit == false"
               row="10"
               backgroundColor="#F4F6F8"
               color="#222a37"
@@ -158,7 +158,7 @@
             <!-- ******************* -->
             <!-- Boton para Editar -->
             <Button
-              v-if="action == true"
+              v-if="containerReportEdit == true"
               row="10"
               backgroundColor="#F4F6F8"
               color="#222a37"
@@ -186,28 +186,17 @@ const {
   storeContainerReport,
   getContainerElements,
   getDamage,
-  updateContainerReport
+  updateContainerReport,
 } = require("~/sqlite/database");
 import mixinMasters from "~/mixins/Master";
 import DamagedItems from "~/views/evidence/containerReport/damagedItems/DamagedItems.vue";
-import ListComponent from "~/components/listComponent/ListComponent";
+import DamagedItemsList from '~/views/evidence/containerReport/damagedItems/DamagedItemsList.vue'
 import Alert from "~/alerts/Alerts";
 import { mapState, mapMutations } from "vuex";
 
 export default {
   components: {
-    DamagedItems,
-    ListComponent,
-  },
-
-  props: {
-    info: {
-      type: Object,
-    },
-    action: {
-      type: Boolean,
-      default: false,
-    },
+    DamagedItems
   },
 
   data() {
@@ -224,7 +213,6 @@ export default {
       types: [],
       additionalDamage: [],
       elements: [],
-      info: [],
       icons: {},
       isScrolling: false,
     };
@@ -233,11 +221,12 @@ export default {
   mixins: [mixinMasters],
 
   computed: {
-    ...mapState("evidenceStore", ["managementModel", "damagedItems"]),
+    ...mapState("evidenceStore", ["managementModel", "damagedItems", "containerReport", "containerReportEdit"]),
   },
 
   methods: {
     ...mapMutations("evidenceStore", ["setDamagedItem", "cleanDamagedItems"]),
+
     openFormDamaged() {
       this.$showModal(DamagedItems, {
         fullscreen: true,
@@ -245,8 +234,10 @@ export default {
         cancelable: false,
         props: {
           container_elements: this.elements,
-          repairs: this.model.repairs
+          repairs: this.model.repairs,
         },
+      }).then((res) => {
+        console.log("console damage")
       });
     },
 
@@ -255,7 +246,7 @@ export default {
       try {
         if (this.model.code.trim() !== "") {
           this.model.repairs = this.damagedItems;
-          console.log("model.repairs ", this.model)
+          console.log("model.repairs ", this.model);
           this.loadingCharge(true);
           const res = await storeContainerReport(this.model);
           if (res.status === 500) {
@@ -275,17 +266,15 @@ export default {
       }
     },
 
-    async updateContainerReport(){
+    async updateContainerReport() {
       try {
-        const res = await updateContainerReport(this.model)
-        console.log("update res ",res)
-      } catch (error) {
-
-      }
+        const res = await updateContainerReport(this.model);
+        console.log("update res ", res);
+      } catch (error) {}
     },
 
     listRepairs() {
-      this.$showModal(ListComponent, {
+      this.$showModal(DamagedItemsList, {
         fullscreen: true,
         animated: true,
         props: {
@@ -314,16 +303,17 @@ export default {
     },
 
     initialMethods() {
-      if (this.action) {
-        const additionalDamage = this.info.additionalDamage;
+      console.log("m Model ",this.managementModel)
+      console.log("m damage ite ",this.damagedItems)
+      if (this.containerReportEdit) {
+        const additionalDamage = this.containerReport.additionalDamage;
         let additional_damage_id = [];
         for (let i = 0; i < additionalDamage.length; i++) {
           additional_damage_id.push(additionalDamage[i].id);
         }
-        this.model = this.info;
+        this.model = this.containerReport;
         this.model.additional_damage_id = additional_damage_id;
       }
-      this.cleanDamagedItems();
       this.model.management_id = this.managementModel.id;
       this.InfoSelect();
     },

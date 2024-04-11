@@ -21,7 +21,9 @@
       <Label dock="bottom" height="auto" />
     </DockLayout>
     <!-- <StackLayout v-if="value === true"> -->
-    <slot v-if="value === true"></slot>
+    <ScrollView>
+      <slot v-if="value === true"></slot>
+    </ScrollView>
     <!-- </StackLayout> -->
   </StackLayout>
 </template>

@@ -250,7 +250,7 @@ export default {
             photo: "",
           };
           this.unCheckAll();
-          console.log("store damage ", this.damagedItems);
+         /*  console.log("store damage ", this.damagedItems); */
           Alert.success("Reparacion agrgada");
         } else {
           this.$modal.close();
@@ -259,15 +259,15 @@ export default {
     },
 
     async InfoSelect() {
-      console.log("damages items", this.repairs);
+      /* console.log("damages items", this.repairs); */
       /* this.model.container_element_id = this.repairs[0].container_element_id */
-      console.log("model ", this.container_elements);
+      /* console.log("model ", this.container_elements); */
       try {
         this.loadingCharge(true);
         const res2 = await getDamage();
         this.damages = res2.data;
         this.elements = this.container_elements;
-        console.log("damages []", this.damages);
+        /* console.log("damages []", this.damages); */
       } catch (error) {
         console.log("solucion de errores ", error);
       } finally {

@@ -148,7 +148,7 @@ const {
 } = require("~/sqlite/database");
 import mixinMasters from "~/mixins/Master";
 import Alert from "~/alerts/Alerts";
-import { mapState } from "vuex";
+import { mapState, mapMutations } from "vuex";
 import ButtomSheet from "~/components/buttomSheet/ButtomSheet.vue";
 import ListModal from "~/components/listModal/ListModal.vue";
 import containerReportListInfo from "~/views/evidence/containerReport/ContainerReportListInfo";
@@ -176,6 +176,11 @@ export default {
   },
 
   methods: {
+    ...mapMutations("evidenceStore", [
+      "setContainerReport",
+      "setContainerReportEdit",
+    ]),
+
     filter() {
       console.log("container report ", this.container_reports);
       console.log("search fuera", this.search);
@@ -199,6 +204,8 @@ export default {
         fullscreen: true,
         animated: true,
       }).then(() => {
+        console.log("list")
+        this.cleanDamagedItems();
         this.getEvidences();
       });
     },
@@ -266,12 +273,15 @@ export default {
     },
 
     containerReportEdit(item) {
+      this.setContainerReport(item);
+      this.setContainerReportEdit(true);
       this.$showModal(ContainerReport, {
         fullscreen: true,
-        props: { info: item, action: true },
-      }).then((res) => {
-        console.log("respuesta ", res);
-        this.$emit("someEvent", "Valor de ejemplo");
+        animated: true,
+      }).then(() => {
+        this.setContainerReport({});
+        this.setContainerReportEdit(false);
+        console.log("close modallll");
       });
     },
 
@@ -285,14 +295,14 @@ export default {
           showTags: "additionalDamage",
           iteratorTags: "name",
           showMulTags: "repairs",
-          propsGeneralComponent:{
-            labelTag: 'name',
-            itemsKey: 'repair_damage',
-            labelIterator: 'name',
-            titleCollapse: 'Visualizar Evidencia',
-            labelViewImage: 'Foto',
-            viewImageKey: 'photo'
-          }
+          propsGeneralComponent: {
+            labelTag: "name",
+            itemsKey: "repair_damage",
+            labelIterator: "name",
+            titleCollapse: "Visualizar Evidencia",
+            labelViewImage: "Foto",
+            viewImageKey: "photo",
+          },
         },
       });
     },

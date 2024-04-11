@@ -102,6 +102,27 @@
             class="p-l-10 colorIcons"
           />
         </GridLayout>
+        <GridLayout
+          id="3"
+          columns="40,*"
+          class="nt-drawer__list-item"
+          :class="isHovered && itemSelector == 5 ? 'hovered' : ''"
+          @touch="onTouch(5)"
+        >
+          <Label
+            col="0"
+            :text="'fa-file-upload' | fonticon"
+            class="fas colorIcons"
+            fontSize="22"
+          />
+          <Label
+            col="1"
+            text="Sincronozar Evidencias"
+            textWrap="true"
+            fontSize="14"
+            class="p-l-10 colorIcons"
+          />
+        </GridLayout>
         <!-- <GridLayout columns="auto,*" class="nt-drawer__list-item" @tap="showProgressDialog">
                     <Label col="0" :text="'fa-trash-alt' | fonticon" class="fas colorIcons" fontSize="18" />
                     <Label col="1" text="Prueba" fontSize="15" class="p-l-10 colorIcons" />
