@@ -2,7 +2,7 @@
   <StackLayout @loaded="index">
     <Label
       v-if="label.length > 0"
-      text="Firma: "
+      :text="label "
       fontWeight="bold"
       fontSize="15"
     />

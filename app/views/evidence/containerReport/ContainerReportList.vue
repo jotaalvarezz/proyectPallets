@@ -79,7 +79,10 @@
                   fontSize="18"
                 />
                 <Label textWrap="true">
-                  <FormattedString>
+                  <!-- Barco -->
+                  <FormattedString
+                    v-if="managementModel.type_management_id === 1"
+                  >
                     <Span text="Contenedor: " fontWeight="bold" fontSize="15" />
                     <Span :text="item.code + '\n'" fontSize="15" />
                     <Span text="Tipo: " fontWeight="bold" fontSize="15" />
@@ -90,14 +93,31 @@
                     <Span :text="item.role + '\n'" fontSize="15" />
                     <Span text="Elemntos:" fontWeight="bold" fontSize="15" />
                   </FormattedString>
+                  <!-- Patio -->
+                  <FormattedString
+                    v-if="managementModel.type_management_id === 2"
+                  >
+                    <Span text="Contenedor: " fontWeight="bold" fontSize="15" />
+                    <Span :text="item.code + '\n'" fontSize="15" />
+                    <Span text="Tipo: " fontWeight="bold" fontSize="15" />
+                    <Span :text="nameType(item.type_id) + '\n'" fontSize="15" />
+                    <Span text="Patio: " fontWeight="bold" fontSize="15" />
+                    <Span :text="'Alieva' + '\n'" fontSize="15" />
+                    <Span text="Tecnico: " fontWeight="bold" fontSize="15" />
+                    <Span :text="item.role + '\n'" fontSize="15" />
+                    <Span text="Elemntos:" fontWeight="bold" fontSize="15" />
+                  </FormattedString>
                 </Label>
                 <StackLayout
                   v-for="(repair, index) in item.repairs"
                   :key="index"
                   style="padding: 0px 5px 5px 8px"
                 >
-                  <Label :text="repair.name" class="subTittle" fontSize="12" />
-                  <Tag :items="repair.repair_damage" labelIterator="name" />
+                  <Tag
+                    :label="repair.name"
+                    :items="repair.repair_damage"
+                    labelIterator="name"
+                  />
                   <!-- <Switch width="50" v-model="repair.state" horizontalAlignment="right"/> -->
                 </StackLayout>
               </StackLayout>
@@ -105,14 +125,15 @@
             <Label
               :text="'fa-ellipsis-v' | fonticon"
               class="fas iconOptions"
-              fontSize="18"
+              fontSize="14"
               col="1"
               style="text-align: center"
+              @tap="navigateOptions(item, index)"
             />
           </GridLayout>
         </v-template>
       </ListView>
-      <FloatingButton row="1" :icon="'fa-plus'" :method="create" />
+      <FloatingButton row="1" :icon="'fa-plus'" :method="openModal" />
     </GridLayout>
   </page>
 </template>
@@ -121,15 +142,23 @@
 const {
   getContainerReport,
   getTypes,
+  deleteContainerReport,
   getRepairDamage,
   getRepairs,
 } = require("~/sqlite/database");
 import mixinMasters from "~/mixins/Master";
 import Alert from "~/alerts/Alerts";
 import { mapState } from "vuex";
+import ButtomSheet from "~/components/buttomSheet/ButtomSheet.vue";
+import ListModal from "~/components/listModal/ListModal.vue";
+import containerReportListInfo from "~/views/evidence/containerReport/ContainerReportListInfo";
+import ContainerReport from "~/views/evidence/containerReport/ContainerReport.vue";
 
 export default {
   name: "containerReportList",
+  components: {
+    ButtomSheet,
+  },
   data() {
     return {
       search: "",
@@ -165,7 +194,38 @@ export default {
       this.array_filter = this.container_reports;
     },
 
-    create() {},
+    openModal() {
+      this.$showModal(ContainerReport, {
+        fullscreen: true,
+        animated: true,
+      }).then(() => {
+        this.getEvidences();
+      });
+    },
+
+    navigateOptions(item, index) {
+      console.log("item ", item);
+      item.action = true;
+      const options = {
+        dismissOnBackgroundTap: true,
+        dismissOnDraggingDownSheet: false,
+        transparent: true,
+        props: {
+          item: item,
+          generalOptions: true,
+          infoRegister: () => this.containerReportInfo(item),
+          updateRegister: () => this.containerReportEdit(item),
+          deleteRow: () => this.deleteRow(item.id),
+        },
+        // listeners to be connected to MyComponent
+        on: {
+          someEvent: (value) => {
+            console.log(value);
+          },
+        },
+      };
+      this.$showBottomSheet(ButtomSheet, options);
+    },
 
     async getEvidences() {
       console.log("management model ", this.managementModel);
@@ -189,6 +249,54 @@ export default {
         this.loadingCharge();
       }
     },
+
+    async deleteRow(id) {
+      let confirmated = await Alert.Danger(1);
+      if (confirmated) {
+        try {
+          const record = await deleteContainerReport(id);
+          const index = this.container_reports.findIndex(
+            (prev) => prev.id === id
+          );
+          this.container_reports.splice(index, 1);
+        } catch (error) {
+          Alert.danger("eleminacion fallida ", error.message);
+        }
+      }
+    },
+
+    containerReportEdit(item) {
+      this.$showModal(ContainerReport, {
+        fullscreen: true,
+        props: { info: item, action: true },
+      }).then((res) => {
+        console.log("respuesta ", res);
+        this.$emit("someEvent", "Valor de ejemplo");
+      });
+    },
+
+    containerReportInfo(item) {
+      let listRows = containerReportListInfo.listRowsContainerReport;
+      this.$showModal(ListModal, {
+        props: {
+          title: "Informacion del reporte",
+          info: item,
+          listRows: listRows,
+          showTags: "additionalDamage",
+          iteratorTags: "name",
+          showMulTags: "repairs",
+          propsGeneralComponent:{
+            labelTag: 'name',
+            itemsKey: 'repair_damage',
+            labelIterator: 'name',
+            titleCollapse: 'Visualizar Evidencia',
+            labelViewImage: 'Foto',
+            viewImageKey: 'photo'
+          }
+        },
+      });
+    },
+
     refreshEvidences() {
       this.getEvidences();
     },

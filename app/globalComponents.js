@@ -12,6 +12,7 @@ import Signature from "~/components/signature/Signature.vue";
 import Stripe from "~/components/stripe/Stripe.vue";
 import Tag from "~/components/tag/Tag.vue";
 import ListModal from "~/components/listModal/ListModal.vue";
+import GeneralComponent from "~/components/GeneralComponent/GeneralComponent.vue";
 
 const GlobalComponents = {
   install(Vue) {
@@ -29,6 +30,7 @@ const GlobalComponents = {
     Vue.component(Stripe.name, Stripe);
     Vue.component(Tag.name, Tag);
     Vue.component(ListModal.name, ListModal);
+    Vue.component(GeneralComponent.name, GeneralComponent);
   }
 }
 

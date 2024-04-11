@@ -1,5 +1,5 @@
 //Consulta para los select del modulo de evidencias
-const { openDatabase, showData } = require('~/sqlite/openDatabase');
+const { openDatabase, showData, getRegister } = require('~/sqlite/openDatabase');
 
 const getContainerReport = async (management_id) => {
   try {
@@ -24,7 +24,7 @@ const getContainerReport = async (management_id) => {
                                     FROM  repairs r
                                     INNER JOIN container_elements e on e.id = r.container_element_id
                                     WHERE container_report_id = ?`, [dataFormatted[i].id]);
-      const repairsFormatted = await showData('repairs', repairs, ['id', 'container_element_id', 'name', 'loaction', 'position', 'photo'])
+      const repairsFormatted = await showData('repairs', repairs, ['id', 'container_element_id', 'name', 'location', 'position', 'photo'])
       /* consulta para traer los daños */
       for (let i = 0; i < repairsFormatted.length; i++) {
         let damages = await db.all(`SELECT rd.damage_id, d.name
@@ -66,6 +66,11 @@ const getRepairDamage = async () => {
 
 const storeContainerReport = async (data) => {
   try {
+    const register = await getRegister('container_reports', 'code', data.code, 'management_id', data.management_id)
+    if (Object.keys(register.data).length > 0) {
+      return { status: 500, message: "Ya existe un registro creado con el mismo numero de contenedor!" }
+    }
+
     const db = await openDatabase();
     let postData = await db.execSQL(
       `INSERT INTO container_reports (
@@ -80,7 +85,7 @@ const storeContainerReport = async (data) => {
       data.role, data.observation, new Date()]
     );
     storeCReportADamage({ container_report_id: postData, additional_damage_id: data.additional_damage_id })
-    storeRepairs({ container_report_id: postData, damages_repairs: data.damages_repairs })
+    storeRepairs({ container_report_id: postData, damages_repairs: data.repairs })
     return postData;
   } catch (error) {
     console.log("ocurrio un problema al insertar la fila", error);
@@ -89,6 +94,7 @@ const storeContainerReport = async (data) => {
 
 const storeCReportADamage = async (data) => {
   try {
+    console.log("data ",data)
     const additional_damage = data.additional_damage_id
     const db = await openDatabase();
     let postData = []
@@ -156,10 +162,39 @@ const storeRepairDamage = async (data) => {
   }
 }
 
+const updateContainerReport = async (item) => {
+  try {
+    console.log("item ", item)
+    const db = await openDatabase();
+    let updateData = db.execSQL(`UPDATE container_reports
+                                      SET code = (?),
+                                      type_id = (?),
+                                      role = (?),
+                                      observation = (?)
+                                      WHERE id = (?)`, [item.code, item.type_id, item.role, item.observation, item.id]);
+    const containerReport = getRegister('container_reports', 'id', item.id)
+    return containerReport
+  } catch (error) {
+    console.error("Error al editar el registro ", error)
+  }
+}
+
+const deleteContainerReport = async (id) => {
+  try {
+    const db = await openDatabase();
+    const data = await db.execSQL("DELETE FROM container_reports WHERE id = ?", [id]);
+    return data;
+  } catch (error) {
+    console.log("Hubo un error intentando eliminar el registro ", error);
+  }
+}
+
 module.exports = {
   storeContainerReport,
   getContainerReport,
   getRepairs,
-  getRepairDamage
+  getRepairDamage,
+  deleteContainerReport,
+  updateContainerReport
 }
 

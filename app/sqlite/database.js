@@ -11,6 +11,8 @@ const {
   getContainerReport,
   getRepairs,
   getRepairDamage,
+  deleteContainerReport,
+  updateContainerReport
 } = require('~/sqlite/queries/evidence')
 
 const {
@@ -98,7 +100,7 @@ const Querys = [
         name TEXT,
         journey TEXT,
         titular_name TEXT,
-        signature BLOB,
+        signature TEXT,
         date_creation DATETIME,
         FOREIGN KEY (type_management_id) REFERENCES types_management(id)
       )`,
@@ -123,7 +125,7 @@ const Querys = [
     location TEXT,
     position TEXT,
     container_report_id INTEGER,
-    photo BLOB,
+    photo TEXT,
     date_creation DATETIME,
     FOREIGN KEY (container_element_id) REFERENCES container_elements(id),
     FOREIGN KEY (container_report_id) REFERENCES container_reports(id)
@@ -539,7 +541,9 @@ module.exports = {
   getManagements,
   getAllManagements,
   deleteManagement,
-  updateManagement
+  updateManagement,
+  deleteContainerReport,
+  updateContainerReport
 };
 
 
