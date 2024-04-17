@@ -1,5 +1,6 @@
 //Consulta para los select del modulo de evidencias
-const { openDatabase, showData, getRegister } = require('~/sqlite/openDatabase');
+const { openDatabase, showData, getRegister, first } = require('~/sqlite/openDatabase');
+const moment = require('moment');
 
 const getContainerReport = async (management_id) => {
   try {
@@ -20,11 +21,11 @@ const getContainerReport = async (management_id) => {
       const additionalDamageFormatted = await showData('additional_damage', additionalDamage, ['id', 'name', 'date_creation'])
       dataFormatted[i].additionalDamage = additionalDamageFormatted
       /* consulta para traer los reparaciones */
-      let repairs = await db.all(`SELECT r.id, r.container_element_id, e.name, r.location, r.position, r.photo
+      let repairs = await db.all(`SELECT r.id, r.container_element_id, e.name, r.location, r.position, r.container_report_id, r.photo
                                     FROM  repairs r
                                     INNER JOIN container_elements e on e.id = r.container_element_id
                                     WHERE container_report_id = ?`, [dataFormatted[i].id]);
-      const repairsFormatted = await showData('repairs', repairs, ['id', 'container_element_id', 'name', 'location', 'position', 'photo'])
+      const repairsFormatted = await showData('repairs', repairs, ['id', 'container_element_id', 'name', 'location', 'position', 'container_report_id', 'photo'])
       /* consulta para traer los daños */
       for (let i = 0; i < repairsFormatted.length; i++) {
         let damages = await db.all(`SELECT rd.damage_id, d.name
@@ -36,6 +37,48 @@ const getContainerReport = async (management_id) => {
       }
       dataFormatted[i].repairs = repairsFormatted
     }
+    return { data: dataFormatted };
+  } catch (error) {
+    console.log("error al traer los datos ", error);
+  }
+}
+
+const showContainerReport = async (id) => {
+  try {
+    const db = await openDatabase();
+    const data = await db.get(`SELECT cr.id, m.name, m.journey, cr.management_id,
+                                      cr.code, cr.type_id, cr.role,
+                                      cr.observation, cr.date_creation
+                                FROM container_reports cr
+                                INNER JOIN management m on m.id = cr.management_id
+                                WHERE cr.id = ?`, [id]);
+    let dataFormatted = await first('container_reports', data, ['id', 'vessel', 'journey', 'management_id', 'code', 'type_id', 'role', 'observation', 'date_creation'])
+    if (Object.keys(dataFormatted).length > 0) {
+      /* consulta para traer los daños adicionales */
+      let additionalDamage = await db.all(`SELECT a.id, a.name, a.date_creation
+                                    FROM  container_reports_additional_damage ca
+                                    INNER JOIN additional_damage a on a.id = ca.additional_damage_id
+                                    WHERE ca.container_report_id = ?`, [dataFormatted.id]);
+      const additionalDamageFormatted = await showData('additional_damage', additionalDamage, ['id', 'name', 'date_creation'])
+      dataFormatted.additionalDamage = additionalDamageFormatted
+      /* consulta para traer los reparaciones */
+      let repairs = await db.all(`SELECT r.id, r.container_element_id, e.name, r.location, r.position, r.container_report_id, r.photo
+                                    FROM  repairs r
+                                    INNER JOIN container_elements e on e.id = r.container_element_id
+                                    WHERE container_report_id = ?`, [dataFormatted.id]);
+      const repairsFormatted = await showData('repairs', repairs, ['id', 'container_element_id', 'name', 'location', 'position', 'container_report_id', 'photo'])
+      /* consulta para traer los daños */
+      for (let i = 0; i < repairsFormatted.length; i++) {
+        let damages = await db.all(`SELECT rd.id, rd.repair_id ,rd.damage_id, d.name
+                                    FROM  repair_damage rd
+                                    INNER JOIN damage d on d.id = rd.damage_id
+                                    WHERE rd.repair_id = ?`, [repairsFormatted[i].id]);
+        const damagesFormatted = await showData('repair_damage', damages, ['id', 'repair_id', 'damage_id','name'])
+        repairsFormatted[i].repair_damage = damagesFormatted
+      }
+      dataFormatted.repairs = repairsFormatted
+    }
+
     return { data: dataFormatted };
   } catch (error) {
     console.log("error al traer los datos ", error);
@@ -82,10 +125,10 @@ const storeContainerReport = async (data) => {
                           date_creation)
       VALUES (?, ?, ?, ?, ?, ?)`,
       [data.management_id, data.code, data.type_id,
-      data.role, data.observation, new Date()]
+      data.role, data.observation, moment(new Date()).format("YYYY-MM-DD HH:mm:ss")]
     );
     storeCReportADamage({ container_report_id: postData, additional_damage_id: data.additional_damage_id })
-    storeRepairs({ container_report_id: postData, damages_repairs: data.repairs })
+    /* storeRepairs({ container_report_id: postData, damages_repairs: data.repairs }) */
     return postData;
   } catch (error) {
     console.log("ocurrio un problema al insertar la fila", error);
@@ -94,7 +137,7 @@ const storeContainerReport = async (data) => {
 
 const storeCReportADamage = async (data) => {
   try {
-    console.log("data ",data)
+    console.log("data ", data)
     const additional_damage = data.additional_damage_id
     const db = await openDatabase();
     let postData = []
@@ -105,7 +148,7 @@ const storeCReportADamage = async (data) => {
                             additional_damage_id,
                             date_creation)
         VALUES (?, ?, ?)`,
-        [data.container_report_id, additional_damage[i], new Date()]
+        [data.container_report_id, additional_damage[i], moment(new Date()).format("YYYY-MM-DD HH:mm:ss")]
       );
     }
     return postData;
@@ -130,7 +173,7 @@ const storeRepairs = async (data) => {
                           date_creation)
         VALUES (?, ?, ?, ?, ?, ?)`,
         [repairs[i].container_element_id, repairs[i].location, repairs[i].position,
-        data.container_report_id, repairs[i].photo, new Date()]
+        data.container_report_id, repairs[i].photo, moment(new Date()).format("YYYY-MM-DD HH:mm:ss")]
       );
       storeRepairDamage({ repair_id: postData[i], damage_id: repairs[i].damage_id })
     }
@@ -153,7 +196,7 @@ const storeRepairDamage = async (data) => {
                             damage_id,
                             date_creation)
         VALUES (?, ?, ?)`,
-        [data.repair_id, damages[i].id, new Date()]
+        [data.repair_id, damages[i].id, moment(new Date()).format("YYYY-MM-DD HH:mm:ss")]
       );
     }
     return postData;
@@ -182,6 +225,35 @@ const updateContainerReport = async (item) => {
 const deleteContainerReport = async (id) => {
   try {
     const db = await openDatabase();
+    const register = await showContainerReport(id)
+    console.log("register sss", register)
+    if (Object.keys(register.data).length === 0) {
+      return { status: 500, message: "No se encontro el reporte seleccionado, actualice la lista!" }
+    }
+
+    if (register.data.additionalDamage.length > 0) {
+      const additionalDamage = register.data.additionalDamage
+      let deleteData = []
+      for (let i = 0; i < additionalDamage.length; i++) {
+        deleteData[i] = await db.execSQL("DELETE FROM container_reports_additional_damage WHERE container_report_id = ?", [register.data.id]);
+      }
+    }
+
+    if (register.data.repairs.length > 0) {
+      const repairs = register.data.repairs
+      let deleteData = []
+      for (let i = 0; i < repairs.length; i++) {
+        const repair_damage = repairs[i].repair_damage;
+        let delete_repair_damage = []
+        if (repair_damage.length > 0){
+          for (let i = 0; i < repair_damage.length; i++) {
+            delete_repair_damage[i] = await db.execSQL("DELETE FROM repair_damage WHERE repair_id = ?", [repair_damage[i].repair_id]);
+          }
+        }
+        deleteData[i] = await db.execSQL("DELETE FROM repairs WHERE id = ?", [repairs[i].id]);
+      }
+    }
+
     const data = await db.execSQL("DELETE FROM container_reports WHERE id = ?", [id]);
     return data;
   } catch (error) {

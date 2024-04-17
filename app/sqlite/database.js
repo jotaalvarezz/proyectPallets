@@ -24,6 +24,8 @@ const {
   updateManagement
 } = require('~/sqlite/queries/management')
 
+
+const { storeRepair, deleteRepair } = require('~/sqlite/queries/repair')
 const Querys = [
   `CREATE TABLE IF NOT EXISTS ships
     (
@@ -543,7 +545,9 @@ module.exports = {
   deleteManagement,
   updateManagement,
   deleteContainerReport,
-  updateContainerReport
+  updateContainerReport,
+  storeRepair,
+  deleteRepair
 };
 
 

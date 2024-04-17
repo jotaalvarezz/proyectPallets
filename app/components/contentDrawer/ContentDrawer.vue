@@ -107,6 +107,7 @@
           columns="40,*"
           class="nt-drawer__list-item"
           :class="isHovered && itemSelector == 5 ? 'hovered' : ''"
+          @tap="EvidenceList"
           @touch="onTouch(5)"
         >
           <Label
@@ -192,7 +193,7 @@ export default {
           this.loadingCharge(true);
           const shipsWarehouses = await this.getShipsWarehouses();
           const db = await createTable(shipsWarehouses.data.data);
-          this.$router.pushClear("ship.index");
+          this.$router.pushClear("login.index");
           this.loadingCharge();
           Alert.success("Actualizacion de DB");
           //console.log(db)
@@ -200,7 +201,6 @@ export default {
       } catch (error) {
         this.loadingCharge();
         Alert.danger("No se pudo actualizar la DB", error);
-        console.log("error intentando crear las tablas...");
       }
     },
 
@@ -209,7 +209,7 @@ export default {
         this.$router.pushClear("ship.index");
         utils.closeDrawer();
       } catch (error) {
-        console.log("error al dirigirme a la ruta ", error);
+        Alert.info("error intentando al dirigirse a la ruta "+error,1,"Error!");
       }
     },
 
@@ -225,7 +225,7 @@ export default {
                 }) */
         /* console.log(db) */
       } catch (error) {
-        console.log("error intentando crear las tablas...");
+        Alert.info("error intentando al dirigirse a la ruta "+error,1,"Error!");
       }
     },
 
@@ -234,7 +234,16 @@ export default {
         this.$router.pushClear("evidence.index");
         utils.closeDrawer();
       } catch (error) {
-        console.log("error al dirigirme a la ruta ", error);
+        Alert.info("error intentando al dirigirse a la ruta "+error,1,"Error!");
+      }
+    },
+
+    EvidenceList() {
+      try {
+        this.$router.pushClear("evidence_list.show");
+        utils.closeDrawer();
+      } catch (error) {
+        Alert.info("error intentando al dirigirse a la ruta "+error,1,"Error!");
       }
     },
   },

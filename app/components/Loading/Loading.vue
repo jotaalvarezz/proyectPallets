@@ -29,11 +29,9 @@ export default {
 
         controlIndicator(){
             if(this.indicator == false){
-                console.log("dasctivate ",this.indicator)
                 //this.indicatorState(this.indicator)
                 this.$modal.close()
             }else{
-                console.log("activate ",this.indicator)
                 return true
             }
         }
@@ -43,7 +41,7 @@ export default {
         ...mapMutations(['indicatorState']),
 
         onBusyChanged(){
-            /* console.log("charge tamplate") */
+
         },
 
         stop(){

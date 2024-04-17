@@ -38,7 +38,7 @@
         >
           <GridLayout
             ref="form2"
-            rows="auto,auto,auto,auto,auto,auto,60,auto,auto,auto,auto,auto"
+            rows="auto,auto,auto,auto,auto,60,auto,auto,auto,auto,auto"
             padding="30"
           >
             <Label
@@ -89,7 +89,7 @@
                 />
               </FormattedString>
             </Label>
-            <GridLayout
+            <!-- <GridLayout
               row="6"
               columns="35,auto,*,35,auto"
               style="width: 80%; margin-top: 15px"
@@ -124,9 +124,9 @@
                 class="colorIcons"
                 @tap="listRepairs"
               />
-            </GridLayout>
+            </GridLayout> -->
             <SelectField
-              row="7"
+              row="6"
               :value="model.additional_damage_id"
               :items="additionalDamage"
               label="DAÑO ADICIONAL:"
@@ -135,17 +135,17 @@
               @value="model.additional_damage_id = $event"
             />
             <FormGroupTextField
-              row="8"
+              row="7"
               label="OBSERVACION:"
               textArea="true"
               placeholder="Observaciones..."
               v-model="model.observation"
             />
-            <Stripe row="9" margin="20" />
+            <Stripe row="8" margin="20" />
             <!-- Boton para Crear -->
             <Button
               v-if="containerReportEdit == false"
-              row="10"
+              row="9"
               backgroundColor="#F4F6F8"
               color="#222a37"
               text="Enviar"
@@ -159,7 +159,7 @@
             <!-- Boton para Editar -->
             <Button
               v-if="containerReportEdit == true"
-              row="10"
+              row="9"
               backgroundColor="#F4F6F8"
               color="#222a37"
               text="Actualizar"
@@ -225,8 +225,6 @@ export default {
   },
 
   methods: {
-    ...mapMutations("evidenceStore", ["setDamagedItem", "cleanDamagedItems"]),
-
     openFormDamaged() {
       this.$showModal(DamagedItems, {
         fullscreen: true,
@@ -242,11 +240,11 @@ export default {
     },
 
     async addContainerReport() {
-      console.log("model ", this.damagedItems);
+      console.log("model ", this.model);
       try {
         if (this.model.code.trim() !== "") {
-          this.model.repairs = this.damagedItems;
-          console.log("model.repairs ", this.model);
+/*           this.model.repairs = this.damagedItems; */
+          /* console.log("model.repairs ", this.model); */
           this.loadingCharge(true);
           const res = await storeContainerReport(this.model);
           if (res.status === 500) {
@@ -303,8 +301,6 @@ export default {
     },
 
     initialMethods() {
-      console.log("m Model ",this.managementModel)
-      console.log("m damage ite ",this.damagedItems)
       if (this.containerReportEdit) {
         const additionalDamage = this.containerReport.additionalDamage;
         let additional_damage_id = [];

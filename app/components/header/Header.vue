@@ -2,7 +2,7 @@
   <ActionBar backgroundColor="#00acc1" flat="true">
     <GridLayout rows="auto, *" columns="auto, 3*, auto" height="100%">
       <!-- Contenido de tu GridLayout aquí -->
-      <Label
+      <!-- <Label
         row="1"
         col="1"
         text="label de prueba"
@@ -10,7 +10,7 @@
         padding="0"
         color="#F4F6F8"
         fontWeight="bold"
-      />
+      /> -->
       <Label
         col="0"
         rowSpan="2"

@@ -13,6 +13,7 @@
       :isEnabled="enable"
       :text="value"
       :keyboardType="typeInput"
+      :secure="pass"
       padding="10"
       :hint="placeholder"
       height="45"
@@ -74,6 +75,10 @@ export default {
     typeInput:{
       type: String,
       default: "text",
+    },
+    pass:{
+      type: Boolean,
+      default: false
     }
   /*   showError:{
       type:Boolean,
@@ -96,7 +101,6 @@ export default {
     onTextChange(args) {
       this.textValue = args.object.text;
       /* if(this.showError){ */
-        console.log('shoError ',this.showError)
       /* } */
       this.$emit("input", this.textValue);
     },

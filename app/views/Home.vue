@@ -4,7 +4,7 @@
         <StackLayout ~mainContent>
             <!-- Agrega tus elementos de contenido principal aquí -->
             <Frame>
-                <Ships/>
+                <LoginIndex/>
             </Frame>
         </StackLayout>
         <!-- Contenido del Drawer -->
@@ -20,12 +20,14 @@ import axios from 'axios';
 import Header from '~/components/header/Header.vue';
 import ContentDrawer from '~/components/contentDrawer/ContentDrawer.vue';
 import Ships from './ships/Ships.vue';
+import LoginIndex from './Login.vue';
 
 export default {
     components: {
         Header,
         ContentDrawer,
-        Ships
+        Ships,
+        LoginIndex
     },
 
     data() {

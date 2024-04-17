@@ -11,6 +11,8 @@ import Evidence from '~/views/evidence/Evidence.vue'
 import NavViews from '~/views/evidence/tabview/NavViews.vue'
 import ManagementForm from '~/views/evidence/managementForm/ManagementForm'
 import ContainerReportList from '~/views/evidence/containerReport/ContainerReportList.vue'
+import EvidenceList from '~/views/evidence/EvidenceList.vue'
+import Login from '~/views/Login'
 
 Vue.use(NSVueRouter)
 
@@ -18,54 +20,58 @@ const routes = [
   {
     name: 'warehouses.index',
     component: Warehouse,
-    meta: { guest: true }
+    meta: { auth: true }
   },
   {
     name: 'ship.index',
     component: Ship,
-    meta: { guest: true }
+    meta: { auth: true }
   },
   {
     name: 'generalpallets.index',
     component: GeneralPallets,
-    meta: { guest: true }
+    meta: { auth: true }
   },
   {
     name: 'pallets.index',
     component: Pallets,
-    meta: { guest: true }
+    meta: { auth: true }
   },
   {
     name: 'editpallets.index',
     component: CreateEditPallet,
-    meta: { guest: true }
+    meta: { auth: true }
   },
   {
     name: 'reportsnav.index',
     component: NavViews,
-    meta: { guest: true }
+    meta: { auth: true }
   },
   {
     name: 'evidence.index',
     component: Evidence,
-    meta: { guest: true },
-    /* children: [
-      {
-        name: 'verification.details',
-        component: ManagementForm // Componente para los detalles de un barco
-      }
-    ] */
+    meta: { auth: true },
   },
   {
     name: 'verification.details',
     component: ManagementForm,
-    meta: { guest: true }
+    meta: { auth: true }
   },
   {
     name: 'container_report.index',
     component: ContainerReportList,
-    meta: { guest: true }
+    meta: { auth: true }
   },
+  {
+    name: 'evidence_list.show',
+    component: EvidenceList,
+    meta: { auth: true }
+  },
+  {
+    name: 'login.index',
+    component: Login,
+    meta: { guest: true }
+  }
 ]
 
 const router = new NSVueRouter({
@@ -74,5 +80,24 @@ const router = new NSVueRouter({
   /* eslint-disable-next-line no-undef  */
   /* verbose: TNS_ENV !== 'production' */ // <-- Optional. Will output the warnings to console.
 })
+
+const user = () => {
+  return true;
+}
+
+router.beforeEach((to, next) => {
+  let isLogged = user()
+  if (to.meta.auth && !isLogged) {
+    console.log("Redirigir a login porque el usuario no está autenticado")
+    router.push('login.index')
+  } else if (to.meta.guest && isLogged) {
+    console.log("Redirigir a dashboard porque el usuario ya está autenticado")
+    router.push('ship.index')
+  } else {
+    console.log("Permitir acceso a la ruta")
+    next()
+  }
+})
+
 
 export default router

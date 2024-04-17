@@ -67,22 +67,17 @@ export default {
   methods: {
     index() {
       if (this.encrypted && this.url.length > 0) {
-        console.log("encript ", this.url);
         this.desencriptarImagen(this.url);
       } else if (!this.encrypted && this.url.length > 0) {
-        console.log("decript ", this.url);
         let myImg = this.$refs.imageRef.nativeView;
         myImg.src = this.url;
       }
-      console.log("afueraa ", this.url);
     },
 
     desencriptarImagen(base64Encriptado) {
-      console.log("base64 ", base64Encriptado);
       const imageData = ImageSource.fromBase64Sync(base64Encriptado);
       /* setTimeout(() => { */
         let myImg = this.$refs.imageRef.nativeView;
-        console.log("instancia img ", myImg);
         myImg.src = imageData;
       /* }, 500); */
     },

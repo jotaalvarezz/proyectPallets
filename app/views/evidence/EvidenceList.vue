@@ -1,22 +1,6 @@
 <template>
-  <page @loaded="getEvidences">
-    <ActionBar backgroundColor="#00acc1">
-      <StackLayout orientation="horizontal">
-        <Image
-          src="res://icon"
-          width="40"
-          height="40"
-          verticalAlignment="center"
-        />
-        <Label
-          text="Reporte de Contenedores"
-          fontSize="12"
-          color="#F4F6F8"
-          fontWeight="bold"
-          verticalAlignment="center"
-        />
-      </StackLayout>
-    </ActionBar>
+  <page @loaded="index">
+    <Header :search="false" />
     <GridLayout rows="auto,*" backgroundColor="#F4F6F8">
       <GridLayout margin="5" row="0" rows="auto" columns="50, 3*, 50">
         <SearchBar
@@ -38,14 +22,14 @@
           width="40"
           color="#222a37"
           fontSize="22"
-          @tap="refreshEvidences"
+          @tap="refreshEvidenceRports"
         />
       </GridLayout>
       <Label
         row="1"
         textWrap="true"
         class="info"
-        v-if="container_reports.length == 0"
+        v-if="evidenceReports.length == 0"
         verticalAlignment="center"
       >
         <FormattedString>
@@ -53,14 +37,14 @@
           <Span :text="message" />
         </FormattedString>
       </Label>
-      <!-- Lista de reportes -->
       <ListView
         row="1"
         ref="listView"
-        for="(item, index) in array_filter"
-        v-if="container_reports.length > 0"
+        for="item in array_filter"
+        @itemTap="onItemTap"
       >
         <v-template>
+          <!-- Shows the list item label in the default color and style. -->
           <GridLayout columns="*, 40">
             <StackLayout orientation="horizontal" col="0">
               <Label
@@ -80,15 +64,15 @@
                 />
                 <Label textWrap="true">
                   <!-- Barco -->
-                  <FormattedString
-                    v-if="managementModel.type_management_id === 1"
-                  >
+                  <FormattedString v-if="item.type_management_id === 1">
                     <Span text="Contenedor: " fontWeight="bold" fontSize="15" />
                     <Span :text="item.code + '\n'" fontSize="15" />
                     <Span text="Tipo: " fontWeight="bold" fontSize="15" />
-                    <Span :text="nameType(item.type_id) + '\n'" fontSize="15" />
+                    <Span :text="item.nameType + '\n'" fontSize="15" />
                     <Span text="Buque: " fontWeight="bold" fontSize="15" />
                     <Span :text="item.vessel + '\n'" fontSize="15" />
+                    <Span text="Capitan: " fontWeight="bold" fontSize="15" />
+                    <Span :text="item.titular_name + '\n'" fontSize="15" />
                     <Span text="Tecnico: " fontWeight="bold" fontSize="15" />
                     <Span :text="item.role + '\n'" fontSize="15" />
                     <Span
@@ -98,15 +82,15 @@
                     />
                   </FormattedString>
                   <!-- Patio -->
-                  <FormattedString
-                    v-if="managementModel.type_management_id === 2"
-                  >
+                  <FormattedString v-if="item.type_management_id === 2">
                     <Span text="Contenedor: " fontWeight="bold" fontSize="15" />
                     <Span :text="item.code + '\n'" fontSize="15" />
                     <Span text="Tipo: " fontWeight="bold" fontSize="15" />
-                    <Span :text="nameType(item.type_id) + '\n'" fontSize="15" />
+                    <Span :text="item.nameType + '\n'" fontSize="15" />
                     <Span text="Patio: " fontWeight="bold" fontSize="15" />
                     <Span :text="'Alieva' + '\n'" fontSize="15" />
+                    <Span text="Conductor: " fontWeight="bold" fontSize="15" />
+                    <Span :text="item.titular_name + '\n'" fontSize="15" />
                     <Span text="Tecnico: " fontWeight="bold" fontSize="15" />
                     <Span :text="item.role + '\n'" fontSize="15" />
                     <Span text="Elemntos:" fontWeight="bold" fontSize="15" />
@@ -124,7 +108,7 @@
                     :items="repair.repair_damage"
                     labelIterator="name"
                   />
-                  <Label
+                  <!-- <Label
                     width="20%"
                     height="40"
                     :text="'fa-times' | fonticon"
@@ -132,9 +116,9 @@
                     fontWeight="bold"
                     fontSize="15"
                     @tap="deleteRowRepair(item, repair.id)"
-                  />
+                  /> -->
                 </StackLayout>
-                <Label
+                <!-- <Label
                   width="50"
                   height="50"
                   marginTop="10"
@@ -145,7 +129,7 @@
                   fontSize="15"
                   borderRadius="50"
                   @tap="openFormDamaged(item)"
-                />
+                /> -->
               </StackLayout>
             </StackLayout>
             <Label
@@ -159,98 +143,54 @@
           </GridLayout>
         </v-template>
       </ListView>
-      <FloatingButton row="1" :icon="'fa-plus'" :method="openModal" />
+      <FloatingButton row="2" :icon="'fa-cloud-upload-alt'" :method="sendAll" />
     </GridLayout>
   </page>
 </template>
 
 <script>
-const {
-  getContainerReport,
-  getTypes,
-  deleteContainerReport,
-  deleteRepair,
-  getRepairDamage,
-  getRepairs,
-} = require("~/sqlite/database");
+const { getAllManagements } = require("~/sqlite/database");
 import mixinMasters from "~/mixins/Master";
-import Alert from "~/alerts/Alerts";
-import { mapState, mapMutations } from "vuex";
 import ButtomSheet from "~/components/buttomSheet/ButtomSheet.vue";
 import ListModal from "~/components/listModal/ListModal.vue";
-import containerReportListInfo from "~/views/evidence/containerReport/ContainerReportListInfo";
-import ContainerReport from "~/views/evidence/containerReport/ContainerReport.vue";
-import DamagedItems from "~/views/evidence/containerReport/damagedItems/DamagedItems.vue";
+import EvidenceListInfo from "./EvidenceListInfo";
+import axios from "axios";
 
 export default {
-  name: "containerReportList",
-  components: {
-    ButtomSheet,
-  },
+  name: "EvidenceList",
   data() {
     return {
       search: "",
-      message: "No hay reportes de contenedores para mostrar",
-      container_reports: [],
-      types: [],
+      message: "No hay registros para mostrar",
+      evidenceReports: [],
       array_filter: [],
-      state: true,
     };
   },
+
   mixins: [mixinMasters],
 
-  computed: {
-    ...mapState("evidenceStore", ["managementModel"]),
-  },
-
   methods: {
-    ...mapMutations("evidenceStore", [
-      "setContainerReport",
-      "setContainerReportEdit",
-    ]),
+    index() {
+      this.getEvidenceReports();
+    },
+
+    refreshEvidenceRports() {
+      this.getEvidenceReports();
+    },
 
     filter() {
-      console.log("container report ", this.container_reports);
+      console.log("cabronship 0", this.evidenceReports);
       console.log("search fuera", this.search);
       if (this.search.length > 0) {
         console.log("search dentro", this.search);
-        this.array_filter = this.container_reports.filter(
+        this.array_filter = this.evidenceReports.filter(
           (data) =>
-            !this.search || data.code.toLowerCase().includes(this.search)
+            !this.search || data.name.toLowerCase().includes(this.search)
         );
       } else if (this.search.length === 0) {
-        this.array_filter = this.container_reports;
+        console.log("search 0", this.evidenceReports);
+        this.array_filter = this.evidenceReports;
       }
-    },
-
-    clear() {
-      this.array_filter = this.container_reports;
-    },
-
-    openModal() {
-      this.$showModal(ContainerReport, {
-        fullscreen: true,
-        animated: true,
-      }).then(() => {
-        console.log("list");
-        this.getEvidences();
-      });
-    },
-
-    openFormDamaged(item) {
-      console.log("item ", item);
-      this.$showModal(DamagedItems, {
-        fullscreen: true,
-        animated: true,
-        cancelable: false,
-        props: {
-          container_report_id: item.id,
-          /* container_elements: this.elements,
-          repairs: this.model.repairs, */
-        },
-      }).then((res) => {
-        console.log("console damage");
-      });
     },
 
     navigateOptions(item, index) {
@@ -263,9 +203,9 @@ export default {
         props: {
           item: item,
           generalOptions: true,
-          infoRegister: () => this.containerReportInfo(item),
-          updateRegister: () => this.containerReportEdit(item),
-          deleteRow: () => this.deleteRow(item.id),
+          infoRegister: () => this.evidenceReportsInfo(item),
+          /* updateRegister: () => this.containerReportEdit(item),
+          deleteRow: () => this.deleteRow(item.id), */
         },
         // listeners to be connected to MyComponent
         on: {
@@ -277,86 +217,26 @@ export default {
       this.$showBottomSheet(ButtomSheet, options);
     },
 
-    async getEvidences() {
-      console.log("management model ", this.managementModel);
+    async getEvidenceReports() {
       try {
         this.loadingCharge(true);
-        const res = await getContainerReport(this.managementModel.id);
-        this.container_reports = res.data;
+        const res = await getAllManagements();
+        console.log("res ", res.data);
+        this.evidenceReports = res.data;
         this.array_filter = res.data;
-        console.log("reports ", this.container_reports);
-        /* const aux = await getRepairDamage()
-        console.log("aux ", aux.data);
-        const r = await getRepairs()
-        console.log("r ", r.data); */
-        if (this.types.length === 0) {
-          const types = await getTypes();
-          this.types = types.data;
-        }
       } catch (error) {
-        Alert.danger("Hubo un error al traer informacion", error.message);
       } finally {
         this.loadingCharge();
       }
     },
 
-    async deleteRowRepair(item, id) {
-      let confirmated = await Alert.Danger(1);
-      if (confirmated) {
-        try {
-          const record = await deleteRepair(id);
-          if (record.status === 500) {
-            Alert.info(
-              record.message,
-              1,
-              "Registro no existe!"
-            );
-          } else {
-            const index_report = this.container_reports.findIndex(
-              (prev) => prev.id === item.id
-            );
-            const index = this.container_reports[
-              index_report
-            ].repairs.findIndex((prev) => prev.id === id);
-            this.container_reports[index_report].repairs.splice(index, 1);
-          }
-        } catch (error) {
-          Alert.danger("eleminacion fallida ", error.message);
-        }
+    evidenceReportsInfo(item) {
+      let listRows = [];
+      if (item.type_management_id === 1) {
+        listRows = EvidenceListInfo.listRowsVeesel;
+      } else if (item.type_management_id === 2) {
+        listRows = EvidenceListInfo.listRowsPatio;
       }
-    },
-
-    async deleteRow(id) {
-      let confirmated = await Alert.Danger(1);
-      if (confirmated) {
-        try {
-          const record = await deleteContainerReport(id);
-          console.log("record ",record);
-          const index = this.container_reports.findIndex(
-            (prev) => prev.id === id
-          );
-          this.container_reports.splice(index, 1);
-        } catch (error) {
-          Alert.danger("eleminacion fallida ", error.message);
-        }
-      }
-    },
-
-    containerReportEdit(item) {
-      this.setContainerReport(item);
-      this.setContainerReportEdit(true);
-      this.$showModal(ContainerReport, {
-        fullscreen: true,
-        animated: true,
-      }).then(() => {
-        this.setContainerReport({});
-        this.setContainerReportEdit(false);
-        console.log("close modallll");
-      });
-    },
-
-    containerReportInfo(item) {
-      let listRows = containerReportListInfo.listRowsContainerReport;
       this.$showModal(ListModal, {
         props: {
           title: "Informacion del reporte",
@@ -377,37 +257,35 @@ export default {
       });
     },
 
-    refreshEvidences() {
-      this.getEvidences();
-    },
-
-    nameType(type_id) {
-      const type = this.types.find((prev) => prev.id === type_id);
-      if (type === null || type === undefined) {
-        return type_id;
-      }
-      return type.name;
-    },
-
-    /* async InfoSelect() {
+    async sendAll() {
       try {
         this.loadingCharge(true);
-        const types = await getTypes();
-        this.types = types.data;
+        const evidenceReports =  this.evidenceReports;
+        if (evidenceReports.length > 0) {
+          console.log("entre ",evidenceReports)
+          //const postPallets = await axios.post('http://186.1.181.146:8811/mcp-backend/public/api/mobile/loadpallets', this.sendPallets)
+          //const postPallets = await axios.post('http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/loadpallets', this.sendPallets)
+          const postEvidence = await axios.post(
+            "http://172.70.8.122/mcp-backend/public/api/mobile/loadevidence",
+            evidenceReports
+          );
+          console.log("postEvidence ", postEvidence)
+          this.loadingCharge();
+          Alert.success("Cargue");
+        } else {
+          this.loadingCharge();
+          Alert.danger(
+            "No se encontraron reportes",
+            "por favor asegurese antes de sincronizar"
+          );
+        }
       } catch (error) {
-        Alert.danger("Hubo un error al traer los tipos", error.message);
-      } finally {
         this.loadingCharge();
+        Alert.danger("Hubo un error en el cargue de los reportes", error.message);
       }
-    }, */
+    },
   },
 };
 </script>
 
-<style scoped>
-.info {
-  font-size: 16;
-  horizontal-align: center;
-  vertical-align: center;
-}
-</style>
+<style scoped></style>

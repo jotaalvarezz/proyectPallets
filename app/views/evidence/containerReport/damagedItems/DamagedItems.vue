@@ -89,16 +89,8 @@
           iconSize="md"
           :method="onTakePictureTap"
         />
-        <!-- <Image
-          ref="imageRef"
-          v-if="cameraImage.length > 0"
-          margin="25"
-          backgroundColor="#D8E2E8"
-          :src="cameraImage"
-          loadMode="sync"
-        /> -->
         <DockLayout
-          v-if="cameraImage.length > 0"
+          v-if="namePhoto.length > 0"
           stretchLastChild="true"
           backgroundColor="#F4F6F8"
         >
@@ -132,7 +124,7 @@
           borderColor="#222a37"
           borderRadius="30"
         />
-        <Button
+        <!-- <Button
           backgroundColor="#F4F6F8"
           color="#222a37"
           text="En Memoria"
@@ -141,14 +133,18 @@
           borderWidth="1"
           borderColor="#222a37"
           borderRadius="30"
-        />
+        /> -->
       </StackLayout>
     </ScrollView>
   </StackLayout>
 </template>
 
 <script>
-const { getDamage } = require("~/sqlite/database");
+const {
+  getDamage,
+  getContainerElements,
+  storeRepair,
+} = require("~/sqlite/database");
 import mixinMasters from "~/mixins/Master";
 import Alert from "~/alerts/Alerts";
 import { requestPermissions } from "@nativescript/camera";
@@ -166,6 +162,10 @@ export default {
     repairs: {
       type: Array,
       default: [],
+    },
+    container_report_id: {
+      type: Number,
+      required: true,
     },
   },
   data() {
@@ -203,13 +203,9 @@ export default {
 
   mixins: [mixinMasters],
 
-  computed: {
-    ...mapState("evidenceStore", ["damagedItems"]),
-  },
+  computed: {},
 
   methods: {
-    ...mapMutations("evidenceStore", ["setDamagedItem"]),
-
     onCheckedChange(args) {
       const checkbox = args.object;
       console.log("checkbox ", checkbox);
@@ -236,25 +232,28 @@ export default {
 
     async addRepair() {
       try {
-        this.setDamagedItem(this.model);
-        let confirmated = await Alert.info(
-          "¡¿Desea sequir añadiendo reparaciones?!",
-          3
-        );
-        if (confirmated) {
-          this.model = {
-            container_element_id: null,
-            location: null,
-            position: null,
-            damage_id: [],
-            photo: "",
-          };
-          this.unCheckAll();
-         /*  console.log("store damage ", this.damagedItems); */
+        if (
+          this.model.container_element_id !== null ||
+          this.model.location !== null ||
+          this.model.position !== null
+        ) {
+          const res = await storeRepair({
+            container_report_id: this.container_report_id,
+            repair: this.model,
+          });
           Alert.success("Reparacion agrgada");
-        } else {
-          this.$modal.close();
         }
+
+        this.model = {
+          container_element_id: null,
+          location: null,
+          position: null,
+          damage_id: [],
+          photo: "",
+        };
+        this.unCheckAll();
+        Alert.info("Revise que no hayan campos vacios!",1);
+        this.$modal.close();
       } catch (error) {}
     },
 
@@ -264,9 +263,10 @@ export default {
       /* console.log("model ", this.container_elements); */
       try {
         this.loadingCharge(true);
-        const res2 = await getDamage();
-        this.damages = res2.data;
-        this.elements = this.container_elements;
+        const res = await getDamage();
+        const containerElements = await getContainerElements();
+        this.damages = res.data;
+        this.elements = containerElements.data;
         /* console.log("damages []", this.damages); */
       } catch (error) {
         console.log("solucion de errores ", error);
@@ -304,7 +304,7 @@ export default {
         this.namePhoto = photo;
         const imageSource = await ImageSource.fromAsset(imageAsset);
         const folderPath = knownFolders.documents().path;
-        this.cleanImage(folderPath)
+        this.cleanImage(folderPath);
         const filePath = fs.path.join(folderPath, photo);
         const saved = imageSource.saveToFile(filePath, "jpg");
         this.model.photo = filePath;
