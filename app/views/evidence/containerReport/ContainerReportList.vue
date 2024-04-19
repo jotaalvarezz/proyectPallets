@@ -1,22 +1,44 @@
 <template>
   <page @loaded="getEvidences">
     <ActionBar backgroundColor="#00acc1">
-      <StackLayout orientation="horizontal">
-        <Image
-          src="res://icon"
-          width="40"
-          height="40"
-          verticalAlignment="center"
-        />
-        <Label
-          text="Reporte de Contenedores"
-          fontSize="12"
-          color="#F4F6F8"
-          fontWeight="bold"
-          verticalAlignment="center"
-        />
-      </StackLayout>
+      <Label
+        class="text-center"
+        text="Reporte de Contenedores"
+        fontSize="15"
+        color="#F4F6F8"
+        fontWeight="bold"
+      />
+      <NavigationButton
+        text="Go back"
+        android.systemIcon="ic_menu_back"
+        @tap="goBack"
+      />
     </ActionBar>
+    <GridLayout
+      height="65"
+      rows="*"
+      columns="50, 3*, 50"
+      backgroundColor="#00acc1"
+    >
+      <Label
+        row="0"
+        col="0"
+        :text="'fa-arrow-left' | fonticon"
+        fontSize="16"
+        class="fas text-center"
+        color="#F4F6F8"
+        @tap="$modal.close"
+      />
+      <Label
+        row="0"
+        col="1"
+        class="text-center"
+        text="Registro de Daños/Reparaciones"
+        fontSize="15"
+        color="#F4F6F8"
+        fontWeight="bold"
+      ></Label>
+    </GridLayout>
     <GridLayout rows="auto,*" backgroundColor="#F4F6F8">
       <GridLayout margin="5" row="0" rows="auto" columns="50, 3*, 50">
         <SearchBar
@@ -306,11 +328,7 @@ export default {
         try {
           const record = await deleteRepair(id);
           if (record.status === 500) {
-            Alert.info(
-              record.message,
-              1,
-              "Registro no existe!"
-            );
+            Alert.info(record.message, 1, "Registro no existe!");
           } else {
             const index_report = this.container_reports.findIndex(
               (prev) => prev.id === item.id
@@ -331,7 +349,7 @@ export default {
       if (confirmated) {
         try {
           const record = await deleteContainerReport(id);
-          console.log("record ",record);
+          console.log("record ", record);
           const index = this.container_reports.findIndex(
             (prev) => prev.id === id
           );

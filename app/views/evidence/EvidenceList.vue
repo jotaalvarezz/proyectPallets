@@ -262,7 +262,7 @@ export default {
         this.loadingCharge(true);
         const evidenceReports =  this.evidenceReports;
         if (evidenceReports.length > 0) {
-          console.log("entre ",evidenceReports)
+          /* console.log("entre ",evidenceReports) */
           //const postPallets = await axios.post('http://186.1.181.146:8811/mcp-backend/public/api/mobile/loadpallets', this.sendPallets)
           //const postPallets = await axios.post('http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/loadpallets', this.sendPallets)
           const postEvidence = await axios.post(

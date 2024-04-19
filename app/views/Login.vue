@@ -27,12 +27,12 @@
         <FormGroupTextField
           label="Usuario:"
           placeholder="usuario..."
-          v-model="user"
+          v-model="model.user"
         />
         <FormGroupTextField
           label="Contraseña:"
           placeholder="contraseña..."
-          v-model="password"
+          v-model="model.password"
           :pass="true"
         />
         <Stripe color="#D5D8DC" mt="20" mb="20" />
@@ -52,19 +52,26 @@
 </template>
 
 <script>
+import { mapState, mapActions } from 'vuex';
+
 export default {
   name: "LoginIndex",
   data() {
     return {
-      user: "",
-      password: "",
+      model:{
+        user: "",
+        password: ""
+      }
     };
   },
   methods: {
-    submit() {
-      // ...
+    ...mapActions('auth',['isLogin']),
 
-      this.$router.pushClear("ship.index");
+    async submit() {
+      // ...
+      const aux = await this.isLogin(this.model)
+      console.log("aux ",aux)
+      /* this.$router.pushClear("ship.index"); */
 
       // ...
     },

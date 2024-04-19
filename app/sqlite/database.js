@@ -24,6 +24,11 @@ const {
   updateManagement
 } = require('~/sqlite/queries/management')
 
+const {
+  getUsers,
+  storeUsers,
+  showUser
+} = require('~/sqlite/queries/login/users')
 
 const { storeRepair, deleteRepair } = require('~/sqlite/queries/repair')
 const Querys = [
@@ -152,6 +157,39 @@ const Querys = [
       date_creation DATETIME,
       FOREIGN KEY (container_report_id) REFERENCES container_reports(id),
       FOREIGN KEY (additional_damage_id) REFERENCES additional_damage(id)
+    )`,
+
+  /* Tablas de usuarios y modulos */
+  `CREATE TABLE IF NOT EXISTS users
+    (
+      id INTEGER PRIMARY KEY,
+      first_name TEXT,
+      last_name TEXT,
+      username TEXT,
+      password TEXT,
+      date_creation DATETIME
+    )`,
+
+  `CREATE TABLE IF NOT EXISTS modules
+    (
+      id INTEGER PRIMARY KEY,
+      name_module TEXT,
+      url TEXT,
+      icon TEXT,
+      movil_id TEXT,
+      description TEXT,
+      date_creation DATETIME
+    )`,
+
+
+  `CREATE TABLE IF NOT EXISTS module_user
+    (
+      id INTEGER PRIMARY KEY,
+      user_id INTEGER,
+      module_id INTEGER,
+      date_creation DATETIME,
+      FOREIGN KEY (user_id) REFERENCES users(id),
+      FOREIGN KEY (module_id) REFERENCES modules(id)
     )`
 ];
 
@@ -547,7 +585,9 @@ module.exports = {
   deleteContainerReport,
   updateContainerReport,
   storeRepair,
-  deleteRepair
+  deleteRepair,
+  storeUsers,
+  showUser
 };
 
 

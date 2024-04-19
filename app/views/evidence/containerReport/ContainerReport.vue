@@ -33,7 +33,7 @@
           backgroundColor="#F4F6F8"
           margin="10"
           borderWidth="1"
-          borderColor="#3c495e"
+          borderColor="#c0c9d7"
           borderRadius="5"
         >
           <GridLayout

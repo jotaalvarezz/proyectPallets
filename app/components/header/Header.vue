@@ -20,7 +20,7 @@
         @tap="openDrawer"
         fontSize="20"
       />
-      <StackLayout row="0" col="1" style="width: 100%">
+      <StackLayout rowSpan="2" col="1" style="width: 100%">
         <Image
           src="~/assets/images/logobarco.png"
           width="30"
