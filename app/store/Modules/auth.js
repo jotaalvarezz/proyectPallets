@@ -35,9 +35,8 @@ export default {
       /* const username = state.users.find(prev => prev.username === user) */
       if (userDb) {
         commit('setUser', userDb)
+        return { state: false, test: "prueba" }
       }
-
-      return {state:false, test:"prueba"}
     }
   }
 }

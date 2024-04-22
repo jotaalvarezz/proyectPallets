@@ -3,12 +3,10 @@ import Home from "./views/Home";
 import store from "./store/index";
 import router from "./Routes/Routes";
 import RadSideDrawer from "nativescript-ui-sidedrawer/vue";
-import CanvasPlugin from '@nativescript-community/ui-canvas/vue';
 import GlobalComponents from "./globalComponents";
 
 Vue.use(GlobalComponents)
 Vue.use(RadSideDrawer);
-Vue.use(CanvasPlugin);
 
 import BottomSheetPlugin from '@nativescript-community/ui-material-bottomsheet/vue';
 import { install } from "@nativescript-community/ui-material-bottomsheet";
