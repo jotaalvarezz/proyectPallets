@@ -36,7 +36,14 @@
           borderRadius="5"
         >
           <StackLayout v-for="(item, index) in listRows" :key="index">
-            <Label textWrap="true" v-if="item.prop !== 'signature' && item.prop !== showTags">
+            <Label
+              textWrap="true"
+              v-if="
+                item.prop !== 'signature' &&
+                item.prop !== showTags &&
+                item.prop !== showMulTags
+              "
+            >
               <FormattedString>
                 <Span
                   :text="item.label + ': '"
@@ -46,6 +53,17 @@
                 <Span :text="info[item.prop]" fontSize="14" />
               </FormattedString>
             </Label>
+            <GeneralComponent
+              v-if="item.prop === showMulTags"
+              :label="item.label+':'"
+              :data="info[item.prop]"
+              :labelTag="propsGeneralComponent.labelTag"
+              :itemsKey="propsGeneralComponent.itemsKey"
+              :labelIterator="propsGeneralComponent.labelIterator"
+              :titleCollapse="propsGeneralComponent.titleCollapse"
+              :labelViewImage="propsGeneralComponent.labelViewImage"
+              :viewImageKey="propsGeneralComponent.viewImageKey"
+            />
             <Tag
               v-if="item.prop === showTags"
               :label="item.label"
@@ -56,7 +74,6 @@
               v-if="item.prop === 'signature'"
               ref="viewImage"
               label="Firma: "
-              encrypted="true"
               :url="info[item.prop]"
             />
             <Stripe color="#3c495e" ml="0" mr="0" />
@@ -91,6 +108,14 @@ export default {
       type: String,
       default: "",
     },
+    showMulTags: {
+      type: String,
+      default: "",
+    },
+    propsGeneralComponent:{
+      type:Object,
+      default:{}
+    }
   },
 
   data() {
@@ -102,6 +127,8 @@ export default {
     };
   },
 
-  created() {},
+  created() {
+
+  },
 };
 </script>

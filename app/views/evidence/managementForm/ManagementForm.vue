@@ -95,16 +95,35 @@
           <!-- <Image row="7" ref="imageRef" margin="25" src="" loadMode="sync" /> -->
         </GridLayout>
       </Collapse>
-      <!-- <Label
-        row="1"
+      <GridLayout
+        v-if="collapseValue === false"
         margin="5"
-        :text="'fa-sync-alt' | fonticon"
-        class="fas"
-        width="40"
-        color="#222a37"
-        fontSize="22"
-        @tap="refreshManagments"
-      /> -->
+        row="1"
+        rows="auto"
+        columns="50, 3*, 50"
+      >
+        <SearchBar
+          row="0"
+          col="1"
+          margin="10"
+          hint="Buscar..."
+          v-model="search"
+          @textChange="filter"
+          @submit="filter"
+          @clear="clear"
+        />
+        <Label
+          row="0"
+          col="2"
+          margin="10"
+          :text="'fa-sync-alt' | fonticon"
+          class="fas text-center"
+          width="40"
+          color="#222a37"
+          fontSize="22"
+          @tap="refreshManagments"
+        />
+      </GridLayout>
       <Label
         row="2"
         textWrap="true"
@@ -120,13 +139,13 @@
       <ListView
         row="2"
         ref="listView"
-        for="item in managments"
+        for="item in array_filter"
         @itemTap="onItemTap"
       >
         <v-template>
           <!-- Shows the list item label in the default color and style. -->
           <GridLayout columns="*, 40">
-            <StackLayout orientation="horizontal" col="0" @tap="navigate(item)">
+            <StackLayout orientation="horizontal" col="0">
               <Label
                 backgroundColor="#D8E2E8"
                 :text="'fa-file-alt' | fonticon"
@@ -230,6 +249,7 @@ export default {
 
   data() {
     return {
+      search: "",
       collapseValue: false,
       message: "No hay registros para mostrar",
       model: {
@@ -239,6 +259,7 @@ export default {
         titular_name: "Gerson Calvo",
         signature: "",
       },
+      array_filter: [],
       managments: [],
     };
   },
@@ -251,6 +272,27 @@ export default {
 
   methods: {
     ...mapMutations("evidenceStore", ["setManagementModel"]),
+
+    onItemTap(event) {
+      /* console.log(event.index)
+      console.log(event.item); */
+      this.navigate(event.item);
+    },
+
+    filter() {
+      if (this.search.length > 0) {
+        this.array_filter = this.managments.filter(
+          (data) =>
+            !this.search || data.name.toLowerCase().includes(this.search)
+        );
+      } else if (this.search === 0) {
+        this.array_filter = this.managments;
+      }
+    },
+
+    clear() {
+      this.array_filter = this.managments;
+    },
 
     index() {
       this.model.type_management_id = this.management_id;
@@ -274,7 +316,8 @@ export default {
         this.loadingCharge(true);
         const res = await getManagements(id);
         this.managments = res.data;
-        /* console.log("managments ",res) */
+        this.array_filter = res.data;
+        console.log("managments ",res)
       } catch (error) {
         Alert.danger("Hubo un error al traer los datos ", error.message);
         /* this.loadingCharge(); */
@@ -284,20 +327,17 @@ export default {
     },
 
     async addManagement() {
-      console.log("modelo ",this.model)
+      /* console.log("modelo ", this.model); */
       try {
-        if (
-          this.model.titular_name !== "" &&
-          this.model.name !== ""
-        ) {
+        if (this.model.titular_name !== "" && this.model.name !== "") {
           this.loadingCharge(true);
           const res = await storeManagement(this.model);
-          if(res.status === 500){
+          if (res.status === 500) {
             Alert.info(res.message, 1, "Ya existe");
-          }else{
+          } else {
             this.managments.push(res.data);
           }
-          console.log("res ", res);
+          /* console.log("res ", res); */
         } else {
           Alert.info("¡Revise que los campos no se encuentren vacios!", 1);
         }
@@ -318,7 +358,7 @@ export default {
 
     navigate(item) {
       this.setManagementModel(item);
-      this.$router.push("reportsnav.index");
+      this.$router.push("container_report.index");
       /* this.$showModal(NavViews, {
         fullscreen: true,
         animated: true,
@@ -330,7 +370,6 @@ export default {
     },
 
     navigateOptions(item, index) {
-      console.log("item ", item);
       item.action = true;
       const options = {
         dismissOnBackgroundTap: true,

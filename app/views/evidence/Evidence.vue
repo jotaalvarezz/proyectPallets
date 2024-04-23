@@ -58,10 +58,6 @@ export default {
       }
     }
   },
-
-  mounted() {
-    console.log("routss ", this.$router)
-  },
 };
 </script>
 <style>

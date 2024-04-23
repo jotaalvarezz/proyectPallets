@@ -2,7 +2,7 @@
   <ActionBar backgroundColor="#00acc1" flat="true">
     <GridLayout rows="auto, *" columns="auto, 3*, auto" height="100%">
       <!-- Contenido de tu GridLayout aquí -->
-      <Label
+      <!-- <Label
         row="1"
         col="1"
         text="label de prueba"
@@ -10,7 +10,7 @@
         padding="0"
         color="#F4F6F8"
         fontWeight="bold"
-      />
+      /> -->
       <Label
         col="0"
         rowSpan="2"
@@ -20,7 +20,7 @@
         @tap="openDrawer"
         fontSize="20"
       />
-      <StackLayout row="0" col="1" style="width: 100%">
+      <StackLayout rowSpan="2" col="1" style="width: 100%">
         <Image
           src="~/assets/images/logobarco.png"
           width="30"

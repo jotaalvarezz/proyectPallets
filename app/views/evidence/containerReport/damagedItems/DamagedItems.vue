@@ -31,7 +31,7 @@
         backgroundColor="#F4F6F8"
         margin="20"
         borderWidth="1"
-        borderColor="#3c495e"
+        borderColor="#c0c9d7"
         borderRadius="5"
       >
         <SelectField
@@ -89,16 +89,8 @@
           iconSize="md"
           :method="onTakePictureTap"
         />
-        <!-- <Image
-          ref="imageRef"
-          v-if="cameraImage.length > 0"
-          margin="25"
-          backgroundColor="#D8E2E8"
-          :src="cameraImage"
-          loadMode="sync"
-        /> -->
         <DockLayout
-          v-if="cameraImage.length > 0"
+          v-if="namePhoto.length > 0"
           stretchLastChild="true"
           backgroundColor="#F4F6F8"
         >
@@ -132,18 +124,33 @@
           borderColor="#222a37"
           borderRadius="30"
         />
+        <!-- <Button
+          backgroundColor="#F4F6F8"
+          color="#222a37"
+          text="En Memoria"
+          @tap="cleanImage"
+          style="width: 80%; margin-bottom: 20px"
+          borderWidth="1"
+          borderColor="#222a37"
+          borderRadius="30"
+        /> -->
       </StackLayout>
     </ScrollView>
   </StackLayout>
 </template>
 
 <script>
-const { getDamage } = require("~/sqlite/database");
+const {
+  getDamage,
+  getContainerElements,
+  storeRepair,
+} = require("~/sqlite/database");
 import mixinMasters from "~/mixins/Master";
 import Alert from "~/alerts/Alerts";
 import { requestPermissions } from "@nativescript/camera";
 import * as camera from "@nativescript/camera";
-import { ImageSource, knownFolders, path } from "@nativescript/core";
+import { ImageSource, knownFolders, path, Folder } from "@nativescript/core";
+import * as fs from "@nativescript/core/file-system";
 import { mapMutations, mapState } from "vuex";
 
 export default {
@@ -151,6 +158,14 @@ export default {
     container_elements: {
       type: Array,
       default: [],
+    },
+    repairs: {
+      type: Array,
+      default: [],
+    },
+    container_report_id: {
+      type: Number,
+      required: true,
     },
   },
   data() {
@@ -188,16 +203,12 @@ export default {
 
   mixins: [mixinMasters],
 
-  computed:{
-    ...mapState('evidenceStore',['damagedItems'])
-  },
+  computed: {},
 
   methods: {
-    ...mapMutations('evidenceStore',['setDamagedItem']),
-
     onCheckedChange(args) {
       const checkbox = args.object;
-      console.log("checkbox ", checkbox)
+      console.log("checkbox ", checkbox);
       if (checkbox.checked) {
         this.model.damage_id.push({
           id: checkbox.id,
@@ -212,45 +223,51 @@ export default {
       }
     },
 
-    unCheckAll(){
-      const checkbox = this.$refs.checkbok
+    unCheckAll() {
+      const checkbox = this.$refs.checkbok;
       for (let i = 0; i < checkbox.length; i++) {
-        checkbox[i].nativeView.checked = false
+        checkbox[i].nativeView.checked = false;
       }
     },
 
     async addRepair() {
       try {
-        this.setDamagedItem(this.model)
-        let confirmated = await Alert.info(
-          "¡¿Desea sequir añadiendo reparaciones?!",
-          3
-        );
-        if (confirmated) {
-          this.model = {
-            container_element_id: null,
-            location: null,
-            position: null,
-            damage_id: [],
-            photo: "",
-          };
-          this.unCheckAll()
-          console.log("store damage ", this.damagedItems)
-          Alert.success("Reparacion agrgada")
-        } else {
-          this.$modal.close();
+        if (
+          this.model.container_element_id !== null ||
+          this.model.location !== null ||
+          this.model.position !== null
+        ) {
+          const res = await storeRepair({
+            container_report_id: this.container_report_id,
+            repair: this.model,
+          });
+          Alert.success("Reparacion agrgada");
         }
+
+        this.model = {
+          container_element_id: null,
+          location: null,
+          position: null,
+          damage_id: [],
+          photo: "",
+        };
+        this.unCheckAll();
+        Alert.info("Revise que no hayan campos vacios!",1);
+        this.$modal.close();
       } catch (error) {}
     },
 
     async InfoSelect() {
-      console.log("damages items");
+      /* console.log("damages items", this.repairs); */
+      /* this.model.container_element_id = this.repairs[0].container_element_id */
+      /* console.log("model ", this.container_elements); */
       try {
         this.loadingCharge(true);
-        const res2 = await getDamage();
-        this.damages = res2.data;
-        this.elements = this.container_elements;
-        console.log("damages []", this.damages)
+        const res = await getDamage();
+        const containerElements = await getContainerElements();
+        this.damages = res.data;
+        this.elements = containerElements.data;
+        /* console.log("damages []", this.damages); */
       } catch (error) {
         console.log("solucion de errores ", error);
       } finally {
@@ -276,20 +293,22 @@ export default {
 
       try {
         const imageAsset = await camera.takePicture(options);
-        const imageSource = await ImageSource.fromAsset(imageAsset);
-        const base64Image = imageSource.toBase64String("jpeg");
-        this.model.photo = base64Image;
-        console.log("base ", this.cameraImage);
-        /* console.log("testimonio ",imageAsset)
-        this.model.photo = imageAsset;
+        /* const imageSource = await ImageSource.fromAsset(imageAsset); */
+        /* const base64Image = imageSource.toBase64String("jpeg"); */
+        /* this.model.photo = base64Image; */
+        /*  console.log("base ", this.cameraImage); */
+        console.log("testimonio ", imageAsset);
+        /* this.model.photo = imageAsset; */
         let pathSplit = imageAsset._android.split("/");
         let photo = pathSplit[pathSplit.length - 1];
         this.namePhoto = photo;
         const imageSource = await ImageSource.fromAsset(imageAsset);
         const folderPath = knownFolders.documents().path;
-        const filePath = path.join(folderPath, photo);
+        this.cleanImage(folderPath);
+        const filePath = fs.path.join(folderPath, photo);
         const saved = imageSource.saveToFile(filePath, "jpg");
-        this.cameraImage = filePath; */
+        this.model.photo = filePath;
+        /* console.log("url ", this.model.photo); */
         /* if (saved) {
           console.log("Gallery: " + this._dataItem);
           console.log("Saved: " + filePath);
@@ -311,6 +330,40 @@ export default {
     },
 
     showPhoto() {},
+
+    cleanImage(folderPath) {
+      // Crear una carpeta si no existe para guardar la imagen
+      const folder = Folder.fromPath(folderPath);
+      /* console.log("folder path ",folderPath) */
+      if (!folder) {
+        console.error("Error al obtener la carpeta de documentos");
+        return;
+      }
+
+      // Verificar si el archivo de imagen ya existe
+      const fileExists = fs.File.exists(this.model.photo);
+
+      // Obtener la lista de archivos en el directorio
+      const fileList = folder.getEntitiesSync();
+      /* console.log("fileList ", fileList); */
+
+      // Filtrar solo los archivos de imagen (por ejemplo, con extensión .jpg)
+      const imageFiles = fileList.filter(
+        (file) => file["_path"] === this.model.photo
+      );
+
+      const deleteImages = imageFiles.map((file) => file["_path"]);
+
+      if (fileExists) {
+        for (let i = 0; i < deleteImages.length; i++) {
+          // Eliminar el archivo existente
+          /* fs.File.fromPath(deleteImages[i]).remove();
+          console.log("Imagen anterior eliminada:", deleteImages[i]); */
+          fs.File.fromPath(deleteImages[i]).remove();
+          console.log("Imagen anterior eliminada:", deleteImages[i]);
+        }
+      }
+    },
   },
 };
 </script>

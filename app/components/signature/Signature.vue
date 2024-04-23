@@ -68,11 +68,12 @@
 </template>
 
 <script>
-import { ImageSource } from "@nativescript/core";
+import { ImageSource, knownFolders, path, Folder } from "@nativescript/core";
+import * as fs from "@nativescript/core/file-system";
 import Stripe from "~/components/stripe/Stripe";
 
 export default {
-  name:"Signature",
+  name: "Signature",
   components: {
     Stripe,
   },
@@ -81,6 +82,10 @@ export default {
     signature: {
       type: String,
       default: "",
+    },
+    id: {
+      type: Number,
+      default: 0,
     },
   },
 
@@ -103,9 +108,35 @@ export default {
         const pad = this.$refs.drawingPad.nativeView;
         const res = await pad.getDrawing();
         const img = new ImageSource(res);
-        const base64imageString = img.toBase64String("jpg");
+        /* const base64imageString = img.toBase64String("jpg"); */
+        // Obtener la ruta del directorio de documentos de la aplicación
+        const folderPath = knownFolders.documents().path;
+
+        const validatorSignature = this.validatorSignature(folderPath);
+
+        /* // Mostrar por consola los nombres de las imágenes encontradas
+        console.log(
+          "Imágenes en la carpeta:",
+          validatorSignature.imageFiles.map((file) => file["_path"])
+        ); */
+        const deleteImages = validatorSignature.imageFiles.map(
+          (file) => file["_path"]
+        );
+
+        // Guardar la imagen en el dispositivo
+        const saved = img.saveToFile(validatorSignature.filePath, "jpg");
+
+        /* if (saved) {
+          console.log("Imagen de firma guardada correctamente en:", validatorSignature.filePath);
+          // Aquí puedes hacer algo con la ruta del archivo guardado, como mostrarla en la interfaz
+        } else {
+          console.error("Error al guardar la imagen de firma");
+        } */
         this.$modal.close({
-          signature: base64imageString,
+          signature: validatorSignature.filePath,
+          deleteImages: deleteImages,
+          fileExists: validatorSignature.fileExists,
+
         });
       } catch (error) {
         this.$modal.close({
@@ -113,6 +144,54 @@ export default {
         });
         console.log("err ", error);
       }
+    },
+
+    validatorSignature(folderPath) {
+      // Crear una carpeta si no existe para guardar la imagen
+      const folder = Folder.fromPath(folderPath);
+      /* console.log("folder path ",folderPath) */
+      if (!folder) {
+        console.error("Error al obtener la carpeta de documentos");
+        return;
+      }
+
+      const fileName = "firma_usuario" + "_" + Date.now() + ".jpg";
+      /* console.log("folder fileName ",fileName) */
+      let filePath = fs.path.join(folderPath, fileName);
+      /* console.log("folder filePath ",filePath) */
+      let signature = "";
+      let signatureName = ""
+      let oldfilePath = ""
+      if (this.signature.length > 0) {
+        /* console.log("siganture lleno ",this.signature) */
+        signature = this.signature.split("/");
+        signatureName = signature[signature.length - 1];
+        oldfilePath = fs.path.join(folderPath, signatureName);
+      } else {
+        /* console.log("siganture vacio ",this.signature) */
+        signature = this.signature;
+      }
+
+      // Verificar si el archivo de imagen ya existe
+      const fileExists = fs.File.exists(oldfilePath);
+
+      // Obtener la lista de archivos en el directorio
+      const fileList = folder.getEntitiesSync();
+      /* console.log("fileList ", fileList); */
+      // Filtrar solo los archivos de imagen (por ejemplo, con extensión .jpg)
+      const imageFiles = fileList.filter(
+        (file) => file["_name"] === signatureName
+      );
+
+      /* const imageFiles = fileList.filter(
+        (file) => file["_extension"] === ".jpg"
+      ); */
+
+      return {
+        imageFiles,
+        fileExists,
+        filePath
+      };
     },
   },
 };

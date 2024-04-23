@@ -122,6 +122,8 @@ import FormGroupTextField from "~/components/input/FormGroupTextField";
 import Stripe from "~/components/stripe/Stripe";
 import mixinMasters from "~/mixins/Master";
 import { ImageSource, Utils } from "@nativescript/core";
+import * as fs from "@nativescript/core/file-system";
+import Alert from "~/alerts/Alerts";
 
 export default {
   components: {
@@ -146,6 +148,7 @@ export default {
         titular_name: "Gerson Calvo",
         signature: "",
       },
+      propsSignature: {},
     };
   },
 
@@ -153,7 +156,7 @@ export default {
 
   methods: {
     index() {
-      console.log("info ", this.info)
+      console.log("info ", this.info);
       this.model = {
         id: this.info.id,
         type_management_id: this.info.type_management_id,
@@ -168,9 +171,20 @@ export default {
       try {
         this.loadingCharge(true);
         const res = await updateManagement(this.model);
-        console.log("res edit ",res)
+        /* console.log("res edit ", res);
+        console.log("propsSignature ", this.propsSignature.fileExists); */
+        if (this.propsSignature.fileExists) {
+          for (let i = 0; i < this.propsSignature.deleteImages.length; i++) {
+            // Eliminar el archivo existente
+            fs.File.fromPath(this.propsSignature.deleteImages[i]).remove();
+            console.log(
+              "Imagen anterior eliminada:",
+              this.propsSignature.deleteImages[i]
+            );
+          }
+        }
         this.$modal.close({
-          model: res.data
+          model: res.data,
         });
       } catch (error) {
         Alert.danger("Hubo un error al traer los datos ", error.message);
@@ -182,16 +196,20 @@ export default {
     signatureCaptain() {
       this.$showModal(Signature, {
         props: {
+          id: this.model.id,
           signature: this.model.signature,
         },
         animated: true,
         cancelable: true,
       }).then((res) => {
+        this.propsSignature = res;
+        /* console.log("props ", this.propsSignature); */
         this.model.signature = res.signature;
-        /* console.log("desencriptando ", this.model.signature); */
-        const imageData = ImageSource.fromBase64Sync(this.model.signature);
+        /* console.log("signature edit ", this.model.signature); */
+        /* const imageData = ImageSource.fromBase64Sync(this.model.signature); */
         let myImg = this.$refs.imageRef.nativeView;
-        myImg.src = imageData;
+        myImg.src = this.model.signature;
+        /* console.log("final"); */
       });
     },
   },

@@ -102,6 +102,28 @@
             class="p-l-10 colorIcons"
           />
         </GridLayout>
+        <GridLayout
+          id="3"
+          columns="40,*"
+          class="nt-drawer__list-item"
+          :class="isHovered && itemSelector == 5 ? 'hovered' : ''"
+          @tap="EvidenceList"
+          @touch="onTouch(5)"
+        >
+          <Label
+            col="0"
+            :text="'fa-file-upload' | fonticon"
+            class="fas colorIcons"
+            fontSize="22"
+          />
+          <Label
+            col="1"
+            text="Sincronozar Evidencias"
+            textWrap="true"
+            fontSize="14"
+            class="p-l-10 colorIcons"
+          />
+        </GridLayout>
         <!-- <GridLayout columns="auto,*" class="nt-drawer__list-item" @tap="showProgressDialog">
                     <Label col="0" :text="'fa-trash-alt' | fonticon" class="fas colorIcons" fontSize="18" />
                     <Label col="1" text="Prueba" fontSize="15" class="p-l-10 colorIcons" />
@@ -111,7 +133,7 @@
   </GridLayout>
 </template>
 <script>
-const { createTable, DBdelete, structure } = require("../../sqlite/database");
+const { createTable, DBdelete, structure, storeUsers } = require("../../sqlite/database");
 import * as utils from "~/shared/util";
 import axios from "axios";
 import { mapState, mapMutations } from "vuex";
@@ -136,6 +158,7 @@ export default {
 
   methods: {
     ...mapMutations(["saveShipsWarehouses", "indicatorState"]),
+    ...mapMutations("auth",["setUsers", "setModules"]),
 
     onTouch(n) {
       this.itemSelector = n;
@@ -164,14 +187,36 @@ export default {
       }
     },
 
+    async getModulesWsp() {
+      try {
+        //const shipsWarehouses = await axios.get('http://186.1.181.146:8811/mcp-backend/public/api/mobile/ships');
+        /*  const shipsWarehouses = await axios.get(
+          "http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/ships"
+        ); */
+        const modules_wsp = await axios.get(
+          "http://172.70.9.110/mcp-backend/public/api/mobile/wsp_modules",
+        );
+        return modules_wsp;
+      } catch (error) {
+        /* this.loadingCharge()
+                Alert.danger("No se pudieron cargados los datos de MCP a la DB",error) */
+        console.log(error);
+      }
+    },
+
     async createTables() {
       try {
         let confirmated = await Alert.Danger(2);
         if (confirmated) {
           this.loadingCharge(true);
           const shipsWarehouses = await this.getShipsWarehouses();
+          const modules = await this.getModulesWsp()
+          console.log("modules ", modules.data.data)
+          this.setUsers(modules.data.data)
           const db = await createTable(shipsWarehouses.data.data);
-          this.$router.pushClear("ship.index");
+          const users = await storeUsers(modules.data.data)
+          console.log("users ", users)
+          this.$router.pushClear("login.index");
           this.loadingCharge();
           Alert.success("Actualizacion de DB");
           //console.log(db)
@@ -179,7 +224,6 @@ export default {
       } catch (error) {
         this.loadingCharge();
         Alert.danger("No se pudo actualizar la DB", error);
-        console.log("error intentando crear las tablas...");
       }
     },
 
@@ -188,7 +232,11 @@ export default {
         this.$router.pushClear("ship.index");
         utils.closeDrawer();
       } catch (error) {
-        console.log("error al dirigirme a la ruta ", error);
+        Alert.info(
+          "error intentando al dirigirse a la ruta " + error,
+          1,
+          "Error!"
+        );
       }
     },
 
@@ -196,15 +244,19 @@ export default {
       try {
         this.$router.pushClear("generalpallets.index");
         utils.closeDrawer();
-        /*  const db = await structure() */
+         const db = await structure()
         /* alert({
                     title:'Inicializando DB',
                     message:'Actualizando Tablas...',
                     okButtonText:"aceptar"
                 }) */
-        /* console.log(db) */
+        console.log(db)
       } catch (error) {
-        console.log("error intentando crear las tablas...");
+        Alert.info(
+          "error intentando al dirigirse a la ruta " + error,
+          1,
+          "Error!"
+        );
       }
     },
 
@@ -213,7 +265,24 @@ export default {
         this.$router.pushClear("evidence.index");
         utils.closeDrawer();
       } catch (error) {
-        console.log("error al dirigirme a la ruta ", error);
+        Alert.info(
+          "error intentando al dirigirse a la ruta " + error,
+          1,
+          "Error!"
+        );
+      }
+    },
+
+    EvidenceList() {
+      try {
+        this.$router.pushClear("evidence_list.show");
+        utils.closeDrawer();
+      } catch (error) {
+        Alert.info(
+          "error intentando al dirigirse a la ruta " + error,
+          1,
+          "Error!"
+        );
       }
     },
   },

@@ -122,7 +122,6 @@ export default {
   methods: {
     onTextChange(args) {
       const newValue = args.object.text;
-      /* console.log("selected <=> ",newValue) */
       this.$emit("input", newValue);
     },
 
@@ -142,7 +141,7 @@ export default {
   },
 
   created(){
-    /* console.log("mull ", this.multiple) */
+
   }
 };
 </script>

@@ -109,7 +109,6 @@ export default {
 
   methods: {
     filter() {
-      //console.log(this.data)
       if (this.textFieldValue.length > 0) {
         this.array_filter = this.data.filter(
           (data) =>
