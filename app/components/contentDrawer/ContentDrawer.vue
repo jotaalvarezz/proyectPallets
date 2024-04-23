@@ -194,7 +194,7 @@ export default {
           "http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/ships"
         ); */
         const modules_wsp = await axios.get(
-          "http://172.70.8.122/mcp-backend/public/api/mobile/wsp_modules",
+          "http://172.70.9.110/mcp-backend/public/api/mobile/wsp_modules",
         );
         return modules_wsp;
       } catch (error) {

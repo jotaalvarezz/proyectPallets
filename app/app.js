@@ -51,7 +51,7 @@ Vue.registerElement(
   () => require("nativescript-barcodescanner").BarcodeScannerView
 );
 
-TNSFontIcon.debug = true; // Opcionalmente, puedes habilitar el modo de depuración
+TNSFontIcon.debug = false; // Opcionalmente, puedes habilitar el modo de depuración
 
 TNSFontIcon.paths = {
   fa: "./assets/all.css",
