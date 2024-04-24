@@ -71,7 +71,7 @@ export default {
       // ...
       const aux = await this.isLogin(this.model)
       console.log("aux ",aux)
-      /* this.$router.pushClear("ship.index"); */
+      this.$router.pushClear("ship.index");
 
       // ...
     },

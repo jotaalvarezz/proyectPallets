@@ -3,8 +3,8 @@ const {
   getTypes,
   getAdditionalDamage,
   getContainerElements,
-  getDamage
-} = require('~/sqlite/queries/InfoSelects')
+  getDamage,
+} = require("~/sqlite/queries/InfoSelects");
 
 const {
   storeContainerReport,
@@ -12,8 +12,8 @@ const {
   getRepairs,
   getRepairDamage,
   deleteContainerReport,
-  updateContainerReport
-} = require('~/sqlite/queries/evidence')
+  updateContainerReport,
+} = require("~/sqlite/queries/evidence");
 
 const {
   getTypesManagement,
@@ -21,16 +21,18 @@ const {
   getManagements,
   getAllManagements,
   deleteManagement,
-  updateManagement
-} = require('~/sqlite/queries/management')
+  updateManagement,
+} = require("~/sqlite/queries/management");
 
 const {
   getUsers,
   storeUsers,
-  showUser
-} = require('~/sqlite/queries/login/users')
+  showUser,
+} = require("~/sqlite/queries/login/users");
 
-const { storeRepair, deleteRepair } = require('~/sqlite/queries/repair')
+const { storeModules } = require("~/sqlite/queries/login/modules");
+
+const { storeRepair, deleteRepair } = require("~/sqlite/queries/repair");
 const Querys = [
   `CREATE TABLE IF NOT EXISTS ships
     (
@@ -181,7 +183,6 @@ const Querys = [
       date_creation DATETIME
     )`,
 
-
   `CREATE TABLE IF NOT EXISTS module_user
     (
       id INTEGER PRIMARY KEY,
@@ -190,7 +191,7 @@ const Querys = [
       date_creation DATETIME,
       FOREIGN KEY (user_id) REFERENCES users(id),
       FOREIGN KEY (module_id) REFERENCES modules(id)
-    )`
+    )`,
 ];
 
 const DefaultSelects = {
@@ -198,7 +199,7 @@ const DefaultSelects = {
     { name: "Refrigerado", date_creation: new Date() },
     { name: "Seco", date_creation: new Date() },
     { name: "Lleno", date_creation: new Date() },
-    { name: "Vacio", date_creation: new Date() }
+    { name: "Vacio", date_creation: new Date() },
   ],
   additional_damage: [
     { name: "VENTILADOR", date_creation: new Date() },
@@ -209,7 +210,7 @@ const DefaultSelects = {
     { name: "MICRO", date_creation: new Date() },
     { name: "FREON", date_creation: new Date() },
     { name: "COMPRESOR", date_creation: new Date() },
-    { name: "PANTALLA", date_creation: new Date() }
+    { name: "PANTALLA", date_creation: new Date() },
   ],
   container_elements: [
     { name: "Viga Frontal", date_creation: new Date() },
@@ -233,13 +234,21 @@ const DefaultSelects = {
     { name: "RO - ROTO", date_creation: new Date() },
     { name: "ZA - ZAFO", date_creation: new Date() },
     { name: "AC - MANCHAS DE ACEITE", date_creation: new Date() },
-  ]
-}
+  ],
+};
 
 const DefaultTypesManagement = [
-  { name: "Gestion en Barco", icon: "~/assets/images/gestion_barco.jpg", date_creation: new Date() },
-  { name: "Gestion en Patio", icon: "~/assets/images/gestion_patio.jpg", date_creation: new Date() }
-]
+  {
+    name: "Gestion en Barco",
+    icon: "~/assets/images/gestion_barco.jpg",
+    date_creation: new Date(),
+  },
+  {
+    name: "Gestion en Patio",
+    icon: "~/assets/images/gestion_patio.jpg",
+    date_creation: new Date(),
+  },
+];
 
 // Función para abrir o crear la base de datos
 /* ************************************************************************************** */
@@ -250,102 +259,100 @@ const openDatabase = async () => {
   } catch (error) {
     console.log("error al abrir la db: ", error);
   }
-}
+};
 
 const structure = async () => {
   try {
     const db = await openDatabase();
-    return db.all("SELECT name, sql FROM sqlite_master WHERE type='table'").then(
-      (result) => {
+    return db
+      .all("SELECT name, sql FROM sqlite_master WHERE type='table'")
+      .then((result) => {
         // Imprime la estructura de la base de datos en la consola
         result.forEach((table) => {
           console.log("Tabla:", table[0]);
           console.log("Definición:", table[1]);
           console.log("------------------------------------");
         });
-      }
-    );
-  } catch (error) { }
-}
+      });
+  } catch (error) {}
+};
 
 // Función para crear las tablas
 const createTable = async (shipsWarehouses) => {
   /* console.log("EN DATABASE", shipsWarehouses) */
   try {
-    DBdelete()
+    DBdelete();
     let database = [];
     const db = await openDatabase();
     for (let i = 0; i < Querys.length; i++) {
-      database = db.execSQL(
-        Querys[i],
-        []
-      );
+      database = db.execSQL(Querys[i], []);
     }
-    insertDefaultData(db, shipsWarehouses)
+    insertDefaultData(db, shipsWarehouses);
     //console.log(db);
     return database;
   } catch (error) {
     console.log("error e la creacion de la tabla ", error);
   }
-}
+};
 /* ************************************************************************************** */
 
 const insertSeletsData = async (db) => {
   try {
-    let post = []
+    let post = [];
     for (const key in DefaultSelects) {
       if (DefaultSelects.hasOwnProperty(key)) {
         for (let j = 0; j < DefaultSelects[key].length; j++) {
-          post[j] = db.execSQL(`INSERT INTO ${key} (name, date_creation) VALUES (?, ?)`,
-            [
-              DefaultSelects[key][j].name,
-              DefaultSelects[key][j].date_creation
-            ]
+          post[j] = db.execSQL(
+            `INSERT INTO ${key} (name, date_creation) VALUES (?, ?)`,
+            [DefaultSelects[key][j].name, DefaultSelects[key][j].date_creation]
           );
         }
       }
     }
-    return post
+    return post;
   } catch (error) {
-    console.log("errores ", error)
+    console.log("errores ", error);
   }
-}
+};
 
 //datos por defecto de tipos de gestion
 const insertTypesManagement = async (db) => {
   try {
-    let post = []
+    let post = [];
     for (let i = 0; i < DefaultTypesManagement.length; i++) {
-      post[i] = db.execSQL(`INSERT INTO types_management (name, icon, date_creation) VALUES (?, ?, ?)`,
+      post[i] = db.execSQL(
+        `INSERT INTO types_management (name, icon, date_creation) VALUES (?, ?, ?)`,
         [
           DefaultTypesManagement[i].name,
           DefaultTypesManagement[i].icon,
-          DefaultTypesManagement[i].date_creation
+          DefaultTypesManagement[i].date_creation,
         ]
       );
     }
-    return post
+    return post;
   } catch (error) {
-    console.log("error al crear registro en types management ", error)
+    console.log("error al crear registro en types management ", error);
   }
-}
+};
 
 //Creacion de datos por defecto
 const insertDefaultData = async (db, shipsWarehouses) => {
   try {
-    let postWarehouse = []
-    let postData = []
-    let selects = []
+    let postWarehouse = [];
+    let postData = [];
+    let selects = [];
     for (let i = 0; i < shipsWarehouses.length; i++) {
-      postData[i] = await db.execSQL("INSERT INTO ships (id, name, journey) VALUES (?, ?, ?)",
+      postData[i] = await db.execSQL(
+        "INSERT INTO ships (id, name, journey) VALUES (?, ?, ?)",
         [
           shipsWarehouses[i].id,
           shipsWarehouses[i].name_ship,
-          shipsWarehouses[i].journey
+          shipsWarehouses[i].journey,
         ]
       );
       for (let j = 0; j < shipsWarehouses[i].warehouses.length; j++) {
-        postWarehouse[j] = db.execSQL("INSERT INTO warehouses (name, warehouse_id, ship_id) VALUES (?, ?, ?)",
+        postWarehouse[j] = db.execSQL(
+          "INSERT INTO warehouses (name, warehouse_id, ship_id) VALUES (?, ?, ?)",
           [
             shipsWarehouses[i].warehouses[j].name_warehouse,
             shipsWarehouses[i].warehouses[j].id,
@@ -354,13 +361,13 @@ const insertDefaultData = async (db, shipsWarehouses) => {
         );
       }
     }
-    insertSeletsData(db)
-    insertTypesManagement(db)
+    insertSeletsData(db);
+    insertTypesManagement(db);
     return { postShip: postData, postWarehouse: postWarehouse };
   } catch (error) {
     console.log("ocurrio un problema al insertar la fila", error);
   }
-}
+};
 
 //traer todos los datos
 /* ************************************************************************************** */
@@ -372,27 +379,32 @@ const getShips = async () => {
   } catch (error) {
     console.log("error al traer los datos ", error);
   }
-}
+};
 
 const getWarehouses = async (ship_id) => {
   try {
     const db = await openDatabase();
-    const data = await db.all("SELECT * FROM warehouses WHERE ship_id = (?)", [ship_id]);
+    const data = await db.all("SELECT * FROM warehouses WHERE ship_id = (?)", [
+      ship_id,
+    ]);
     return data;
   } catch (error) {
     console.log("error al traer los datos ", error);
   }
-}
+};
 
 const getPallets = async (warehouse_id) => {
   try {
     const db = await openDatabase();
-    const data = await db.all("SELECT * FROM pallets WHERE warehouse_id = (?)", [warehouse_id]);
+    const data = await db.all(
+      "SELECT * FROM pallets WHERE warehouse_id = (?)",
+      [warehouse_id]
+    );
     return data;
   } catch (error) {
     console.log("error al traer los datos ", error);
   }
-}
+};
 
 const getPalletsAll = async () => {
   try {
@@ -402,28 +414,31 @@ const getPalletsAll = async () => {
   } catch (error) {
     console.log("error al traer los datos ", error);
   }
-}
+};
 
 const getPallet = async (item) => {
   try {
     const db = await openDatabase();
-    const data = await db.all(`SELECT p.id, p.code, p.observation, sh.name, w.name
+    const data = await db.all(
+      `SELECT p.id, p.code, p.observation, sh.name, w.name
                                         FROM pallets p
                                         INNER JOIN warehouses w on w.id = p.warehouse_id
                                         INNER JOIN ships sh on sh.id = w.ship_id
-                                        WHERE p.id = (?)`, [item.id]
+                                        WHERE p.id = (?)`,
+      [item.id]
     );
     return data;
   } catch (error) {
     console.log("error al traer los datos ", error);
   }
-}
+};
 
 //carga los pallets que se van a enviar al backend de MCP
 const loadPallets = async () => {
   try {
     const db = await openDatabase();
-    const data = await db.all(`SELECT p.id,
+    const data = await db.all(
+      `SELECT p.id,
                                       p.code,
                                       p.observation,
                                       sh.id,
@@ -434,13 +449,14 @@ const loadPallets = async () => {
                                       p.date_creation
                                 FROM pallets p
                                 INNER JOIN warehouses w on w.id = p.warehouse_id
-                                INNER JOIN ships sh on sh.id = w.ship_id`, []
+                                INNER JOIN ships sh on sh.id = w.ship_id`,
+      []
     );
     return data;
   } catch (error) {
     console.log("error al traer los datos ", error);
   }
-}
+};
 
 /* ************************************************************************************** */
 
@@ -449,60 +465,74 @@ const loadPallets = async () => {
 const insertShip = async (data) => {
   try {
     const db = await openDatabase();
-    let postData = db.execSQL("INSERT INTO ships (name, journey) VALUES (?, ?)", [data.nameShip, data.journey]);
+    let postData = db.execSQL(
+      "INSERT INTO ships (name, journey) VALUES (?, ?)",
+      [data.nameShip, data.journey]
+    );
     return postData;
   } catch (error) {
     console.log("ocurrio un problema al insertar la fila", error);
   }
-}
+};
 
 const insertWarehuse = async (data) => {
   try {
     const db = await openDatabase();
-    let postData = db.execSQL("INSERT INTO warehouses (name, ship_id) VALUES (?, ?)", [data.nameWarehouse, data.ship_id]);
+    let postData = db.execSQL(
+      "INSERT INTO warehouses (name, ship_id) VALUES (?, ?)",
+      [data.nameWarehouse, data.ship_id]
+    );
     return postData;
   } catch (error) {
     console.log("ocurrio un problema al insertar la fila", error);
   }
-}
+};
 
 const insertPallet = async (data) => {
   try {
     const db = await openDatabase();
-    let postData = db.execSQL("INSERT INTO pallets (code, warehouse_id, date_creation) VALUES (?, ?, ?)", [data.codePallet, data.warehouse_id, data.pallet_creation]);
+    let postData = db.execSQL(
+      "INSERT INTO pallets (code, warehouse_id, date_creation) VALUES (?, ?, ?)",
+      [data.codePallet, data.warehouse_id, data.pallet_creation]
+    );
     return postData;
   } catch (error) {
     console.log("ocurrio un problema al insertar la fila", error);
   }
-}
+};
 /* ************************************************************************************** */
-
 
 // Funciónes para editar datos en la tabla
 /* ************************************************************************************** */
 const updatePallet = async (item) => {
   try {
     const db = await openDatabase();
-    let updateData = db.execSQL(`UPDATE pallets
+    let updateData = db.execSQL(
+      `UPDATE pallets
                                         SET observation = (?)
-                                        WHERE id = (?)`, [item.observation, item.id]);
-    return updateData
+                                        WHERE id = (?)`,
+      [item.observation, item.id]
+    );
+    return updateData;
   } catch (error) {
-    console.error("Error al editar el pallet ", error)
+    console.error("Error al editar el pallet ", error);
   }
-}
+};
 
 const updateShip = async (item) => {
   try {
     const db = await openDatabase();
-    let updateData = db.execSQL(`UPDATE ships
+    let updateData = db.execSQL(
+      `UPDATE ships
                                       SET journey = (?)
-                                      WHERE id = (?)`, [item.journey, item.id]);
-    return updateData
+                                      WHERE id = (?)`,
+      [item.journey, item.id]
+    );
+    return updateData;
   } catch (error) {
-    console.error("Error al editar el barco ", error)
+    console.error("Error al editar el barco ", error);
   }
-}
+};
 /* ************************************************************************************** */
 
 //Funcion para eliminar registros de una tabla
@@ -515,7 +545,7 @@ const deleteShip = async (id) => {
   } catch (error) {
     console.log("Hubo un error intentando eliminar el registro ", error);
   }
-}
+};
 
 const deleteWarehouse = async (id) => {
   try {
@@ -525,7 +555,7 @@ const deleteWarehouse = async (id) => {
   } catch (error) {
     console.log("Hubo un error intentando eliminar el registro ", error);
   }
-}
+};
 
 const deletePallet = async (id) => {
   try {
@@ -535,7 +565,7 @@ const deletePallet = async (id) => {
   } catch (error) {
     console.log("Hubo un error intentando eliminar el registro ", error);
   }
-}
+};
 
 //Funcion para eliminar la Base de datos
 const DBdelete = async () => {
@@ -547,7 +577,7 @@ const DBdelete = async () => {
   } catch (error) {
     console.log("error al eliminar ", error);
   }
-}
+};
 
 module.exports = {
   createTable,
@@ -587,9 +617,9 @@ module.exports = {
   storeRepair,
   deleteRepair,
   storeUsers,
-  showUser
+  showUser,
+  storeModules
 };
-
 
 // Función para abrir o crear la base de datos
 /* const openDatabase = async () => {

@@ -36,28 +36,7 @@
             class="p-l-10 colorIcons"
           />
         </GridLayout>
-        <GridLayout
-          id="2"
-          columns="40,*"
-          class="nt-drawer__list-item"
-          :class="isHovered && itemSelector == 2 ? 'hovered' : ''"
-          @touch="onTouch(2)"
-          @tap="pallets"
-        >
-          <Label
-            col="0"
-            :text="'fa-pallet' | fonticon"
-            class="fas"
-            color="#0096b7"
-            fontSize="22"
-          />
-          <Label
-            col="1"
-            text="Pallets"
-            fontSize="14"
-            class="p-l-10 colorIcons"
-          />
-        </GridLayout>
+        <!-- static -->
         <GridLayout
           id="3"
           columns="40,*"
@@ -80,60 +59,45 @@
             class="p-l-10 colorIcons"
           />
         </GridLayout>
+        <!-- static -->
         <GridLayout
-          id="3"
+          v-for="(item, index) in modules"
+          :key="index"
+          :id="item.id"
           columns="40,*"
           class="nt-drawer__list-item"
-          @tap="signature"
-          :class="isHovered && itemSelector == 4 ? 'hovered' : ''"
-          @touch="onTouch(4)"
+          :class="isHovered && itemSelector == item.id ? 'hovered' : ''"
+          @touch="onTouch(item.id)"
+          @tap="navigate(item.url)"
         >
           <Label
             col="0"
-            :text="'fa-file-signature' | fonticon"
-            class="fas colorIcons"
+            :text="item.icon | fonticon"
+            class="fas"
+            color="#0096b7"
             fontSize="22"
           />
           <Label
             col="1"
-            text="Reportes/Evidencias"
-            textWrap="true"
+            :text="item.name"
             fontSize="14"
             class="p-l-10 colorIcons"
           />
         </GridLayout>
-        <GridLayout
-          id="3"
-          columns="40,*"
-          class="nt-drawer__list-item"
-          :class="isHovered && itemSelector == 5 ? 'hovered' : ''"
-          @tap="EvidenceList"
-          @touch="onTouch(5)"
-        >
-          <Label
-            col="0"
-            :text="'fa-file-upload' | fonticon"
-            class="fas colorIcons"
-            fontSize="22"
-          />
-          <Label
-            col="1"
-            text="Sincronozar Evidencias"
-            textWrap="true"
-            fontSize="14"
-            class="p-l-10 colorIcons"
-          />
-        </GridLayout>
-        <!-- <GridLayout columns="auto,*" class="nt-drawer__list-item" @tap="showProgressDialog">
-                    <Label col="0" :text="'fa-trash-alt' | fonticon" class="fas colorIcons" fontSize="18" />
-                    <Label col="1" text="Prueba" fontSize="15" class="p-l-10 colorIcons" />
-                </GridLayout> -->
+        <!-- Label en la parte inferior -->
+        <Label text="Cerrar sesion" horizontalAlignment="center" />
       </StackLayout>
     </ScrollView>
   </GridLayout>
 </template>
 <script>
-const { createTable, DBdelete, structure, storeUsers } = require("../../sqlite/database");
+const {
+  createTable,
+  DBdelete,
+  structure,
+  storeUsers,
+  storeModules,
+} = require("../../sqlite/database");
 import * as utils from "~/shared/util";
 import axios from "axios";
 import { mapState, mapMutations } from "vuex";
@@ -152,13 +116,19 @@ export default {
 
   computed: {
     ...mapState(["indicator"]),
+    ...mapState("auth", ["logout", "modules", "user"]),
   },
 
   mixins: [mixinMasters],
 
   methods: {
     ...mapMutations(["saveShipsWarehouses", "indicatorState"]),
-    ...mapMutations("auth",["setUsers", "setModules"]),
+    ...mapMutations("auth", ["setUsers", "setModules", "setUser", "setLogout"]),
+
+    accessModules() {
+      if (this.logout) {
+      }
+    },
 
     onTouch(n) {
       this.itemSelector = n;
@@ -187,14 +157,31 @@ export default {
       }
     },
 
+    async getUsersWsp() {
+      try {
+        //const shipsWarehouses = await axios.get('http://186.1.181.146:8811/mcp-backend/public/api/mobile/wsp_users');
+        /*  const shipsWarehouses = await axios.get(
+          "http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/wsp_users"
+        ); */
+        const users_wsp = await axios.get(
+          "http://172.104.10.120/mcp-backend/public/api/mobile/wsp_users"
+        );
+        return users_wsp;
+      } catch (error) {
+        /* this.loadingCharge()
+                Alert.danger("No se pudieron cargados los datos de MCP a la DB",error) */
+        console.log(error);
+      }
+    },
+
     async getModulesWsp() {
       try {
-        //const shipsWarehouses = await axios.get('http://186.1.181.146:8811/mcp-backend/public/api/mobile/ships');
+        //const shipsWarehouses = await axios.get('http://186.1.181.146:8811/mcp-backend/public/api/mobile/wsp_modules');
         /*  const shipsWarehouses = await axios.get(
-          "http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/ships"
+          "http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/wsp_modules"
         ); */
         const modules_wsp = await axios.get(
-          "http://172.70.9.110/mcp-backend/public/api/mobile/wsp_modules",
+          "http://172.104.10.120/mcp-backend/public/api/mobile/wsp_modules"
         );
         return modules_wsp;
       } catch (error) {
@@ -210,12 +197,15 @@ export default {
         if (confirmated) {
           this.loadingCharge(true);
           const shipsWarehouses = await this.getShipsWarehouses();
-          const modules = await this.getModulesWsp()
-          console.log("modules ", modules.data.data)
-          this.setUsers(modules.data.data)
+          const modules = await this.getModulesWsp();
+          const users = await this.getUsersWsp();
+          console.log("modules ", modules.data.data);
+          console.log("users ", users.data.data);
+          this.setUsers(modules.data.data);
           const db = await createTable(shipsWarehouses.data.data);
-          const users = await storeUsers(modules.data.data)
-          console.log("users ", users)
+          const res = await storeUsers(users.data.data);
+          const res2 = await storeModules(modules.data.data);
+          console.log("resss ", res + "  " + res2);
           this.$router.pushClear("login.index");
           this.loadingCharge();
           Alert.success("Actualizacion de DB");
@@ -227,30 +217,17 @@ export default {
       }
     },
 
-    home() {
+    navigate(url) {
       try {
-        this.$router.pushClear("ship.index");
+        this.$router.pushClear(url);
         utils.closeDrawer();
-      } catch (error) {
-        Alert.info(
-          "error intentando al dirigirse a la ruta " + error,
-          1,
-          "Error!"
-        );
-      }
-    },
-
-    async pallets() {
-      try {
-        this.$router.pushClear("generalpallets.index");
-        utils.closeDrawer();
-         const db = await structure()
+        /*  const db = await structure(); */
         /* alert({
                     title:'Inicializando DB',
                     message:'Actualizando Tablas...',
                     okButtonText:"aceptar"
                 }) */
-        console.log(db)
+        /* console.log(db); */
       } catch (error) {
         Alert.info(
           "error intentando al dirigirse a la ruta " + error,
@@ -259,32 +236,10 @@ export default {
         );
       }
     },
+  },
 
-    signature() {
-      try {
-        this.$router.pushClear("evidence.index");
-        utils.closeDrawer();
-      } catch (error) {
-        Alert.info(
-          "error intentando al dirigirse a la ruta " + error,
-          1,
-          "Error!"
-        );
-      }
-    },
-
-    EvidenceList() {
-      try {
-        this.$router.pushClear("evidence_list.show");
-        utils.closeDrawer();
-      } catch (error) {
-        Alert.info(
-          "error intentando al dirigirse a la ruta " + error,
-          1,
-          "Error!"
-        );
-      }
-    },
+  created() {
+    this.accessModules();
   },
 };
 </script>
