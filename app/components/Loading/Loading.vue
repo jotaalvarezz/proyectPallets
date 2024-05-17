@@ -2,7 +2,7 @@
     <Page>
         <GridLayout rows="auto, auto" columns="115" margin="40">
             <ActivityIndicator row="0" :busy="controlIndicator"  @busyChange="onBusyChanged" />
-            <Label row="1" text="Cargando Informacion" style="text-align: center;" textWrap="true"/>
+            <Label row="1" text="Cargando..." style="text-align: center;" textWrap="true"/>
         </GridLayout>
     </Page>
 </template>

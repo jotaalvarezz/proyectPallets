@@ -14,6 +14,7 @@ import ManagementForm from '~/views/evidence/managementForm/ManagementForm'
 import ContainerReportList from '~/views/evidence/containerReport/ContainerReportList.vue'
 import EvidenceList from '~/views/evidence/EvidenceList.vue'
 import Login from '~/views/Login'
+import Dashboard from '~/views/dashboard/Dashboard'
 
 Vue.use(NSVueRouter)
 
@@ -69,6 +70,11 @@ const routes = [
     meta: { auth: true }
   },
   {
+    name: 'dashboard.index',
+    component: Dashboard,
+    meta: { auth: true }
+  },
+  {
     name: 'login.index',
     component: Login,
     meta: { guest: true }
@@ -81,10 +87,6 @@ const router = new NSVueRouter({
   /* eslint-disable-next-line no-undef  */
   /* verbose: TNS_ENV !== 'production' */ // <-- Optional. Will output the warnings to console.
 })
-
-const user = () => {
-  return false;
-}
 
 router.beforeEach((to, next) => {
   let isLogged = store.state.logout

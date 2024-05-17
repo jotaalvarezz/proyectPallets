@@ -22,6 +22,7 @@ const {
   getAllManagements,
   deleteManagement,
   updateManagement,
+  sendEvidenceReports
 } = require("~/sqlite/queries/management");
 
 const {
@@ -105,6 +106,7 @@ const Querys = [
   `CREATE TABLE IF NOT EXISTS management
       (
         id INTEGER PRIMARY KEY,
+        consecutive TEXT,
         type_management_id INTEGER,
         name TEXT,
         journey TEXT,
@@ -117,6 +119,7 @@ const Querys = [
   `CREATE TABLE IF NOT EXISTS container_reports
   (
     id INTEGER PRIMARY KEY,
+    consecutive TEXT,
     management_id INTEGER,
     code TEXT,
     type_id INTEGER,
@@ -194,7 +197,7 @@ const Querys = [
     )`,
 ];
 
-const DefaultSelects = {
+/* const DefaultSelects = {
   types: [
     { name: "Refrigerado", date_creation: new Date() },
     { name: "Seco", date_creation: new Date() },
@@ -248,7 +251,7 @@ const DefaultTypesManagement = [
     icon: "~/assets/images/gestion_patio.jpg",
     date_creation: new Date(),
   },
-];
+]; */
 
 // Función para abrir o crear la base de datos
 /* ************************************************************************************** */
@@ -296,15 +299,16 @@ const createTable = async (shipsWarehouses) => {
 };
 /* ************************************************************************************** */
 
-const insertSeletsData = async (db) => {
+const insertSeletsEvidence = async (DefaultSelects) => {
   try {
+    const db = await openDatabase();
     let post = [];
     for (const key in DefaultSelects) {
       if (DefaultSelects.hasOwnProperty(key)) {
         for (let j = 0; j < DefaultSelects[key].length; j++) {
           post[j] = db.execSQL(
-            `INSERT INTO ${key} (name, date_creation) VALUES (?, ?)`,
-            [DefaultSelects[key][j].name, DefaultSelects[key][j].date_creation]
+            `INSERT INTO ${key} (id, name, date_creation) VALUES (?, ?, ?)`,
+            [DefaultSelects[key][j].id, DefaultSelects[key][j].name, DefaultSelects[key][j].created_at]
           );
         }
       }
@@ -316,16 +320,19 @@ const insertSeletsData = async (db) => {
 };
 
 //datos por defecto de tipos de gestion
-const insertTypesManagement = async (db) => {
+const insertTypesManagement = async (data) => {
   try {
+    const db = await openDatabase();
+    const DefaultTypesManagement = data.types_management
     let post = [];
     for (let i = 0; i < DefaultTypesManagement.length; i++) {
       post[i] = db.execSQL(
-        `INSERT INTO types_management (name, icon, date_creation) VALUES (?, ?, ?)`,
+        `INSERT INTO types_management (id, name, icon, date_creation) VALUES (?, ?, ?, ?)`,
         [
+          DefaultTypesManagement[i].id,
           DefaultTypesManagement[i].name,
           DefaultTypesManagement[i].icon,
-          DefaultTypesManagement[i].date_creation,
+          DefaultTypesManagement[i].created_at,
         ]
       );
     }
@@ -361,8 +368,6 @@ const insertDefaultData = async (db, shipsWarehouses) => {
         );
       }
     }
-    insertSeletsData(db);
-    insertTypesManagement(db);
     return { postShip: postData, postWarehouse: postWarehouse };
   } catch (error) {
     console.log("ocurrio un problema al insertar la fila", error);
@@ -618,7 +623,10 @@ module.exports = {
   deleteRepair,
   storeUsers,
   showUser,
-  storeModules
+  storeModules,
+  insertSeletsEvidence,
+  insertTypesManagement,
+  sendEvidenceReports
 };
 
 // Función para abrir o crear la base de datos

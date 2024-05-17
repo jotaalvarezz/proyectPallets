@@ -49,7 +49,7 @@ export default {
       } catch (error) {}
     },
 
-    async logout({ commit }) {
+    async islogout({ commit }) {
       try {
         commit("setUser", {});
         commit("setModules", []);

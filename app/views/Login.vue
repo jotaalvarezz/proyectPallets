@@ -53,25 +53,30 @@
 
 <script>
 import { mapState, mapActions } from 'vuex';
+import mixinMasters from "~/mixins/Master";
 
 export default {
   name: "LoginIndex",
   data() {
     return {
       model:{
-        user: "",
-        password: ""
+        user: "evidWsp",
+        password: "Admin2024."
       }
     };
   },
+
+  mixins: [mixinMasters],
+
   methods: {
     ...mapActions('auth',['isLogin']),
 
     async submit() {
       // ...
+      this.loadingCharge(true);
       const aux = await this.isLogin(this.model)
-      console.log("aux ",aux)
-      this.$router.pushClear("ship.index");
+      this.loadingCharge();
+      this.$router.pushClear("dashboard.index");
 
       // ...
     },

@@ -84,7 +84,7 @@ class Alert {
       break;
       case 3:
         res = await confirm({
-          title: "Seguir",
+          title: title,
           message: msg,
           okButtonText: "Aceptar",
           cancelButtonText: "Cancelar",

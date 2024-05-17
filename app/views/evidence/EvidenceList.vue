@@ -149,11 +149,13 @@
 </template>
 
 <script>
-const { getAllManagements } = require("~/sqlite/database");
+import { ImageSource, knownFolders, path, Folder } from "@nativescript/core";
+const { getAllManagements, sendEvidenceReports } = require("~/sqlite/database");
 import mixinMasters from "~/mixins/Master";
 import ButtomSheet from "~/components/buttomSheet/ButtomSheet.vue";
 import ListModal from "~/components/listModal/ListModal.vue";
 import EvidenceListInfo from "./EvidenceListInfo";
+import Alert from "~/alerts/Alerts";
 import axios from "axios";
 
 export default {
@@ -260,16 +262,21 @@ export default {
     async sendAll() {
       try {
         this.loadingCharge(true);
-        const evidenceReports =  this.evidenceReports;
-        if (evidenceReports.length > 0) {
+        const reports = await sendEvidenceReports();
+        console.log("reportes ",reports.data)
+        /* return; */
+        if (reports.data.length > 0) {
           /* console.log("entre ",evidenceReports) */
           //const postPallets = await axios.post('http://186.1.181.146:8811/mcp-backend/public/api/mobile/loadpallets', this.sendPallets)
           //const postPallets = await axios.post('http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/loadpallets', this.sendPallets)
           const postEvidence = await axios.post(
-            "http://172.70.8.122/mcp-backend/public/api/mobile/loadevidence",
-            evidenceReports
+            "http://172.70.9.110/mcp-backend/public/api/mobile/loadevidence",
+            reports.data
           );
-          console.log("postEvidence ", postEvidence)
+          console.log("dataa ",postEvidence)
+          for (let i = 0; i < postEvidence.data.length; i++) {
+            console.log("postEvidence ", postEvidence);
+          }
           this.loadingCharge();
           Alert.success("Cargue");
         } else {
@@ -281,7 +288,10 @@ export default {
         }
       } catch (error) {
         this.loadingCharge();
-        Alert.danger("Hubo un error en el cargue de los reportes", error.message);
+        Alert.danger(
+          "Hubo un error en el cargue de los reportes",
+          error.message
+        );
       }
     },
   },
