@@ -2,10 +2,10 @@
   <page @loaded="index">
     <Header :search="false" />
     <GridLayout rows="auto,*" backgroundColor="#F4F6F8">
-      <GridLayout margin="5" row="0" rows="auto" columns="50, 3*, 50">
+      <GridLayout margin="5" row="0" rows="auto" columns="3*, 50">
         <SearchBar
           row="0"
-          col="1"
+          col="0"
           margin="10"
           hint="Buscar..."
           v-model="search"
@@ -15,7 +15,7 @@
         />
         <Label
           row="0"
-          col="2"
+          col="1"
           margin="10"
           :text="'fa-sync-alt' | fonticon"
           class="fas text-center"
@@ -149,11 +149,15 @@
 </template>
 
 <script>
-const { getAllManagements } = require("~/sqlite/database");
+import { ImageSource, knownFolders, path, Folder } from "@nativescript/core";
+const { getAllManagements, sendEvidenceReports } = require("~/sqlite/database");
+import { mapState, mapMutations } from "vuex";
 import mixinMasters from "~/mixins/Master";
 import ButtomSheet from "~/components/buttomSheet/ButtomSheet.vue";
 import ListModal from "~/components/listModal/ListModal.vue";
 import EvidenceListInfo from "./EvidenceListInfo";
+import ContainerReport from "~/views/evidence/containerReport/ContainerReport.vue";
+import Alert from "~/alerts/Alerts";
 import axios from "axios";
 
 export default {
@@ -170,6 +174,11 @@ export default {
   mixins: [mixinMasters],
 
   methods: {
+    ...mapMutations("evidenceStore", [
+      "setContainerReport",
+      "setContainerReportEdit",
+    ]),
+
     index() {
       this.getEvidenceReports();
     },
@@ -204,6 +213,7 @@ export default {
           item: item,
           generalOptions: true,
           infoRegister: () => this.evidenceReportsInfo(item),
+          updateRegister: () => this.evidenceReportsEdit(item),
           /* updateRegister: () => this.containerReportEdit(item),
           deleteRow: () => this.deleteRow(item.id), */
         },
@@ -257,19 +267,37 @@ export default {
       });
     },
 
+    evidenceReportsEdit(item) {
+      this.setContainerReport(item);
+      this.setContainerReportEdit(true);
+      this.$showModal(ContainerReport, {
+        fullscreen: true,
+        animated: true,
+      }).then(() => {
+        this.setContainerReport({});
+        this.setContainerReportEdit(false);
+        console.log("close modallll");
+      });
+    },
+
     async sendAll() {
       try {
         this.loadingCharge(true);
-        const evidenceReports =  this.evidenceReports;
-        if (evidenceReports.length > 0) {
+        const reports = await sendEvidenceReports();
+        console.log("reportes ", reports.data);
+        /* return; */
+        if (reports.data.length > 0) {
           /* console.log("entre ",evidenceReports) */
           //const postPallets = await axios.post('http://186.1.181.146:8811/mcp-backend/public/api/mobile/loadpallets', this.sendPallets)
           //const postPallets = await axios.post('http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/loadpallets', this.sendPallets)
           const postEvidence = await axios.post(
-            "http://172.70.8.122/mcp-backend/public/api/mobile/loadevidence",
-            evidenceReports
+            "http://172.70.9.110/mcp-backend/public/api/mobile/loadevidence",
+            reports.data
           );
-          console.log("postEvidence ", postEvidence)
+          console.log("dataa ", postEvidence);
+          for (let i = 0; i < postEvidence.data.length; i++) {
+            console.log("postEvidence ", postEvidence);
+          }
           this.loadingCharge();
           Alert.success("Cargue");
         } else {
@@ -281,7 +309,10 @@ export default {
         }
       } catch (error) {
         this.loadingCharge();
-        Alert.danger("Hubo un error en el cargue de los reportes", error.message);
+        Alert.danger(
+          "Hubo un error en el cargue de los reportes",
+          error.message
+        );
       }
     },
   },

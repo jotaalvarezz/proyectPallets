@@ -1,4 +1,5 @@
 const Sqlite = require("nativescript-sqlite");
+import { ImageSource } from "@nativescript/core";
 
 export const openDatabase = async () => {
   try {
@@ -7,19 +8,19 @@ export const openDatabase = async () => {
   } catch (error) {
     console.log("error al abrir la db: ", error);
   }
-}
+};
 
 export const showData = async (nameTable, data, keys = []) => {
   try {
     const db = await openDatabase();
-    let columnNames = []
-    let objectData = []
-    let object = {}
+    let columnNames = [];
+    let objectData = [];
+    let object = {};
     if (keys.length === 0) {
       const columnInfo = await db.all(`PRAGMA table_info(${nameTable})`, []);
-      columnNames = columnInfo.map(column => column[1]);
+      columnNames = columnInfo.map((column) => column[1]);
     } else {
-      columnNames = keys
+      columnNames = keys;
     }
 
     if (data.length === 0) {
@@ -29,33 +30,33 @@ export const showData = async (nameTable, data, keys = []) => {
     console.log("data ", data[0].length)
     console.log("data name ", data[0]) */
     if (columnNames.length !== data[0].length) {
-      throw new Error('verifique que las claves y la data coincidan...');
+      throw new Error("verifique que las claves y la data coincidan...");
     }
 
     for (let i = 0; i < data.length; i++) {
-      object = {}
+      object = {};
       for (let j = 0; j < data[i].length; j++) {
-        object[columnNames[j]] = data[i][j]
+        object[columnNames[j]] = data[i][j];
       }
-      objectData.push(object)
+      objectData.push(object);
     }
     return objectData;
   } catch (error) {
     console.log("error al traer columnas: ", error.message);
   }
-}
+};
 
 export const showOneData = async (nameTable, data, keys = []) => {
   try {
     const db = await openDatabase();
-    let columnNames = []
-    let objectData = []
-    let object = {}
+    let columnNames = [];
+    let objectData = [];
+    let object = {};
     if (keys.length === 0) {
       const columnInfo = await db.all(`PRAGMA table_info(${nameTable})`, []);
-      columnNames = columnInfo.map(column => column[1]);
+      columnNames = columnInfo.map((column) => column[1]);
     } else {
-      columnNames = keys
+      columnNames = keys;
     }
 
     if (data.length === 0) {
@@ -65,42 +66,42 @@ export const showOneData = async (nameTable, data, keys = []) => {
     console.log("data ", data[0].length)
     console.log("data name ", data[0]) */
     if (columnNames.length !== data[0].length) {
-      throw new Error('verifique que las claves y la data coincidan...');
+      throw new Error("verifique que las claves y la data coincidan...");
     }
 
     if (data.length > 0 && data.length < 2) {
       for (let i = 0; i < data.length; i++) {
-        object = {}
+        object = {};
         for (let j = 0; j < data[i].length; j++) {
-          object[columnNames[j]] = data[i][j]
+          object[columnNames[j]] = data[i][j];
         }
         return object;
       }
     }
 
     for (let i = 0; i < data.length; i++) {
-      object = {}
+      object = {};
       for (let j = 0; j < data[i].length; j++) {
-        object[columnNames[j]] = data[i][j]
+        object[columnNames[j]] = data[i][j];
       }
-      objectData.push(object)
+      objectData.push(object);
     }
     return objectData;
   } catch (error) {
     console.log("error al traer columnas: ", error.message);
   }
-}
+};
 
 export const first = async (nameTable, data, keys = []) => {
   try {
     const db = await openDatabase();
-    let columnNames = []
-    let object = {}
+    let columnNames = [];
+    let object = {};
     if (keys.length === 0) {
       const columnInfo = await db.all(`PRAGMA table_info(${nameTable})`, []);
-      columnNames = columnInfo.map(column => column[1]);
+      columnNames = columnInfo.map((column) => column[1]);
     } else {
-      columnNames = keys
+      columnNames = keys;
     }
 
     if (data === null) {
@@ -108,34 +109,56 @@ export const first = async (nameTable, data, keys = []) => {
     }
 
     if (columnNames.length !== data.length) {
-      throw new Error('verifique que las claves y la data coincidan...');
+      throw new Error("verifique que las claves y la data coincidan...");
     }
 
     for (let i = 0; i < data.length; i++) {
-      object[columnNames[i]] = data[i]
+      object[columnNames[i]] = data[i];
     }
     return object;
   } catch (error) {
     console.log("error al traer columnas: ", error.message);
   }
-}
+};
 
-export const getRegister = async (table, columName1, name1, columName2 = null, name2 = null) => {
+export const getRegister = async (
+  table,
+  columName1,
+  name1,
+  columName2 = null,
+  name2 = null
+) => {
   try {
     const db = await openDatabase();
-    let data = []
-    if ((columName2 === null && name2 === null) || (columName2 === '' && name2 === '')) {
-      console.log("normal")
-      data = await db.get(`SELECT * FROM ${table}
-                                        WHERE ${columName1} = ?`, [name1])
+    let data = [];
+    if (
+      (columName2 === null && name2 === null) ||
+      (columName2 === "" && name2 === "")
+    ) {
+      console.log("normal");
+      data = await db.get(
+        `SELECT * FROM ${table}
+                                        WHERE ${columName1} = ?`,
+        [name1]
+      );
     } else {
-      console.log("doble",table,name1,columName1,columName2,name2)
-      data = await db.get(`SELECT * FROM ${table}
-                                        WHERE ${columName1} = ? AND ${columName2} = ?`, [name1, name2])
+      /* console.log("doble",table,name1,columName1,columName2,name2) */
+      data = await db.get(
+        `SELECT * FROM ${table}
+                                        WHERE ${columName1} = ? AND ${columName2} = ?`,
+        [name1, name2]
+      );
     }
-    const dataFormatted = await first(table, data)
+    const dataFormatted = await first(table, data);
     return { data: dataFormatted };
   } catch (error) {
     console.log("error al traer los datos ", error);
   }
-}
+};
+
+export const encriptImg = async (directory) => {
+  const imageSource = await ImageSource.fromFile(directory);
+  const base64Image = imageSource.toBase64String("jpg");
+  console.log("bimbolete ", imageSource);
+  return base64Image;
+};

@@ -51,6 +51,16 @@ Vue.registerElement(
   () => require("nativescript-barcodescanner").BarcodeScannerView
 );
 
+Vue.registerElement(
+  "Carousel",
+  () => require("@nstudio/nativescript-carousel").Carousel
+);
+
+Vue.registerElement(
+  "CarouselItem",
+  () => require("@nstudio/nativescript-carousel").CarouselItem
+);
+
 TNSFontIcon.debug = false; // Opcionalmente, puedes habilitar el modo de depuración
 
 TNSFontIcon.paths = {

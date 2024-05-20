@@ -1,7 +1,7 @@
 import Vue from 'nativescript-vue'
 
 import NSVueRouter from 'nativescript-vue-router-ns'
-import store from '~/store/index'
+import store from '~/store/Modules/auth'
 
 import Warehouse from '~/views/Warehouses/Warehouses'
 import Ship from '~/views/ships/Ships'
@@ -14,6 +14,7 @@ import ManagementForm from '~/views/evidence/managementForm/ManagementForm'
 import ContainerReportList from '~/views/evidence/containerReport/ContainerReportList.vue'
 import EvidenceList from '~/views/evidence/EvidenceList.vue'
 import Login from '~/views/Login'
+import Dashboard from '~/views/dashboard/Dashboard'
 
 Vue.use(NSVueRouter)
 
@@ -69,6 +70,11 @@ const routes = [
     meta: { auth: true }
   },
   {
+    name: 'dashboard.index',
+    component: Dashboard,
+    meta: { auth: true }
+  },
+  {
     name: 'login.index',
     component: Login,
     meta: { guest: true }
@@ -82,14 +88,9 @@ const router = new NSVueRouter({
   /* verbose: TNS_ENV !== 'production' */ // <-- Optional. Will output the warnings to console.
 })
 
-const user = () => {
-  return false;
-}
-
-/* router.beforeEach((to, next) => {
-  let isLogged = store.dispatch('isLogin').then((res) => {
-    console.log('Datos obtenidos correctamente', res);
-  })
+router.beforeEach((to, next) => {
+  let isLogged = store.state.logout
+  console.log("logged", isLogged)
   if (to.meta.auth && !isLogged) {
     console.log("Redirigir a login porque el usuario no está autenticado")
     router.push('login.index')
@@ -100,7 +101,7 @@ const user = () => {
     console.log("Permitir acceso a la ruta")
     next()
   }
-}) */
+})
 
 
 export default router

@@ -1,5 +1,5 @@
 <template>
-  <GridLayout rows="auto, *" class="nt-drawer__content">
+  <GridLayout rows="auto, *, 70" class="nt-drawer__content">
     <StackLayout row="0" class="nt-drawer__header" backgroundColor="#00acc1">
       <Image
         class="nt-drawer__header-image fas t-36"
@@ -15,6 +15,7 @@
     <ScrollView row="1" class="nt-drawer__body" backgroundColor="#F4F6F8">
       <StackLayout>
         <GridLayout
+          v-if="logout === true"
           id="1"
           columns="40,*"
           class="nt-drawer__list-item hover-label"
@@ -26,7 +27,7 @@
             col="0"
             :text="'fa-home' | fonticon"
             class="fas colorIcons"
-            color="#EAB14D"
+            color="#3c495e"
             fontSize="22"
           />
           <Label
@@ -36,28 +37,7 @@
             class="p-l-10 colorIcons"
           />
         </GridLayout>
-        <GridLayout
-          id="2"
-          columns="40,*"
-          class="nt-drawer__list-item"
-          :class="isHovered && itemSelector == 2 ? 'hovered' : ''"
-          @touch="onTouch(2)"
-          @tap="pallets"
-        >
-          <Label
-            col="0"
-            :text="'fa-pallet' | fonticon"
-            class="fas"
-            color="#0096b7"
-            fontSize="22"
-          />
-          <Label
-            col="1"
-            text="Pallets"
-            fontSize="14"
-            class="p-l-10 colorIcons"
-          />
-        </GridLayout>
+        <!-- static -->
         <GridLayout
           id="3"
           columns="40,*"
@@ -70,7 +50,7 @@
             col="0"
             :text="'fa-sync' | fonticon"
             class="fas"
-            color="#24D311"
+            color="#3c495e"
             fontSize="22"
           />
           <Label
@@ -80,63 +60,75 @@
             class="p-l-10 colorIcons"
           />
         </GridLayout>
+        <!-- create modules -->
         <GridLayout
-          id="3"
+          v-for="(item, index) in modules"
+          :key="index"
+          :id="item.id"
           columns="40,*"
           class="nt-drawer__list-item"
-          @tap="signature"
-          :class="isHovered && itemSelector == 4 ? 'hovered' : ''"
-          @touch="onTouch(4)"
+          :class="isHovered && itemSelector == item.id ? 'hovered' : ''"
+          @touch="onTouch(item.id)"
+          @tap="navigate(item.url)"
         >
           <Label
             col="0"
-            :text="'fa-file-signature' | fonticon"
-            class="fas colorIcons"
+            :text="item.icon | fonticon"
+            class="fas"
+            color="#3c495e"
             fontSize="22"
           />
           <Label
             col="1"
-            text="Reportes/Evidencias"
-            textWrap="true"
+            :text="item.name"
             fontSize="14"
             class="p-l-10 colorIcons"
           />
         </GridLayout>
-        <GridLayout
-          id="3"
-          columns="40,*"
-          class="nt-drawer__list-item"
-          :class="isHovered && itemSelector == 5 ? 'hovered' : ''"
-          @tap="EvidenceList"
-          @touch="onTouch(5)"
-        >
-          <Label
-            col="0"
-            :text="'fa-file-upload' | fonticon"
-            class="fas colorIcons"
-            fontSize="22"
-          />
-          <Label
-            col="1"
-            text="Sincronozar Evidencias"
-            textWrap="true"
-            fontSize="14"
-            class="p-l-10 colorIcons"
-          />
-        </GridLayout>
-        <!-- <GridLayout columns="auto,*" class="nt-drawer__list-item" @tap="showProgressDialog">
-                    <Label col="0" :text="'fa-trash-alt' | fonticon" class="fas colorIcons" fontSize="18" />
-                    <Label col="1" text="Prueba" fontSize="15" class="p-l-10 colorIcons" />
-                </GridLayout> -->
       </StackLayout>
     </ScrollView>
+    <!-- Label en la parte inferior -->
+    <GridLayout
+      backgroundColor="#F4F6F8"
+      v-if="logout === true"
+      id="100"
+      row="2"
+      height="70"
+      columns="*, *,40"
+      class="nt-drawer__list-item hover-label"
+      :class="isHovered && itemSelector == 100 ? 'hovered' : ''"
+      @touch="onTouch(100)"
+      @tap="closeSession"
+    >
+      <Label
+        col="1"
+        :text="'fa-sign-out-alt' | fonticon"
+        class="fas colorIcons"
+        color="#3c495e"
+        fontSize="22"
+      />
+      <Label
+        col="0"
+        text="Cerrar sesion"
+        fontSize="14"
+        class="p-l-10 colorIcons"
+      />
+    </GridLayout>
   </GridLayout>
 </template>
 <script>
-const { createTable, DBdelete, structure, storeUsers } = require("../../sqlite/database");
+const {
+  createTable,
+  DBdelete,
+  structure,
+  storeUsers,
+  storeModules,
+  insertSeletsEvidence,
+  insertTypesManagement
+} = require("../../sqlite/database");
 import * as utils from "~/shared/util";
 import axios from "axios";
-import { mapState, mapMutations } from "vuex";
+import { mapState, mapMutations, mapActions } from "vuex";
 import mixinMasters from "~/mixins/Master";
 import Alert from "~/alerts/Alerts";
 
@@ -152,13 +144,20 @@ export default {
 
   computed: {
     ...mapState(["indicator"]),
+    ...mapState("auth", ["logout", "modules", "user"]),
   },
 
   mixins: [mixinMasters],
 
   methods: {
     ...mapMutations(["saveShipsWarehouses", "indicatorState"]),
-    ...mapMutations("auth",["setUsers", "setModules"]),
+    ...mapMutations("auth", ["setUsers", "setModules", "setUser", "setLogout"]),
+    ...mapActions("auth", ["islogout"]),
+
+    accessModules() {
+      if (this.logout) {
+      }
+    },
 
     onTouch(n) {
       this.itemSelector = n;
@@ -187,16 +186,50 @@ export default {
       }
     },
 
+    async getUsersWsp() {
+      try {
+        //const shipsWarehouses = await axios.get('http://186.1.181.146:8811/mcp-backend/public/api/mobile/wsp_users');
+        /*  const shipsWarehouses = await axios.get(
+          "http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/wsp_users"
+        ); */
+        const users_wsp = await axios.get(
+          "http://172.70.9.110/mcp-backend/public/api/mobile/wsp_users"
+        );
+        return users_wsp;
+      } catch (error) {
+        /* this.loadingCharge()
+                Alert.danger("No se pudieron cargados los datos de MCP a la DB",error) */
+        console.log(error);
+      }
+    },
+
     async getModulesWsp() {
       try {
-        //const shipsWarehouses = await axios.get('http://186.1.181.146:8811/mcp-backend/public/api/mobile/ships');
+        //const shipsWarehouses = await axios.get('http://186.1.181.146:8811/mcp-backend/public/api/mobile/wsp_modules');
         /*  const shipsWarehouses = await axios.get(
-          "http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/ships"
+          "http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/wsp_modules"
         ); */
         const modules_wsp = await axios.get(
-          "http://172.70.9.110/mcp-backend/public/api/mobile/wsp_modules",
+          "http://172.70.9.110/mcp-backend/public/api/mobile/wsp_modules"
         );
         return modules_wsp;
+      } catch (error) {
+        /* this.loadingCharge()
+                Alert.danger("No se pudieron cargados los datos de MCP a la DB",error) */
+        console.log(error);
+      }
+    },
+
+    async defaultSelects() {
+      try {
+        //const shipsWarehouses = await axios.get('http://186.1.181.146:8811/mcp-backend/public/api/mobile/wsp_modules');
+        /*  const shipsWarehouses = await axios.get(
+          "http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/wsp_modules"
+        ); */
+        const selects_evidence = await axios.get(
+          "http://172.70.9.110/mcp-backend/public/api/mobile/selects_evidence"
+        );
+        return selects_evidence;
       } catch (error) {
         /* this.loadingCharge()
                 Alert.danger("No se pudieron cargados los datos de MCP a la DB",error) */
@@ -210,12 +243,19 @@ export default {
         if (confirmated) {
           this.loadingCharge(true);
           const shipsWarehouses = await this.getShipsWarehouses();
-          const modules = await this.getModulesWsp()
-          console.log("modules ", modules.data.data)
-          this.setUsers(modules.data.data)
+          const selects_evidence = await this.defaultSelects();
+          const modules = await this.getModulesWsp();
+          const users = await this.getUsersWsp();
+          /* console.log("modules ", selects_evidence); */
+          /* console.log("users ", users.data.data); */
+          this.setUsers(modules.data.data);
           const db = await createTable(shipsWarehouses.data.data);
-          const users = await storeUsers(modules.data.data)
-          console.log("users ", users)
+          await storeUsers(users.data.data);
+          await storeModules(modules.data.data);
+          await insertSeletsEvidence(selects_evidence.data.data.defaultSelects);
+          await insertTypesManagement(selects_evidence.data.data.defaultTypes);
+          /* console.log("resss ", res + "  " + res2); */
+          this.islogout();
           this.$router.pushClear("login.index");
           this.loadingCharge();
           Alert.success("Actualizacion de DB");
@@ -227,10 +267,17 @@ export default {
       }
     },
 
-    home() {
-      try {
-        this.$router.pushClear("ship.index");
+    home(){
+      this.$router.pushClear('dashboard.index');
         utils.closeDrawer();
+    },
+
+    async navigate(url) {
+      try {
+        this.$router.pushClear(url);
+        utils.closeDrawer();
+         /* const db = await structure();
+        console.log(db); */
       } catch (error) {
         Alert.info(
           "error intentando al dirigirse a la ruta " + error,
@@ -240,51 +287,18 @@ export default {
       }
     },
 
-    async pallets() {
-      try {
-        this.$router.pushClear("generalpallets.index");
+    async closeSession() {
+      let confirmated = await Alert.info("Se cerrara la sesion", 3, "Cerrar");
+      if (confirmated) {
+        this.islogout();
+        this.$router.pushClear("login.index");
         utils.closeDrawer();
-         const db = await structure()
-        /* alert({
-                    title:'Inicializando DB',
-                    message:'Actualizando Tablas...',
-                    okButtonText:"aceptar"
-                }) */
-        console.log(db)
-      } catch (error) {
-        Alert.info(
-          "error intentando al dirigirse a la ruta " + error,
-          1,
-          "Error!"
-        );
       }
     },
+  },
 
-    signature() {
-      try {
-        this.$router.pushClear("evidence.index");
-        utils.closeDrawer();
-      } catch (error) {
-        Alert.info(
-          "error intentando al dirigirse a la ruta " + error,
-          1,
-          "Error!"
-        );
-      }
-    },
-
-    EvidenceList() {
-      try {
-        this.$router.pushClear("evidence_list.show");
-        utils.closeDrawer();
-      } catch (error) {
-        Alert.info(
-          "error intentando al dirigirse a la ruta " + error,
-          1,
-          "Error!"
-        );
-      }
-    },
+  created() {
+    this.accessModules();
   },
 };
 </script>

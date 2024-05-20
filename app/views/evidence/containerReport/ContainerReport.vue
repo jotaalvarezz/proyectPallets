@@ -9,7 +9,7 @@
       <Label
         row="0"
         col="0"
-        :text="'fa-arrow-left' | fonticon"
+        :text="'fa-chevron-left' | fonticon"
         fontSize="16"
         class="fas text-center"
         color="#F4F6F8"
@@ -54,6 +54,7 @@
               label="No. CONTAINER:"
               placeholder="Code..."
               v-model="model.code"
+              :required="errors.code"
             />
             <SelectField
               row="3"
@@ -68,6 +69,7 @@
               label="CARGO:"
               placeholder="Cargo..."
               v-model="model.role"
+              :required="errors.role"
             />
             <!-- tabla de descripcion de daños y elementos -->
             <Label
@@ -191,19 +193,19 @@ const {
 } = require("~/sqlite/database");
 import mixinMasters from "~/mixins/Master";
 import DamagedItems from "~/views/evidence/containerReport/damagedItems/DamagedItems.vue";
-import DamagedItemsList from '~/views/evidence/containerReport/damagedItems/DamagedItemsList.vue'
+import DamagedItemsList from "~/views/evidence/containerReport/damagedItems/DamagedItemsList.vue";
 import Alert from "~/alerts/Alerts";
 import { mapState, mapMutations } from "vuex";
 
 export default {
   components: {
-    DamagedItems
+    DamagedItems,
   },
 
   data() {
     return {
       message: "No hay registros para mostrar",
-      formCollapse:false,
+      formCollapse: false,
       model: {
         management_id: null,
         code: "MSG1112020000567896",
@@ -218,13 +220,23 @@ export default {
       elements: [],
       icons: {},
       isScrolling: false,
+
+      errors: {
+        code: false,
+        role: false,
+      },
     };
   },
 
   mixins: [mixinMasters],
 
   computed: {
-    ...mapState("evidenceStore", ["managementModel", "damagedItems", "containerReport", "containerReportEdit"]),
+    ...mapState("evidenceStore", [
+      "managementModel",
+      "damagedItems",
+      "containerReport",
+      "containerReportEdit",
+    ]),
   },
 
   methods: {
@@ -238,27 +250,46 @@ export default {
           repairs: this.model.repairs,
         },
       }).then((res) => {
-        console.log("console damage")
+        console.log("console damage");
       });
+    },
+
+    /* ****************************************************************** */
+    validateField(fields) {
+      console.log("validador ", this.model.code);
+      console.log("validador2 ", this.model.role);
+      this.errors.code = !this.model.code.trim();
+      this.errors.role = !this.model.role.trim();
+      console.log("errorres ", this.errors);
+      let fullfield = "";
+      for (const key in this.errors) {
+        if (this.errors.hasOwnProperty(key) && this.errors[key] != false) {
+          console.log("dentro ", this.errors[key], " - ", key);
+          return !this.errors[key];
+        }
+        fullfield = !this.errors[key];
+      }
+      return fullfield;
     },
 
     async addContainerReport() {
       console.log("model ", this.model);
+      const isValid = this.validateField();
+      console.log("is valid ", isValid);
+      if (!isValid) {
+        console.log("El campo de nombre es obligatorio.");
+        // Detener la ejecución si la validación falla
+        return;
+      }
+
       try {
-        if (this.model.code.trim() !== "") {
-/*           this.model.repairs = this.damagedItems; */
-          /* console.log("model.repairs ", this.model); */
-          this.loadingCharge(true);
-          const res = await storeContainerReport(this.model);
-          if (res.status === 500) {
-            Alert.info(res.message, 1, "Ya existe");
-          } else {
-            Alert.success("Reporte creado");
-            this.$modal.close();
-          }
+        this.loadingCharge(true);
+        const res = await storeContainerReport(this.model);
+        if (res.status === 500) {
+          Alert.info(res.message, 1, "Ya existe");
         } else {
-          Alert.info("¡Verique que no haya campos obligatorios, vacios!", 1);
-          this.showMessageError();
+          Alert.success("Reporte creado");
+          this.$modal.close();
         }
       } catch (error) {
         Alert.danger("Hubo un error al guardar ", error.message);

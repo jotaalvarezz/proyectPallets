@@ -34,6 +34,7 @@
             placeholder="nombre de barco..."
             fontsize="14"
             v-model="model.name"
+            :required="errors.name"
           />
           <FormGroupTextField
             v-if="management_id === 2"
@@ -42,6 +43,7 @@
             placeholder="nombre del patio..."
             fontsize="14"
             v-model="model.name"
+            :required="errors.name"
           />
           <FormGroupTextField
             v-if="management_id === 1"
@@ -57,6 +59,7 @@
             placeholder="nombre de titular..."
             fontsize="14"
             v-model="model.titular_name"
+            :required="errors.titular_name"
           />
           <!-- <GridLayout
             row="4"
@@ -87,7 +90,7 @@
             backgroundColor="#F4F6F8"
             color="#222a37"
             style="width: 80%; margin-bottom: 20px"
-            @tap="addManagement"
+            @tap="submitForm"
             borderWidth="1"
             borderColor="#222a37"
             borderRadius="30"
@@ -100,11 +103,11 @@
         margin="5"
         row="1"
         rows="auto"
-        columns="50, 3*, 50"
+        columns="3*, 50"
       >
         <SearchBar
           row="0"
-          col="1"
+          col="0"
           margin="10"
           hint="Buscar..."
           v-model="search"
@@ -114,7 +117,7 @@
         />
         <Label
           row="0"
-          col="2"
+          col="1"
           margin="10"
           :text="'fa-sync-alt' | fonticon"
           class="fas text-center"
@@ -238,7 +241,6 @@ export default {
   name: "Management",
   components: {
     ButtomSheet,
-    ContainerReport
   },
 
   props: {
@@ -261,6 +263,11 @@ export default {
       },
       array_filter: [],
       managments: [],
+
+      errors: {
+        name: false,
+        titular_name: false,
+      },
     };
   },
 
@@ -272,6 +279,63 @@ export default {
 
   methods: {
     ...mapMutations("evidenceStore", ["setManagementModel"]),
+
+    /* ****************************************************************** */
+    validateField(fields) {
+      console.log("validador ", this.model.name);
+      console.log("validador2 ", this.model.titular_name);
+      this.errors.name = !this.model.name.trim();
+      this.errors.titular_name = !this.model.titular_name.trim();
+      console.log("errorres ", this.errors);
+      let fullfield = "";
+      for (const key in this.errors) {
+        if (this.errors.hasOwnProperty(key) && this.errors[key] != false) {
+          console.log("dentro ", this.errors[key], " - ", key);
+          return !this.errors[key];
+        }
+        fullfield = !this.errors[key];
+      }
+      return fullfield;
+    },
+
+    async submitForm() {
+      const isValid = this.validateField();
+      console.log("is valid ", isValid);
+      if (!isValid) {
+        console.log("El campo de nombre es obligatorio.");
+        // Detener la ejecución si la validación falla
+        return;
+      }
+
+      try {
+        this.loadingCharge(true);
+        const res = await storeManagement(this.model);
+        if (res.status === 500) {
+          Alert.info(res.message, 1, "Ya existe");
+          return;
+        } else {
+          this.managments.push(res.data);
+        }
+
+        this.model = {
+          type_management_id: this.management_id,
+          name: "",
+          journey: "",
+          titular_name: "",
+          signature: "",
+        };
+
+        this.$refs.Collapse.activated();
+        // Continuar con el envío del formulario
+        console.log("Formulario enviado exitosamente!");
+        alert("Formulario enviado exitosamente!");
+      } catch (error) {
+        Alert.danger("Hubo un error al traer los datos ", error.message);
+      } finally {
+        this.loadingCharge();
+      }
+    },
+    /* ******************************************************************* */
 
     onItemTap(event) {
       /* console.log(event.index)
@@ -317,7 +381,7 @@ export default {
         const res = await getManagements(id);
         this.managments = res.data;
         this.array_filter = res.data;
-        console.log("managments ",res)
+        console.log("managments ", res);
       } catch (error) {
         Alert.danger("Hubo un error al traer los datos ", error.message);
         /* this.loadingCharge(); */
@@ -457,5 +521,9 @@ export default {
   font-size: 16px;
   horizontal-align: center;
   vertical-align: center;
+}
+
+.error {
+  color: red;
 }
 </style>

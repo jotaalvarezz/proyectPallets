@@ -22,24 +22,39 @@ export default {
     setModules(state, payload) {
       state.modules = payload;
     },
+
+    setLogout(state, payload) {
+      state.logout = payload;
+    },
   },
   actions: {
     async isLogin({ commit, state }, modelUser) {
-      const user = modelUser.user;
-      const password = modelUser.password
+      try {
+        const user = modelUser.user;
+        const password = modelUser.password
+        const userDb = await showUser(user);
+        console.log("state ", password);
+        console.log("user db ", userDb);
+        const encryptedPassword = SHA256(password).toString(enc.Hex);
+        /* console.log("encripter pass ", encryptedPassword); */
+        if (userDb) {
+          if (encryptedPassword === userDb.data.password) {
+            commit("setUser", userDb.data);
+            commit("setModules", userDb.data.modules);
+            commit("setLogout", true);
+            /* return state.logout; */
+          }
+          /* return state.logout; */
+        }
+      } catch (error) {}
+    },
 
-      const userDb = await showUser(user);
-      console.log("state ", modelUser);
-
-      // Ejemplo de uso
-      /* const password = "password123"; */
-      const encryptedPassword = SHA256(password).toString(enc.Hex);
-      console.log("crypto ", encryptedPassword);
-      /* const username = state.users.find(prev => prev.username === user) */
-      if (userDb) {
-        commit("setUser", userDb);
-        return { state: false, test: "prueba" };
-      }
+    async islogout({ commit }) {
+      try {
+        commit("setUser", {});
+        commit("setModules", []);
+        commit("setLogout", false);
+      } catch (error) {}
     },
   },
 };

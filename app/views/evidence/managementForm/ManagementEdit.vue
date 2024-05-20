@@ -9,7 +9,7 @@
       <Label
         row="0"
         col="0"
-        :text="'fa-arrow-left' | fonticon"
+        :text="'fa-chevron-left' | fonticon"
         fontSize="16"
         class="fas text-center"
         color="#F4F6F8"

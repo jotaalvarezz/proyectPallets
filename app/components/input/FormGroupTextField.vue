@@ -32,7 +32,7 @@
       @textChange="onTextChange"
     />
     <Label
-      v-if="validate && textValue.length === 0 && showError"
+      v-if="required && textValue.length === 0"
       class="label-error"
       :text="'*el campo ' + validateLabel + ' es oblogatorio'"
     />
@@ -68,7 +68,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    validate: {
+    required: {
       type: Boolean,
       default: false,
     },

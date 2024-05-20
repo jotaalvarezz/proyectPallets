@@ -1,49 +1,42 @@
 <template>
-  <page @loaded="getEvidences">
+  <page @loaded="getEvidences" actionBarHidden="false">
     <ActionBar backgroundColor="#00acc1">
-      <Label
-        class="text-center"
-        text="Reporte de Contenedores"
-        fontSize="15"
-        color="#F4F6F8"
-        fontWeight="bold"
-      />
-      <NavigationButton
-        text="Go back"
-        android.systemIcon="ic_menu_back"
-        @tap="goBack"
-      />
-    </ActionBar>
-    <GridLayout
-      height="65"
-      rows="*"
-      columns="50, 3*, 50"
-      backgroundColor="#00acc1"
-    >
-      <Label
-        row="0"
-        col="0"
-        :text="'fa-arrow-left' | fonticon"
-        fontSize="16"
-        class="fas text-center"
-        color="#F4F6F8"
-        @tap="$modal.close"
-      />
-      <Label
-        row="0"
-        col="1"
-        class="text-center"
-        text="Registro de Daños/Reparaciones"
-        fontSize="15"
-        color="#F4F6F8"
-        fontWeight="bold"
-      ></Label>
-    </GridLayout>
-    <GridLayout rows="auto,*" backgroundColor="#F4F6F8">
-      <GridLayout margin="5" row="0" rows="auto" columns="50, 3*, 50">
-        <SearchBar
+      <GridLayout height="65" rows="65" columns="auto, 3*, auto">
+        <Label
+          row="0"
+          col="0"
+          :text="'fa-chevron-left' | fonticon"
+          class="fas exitIcon text-center"
+          color="#F4F6F8"
+          fontSize="16"
+          @tap="navigateBack"
+        />
+        <Label
           row="0"
           col="1"
+          fontSize="16"
+          class="fas text-center"
+          text="Creacion de Reporte/Contenedor"
+          color="#F4F6F8"
+          fontWeight="bold"
+        ></Label>
+        <Label
+          v-show="search"
+          row="0"
+          col="2"
+          class="fas iconSearch"
+          :text="'fa-search' | fonticon"
+          color="white"
+          fontSize="20"
+          @tap="modalSearch"
+        />
+      </GridLayout>
+    </ActionBar>
+    <GridLayout rows="auto,*" backgroundColor="#F4F6F8">
+      <GridLayout margin="5" row="0" rows="auto" columns="3*, 50">
+        <SearchBar
+          row="0"
+          col="0"
           margin="10"
           hint="Buscar..."
           v-model="search"
@@ -53,12 +46,12 @@
         />
         <Label
           row="0"
-          col="2"
+          col="1"
           margin="10"
           :text="'fa-sync-alt' | fonticon"
           class="fas text-center"
           width="40"
-          color="#222a37"
+          color="#3c495e"
           fontSize="22"
           @tap="refreshEvidences"
         />
@@ -297,6 +290,11 @@ export default {
         },
       };
       this.$showBottomSheet(ButtomSheet, options);
+    },
+
+    navigateBack() {
+      /* this.$router.push("container_report.index"); */
+      this.$router.back();
     },
 
     async getEvidences() {

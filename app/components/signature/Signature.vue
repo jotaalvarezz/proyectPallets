@@ -177,7 +177,7 @@ export default {
 
       // Obtener la lista de archivos en el directorio
       const fileList = folder.getEntitiesSync();
-      /* console.log("fileList ", fileList); */
+      console.log("fileList ", fileList);
       // Filtrar solo los archivos de imagen (por ejemplo, con extensión .jpg)
       const imageFiles = fileList.filter(
         (file) => file["_name"] === signatureName

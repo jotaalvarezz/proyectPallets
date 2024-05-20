@@ -117,14 +117,15 @@ const storeContainerReport = async (data) => {
     const db = await openDatabase();
     let postData = await db.execSQL(
       `INSERT INTO container_reports (
+                          consecutive,
                           management_id,
                           code,
                           type_id,
                           role,
                           observation,
                           date_creation)
-      VALUES (?, ?, ?, ?, ?, ?)`,
-      [data.management_id, data.code, data.type_id,
+      VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [(Date.now()+Math.random()),data.management_id, data.code, data.type_id,
       data.role, data.observation, moment(new Date()).format("YYYY-MM-DD HH:mm:ss")]
     );
     storeCReportADamage({ container_report_id: postData, additional_damage_id: data.additional_damage_id })
