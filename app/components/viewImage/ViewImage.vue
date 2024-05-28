@@ -48,8 +48,6 @@ export default {
 
   watch: {
     url(newVal, oldVal) {
-      console.log("nuevo valor ", newVal);
-      console.log("valor anterior ", oldVal);
       this.index();
     },
   },

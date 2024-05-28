@@ -174,7 +174,7 @@ export default {
   padding: 6;
   border-radius: 9999px;
   border-width: 1px;
-  background-color: #eab14d;
+  background-color: rgba(0, 172, 193, 0.8);
 }
 
 .fab-sync {

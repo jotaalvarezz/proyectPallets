@@ -8,7 +8,7 @@
       :search="true"
     />
     <GridLayout rows="*" backgroundColor="#F4F6F8">
-      <ListView for="(item, index) in ships" @itemTap="onItemTap">
+      <ListView for="(item, index) in ships">
         <v-template>
           <GridLayout columns="*,40" @longPress="operations">
             <StackLayout orientation="horizontal" @tap="navigate(item)" col="0">
@@ -90,10 +90,6 @@ export default {
   methods: {
     ...mapMutations(["saveItem", "setShip"]),
 
-    onItemTap() {
-      console.log("success");
-    },
-
     navigate(item) {
       this.saveItem(item);
       this.setShip(item);
@@ -116,9 +112,7 @@ export default {
         },
         // listeners to be connected to MyComponent
         on: {
-          someEvent: (value) => {
-            console.log(value);
-          },
+          someEvent: (value) => {},
         },
       };
       this.$showBottomSheet(ButtomSheet, options).then(() => {
@@ -154,7 +148,6 @@ export default {
         fullscreen: true,
         props: { info: item },
       }).then((res) => {
-        console.log("respuesta ", res);
         this.$emit("someEvent", "Valor de ejemplo");
       });
     },
@@ -165,7 +158,6 @@ export default {
         try {
           const record = await deleteShip(id);
           this.ships.splice(index, 1);
-          console.log(record);
         } catch (error) {
           console.log("eleminacion fallida ", error);
         }
@@ -181,7 +173,6 @@ export default {
         this.loadingCharge(true);
         this.ships = [];
         const ships = await getShips();
-        console.log(ships);
         for (let i = 0; i < ships.length; i++) {
           this.ships.push({
             id: ships[i][0],

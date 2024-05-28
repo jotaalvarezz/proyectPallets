@@ -33,18 +33,13 @@ export default {
         const user = modelUser.user;
         const password = modelUser.password
         const userDb = await showUser(user);
-        console.log("state ", password);
-        console.log("user db ", userDb);
         const encryptedPassword = SHA256(password).toString(enc.Hex);
-        /* console.log("encripter pass ", encryptedPassword); */
         if (userDb) {
           if (encryptedPassword === userDb.data.password) {
             commit("setUser", userDb.data);
             commit("setModules", userDb.data.modules);
             commit("setLogout", true);
-            /* return state.logout; */
           }
-          /* return state.logout; */
         }
       } catch (error) {}
     },

@@ -19,7 +19,7 @@
       <Label
         col="1"
         :text="'fa-eye' | fonticon"
-        class="fas iconDetalles"
+        class="fas icon"
         fontSize="20"
       />
       <Label
@@ -45,7 +45,7 @@
       <Label
         col="1"
         :text="'fa-redo' | fonticon"
-        class="fas iconEdit"
+        class="fas icon"
         fontSize="20"
       />
       <Label
@@ -71,7 +71,7 @@
       <Label
         col="1"
         :text="'fa-times' | fonticon"
-        class="fas iconDelete"
+        class="fas icon"
         fontSize="20"
       />
       <Label
@@ -198,6 +198,10 @@ export default {
 
 .iconDetalles {
   color: #0096b7;
+}
+
+.icon{
+  color: #3c495e;
 }
 
 .underline {

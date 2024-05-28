@@ -30,7 +30,7 @@ const mixinMasters = {
       }else{
         setTimeout(() => {
           this.indicatorState(activated)
-        }, 1000);
+        }, 800);
       }
     },
 

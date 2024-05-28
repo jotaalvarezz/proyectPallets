@@ -11,9 +11,9 @@
         textWrap="true"
       />
       <Stripe row="1" color="#3c495e" />
-      <ListView for="(item, index) in warehouses" @itemTap="onItemTap" row="2">
+      <ListView for="(item, index) in warehouses" row="2">
         <v-template>
-          <GridLayout columns="* ,40" @longPress="operations">
+          <GridLayout columns="* ,40">
             <StackLayout orientation="horizontal" @tap="navigate(item)" col="0">
               <Label
                 backgroundColor="#D8E2E8"
@@ -83,9 +83,6 @@ export default {
   },
   methods: {
     ...mapMutations(["saveItem"]),
-    onItemTap() {
-      console.log("success");
-    },
 
     navigate(item) {
       this.saveItem(item);
@@ -113,22 +110,9 @@ export default {
         try {
           const record = await deleteWarehouse(id);
           this.warehouses.splice(index, 1);
-          console.log(record);
         } catch (error) {
           console.log("eleminacion fallida ", error);
         }
-      }
-    },
-
-    operations() {
-      try {
-        /* const btnShip = document.querySelector('#ship');
-        btnShip.addEventListener('mouseup', (e)=>{
-          console.log('hola mouseup')
-        }) */
-        console.log("por fuera");
-      } catch (error) {
-        console.log("hubo un error con el evento ", error);
       }
     },
 
@@ -136,7 +120,6 @@ export default {
       try {
         this.warehouses = [];
         const warehouses = await getWarehouses(this.ship.id);
-        console.log(warehouses);
         for (let i = 0; i < warehouses.length; i++) {
           this.warehouses.push({
             id: warehouses[i][0],
@@ -152,11 +135,9 @@ export default {
   },
 
   created() {
-    console.log("en warehouse ", this.item);
     this.shipName = this.item.text;
     this.getWarehouses();
   },
-  /* components: { GridLayout }, */
 };
 </script>
 <style lang="scss">

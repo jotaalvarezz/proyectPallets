@@ -5,7 +5,7 @@ const listRowsVeesel = [
   },
   {
     prop: 'nameType',
-    label: 'tipo'
+    label: 'Tipo'
   },
   {
     prop: 'vessel',

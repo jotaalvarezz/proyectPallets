@@ -68,7 +68,6 @@ export default {
   methods: {
     navegate(url) {
       try {
-        console.log("url ", url);
         this.$router.pushClear(url);
       } catch (error) {
         Alert.info(

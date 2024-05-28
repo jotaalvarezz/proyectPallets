@@ -215,7 +215,7 @@ export default {
   mixins: [mixinMasters],
 
   computed: {
-    ...mapState("evidenceStore", ["managementModel"]),
+    ...mapState("evidenceStore", ["managementModel", "containerReport"]),
   },
 
   methods: {
@@ -225,10 +225,7 @@ export default {
     ]),
 
     filter() {
-      console.log("container report ", this.container_reports);
-      console.log("search fuera", this.search);
       if (this.search.length > 0) {
-        console.log("search dentro", this.search);
         this.array_filter = this.container_reports.filter(
           (data) =>
             !this.search || data.code.toLowerCase().includes(this.search)
@@ -247,13 +244,11 @@ export default {
         fullscreen: true,
         animated: true,
       }).then(() => {
-        console.log("list");
         this.getEvidences();
       });
     },
 
     openFormDamaged(item) {
-      console.log("item ", item);
       this.$showModal(DamagedItems, {
         fullscreen: true,
         animated: true,
@@ -264,12 +259,11 @@ export default {
           repairs: this.model.repairs, */
         },
       }).then((res) => {
-        console.log("console damage");
+        this.getEvidences();
       });
     },
 
     navigateOptions(item, index) {
-      console.log("item ", item);
       item.action = true;
       const options = {
         dismissOnBackgroundTap: true,
@@ -284,9 +278,7 @@ export default {
         },
         // listeners to be connected to MyComponent
         on: {
-          someEvent: (value) => {
-            console.log(value);
-          },
+          someEvent: (value) => {},
         },
       };
       this.$showBottomSheet(ButtomSheet, options);
@@ -298,17 +290,11 @@ export default {
     },
 
     async getEvidences() {
-      console.log("management model ", this.managementModel);
       try {
         this.loadingCharge(true);
         const res = await getContainerReport(this.managementModel.id);
         this.container_reports = res.data;
         this.array_filter = res.data;
-        console.log("reports ", this.container_reports);
-        /* const aux = await getRepairDamage()
-        console.log("aux ", aux.data);
-        const r = await getRepairs()
-        console.log("r ", r.data); */
         if (this.types.length === 0) {
           const types = await getTypes();
           this.types = types.data;
@@ -347,7 +333,6 @@ export default {
       if (confirmated) {
         try {
           const record = await deleteContainerReport(id);
-          console.log("record ", record);
           const index = this.container_reports.findIndex(
             (prev) => prev.id === id
           );
@@ -367,7 +352,7 @@ export default {
       }).then(() => {
         this.setContainerReport({});
         this.setContainerReportEdit(false);
-        console.log("close modallll");
+        this.getEvidences();
       });
     },
 

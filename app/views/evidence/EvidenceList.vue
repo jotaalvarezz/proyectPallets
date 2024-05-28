@@ -150,7 +150,11 @@
 
 <script>
 import { ImageSource, knownFolders, path, Folder } from "@nativescript/core";
-const { getAllManagements, sendEvidenceReports } = require("~/sqlite/database");
+const {
+  getAllManagements,
+  sendEvidenceReports,
+  deleteContainerReport,
+} = require("~/sqlite/database");
 import { mapState, mapMutations } from "vuex";
 import mixinMasters from "~/mixins/Master";
 import ButtomSheet from "~/components/buttomSheet/ButtomSheet.vue";
@@ -188,22 +192,17 @@ export default {
     },
 
     filter() {
-      console.log("cabronship 0", this.evidenceReports);
-      console.log("search fuera", this.search);
       if (this.search.length > 0) {
-        console.log("search dentro", this.search);
         this.array_filter = this.evidenceReports.filter(
           (data) =>
-            !this.search || data.name.toLowerCase().includes(this.search)
+            !this.search || data.code.toLowerCase().includes(this.search)
         );
       } else if (this.search.length === 0) {
-        console.log("search 0", this.evidenceReports);
         this.array_filter = this.evidenceReports;
       }
     },
 
     navigateOptions(item, index) {
-      console.log("item ", item);
       item.action = true;
       const options = {
         dismissOnBackgroundTap: true,
@@ -214,14 +213,13 @@ export default {
           generalOptions: true,
           infoRegister: () => this.evidenceReportsInfo(item),
           updateRegister: () => this.evidenceReportsEdit(item),
+          deleteRow: () => this.deleteRow(item.id),
           /* updateRegister: () => this.containerReportEdit(item),
           deleteRow: () => this.deleteRow(item.id), */
         },
         // listeners to be connected to MyComponent
         on: {
-          someEvent: (value) => {
-            console.log(value);
-          },
+          someEvent: (value) => {},
         },
       };
       this.$showBottomSheet(ButtomSheet, options);
@@ -231,7 +229,6 @@ export default {
       try {
         this.loadingCharge(true);
         const res = await getAllManagements();
-        console.log("res ", res.data);
         this.evidenceReports = res.data;
         this.array_filter = res.data;
       } catch (error) {
@@ -276,43 +273,82 @@ export default {
       }).then(() => {
         this.setContainerReport({});
         this.setContainerReportEdit(false);
-        console.log("close modallll");
+        this.getEvidenceReports();
       });
+    },
+
+    async deleteRow(id) {
+      let confirmated = await Alert.Danger(1);
+      if (confirmated) {
+        try {
+          const record = await deleteContainerReport(id);
+          const index = this.evidenceReports.findIndex(
+            (prev) => prev.id === id
+          );
+          this.evidenceReports.splice(index, 1);
+        } catch (error) {
+          Alert.danger("eleminacion fallida ", error.message);
+        }
+      }
     },
 
     async sendAll() {
       try {
         this.loadingCharge(true);
         const reports = await sendEvidenceReports();
-        console.log("reportes ", reports.data);
-        /* return; */
         if (reports.data.length > 0) {
-          /* console.log("entre ",evidenceReports) */
+          /* validar si tienen la firma del titular */
+          for (let i = 0; i < reports.data.length; i++) {
+            if (
+              reports.data[i].signature === "" ||
+              reports.data[i].signature === null
+            ) {
+              Alert.info(
+                `Los reportes de la gestion en ` +
+                  reports.data[i].name +
+                  ` no tiene la firma del titular!`,
+                1,
+                `¡Firma Vacia!`
+              );
+              return;
+            }
+
+            let container_report = reports.data[i].containerReports;
+            for (let j = 0; j < container_report.length; j++) {
+              if (container_report[j].repairs.length === 0) {
+                Alert.info(
+                  `El reporte de la gestion ` +
+                    reports.data[i].name +
+                    ` con el contenedor ` +
+                    container_report[j].code +
+                    ` no tiene reparaciones asigandas, por favor revisar!`,
+                  1,
+                  `¡Reporte invalido!`
+                );
+                return;
+              }
+            }
+          }
           //const postPallets = await axios.post('http://186.1.181.146:8811/mcp-backend/public/api/mobile/loadpallets', this.sendPallets)
           //const postPallets = await axios.post('http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/loadpallets', this.sendPallets)
           const postEvidence = await axios.post(
             "http://172.70.9.110/mcp-backend/public/api/mobile/loadevidence",
             reports.data
           );
-          console.log("dataa ", postEvidence);
-          for (let i = 0; i < postEvidence.data.length; i++) {
-            console.log("postEvidence ", postEvidence);
-          }
-          this.loadingCharge();
           Alert.success("Cargue");
         } else {
-          this.loadingCharge();
           Alert.danger(
             "No se encontraron reportes",
             "por favor asegurese antes de sincronizar"
           );
         }
       } catch (error) {
-        this.loadingCharge();
         Alert.danger(
           "Hubo un error en el cargue de los reportes",
           error.message
         );
+      } finally {
+        this.loadingCharge();
       }
     },
   },

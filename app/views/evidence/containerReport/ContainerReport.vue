@@ -51,8 +51,8 @@
             <Stripe row="1" margin="20" />
             <FormGroupTextField
               row="2"
-              label="No. CONTAINER:"
-              placeholder="Code..."
+              label="# CONTENEDOR:"
+              placeholder="Codigo..."
               v-model="model.code"
               :required="errors.code"
             />
@@ -66,7 +66,7 @@
             />
             <FormGroupTextField
               row="4"
-              label="CARGO:"
+              label="TECNICO:"
               placeholder="Cargo..."
               v-model="model.role"
               :required="errors.role"
@@ -212,7 +212,7 @@ export default {
         type_id: 1,
         role: "Mecanico",
         repairs: [],
-        additional_damage_id: [2, 3, 4],
+        additional_damage_id: [],
         observation: "Testing",
       },
       types: [],
@@ -256,15 +256,11 @@ export default {
 
     /* ****************************************************************** */
     validateField(fields) {
-      console.log("validador ", this.model.code);
-      console.log("validador2 ", this.model.role);
       this.errors.code = !this.model.code.trim();
       this.errors.role = !this.model.role.trim();
-      console.log("errorres ", this.errors);
       let fullfield = "";
       for (const key in this.errors) {
         if (this.errors.hasOwnProperty(key) && this.errors[key] != false) {
-          console.log("dentro ", this.errors[key], " - ", key);
           return !this.errors[key];
         }
         fullfield = !this.errors[key];
@@ -273,11 +269,8 @@ export default {
     },
 
     async addContainerReport() {
-      console.log("model ", this.model);
       const isValid = this.validateField();
-      console.log("is valid ", isValid);
       if (!isValid) {
-        console.log("El campo de nombre es obligatorio.");
         // Detener la ejecución si la validación falla
         return;
       }
@@ -300,8 +293,14 @@ export default {
 
     async updateContainerReport() {
       try {
+        const isValid = this.validateField();
+        if (!isValid) {
+          // Detener la ejecución si la validación falla
+          return;
+        }
         const res = await updateContainerReport(this.model);
-        console.log("update res ", res);
+        Alert.success("Reporte Actualizado!");
+        this.$modal.close();
       } catch (error) {}
     },
 
@@ -341,8 +340,13 @@ export default {
         for (let i = 0; i < additionalDamage.length; i++) {
           additional_damage_id.push(additionalDamage[i].id);
         }
-        this.model = this.containerReport;
+        this.model.id = this.containerReport.id;
+        this.model.code = this.containerReport.code;
+        this.model.type_id = this.containerReport.type_id;
+        this.model.role = this.containerReport.role;
+        this.model.role = this.containerReport.role;
         this.model.additional_damage_id = additional_damage_id;
+        this.model.observation = this.containerReport.observation;
       }
       this.model.management_id = this.managementModel.id;
       this.InfoSelect();

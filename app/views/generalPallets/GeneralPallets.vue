@@ -18,7 +18,6 @@
         for="(item, index) in pallets"
         @itemTap="onItemTap"
         @itemLoading="onScroll"
-        @loadMoreItems="scrolling"
         :class="spaceButtom"
         ref="listView"
         v-if="pallets.length > 0"
@@ -127,33 +126,19 @@ export default {
   methods: {
     ...mapMutations(["indicatorState"]),
 
-    onItemTap() {
-      console.log("success");
-    },
+    onItemTap() {},
 
     onScroll(args) {
-      console.log("index ", args.index);
       if (args.index < this.pallets.length - 1) {
         this.space = false;
       } else if (args.index == this.pallets.length - 1) {
         this.space = true;
       }
-      console.log("loading ", this.space);
-    },
-
-    scrolling() {
-      /*  console.log("REF ", this.$refs.listView.nativeView)
-       if (!this.space) {
-         this.space = true
-       }
-       console.log("hide scroll", this.space) */
     },
 
     async palletInfo(item) {
       try {
-        console.log("item ", item);
         const pallet = await getPallet(item);
-        console.log("info ", pallet);
         for (let i = 0; i < pallet.length; i++) {
           this.infoPallet = Object.assign(
             {},
@@ -182,7 +167,6 @@ export default {
             listRows: listRows,
           },
         });
-        console.log(this.infoPallet);
       } catch (error) {
         console.log("error al traer los datos ", error);
       }
@@ -203,9 +187,7 @@ export default {
         },
         // listeners to be connected to MyComponent
         on: {
-          someEvent: (value) => {
-            console.log(value);
-          },
+          someEvent: (value) => {},
         },
       };
       this.$showBottomSheet(ButtomSheet, options).then(() => {
@@ -217,7 +199,6 @@ export default {
       try {
         this.pallets = [];
         const pallets = await getPalletsAll();
-        console.log(pallets);
         for (let i = 0; i < pallets.length; i++) {
           this.pallets.push({
             id: pallets[i][0],
@@ -226,8 +207,6 @@ export default {
             warehouse_id: pallets[i][3],
           });
         }
-        //this.total = true
-        /* console.log(this.total) */
       } catch (error) {
         console.error("error al traer lo datos ", error);
       }
@@ -251,7 +230,6 @@ export default {
               pallet_creation: pallets[i][8],
             });
           }
-          console.log("send ", this.sendPallets);
           //const postPallets = await axios.post('http://186.1.181.146:8811/mcp-backend/public/api/mobile/loadpallets', this.sendPallets)
           //const postPallets = await axios.post('http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/loadpallets', this.sendPallets)
           const postPallets = await axios.post(
@@ -260,7 +238,6 @@ export default {
           );
           this.loadingCharge();
           Alert.success("Cargue");
-          console.log("send ", postPallets.data);
         } else {
           this.loadingCharge();
           Alert.danger(
@@ -279,7 +256,6 @@ export default {
         fullscreen: true,
         props: { info: item },
       }).then((res) => {
-        console.log("respuesta ", res);
         this.$emit("someEvent", "Valor de ejemplo");
       });
     },
@@ -290,7 +266,6 @@ export default {
         try {
           const pallet = await deletePallet(id);
           this.pallets.splice(index, 1);
-          /* console.log("delete ", pallet) */
           this.$closeBottomSheet();
         } catch (error) {
           console.log("hubo un error al eliminar");

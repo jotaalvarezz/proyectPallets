@@ -208,7 +208,6 @@ export default {
   methods: {
     onCheckedChange(args) {
       const checkbox = args.object;
-      console.log("checkbox ", checkbox);
       if (checkbox.checked) {
         this.model.damage_id.push({
           id: checkbox.id,
@@ -252,22 +251,17 @@ export default {
           photo: "",
         };
         this.unCheckAll();
-        Alert.info("Revise que no hayan campos vacios!",1);
         this.$modal.close();
       } catch (error) {}
     },
 
     async InfoSelect() {
-      /* console.log("damages items", this.repairs); */
-      /* this.model.container_element_id = this.repairs[0].container_element_id */
-      /* console.log("model ", this.container_elements); */
       try {
         this.loadingCharge(true);
         const res = await getDamage();
         const containerElements = await getContainerElements();
         this.damages = res.data;
         this.elements = containerElements.data;
-        /* console.log("damages []", this.damages); */
       } catch (error) {
         console.log("solucion de errores ", error);
       } finally {
@@ -293,12 +287,6 @@ export default {
 
       try {
         const imageAsset = await camera.takePicture(options);
-        /* const imageSource = await ImageSource.fromAsset(imageAsset); */
-        /* const base64Image = imageSource.toBase64String("jpeg"); */
-        /* this.model.photo = base64Image; */
-        /*  console.log("base ", this.cameraImage); */
-        console.log("testimonio ", imageAsset);
-        /* this.model.photo = imageAsset; */
         let pathSplit = imageAsset._android.split("/");
         let photo = pathSplit[pathSplit.length - 1];
         this.namePhoto = photo;
@@ -308,24 +296,8 @@ export default {
         const filePath = fs.path.join(folderPath, photo);
         const saved = imageSource.saveToFile(filePath, "jpg");
         this.model.photo = filePath;
-        /* console.log("url ", this.model.photo); */
-        /* if (saved) {
-          console.log("Gallery: " + this._dataItem);
-          console.log("Saved: " + filePath);
-          console.log("Image saved successfully!");
-        } */
       } catch (error) {
         console.log("Error -> " + error.message);
-      }
-    },
-
-    async getImageBase64(imageAsset) {
-      try {
-        /*  const imageSource = imageAsset.getImageAsync(); */
-        const base64Image = imageAsset.toBase64String("jpeg"); // Cambia 'jpeg' según el formato de tu imagen
-        console.log("base 64 ", base64Image);
-      } catch (error) {
-        console.log("error 64 ", error);
       }
     },
 
@@ -334,7 +306,6 @@ export default {
     cleanImage(folderPath) {
       // Crear una carpeta si no existe para guardar la imagen
       const folder = Folder.fromPath(folderPath);
-      /* console.log("folder path ",folderPath) */
       if (!folder) {
         console.error("Error al obtener la carpeta de documentos");
         return;
@@ -345,7 +316,6 @@ export default {
 
       // Obtener la lista de archivos en el directorio
       const fileList = folder.getEntitiesSync();
-      /* console.log("fileList ", fileList); */
 
       // Filtrar solo los archivos de imagen (por ejemplo, con extensión .jpg)
       const imageFiles = fileList.filter(
@@ -357,10 +327,7 @@ export default {
       if (fileExists) {
         for (let i = 0; i < deleteImages.length; i++) {
           // Eliminar el archivo existente
-          /* fs.File.fromPath(deleteImages[i]).remove();
-          console.log("Imagen anterior eliminada:", deleteImages[i]); */
           fs.File.fromPath(deleteImages[i]).remove();
-          console.log("Imagen anterior eliminada:", deleteImages[i]);
         }
       }
     },

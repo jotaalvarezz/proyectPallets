@@ -58,7 +58,7 @@ export default {
   border-width: 1px;
   padding-left: 5px;
   padding-right: 5px;
-  background-color: rgba(0, 172, 193, 0.19);
+  /* background-color: rgba(0, 172, 193, 0.19); */
   border-color: #00acc1;
   color: #00acc1;
 }

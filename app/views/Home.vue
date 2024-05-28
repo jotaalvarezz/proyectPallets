@@ -41,26 +41,6 @@ export default {
             return this.$refs
         }
     },
-
-    methods: {
-        /* async getShipsWarehouses() {
-            try {
-                const shipsWarehouses = await axios.get('http://172.70.8.122/mcp-backend/public/api/mobile/ships');
-                console.log(shipsWarehouses)
-            } catch (error) {
-                console.log(error)
-            }
-        }, */
-
-        /* openDrawer() {
-            const drawer = this.$refs.drawer
-            drawer.showDrawer()
-        } */
-    },
-
-    created(){
-        /* this.getShipsWarehouses() */
-    }
 };
 </script>
 

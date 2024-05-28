@@ -181,7 +181,6 @@ export default {
       try {
         if (this.model.nameWarehouse.length > 0) {
           const warehouse = await insertWarehuse(this.model);
-          console.log("save ", warehouse);
           this.model.nameWarehouse = "";
           this.$modal.close();
         } else {
@@ -196,7 +195,6 @@ export default {
       try {
         this.ships = [];
         const ships = await getShips();
-        console.log(ships);
         for (let i = 0; i < ships.length; i++) {
           this.options.push(ships[i][1]);
         }

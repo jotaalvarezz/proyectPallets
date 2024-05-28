@@ -149,26 +149,21 @@ export default {
     validatorSignature(folderPath) {
       // Crear una carpeta si no existe para guardar la imagen
       const folder = Folder.fromPath(folderPath);
-      /* console.log("folder path ",folderPath) */
       if (!folder) {
         console.error("Error al obtener la carpeta de documentos");
         return;
       }
 
       const fileName = "firma_usuario" + "_" + Date.now() + ".jpg";
-      /* console.log("folder fileName ",fileName) */
       let filePath = fs.path.join(folderPath, fileName);
-      /* console.log("folder filePath ",filePath) */
       let signature = "";
       let signatureName = ""
       let oldfilePath = ""
       if (this.signature.length > 0) {
-        /* console.log("siganture lleno ",this.signature) */
         signature = this.signature.split("/");
         signatureName = signature[signature.length - 1];
         oldfilePath = fs.path.join(folderPath, signatureName);
       } else {
-        /* console.log("siganture vacio ",this.signature) */
         signature = this.signature;
       }
 
@@ -177,7 +172,6 @@ export default {
 
       // Obtener la lista de archivos en el directorio
       const fileList = folder.getEntitiesSync();
-      console.log("fileList ", fileList);
       // Filtrar solo los archivos de imagen (por ejemplo, con extensión .jpg)
       const imageFiles = fileList.filter(
         (file) => file["_name"] === signatureName

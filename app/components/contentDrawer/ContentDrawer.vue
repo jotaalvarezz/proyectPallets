@@ -246,20 +246,16 @@ export default {
           const selects_evidence = await this.defaultSelects();
           const modules = await this.getModulesWsp();
           const users = await this.getUsersWsp();
-          /* console.log("modules ", selects_evidence); */
-          /* console.log("users ", users.data.data); */
           this.setUsers(modules.data.data);
           const db = await createTable(shipsWarehouses.data.data);
           await storeUsers(users.data.data);
           await storeModules(modules.data.data);
           await insertSeletsEvidence(selects_evidence.data.data.defaultSelects);
           await insertTypesManagement(selects_evidence.data.data.defaultTypes);
-          /* console.log("resss ", res + "  " + res2); */
           this.islogout();
           this.$router.pushClear("login.index");
           this.loadingCharge();
           Alert.success("Actualizacion de DB");
-          //console.log(db)
         }
       } catch (error) {
         this.loadingCharge();
@@ -276,8 +272,6 @@ export default {
       try {
         this.$router.pushClear(url);
         utils.closeDrawer();
-         /* const db = await structure();
-        console.log(db); */
       } catch (error) {
         Alert.info(
           "error intentando al dirigirse a la ruta " + error,

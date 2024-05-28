@@ -26,9 +26,7 @@ export const showData = async (nameTable, data, keys = []) => {
     if (data.length === 0) {
       return objectData;
     }
-    /* console.log("columns ", columnNames)
-    console.log("data ", data[0].length)
-    console.log("data name ", data[0]) */
+
     if (columnNames.length !== data[0].length) {
       throw new Error("verifique que las claves y la data coincidan...");
     }
@@ -62,9 +60,7 @@ export const showOneData = async (nameTable, data, keys = []) => {
     if (data.length === 0) {
       return objectData;
     }
-    /* console.log("columns ", columnNames)
-    console.log("data ", data[0].length)
-    console.log("data name ", data[0]) */
+
     if (columnNames.length !== data[0].length) {
       throw new Error("verifique que las claves y la data coincidan...");
     }
@@ -135,14 +131,12 @@ export const getRegister = async (
       (columName2 === null && name2 === null) ||
       (columName2 === "" && name2 === "")
     ) {
-      console.log("normal");
       data = await db.get(
         `SELECT * FROM ${table}
                                         WHERE ${columName1} = ?`,
         [name1]
       );
     } else {
-      /* console.log("doble",table,name1,columName1,columName2,name2) */
       data = await db.get(
         `SELECT * FROM ${table}
                                         WHERE ${columName1} = ? AND ${columName2} = ?`,
@@ -157,8 +151,10 @@ export const getRegister = async (
 };
 
 export const encriptImg = async (directory) => {
+  if(directory === '' || directory === null){
+    return '';
+  }
   const imageSource = await ImageSource.fromFile(directory);
-  const base64Image = imageSource.toBase64String("jpg");
-  console.log("bimbolete ", imageSource);
+  const base64Image = imageSource.toBase64String("jpg", 60);
   return base64Image;
 };

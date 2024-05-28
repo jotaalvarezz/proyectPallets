@@ -22,7 +22,6 @@ const store = new Vuex.Store({
     },
 
     indicatorState(state, payload) {
-      console.log("payload ", payload)
       state.indicator = payload
     },
 

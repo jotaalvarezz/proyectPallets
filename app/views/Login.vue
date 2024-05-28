@@ -60,7 +60,7 @@ export default {
   data() {
     return {
       model:{
-        user: "evidWsp",
+        user: "adminWsp",
         password: "Admin2024."
       }
     };

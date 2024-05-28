@@ -106,6 +106,7 @@
         columns="3*, 50"
       >
         <SearchBar
+          ref="mySearchBar"
           row="0"
           col="0"
           margin="10"
@@ -282,15 +283,11 @@ export default {
 
     /* ****************************************************************** */
     validateField(fields) {
-      console.log("validador ", this.model.name);
-      console.log("validador2 ", this.model.titular_name);
       this.errors.name = !this.model.name.trim();
       this.errors.titular_name = !this.model.titular_name.trim();
-      console.log("errorres ", this.errors);
       let fullfield = "";
       for (const key in this.errors) {
         if (this.errors.hasOwnProperty(key) && this.errors[key] != false) {
-          console.log("dentro ", this.errors[key], " - ", key);
           return !this.errors[key];
         }
         fullfield = !this.errors[key];
@@ -300,9 +297,7 @@ export default {
 
     async submitForm() {
       const isValid = this.validateField();
-      console.log("is valid ", isValid);
       if (!isValid) {
-        console.log("El campo de nombre es obligatorio.");
         // Detener la ejecución si la validación falla
         return;
       }
@@ -327,7 +322,6 @@ export default {
 
         this.$refs.Collapse.activated();
         // Continuar con el envío del formulario
-        console.log("Formulario enviado exitosamente!");
         alert("Formulario enviado exitosamente!");
       } catch (error) {
         Alert.danger("Hubo un error al traer los datos ", error.message);
@@ -338,8 +332,6 @@ export default {
     /* ******************************************************************* */
 
     onItemTap(event) {
-      /* console.log(event.index)
-      console.log(event.item); */
       this.navigate(event.item);
     },
 
@@ -381,17 +373,14 @@ export default {
         const res = await getManagements(id);
         this.managments = res.data;
         this.array_filter = res.data;
-        console.log("managments ", res);
       } catch (error) {
         Alert.danger("Hubo un error al traer los datos ", error.message);
-        /* this.loadingCharge(); */
       } finally {
         this.loadingCharge();
       }
     },
 
     async addManagement() {
-      /* console.log("modelo ", this.model); */
       try {
         if (this.model.titular_name !== "" && this.model.name !== "") {
           this.loadingCharge(true);
@@ -401,7 +390,6 @@ export default {
           } else {
             this.managments.push(res.data);
           }
-          /* console.log("res ", res); */
         } else {
           Alert.info("¡Revise que los campos no se encuentren vacios!", 1);
         }
@@ -423,10 +411,6 @@ export default {
     navigate(item) {
       this.setManagementModel(item);
       this.$router.push("container_report.index");
-      /* this.$showModal(NavViews, {
-        fullscreen: true,
-        animated: true,
-      }); */
     },
 
     refreshManagments() {
@@ -449,9 +433,7 @@ export default {
         },
         // listeners to be connected to MyComponent
         on: {
-          someEvent: (value) => {
-            console.log(value);
-          },
+          someEvent: (value) => {},
         },
       };
       this.$showBottomSheet(ButtomSheet, options);

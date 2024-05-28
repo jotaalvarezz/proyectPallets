@@ -10,7 +10,7 @@
         <Label
           row="0"
           col="0"
-          :text="'fa-reply' | fonticon"
+          :text="'fa-chevron-left' | fonticon"
           fontSize="16"
           class="fas text-center"
           color="#F4F6F8"
@@ -208,12 +208,6 @@ export default {
       return this.journey;
     },
   },
-  /*   watch: {
-          code() {
-              clearTimeout(this.typingTimer);
-              this.typingTimer = setTimeout(this.savePallet, this.typingTimeout);
-          }
-      }, */
   methods: {
     scanner() {
       let barcodeScanner = new BarcodeScanner();
@@ -230,9 +224,7 @@ export default {
         beepOnScan: true, // Play or Suppress beep on scan (default true)
         fullScreen: true, // Currently only used on iOS; with iOS 13 modals are no longer shown fullScreen by default, which may be actually preferred. But to use the old fullScreen appearance, set this to 'true'. Default 'false'.
         torchOn: false, // launch with the flashlight on (default false)
-        closeCallback: function () {
-          console.log("Scanner closed");
-        }, // invoked when the scanner was closed (success or abort)
+        closeCallback: function () {}, // invoked when the scanner was closed (success or abort)
         resultDisplayDuration: 500, // Android only, default 1500 (ms), set to 0 to disable echoing the scanned text
         orientation: "portrait", // Android only, optionally lock the orientation to either "portrait" or "landscape"
         openSettingsIfPermissionWasPreviouslyDenied: true, // On iOS you can send the user to the settings app if access was previously denied
@@ -256,10 +248,8 @@ export default {
       try {
         if (this.code.length > 0) {
           this.model.codePallet = this.code;
-          console.log("CUCH ", this.model.codePallet);
           this.model.warehouse_id = this.item.id;
           const pallet = await insertPallet(this.model);
-          console.log("save ", pallet);
           this.code = "";
           this.model.warehouse_id = "";
           this.$refs.field.nativeView.focus();
@@ -273,10 +263,8 @@ export default {
       let confirmated = await Alerts.confirmation();
       if (confirmated) {
         try {
-          console.log("observacion ", this.model.observation);
           if (this.model.observation.length > 0) {
             const pallet = await updatePallet(this.model);
-            console.log("update ", pallet);
             this.$modal.close();
             //this.$router.pushClear('generalpallets.index')
           }
@@ -293,7 +281,6 @@ export default {
 
   created() {
     this.model = this.info;
-    console.log(this.model);
   },
 };
 </script>

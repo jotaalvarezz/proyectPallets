@@ -282,7 +282,6 @@ const structure = async () => {
 
 // Función para crear las tablas
 const createTable = async (shipsWarehouses) => {
-  /* console.log("EN DATABASE", shipsWarehouses) */
   try {
     DBdelete();
     let database = [];
@@ -291,7 +290,6 @@ const createTable = async (shipsWarehouses) => {
       database = db.execSQL(Querys[i], []);
     }
     insertDefaultData(db, shipsWarehouses);
-    //console.log(db);
     return database;
   } catch (error) {
     console.log("error e la creacion de la tabla ", error);
@@ -577,7 +575,6 @@ const DBdelete = async () => {
   try {
     //const db = await openDatabase()
     const deleteDB = Sqlite.deleteDatabase("mydatabase.db");
-    console.log("db borrada => ", deleteDB);
     return deleteDB;
   } catch (error) {
     console.log("error al eliminar ", error);
@@ -628,63 +625,3 @@ module.exports = {
   insertTypesManagement,
   sendEvidenceReports
 };
-
-// Función para abrir o crear la base de datos
-/* const openDatabase = async () => {
-  return new Promise((resolve, reject) => {
-    new Sqlite('mydatabase.db', (err, db) => {
-      if (err) {
-        reject(err);
-      } else {
-        //console.log("open ",resolve(db))
-        resolve(db);
-      }
-    });
-  });
-}; */
-
-//traer todos los datos
-/* const allData = async () => {
-  const db = await openDatabase();
-  return new Promise((resolve, reject) => {
-      db.all('SELECT * FROM mytable', [], (err, rows) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(rows);
-        }
-      })
-  })
-} */
-
-// Función para crear la tabla
-/* const createTable = async () => {
-  const db = await openDatabase();
-  return new Promise((resolve, reject) => {
-    db.execSQL(
-      "CREATE TABLE IF NOT EXISTS mytable (id INTEGER PRIMARY KEY, name TEXT)",
-      [],
-      (err) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
-        }
-      }
-    );
-  });
-}; */
-
-// Función para insertar datos en la tabla
-/* const insertData = async (name) => {
-  const db = await openDatabase();
-  return new Promise((resolve, reject) => {
-    db.execSQL("INSERT INTO mytable (name) VALUES (?)", [name], (err, id) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(id);
-      }
-    });
-  });
-}; */

@@ -177,10 +177,8 @@ export default {
 
     async addShip() {
       try {
-        console.log(this.model.nameShip);
         if (this.model.nameShip.length > 0) {
           const ship = await insertShip(this.model);
-          console.log("save ", ship);
           const newShip = this.model;
           this.model.nameShip = "";
           this.model.journey = "";
@@ -199,7 +197,6 @@ export default {
         try {
           if (this.model.journey.length > 0) {
             const ship = await updateShip(this.model);
-            console.log("update ", ship);
             this.$modal.close();
           } else {
             Alerts.info("Debe llenar el campo ' Viaje... ' ", 1);

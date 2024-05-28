@@ -156,7 +156,6 @@ export default {
 
   methods: {
     index() {
-      console.log("info ", this.info);
       this.model = {
         id: this.info.id,
         type_management_id: this.info.type_management_id,
@@ -171,16 +170,10 @@ export default {
       try {
         this.loadingCharge(true);
         const res = await updateManagement(this.model);
-        /* console.log("res edit ", res);
-        console.log("propsSignature ", this.propsSignature.fileExists); */
         if (this.propsSignature.fileExists) {
           for (let i = 0; i < this.propsSignature.deleteImages.length; i++) {
             // Eliminar el archivo existente
             fs.File.fromPath(this.propsSignature.deleteImages[i]).remove();
-            console.log(
-              "Imagen anterior eliminada:",
-              this.propsSignature.deleteImages[i]
-            );
           }
         }
         this.$modal.close({
@@ -203,13 +196,9 @@ export default {
         cancelable: true,
       }).then((res) => {
         this.propsSignature = res;
-        /* console.log("props ", this.propsSignature); */
         this.model.signature = res.signature;
-        /* console.log("signature edit ", this.model.signature); */
-        /* const imageData = ImageSource.fromBase64Sync(this.model.signature); */
         let myImg = this.$refs.imageRef.nativeView;
         myImg.src = this.model.signature;
-        /* console.log("final"); */
       });
     },
   },

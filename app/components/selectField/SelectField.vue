@@ -151,7 +151,7 @@ export default {
   margin: 3px 6px 3px 0px;
   border-radius: 5px;
   border-width: 1px;
-  background-color: rgba(60, 73, 94, 0.2);
+  /* background-color: rgba(60, 73, 94, 0.2); */
   border-color: #3c495e;
   color: #3c495e;
 }

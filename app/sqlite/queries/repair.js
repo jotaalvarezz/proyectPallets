@@ -10,7 +10,6 @@ const showRepair = async (id) => {
                                 INNER JOIN container_elements e on e.id = r.container_element_id
                                 WHERE r.id = ?`, [id]);
     const dataFormatted = await first('repairs', data, ['id', 'container_element_id', 'name', 'location', 'position', 'container_report_id', 'photo'])
-    console.log("show ", dataFormatted)
     if (Object.keys(dataFormatted).length > 0) {
       const damages = await db.all(`SELECT rd.id, rd.repair_id ,rd.damage_id, d.name
                                     FROM  repair_damage rd
@@ -26,7 +25,6 @@ const showRepair = async (id) => {
 }
 
 const storeRepair = async (data) => {
-  console.log("data controller repair ", data.repair.damage_id)
   try {
     const repair = data.repair
     const db = await openDatabase();
@@ -42,7 +40,6 @@ const storeRepair = async (data) => {
       [repair.container_element_id, repair.location, repair.position,
       data.container_report_id, repair.photo, moment(new Date()).format("YYYY-MM-DD HH:mm:ss")]
     );
-    console.log("post Dta ", postData)
     storeRepairDamage({ repair_id: postData, damage_id: repair.damage_id })
     const dataRepair = showRepair(postData)
     return dataRepair;
@@ -54,7 +51,6 @@ const storeRepair = async (data) => {
 
 const storeRepairDamage = async (data) => {
   try {
-    console.log("repair damages ", data)
     const damages = data.damage_id
     const db = await openDatabase();
     let postData = []
@@ -78,7 +74,6 @@ const deleteRepair = async (id) => {
   try {
     const db = await openDatabase();
     const register = await showRepair(id)
-    console.log("register sss", register)
     if (Object.keys(register.data).length === 0) {
       return { status: 500, message: "No se encntro la reparacion seleccionada, actualice la lista!" }
     }

@@ -72,12 +72,11 @@
         :class="spaceEnd"
         @itemLoading="scrolling"
         @loadMoreItems="onScroll"
-        @itemTap="onItemTap"
         row="1"
         v-if="pallets.length > 0"
       >
         <v-template>
-          <GridLayout columns="30,*,50" @longPress="operations">
+          <GridLayout columns="30,*,50">
             <Label
               col="0"
               :text="index + 1"
@@ -190,12 +189,6 @@ export default {
 
     onScroll() {
       this.bandera = true;
-      /* console.log(this.spaceEnd)
-      console.log("movimiento") */
-    },
-
-    onItemTap() {
-      console.log("success");
     },
 
     openModal() {
@@ -224,9 +217,7 @@ export default {
 
     async editPallet(item) {
       try {
-        console.log("observacion ", item.observation);
         const pallet = await updatePallet(item);
-        console.log("update ", pallet);
       } catch (error) {
         console.error("Hubo un error al editar ", error);
       }
@@ -237,32 +228,10 @@ export default {
       if (confirmated) {
         try {
           const record = await deletePallet(id);
-          console.log(record);
           this.pallets.splice(index, 1);
         } catch (error) {
           console.log("eleminacion fallida ", error);
         }
-      }
-    },
-
-    operations() {
-      try {
-        /* const btnShip = document.querySelector('#ship');
-          btnShip.addEventListener('mouseup', (e)=>{
-            console.log('hola mouseup')
-          }) */
-        console.log("por fuera");
-      } catch (error) {
-        console.log("hubo un error con el evento ", error);
-      }
-    },
-
-    async paletas() {
-      try {
-        const pallets = await getPalletsAll();
-        console.log("paletas ", pallets);
-      } catch (error) {
-        console.log(error);
       }
     },
 
@@ -279,7 +248,6 @@ export default {
           this.model.warehouse_id = this.item.id;
           this.model.pallet_creation = moment().format("YYYY-MM-DD HH:mm:ss");
           const pallet = await insertPallet(this.model);
-          console.log("save ", pallet);
           this.code = "";
           this.model.warehouse_id = "";
           this.$refs.field.nativeView.focus();
@@ -290,7 +258,6 @@ export default {
               this.code = "";
             }
           );
-          console.log("repeat ", this.checkRepeated());
         }
       } catch (error) {
         console.log("al insertar error ", error);
@@ -301,9 +268,7 @@ export default {
     async getPallets() {
       try {
         this.pallets = [];
-        console.log("item p", this.item);
         const pallets = await getPallets(this.item.id);
-        console.log(pallets);
         for (let i = 0; i < pallets.length; i++) {
           this.pallets.push({
             id: pallets[i][0],
