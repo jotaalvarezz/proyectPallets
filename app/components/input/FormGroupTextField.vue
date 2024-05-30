@@ -6,10 +6,11 @@
       fontWeight="bold"
       style="color: #3c495e; width: 90%"
     />
-    <TextField
+    <!-- <TextField
       v-if="!textArea"
       ref="field"
       class="input"
+      width="90%"
       :isEnabled="enable"
       :text="value"
       :keyboardType="typeInput"
@@ -21,10 +22,45 @@
       border="none"
       borderRadius="2"
       @textChange="onTextChange"
-    />
+    /> -->
+    <StackLayout orientation="horizontal" width="90%">
+      <TextField
+        v-if="!textArea"
+        ref="field"
+        margin="0"
+        class="input"
+        :width="pass === true ? '93%' : '100%'"
+        :isEnabled="enable"
+        :text="value"
+        :keyboardType="typeInput"
+        :secure="pass"
+        padding="10"
+        :hint="placeholder"
+        height="45"
+        :fontSize="fontsize"
+        border="none"
+        borderTopLeftRadius="2"
+        borderBottomLeftRadius="2"
+        :borderTopRightRadius="pass ? '0' : '2'"
+        :borderBottomRightRadius="pass ? '0' : '2'"
+        @textChange="onTextChange"
+      />
+      <Label
+        v-if="pass === true"
+        :text="securefield ? 'fa-unlock' : 'fa-lock' | fonticon"
+        fontSize="18"
+        class="fas label-Lock text-center"
+        width="7%"
+        height="45"
+        borderTopRightRadius="2"
+        borderBottomRightRadius="2"
+        @tap="showPassword"
+      />
+    </StackLayout>
     <TextView
       v-if="textArea"
       class="input"
+      width="90%"
       :text="value"
       padding="10"
       :fontSize="fontsize"
@@ -43,7 +79,7 @@
 import { mapState } from "vuex";
 
 export default {
-  name:"FormGroupTextField",
+  name: "FormGroupTextField",
   props: {
     label: {
       type: String,
@@ -72,15 +108,15 @@ export default {
       type: Boolean,
       default: false,
     },
-    typeInput:{
+    typeInput: {
       type: String,
       default: "text",
     },
-    pass:{
+    pass: {
       type: Boolean,
-      default: false
-    }
-  /*   showError:{
+      default: false,
+    },
+    /*   showError:{
       type:Boolean,
       default:false
     } */
@@ -90,11 +126,12 @@ export default {
     return {
       validateLabel: "",
       textValue: "",
+      securefield: true,
     };
   },
 
-  computed:{
-    ...mapState(["showError"])
+  computed: {
+    ...mapState(["showError"]),
   },
 
   methods: {
@@ -113,6 +150,17 @@ export default {
         label.slice(1, size - 1).toLowerCase();
       return this.validateLabel;
     },
+
+    showPassword() {
+      let field = this.$refs.field.nativeView;
+      if (field.secure) {
+        this.securefield = false;
+        field.secure = this.securefield;
+      } else {
+        this.securefield = true;
+        field.secure = this.securefield;
+      }
+    },
   },
 
   created() {
@@ -126,7 +174,13 @@ export default {
   placeholder-color: #3c495e;
   color: #3c495e;
   background-color: #c0c9d7;
-  width: 90%;
+  opacity: 0.9;
+}
+
+.label-Lock {
+  placeholder-color: #3c495e;
+  color: #3c495e;
+  background-color: #c0c9d7;
   opacity: 0.9;
 }
 

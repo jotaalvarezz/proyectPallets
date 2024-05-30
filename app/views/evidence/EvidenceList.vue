@@ -46,69 +46,83 @@
         <v-template>
           <!-- Shows the list item label in the default color and style. -->
           <GridLayout columns="*, 40">
-            <StackLayout orientation="horizontal" col="0">
+            <StackLayout>
               <Label
                 backgroundColor="#D8E2E8"
                 :text="'fa-tools' | fonticon"
-                class="fas nt-drawer__header-image"
+                class="fas text-center"
+                padding="20"
                 fontSize="45"
                 color="#EAB14D"
               />
-              <StackLayout class="heigth" width="75%">
-                <Label
-                  text="Reporte:"
-                  class="p-l-10 subTittle"
-                  textWrap="true"
-                  width="auto"
-                  fontSize="18"
-                />
-                <Label textWrap="true">
-                  <!-- Barco -->
-                  <FormattedString v-if="item.type_management_id === 1">
-                    <Span text="Contenedor: " fontWeight="bold" fontSize="15" />
-                    <Span :text="item.code + '\n'" fontSize="15" />
-                    <Span text="Tipo: " fontWeight="bold" fontSize="15" />
-                    <Span :text="item.nameType + '\n'" fontSize="15" />
-                    <Span text="Buque: " fontWeight="bold" fontSize="15" />
-                    <Span :text="item.vessel + '\n'" fontSize="15" />
-                    <Span text="Capitan: " fontWeight="bold" fontSize="15" />
-                    <Span :text="item.titular_name + '\n'" fontSize="15" />
-                    <Span text="Tecnico: " fontWeight="bold" fontSize="15" />
-                    <Span :text="item.role + '\n'" fontSize="15" />
-                    <Span
-                      :text="'Elemntos:' + '\t\t\t\t\t'"
-                      fontWeight="bold"
-                      fontSize="15"
-                    />
-                  </FormattedString>
-                  <!-- Patio -->
-                  <FormattedString v-if="item.type_management_id === 2">
-                    <Span text="Contenedor: " fontWeight="bold" fontSize="15" />
-                    <Span :text="item.code + '\n'" fontSize="15" />
-                    <Span text="Tipo: " fontWeight="bold" fontSize="15" />
-                    <Span :text="item.nameType + '\n'" fontSize="15" />
-                    <Span text="Patio: " fontWeight="bold" fontSize="15" />
-                    <Span :text="'Alieva' + '\n'" fontSize="15" />
-                    <Span text="Conductor: " fontWeight="bold" fontSize="15" />
-                    <Span :text="item.titular_name + '\n'" fontSize="15" />
-                    <Span text="Tecnico: " fontWeight="bold" fontSize="15" />
-                    <Span :text="item.role + '\n'" fontSize="15" />
-                    <Span text="Elemntos:" fontWeight="bold" fontSize="15" />
-                  </FormattedString>
-                </Label>
-                <StackLayout
-                  orientation="horizontal"
-                  v-for="(repair, index) in item.repairs"
-                  :key="index"
-                  style="padding: 0px 5px 5px 8px"
-                >
-                  <Tag
-                    width="80%"
-                    :label="repair.name"
-                    :items="repair.repair_damage"
-                    labelIterator="name"
+              <StackLayout orientation="horizontal" col="0">
+                <StackLayout class="heigth" width="75%">
+                  <Label
+                    text="Reporte:"
+                    class="subTittle"
+                    textWrap="true"
+                    width="auto"
+                    fontSize="18"
                   />
-                  <!-- <Label
+                  <Label textWrap="true">
+                    <!-- Barco -->
+                    <FormattedString v-if="item.type_management_id === 1">
+                      <Span
+                        text="Contenedor: "
+                        fontWeight="bold"
+                        fontSize="15"
+                      />
+                      <Span :text="item.code + '\n'" fontSize="15" />
+                      <Span text="Tipo: " fontWeight="bold" fontSize="15" />
+                      <Span :text="item.nameType + '\n'" fontSize="15" />
+                      <Span text="Buque: " fontWeight="bold" fontSize="15" />
+                      <Span :text="item.vessel + '\n'" fontSize="15" />
+                      <Span text="Capitan: " fontWeight="bold" fontSize="15" />
+                      <Span :text="item.titular_name + '\n'" fontSize="15" />
+                      <Span text="Tecnico: " fontWeight="bold" fontSize="15" />
+                      <Span :text="item.role + '\n'" fontSize="15" />
+                      <Span
+                        :text="'Elemntos:' + '\t\t\t\t\t'"
+                        fontWeight="bold"
+                        fontSize="15"
+                      />
+                    </FormattedString>
+                    <!-- Patio -->
+                    <FormattedString v-if="item.type_management_id === 2">
+                      <Span
+                        text="Contenedor: "
+                        fontWeight="bold"
+                        fontSize="15"
+                      />
+                      <Span :text="item.code + '\n'" fontSize="15" />
+                      <Span text="Tipo: " fontWeight="bold" fontSize="15" />
+                      <Span :text="item.nameType + '\n'" fontSize="15" />
+                      <Span text="Patio: " fontWeight="bold" fontSize="15" />
+                      <Span :text="'Alieva' + '\n'" fontSize="15" />
+                      <Span
+                        text="Conductor: "
+                        fontWeight="bold"
+                        fontSize="15"
+                      />
+                      <Span :text="item.titular_name + '\n'" fontSize="15" />
+                      <Span text="Tecnico: " fontWeight="bold" fontSize="15" />
+                      <Span :text="item.role + '\n'" fontSize="15" />
+                      <Span text="Elemntos:" fontWeight="bold" fontSize="15" />
+                    </FormattedString>
+                  </Label>
+                  <StackLayout
+                    orientation="horizontal"
+                    v-for="(repair, index) in item.repairs"
+                    :key="index"
+                    style="padding: 0px 5px 5px 8px"
+                  >
+                    <Tag
+                      width="80%"
+                      :label="repair.name"
+                      :items="repair.repair_damage"
+                      labelIterator="name"
+                    />
+                    <!-- <Label
                     width="20%"
                     height="40"
                     :text="'fa-times' | fonticon"
@@ -117,8 +131,8 @@
                     fontSize="15"
                     @tap="deleteRowRepair(item, repair.id)"
                   /> -->
-                </StackLayout>
-                <!-- <Label
+                  </StackLayout>
+                  <!-- <Label
                   width="50"
                   height="50"
                   marginTop="10"
@@ -130,6 +144,7 @@
                   borderRadius="50"
                   @tap="openFormDamaged(item)"
                 /> -->
+                </StackLayout>
               </StackLayout>
             </StackLayout>
             <Label

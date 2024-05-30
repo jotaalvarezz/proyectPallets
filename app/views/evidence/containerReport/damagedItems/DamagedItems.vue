@@ -29,10 +29,11 @@
       <StackLayout
         class="shadow"
         backgroundColor="#F4F6F8"
-        margin="20"
+        margin="10"
         borderWidth="1"
         borderColor="#c0c9d7"
         borderRadius="5"
+        padding="30"
       >
         <SelectField
           row="4"
@@ -42,6 +43,7 @@
           fontsize="14"
           icon="fa-toolbox"
           @value="model.container_element_id = $event"
+          :required="errors.container_element_id"
         />
         <SelectField
           :value="model.location"
@@ -66,9 +68,9 @@
           marginTop="10"
           fontsize="14"
           fontWeight="bold"
-          style="color: #3c495e; width: 90%"
+          style="color: #3c495e; width: 80%"
         />
-        <FlexboxLayout flexWrap="wrap" style="width: 90%">
+        <FlexboxLayout flexWrap="wrap" style="width: 80%">
           <check-box
             v-for="item in damages"
             ref="checkbok"
@@ -89,37 +91,37 @@
           iconSize="md"
           :method="onTakePictureTap"
         />
-        <DockLayout
+        <GridLayout
           v-if="namePhoto.length > 0"
-          stretchLastChild="true"
+          dock="left"
+          width="80%"
+          columns="auto, auto"
           backgroundColor="#F4F6F8"
+          class="picture"
+          @tap="showPhoto"
         >
-          <GridLayout
-            dock="left"
-            width="50%"
-            marginLeft="20"
-            columns="auto, auto"
-            backgroundColor="#F4F6F8"
-            class="picture"
-            @tap="showPhoto"
-          >
-            <Label
-              col="0"
-              class="fas"
-              fontSize="20"
-              :text="'fa-image' | fonticon"
-            />
-            <Label col="1" fontSize="14" :text="namePhoto" color="#3c495e" />
-          </GridLayout>
-          <Label dock="bottom" height="auto" />
-        </DockLayout>
-        <Stripe color="#3c495e" margin="20" />
+          <Label
+            col="0"
+            class="fas"
+            fontSize="20"
+            :text="'fa-image' | fonticon"
+            color="#00acc1"
+          />
+          <Label
+            col="1"
+            fontSize="14"
+            marginLeft="10"
+            :text="namePhoto"
+            color="#3c495e"
+          />
+        </GridLayout>
+        <Stripe color="#3c495e" mr="40" ml="40" mt="20" mb="20" />
         <Button
           backgroundColor="#F4F6F8"
           color="#222a37"
           text="Agregar"
           @tap="addRepair"
-          style="width: 80%; margin-bottom: 20px"
+          style="width: 80%"
           borderWidth="1"
           borderColor="#222a37"
           borderRadius="30"
@@ -198,6 +200,12 @@ export default {
       height: 240,
       cameraImage: "",
       namePhoto: "",
+
+      errors: {
+        container_element_id: false,
+        location: false,
+        position: false,
+      },
     };
   },
 
@@ -206,6 +214,20 @@ export default {
   computed: {},
 
   methods: {
+    /* ****************************************************************** */
+    validateField(fields) {
+      this.errors.container_element_id =
+        this.model.container_element_id === null ? true : false;
+      let fullfield = "";
+      for (const key in this.errors) {
+        if (this.errors.hasOwnProperty(key) && this.errors[key] != false) {
+          return !this.errors[key];
+        }
+        fullfield = !this.errors[key];
+      }
+      return fullfield;
+    },
+
     onCheckedChange(args) {
       const checkbox = args.object;
       if (checkbox.checked) {
@@ -230,18 +252,18 @@ export default {
     },
 
     async addRepair() {
+      const isValid = this.validateField();
+      if (!isValid) {
+        // Detener la ejecución si la validación falla
+        return;
+      }
       try {
-        if (
-          this.model.container_element_id !== null ||
-          this.model.location !== null ||
-          this.model.position !== null
-        ) {
-          const res = await storeRepair({
-            container_report_id: this.container_report_id,
-            repair: this.model,
-          });
-          Alert.success("Reparacion agrgada");
-        }
+        this.loadingCharge(true);
+        const res = await storeRepair({
+          container_report_id: this.container_report_id,
+          repair: this.model,
+        });
+        Alert.success("Reparacion agrgada");
 
         this.model = {
           container_element_id: null,
@@ -252,7 +274,11 @@ export default {
         };
         this.unCheckAll();
         this.$modal.close();
-      } catch (error) {}
+      } catch (error) {
+        Alert.danger("Hubo un error al guardar ", error.message);
+      } finally {
+        this.loadingCharge();
+      }
     },
 
     async InfoSelect() {

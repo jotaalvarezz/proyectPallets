@@ -63,6 +63,7 @@
               label="TIPO:"
               icon="fa-memory"
               @value="model.type_id = $event"
+              :required="errors.type_id"
             />
             <FormGroupTextField
               row="4"
@@ -135,6 +136,7 @@
               :multiple="true"
               icon="fa-tools"
               @value="model.additional_damage_id = $event"
+              :required="errors.additional_damage_id"
             />
             <FormGroupTextField
               row="7"
@@ -209,7 +211,7 @@ export default {
       model: {
         management_id: null,
         code: "MSG1112020000567896",
-        type_id: 1,
+        type_id: null,
         role: "Mecanico",
         repairs: [],
         additional_damage_id: [],
@@ -224,6 +226,8 @@ export default {
       errors: {
         code: false,
         role: false,
+        type_id:false,
+        additional_damage_id:false
       },
     };
   },
@@ -258,6 +262,8 @@ export default {
     validateField(fields) {
       this.errors.code = !this.model.code.trim();
       this.errors.role = !this.model.role.trim();
+      this.errors.type_id = this.model.type_id === null ? true : false
+      this.errors.additional_damage_id = this.model.additional_damage_id.length === 0 ? true : false
       let fullfield = "";
       for (const key in this.errors) {
         if (this.errors.hasOwnProperty(key) && this.errors[key] != false) {

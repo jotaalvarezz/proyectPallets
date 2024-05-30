@@ -50,6 +50,11 @@
         color="#3c495e"
       />
     </GridLayout>
+    <Label
+      v-if="required && (value === null || value.length === 0)"
+      class="label-error"
+      :text="'*el campo ' + validateLabel + ' es oblogatorio'"
+    />
   </StackLayout>
 </template>
 
@@ -57,7 +62,7 @@
 import ListOptions from "~/components/listOptions/ListOptions.vue";
 
 export default {
-  name:"SelectField",
+  name: "SelectField",
   props: {
     label: {
       type: String,
@@ -87,6 +92,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    required: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
@@ -103,8 +112,8 @@ export default {
         if (!this.multiple && this.value != null) {
           label = this.items.find((item) => item.id === this.value);
           return label[this.labelIterator];
-        } else if(!this.multiple && this.value === null){
-          return ' ';
+        } else if (!this.multiple && this.value === null) {
+          return " ";
         }
         for (let i = 0; i < this.value.length; i++) {
           label = this.items.find((item) => item.id === this.value[i]);
@@ -138,11 +147,20 @@ export default {
         this.$emit("value", this.value);
       });
     },
+
+    formatLabel() {
+      const size = this.label.length;
+      const label = this.label;
+      this.validateLabel =
+        this.label.charAt(0).toUpperCase() +
+        label.slice(1, size - 1).toLowerCase();
+      return this.validateLabel;
+    },
   },
 
-  created(){
-
-  }
+  created() {
+    this.formatLabel();
+  },
 };
 </script>
 <style scoped>
@@ -154,5 +172,11 @@ export default {
   /* background-color: rgba(60, 73, 94, 0.2); */
   border-color: #3c495e;
   color: #3c495e;
+}
+
+.label-error {
+  color: #e92222;
+  width: 90%;
+  text-align: left;
 }
 </style>

@@ -26,7 +26,7 @@
             color="#3c495e"
             fontWeight="bold"
           ></Label>
-          <Stripe row="1" color="#3c495e" mt="20" mb="20" />
+          <Stripe row="1" color="#3c495e" mt="20" mb="20" mr="40" ml="40" />
           <FormGroupTextField
             v-if="management_id === 1"
             row="2"
@@ -61,28 +61,7 @@
             v-model="model.titular_name"
             :required="errors.titular_name"
           />
-          <!-- <GridLayout
-            row="4"
-            columns="35,auto"
-            style="width: 80%; margin-top: 15px"
-          >
-            <Label
-              col="0"
-              :text="'fa-signature' | fonticon"
-              class="fas colorIcons"
-              fontSize="22"
-            />
-            <Label
-              col="1"
-              textWrap="true"
-              text="Firmar"
-              fontSize="14"
-              class="colorIcons"
-              @tap="signatureCaptain"
-            />
-          </GridLayout> -->
-          <!-- <Signature row="4" /> -->
-          <Stripe row="5" color="#3c495e" mt="20" mb="20" />
+          <Stripe row="5" color="#3c495e" mt="20" mb="20" mr="40" ml="40"/>
           <!-- Boton para Crear -->
           <Button
             row="6"
