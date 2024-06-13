@@ -10,6 +10,7 @@
         backgroundColor="#1c6b48"
       /> -->
       <StackLayout
+        class="img"
         alignSelf="center"
         backgroundColor="#F4F6F8"
         margin="30"
@@ -18,12 +19,13 @@
         borderColor="#D5D8DC"
         borderRadius="5"
       >
-        <Image
+        <!-- <Image
           src="~/assets/images/logobarco.png"
           stretch="aspectFit"
           height="30%"
           width="60%"
-        />
+        /> -->
+        <Label class="login-title" text="WSP"/>
         <FormGroupTextField
           label="Usuario:"
           placeholder="usuario..."
@@ -86,5 +88,17 @@ export default {
 <style scoped>
 .shadow {
   box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.19);
+}
+
+.img{
+
+}
+
+.login-title{
+  text-align: center;
+  font-size: 55px;
+  font-weight: bold;
+  font-family: comic Arial, Helvetica, sans-serif;
+  color: #00acc1;
 }
 </style>

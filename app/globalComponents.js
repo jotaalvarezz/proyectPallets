@@ -13,6 +13,9 @@ import Stripe from "~/components/stripe/Stripe.vue";
 import Tag from "~/components/tag/Tag.vue";
 import ListModal from "~/components/listModal/ListModal.vue";
 import GeneralComponent from "~/components/GeneralComponent/GeneralComponent.vue";
+import FilterSearhBar from "~/components/filterBar/FilterSearhBar.vue"
+import HeaderComponent from "~/components/header/HeaderComponent.vue"
+import ButtonNavigate from "~/components/buttonNavigate/ButtonNavigate.vue"
 
 const GlobalComponents = {
   install(Vue) {
@@ -31,6 +34,9 @@ const GlobalComponents = {
     Vue.component(Tag.name, Tag);
     Vue.component(ListModal.name, ListModal);
     Vue.component(GeneralComponent.name, GeneralComponent);
+    Vue.component(FilterSearhBar.name, FilterSearhBar);
+    Vue.component(HeaderComponent.name, HeaderComponent)
+    Vue.component(ButtonNavigate.name, ButtonNavigate)
   }
 }
 

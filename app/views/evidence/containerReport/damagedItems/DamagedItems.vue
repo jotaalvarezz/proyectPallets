@@ -1,30 +1,6 @@
 <template>
   <StackLayout @loaded="InfoSelect" backgroundColor="#F4F6F8">
-    <GridLayout
-      height="65"
-      rows="*"
-      columns="50, 3*, 50"
-      backgroundColor="#00acc1"
-    >
-      <Label
-        row="0"
-        col="0"
-        :text="'fa-chevron-left' | fonticon"
-        fontSize="16"
-        class="fas text-center"
-        color="#F4F6F8"
-        @tap="$modal.close"
-      />
-      <Label
-        row="0"
-        col="1"
-        class="text-center"
-        text="Registro de Daños/Reparaciones"
-        fontSize="15"
-        color="#F4F6F8"
-        fontWeight="bold"
-      ></Label>
-    </GridLayout>
+    <HeaderComponent title="Registro de Daños/Reparaciones" :handleback="$modal.close"/>
     <ScrollView>
       <StackLayout
         class="shadow"
@@ -98,7 +74,7 @@
           columns="auto, auto"
           backgroundColor="#F4F6F8"
           class="picture"
-          @tap="showPhoto"
+          @tap="showPhoto(namePhoto)"
         >
           <Label
             col="0"
@@ -327,7 +303,28 @@ export default {
       }
     },
 
-    showPhoto() {},
+    showPhoto(photo) {
+      const folderPath = knownFolders.documents().path
+      const folder = Folder.fromPath(folderPath);
+      const fileList = folder.getEntitiesSync();
+      const imageFiles = fileList.filter(
+        (file) => file["_name"] === photo
+      );
+      const path = imageFiles[0]
+      this.$showModal({
+        template: `
+            <Page>
+              <StackLayout>
+                <Image
+                  src="${path['_path']}"
+                  stretch="aspectFit"
+                  width="700px"
+                />
+              </StackLayout>
+            </Page>
+        `,
+      });
+    },
 
     cleanImage(folderPath) {
       // Crear una carpeta si no existe para guardar la imagen

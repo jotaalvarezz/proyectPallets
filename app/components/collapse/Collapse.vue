@@ -12,11 +12,13 @@
       ></StackLayout>
       <Label :text="title" dock="left" width="auto" />
       <Label
+        ref="hoverLabel"
         :text="value ? 'fa-angle-down' : 'fa-angle-right' | fonticon"
-        class="fas"
+        class="fas text-center animated"
         fontSize="20"
         dock="right"
-        width="auto"
+        width="35"
+        @touch="onTouch"
       />
       <Label dock="bottom" height="auto" />
     </DockLayout>
@@ -81,11 +83,44 @@ export default {
       this.$emit("value", true);
       return (this.value = true);
     },
+
+    onTouch(event) {
+      const hoverLabel = this.$refs.hoverLabel.nativeView;
+      switch (event.action) {
+        case "down":
+          // El usuario ha tocado la pantalla
+          hoverLabel.animate({
+            backgroundColor: "#D8E2E8", // Cambiar el color de fondo
+            duration: 200,
+          });
+          break;
+        case "up":
+          // El usuario ha levantado el dedo de la pantalla
+          hoverLabel.animate({
+            backgroundColor: "#F4F6F8", // Revertir al color original
+            duration: 200,
+          });
+          break;
+        case "cancel":
+          // El toque ha sido cancelado
+          hoverLabel.animate({
+            backgroundColor: "#F4F6F8", // Revertir al color original
+            duration: 200,
+          });
+          break;
+      }
+    },
   },
 };
 </script>
 
 <style scoped>
 .base-component {
+}
+
+.animated {
+  /* background-color: #d8e2e8; */
+  border-radius: 60px;
+  padding: 15px;
 }
 </style>

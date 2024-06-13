@@ -1,31 +1,7 @@
 <template>
   <Page>
     <StackLayout backgroundColor="#F4F6F8">
-      <GridLayout
-        height="65"
-        rows="*"
-        columns="50, 3*, 50"
-        backgroundColor="#00acc1"
-      >
-        <Label
-          row="0"
-          col="0"
-          :text="'fa-chevron-left' | fonticon"
-          fontSize="16"
-          class="fas text-center"
-          color="#F4F6F8"
-          @tap="$modal.close"
-        />
-        <Label
-          row="0"
-          col="1"
-          class="text-center"
-          text="Registro de Pallets"
-          fontSize="15"
-          color="#F4F6F8"
-          fontWeight="bold"
-        ></Label>
-      </GridLayout>
+      <HeaderComponent title="Registro de Pallets" :handleback="$modal.close"/>
       <card-view margin="10" elevation="2" radius="5">
         <GridLayout
           rows="auto,auto,auto,auto,auto,auto,auto,auto,auto,auto"

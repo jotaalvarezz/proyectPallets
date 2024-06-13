@@ -4,60 +4,78 @@
       <StackLayout
         backgroundColor="#00acc1"
         orientation="horizontal"
-        padding="11"
+        padding="4"
         height="70"
       >
-        <Label
-          :text="'fa-chevron-left' | fonticon"
-          class="fas exitIcon"
-          width="40"
-          color="#222a37"
-          fontSize="22"
-          @tap="$modal.close"
+        <ButtonNavigate
+          height="60"
+          width="60"
+          icon="fa-chevron-left"
+          iconColor="#F4F6F8"
+          radius="50"
+          :handleEvent="() => close()"
         />
         <TextField
           v-model="textFieldValue"
           height="40"
           borderWidth="1"
           backgroundColor="#F4F6F8"
-          width="85%"
+          width="80%"
           borderRadius="5"
           borderColor="#F4F6F8"
           horizontalAlignment="left"
           style="placeholder-color: #3c495e; color: #3c495e"
-          hint="Buscar Pallet..."
+          hint="Buscar..."
           paddingLeft="10"
           fontSize="15"
           @textChange="filter"
         />
       </StackLayout>
-      <grid-layout
-        v-if="this.array_filter.length > 0"
-        rows="*"
-        backgroundColor="#F4F6F8"
-      >
-        <ListView for="(item, index) in array_filter" @itemTap="onItemTap">
+      <GridLayout rows="*" backgroundColor="#F4F6F8">
+        <Label
+          row="0"
+          textWrap="true"
+          class="info"
+          v-if="array_filter.length == 0"
+          verticalAlignment="center"
+        >
+          <FormattedString>
+            <Span class="fas" text.decode="&#x1F6A2;" />
+            <Span :text="message" />
+          </FormattedString>
+        </Label>
+        <ListView
+          v-if="array_filter.length > 0"
+          for="(item, index) in array_filter"
+          @itemTap="navegate"
+        >
           <v-template>
-            <GridLayout columns="*,40">
+            <GridLayout columns="*,50">
               <StackLayout
                 orientation="horizontal"
-                @tap="navegate(item)"
                 col="0"
               >
                 <Label
+                  backgroundColor="#D8E2E8"
                   :text="icons.iconLogo | fonticon"
-                  class="fas"
-                  width="110"
-                  fontSize="70"
-                  color="#0096b7"
+                  class="nt-drawer__header-image fas"
+                  fontSize="45"
+                  color="#EAB14D"
                 />
-                <Label
-                  :text="item.text"
-                  class="p-l-10 colorIcons"
-                  textWrap="true"
-                  width="auto"
-                  fontSize="18"
-                />
+                <StackLayout class="heigth">
+                  <Label
+                    text="Barco:"
+                    class="p-l-10 subTittle"
+                    textWrap="true"
+                    width="auto"
+                    fontSize="14"
+                  />
+                  <Label
+                    :text="item.text"
+                    class="p-l-10 colorIcons"
+                    fontSize="14"
+                  />
+                </StackLayout>
               </StackLayout>
               <Label
                 :text="icons.iconOperations | fonticon"
@@ -70,21 +88,21 @@
             </GridLayout>
           </v-template>
         </ListView>
-        <fab
+        <!-- <fab
           @tap="getAll"
           :text="'fa-sync' | fonticon"
           class="fab-sync fas"
           rippleColor="#f1f1f1"
         >
-        </fab>
-      </grid-layout>
+        </fab> -->
+      </GridLayout>
     </StackLayout>
   </page>
 </template>
 
 <script>
 export default {
-  name:"searchView",
+  name: "searchView",
   props: {
     data: {
       type: Array,
@@ -104,24 +122,40 @@ export default {
     return {
       textFieldValue: "",
       array_filter: [],
+      datos: [
+        { name: "primer registro" },
+        { name: "segundo registro" },
+        { name: "tercer registro" },
+        { name: "cuarto registro" },
+        { name: "quinto registro" },
+      ],
+      message: "No hay barcos para mostrar",
     };
   },
 
   methods: {
     filter() {
       if (this.textFieldValue.length > 0) {
-        this.array_filter = this.data.filter(
-          (data) =>
-            !this.textFieldValue ||
-            data.text.toLowerCase().includes(this.textFieldValue)
+        this.array_filter = this.data.filter((prev) =>
+          prev.text.toLowerCase().includes(this.textFieldValue.toLowerCase())
         );
+      } else if (this.textFieldValue.length === 0) {
+        this.array_filter = [];
       }
     },
 
-    navegate(item) {
-      this.operation1(item);
+    navegate(event) {
+      this.operation1(event.item);
       this.$modal.close();
     },
+
+    close() {
+      this.$modal.close();
+    },
+  },
+
+  created() {
+    console.log("search ", this.data);
   },
 };
 </script>

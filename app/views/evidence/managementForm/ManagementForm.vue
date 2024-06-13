@@ -61,7 +61,7 @@
             v-model="model.titular_name"
             :required="errors.titular_name"
           />
-          <Stripe row="5" color="#3c495e" mt="20" mb="20" mr="40" ml="40"/>
+          <Stripe row="5" color="#3c495e" mt="20" mb="20" mr="40" ml="40" />
           <!-- Boton para Crear -->
           <Button
             row="6"
@@ -82,12 +82,14 @@
         margin="5"
         row="1"
         rows="auto"
-        columns="3*, 50"
+        columns="*, 65"
       >
         <SearchBar
           ref="mySearchBar"
           row="0"
           col="0"
+          height="60"
+          class="search-bar"
           margin="10"
           hint="Buscar..."
           v-model="search"
@@ -95,23 +97,22 @@
           @submit="filter"
           @clear="clear"
         />
-        <Label
+        <ButtonNavigate
           row="0"
           col="1"
-          margin="10"
-          :text="'fa-sync-alt' | fonticon"
-          class="fas text-center"
-          width="40"
-          color="#222a37"
-          fontSize="22"
-          @tap="refreshManagments"
+          height="60"
+          width="60"
+          icon="fa-sync-alt"
+          size="22"
+          radius="50"
+          :handleEvent="() => refreshManagments()"
         />
       </GridLayout>
       <Label
         row="2"
         textWrap="true"
         class="info"
-        v-if="managments.length == 0"
+        v-if="array_filter.length == 0"
         verticalAlignment="center"
       >
         <FormattedString>
@@ -120,6 +121,7 @@
         </FormattedString>
       </Label>
       <ListView
+        v-if="array_filter.length > 0"
         row="2"
         ref="listView"
         for="item in array_filter"
@@ -127,7 +129,7 @@
       >
         <v-template>
           <!-- Shows the list item label in the default color and style. -->
-          <GridLayout columns="*, 40">
+          <GridLayout columns="*, 50">
             <StackLayout orientation="horizontal" col="0">
               <Label
                 backgroundColor="#D8E2E8"
@@ -186,13 +188,13 @@
                 /> -->
               </StackLayout>
             </StackLayout>
-            <Label
-              :text="'fa-ellipsis-v' | fonticon"
-              class="fas iconOptions"
-              fontSize="14"
+            <ButtonNavigate
               col="1"
-              style="text-align: center"
-              @tap="navigateOptions(item, index)"
+              height="50"
+              width="50"
+              icon="fa-ellipsis-v"
+              radius="50"
+              :handleEvent="() => navigateOptions(item, index)"
             />
           </GridLayout>
         </v-template>
@@ -318,7 +320,8 @@ export default {
       if (this.search.length > 0) {
         this.array_filter = this.managments.filter(
           (data) =>
-            !this.search || data.name.toLowerCase().includes(this.search)
+            !this.search ||
+            data.name.toLowerCase().includes(this.search.toLowerCase())
         );
       } else if (this.search === 0) {
         this.array_filter = this.managments;
@@ -486,5 +489,14 @@ export default {
 
 .error {
   color: red;
+}
+
+.animated {
+  /* background-color: #d8e2e8; */
+  border-radius: 60px;
+}
+
+.search-bar {
+  font-size: 15; /* Cambia el tamaño del texto aquí */
 }
 </style>

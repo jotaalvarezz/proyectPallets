@@ -7,11 +7,52 @@
       :operation2="navigateOptions"
       :search="true"
     />
-    <GridLayout rows="*" backgroundColor="#F4F6F8">
-      <ListView for="(item, index) in ships">
+    <GridLayout rows="auto, *" backgroundColor="#F4F6F8">
+      <GridLayout margin="5" row="0" rows="*" columns="*, 70">
+        <SearchBar
+          row="0"
+          col="0"
+          height="60"
+          margin="10"
+          class="search-bar"
+          hint="Buscar..."
+          v-model="search"
+          @textChange="filter"
+          @submit="filter"
+          @clear="clear"
+        />
+        <ButtonNavigate
+          row="0"
+          col="1"
+          height="60"
+          width="60"
+          icon="fa-sync-alt"
+          size="22"
+          radius="50"
+          :handleEvent="() => refreshEvidenceRports()"
+        />
+      </GridLayout>
+      <Label
+        row="1"
+        textWrap="true"
+        class="info"
+        v-if="array_filter.length == 0"
+        verticalAlignment="center"
+      >
+        <FormattedString>
+          <Span class="fas" text.decode="&#x1F6A2;" />
+          <Span :text="message" />
+        </FormattedString>
+      </Label>
+      <ListView
+        row="1"
+        v-if="array_filter.length > 0"
+        for="(item, index) in ships"
+        @itemTap="navigate"
+      >
         <v-template>
-          <GridLayout columns="*,40" @longPress="operations">
-            <StackLayout orientation="horizontal" @tap="navigate(item)" col="0">
+          <GridLayout columns="*,50">
+            <StackLayout orientation="horizontal" col="0">
               <Label
                 backgroundColor="#D8E2E8"
                 :text="'fa-ship' | fonticon"
@@ -34,18 +75,18 @@
                 />
               </StackLayout>
             </StackLayout>
-            <Label
-              :text="'fa-ellipsis-v' | fonticon"
-              class="fas iconOptions"
-              fontSize="15"
+            <ButtonNavigate
               col="1"
-              style="text-align: center"
-              @tap="navigateOptions(item, index)"
+              height="50"
+              width="50"
+              icon="fa-ellipsis-v"
+              radius="50"
+              :handleEvent="() => navigateOptions(item, index)"
             />
           </GridLayout>
         </v-template>
       </ListView>
-      <FloatingButton row="2" :icon="'fa-plus'" :method="openModal" />
+      <FloatingButton row="1" :icon="'fa-plus'" :method="openModal" />
     </GridLayout>
   </Page>
 </template>
@@ -74,7 +115,10 @@ export default {
   },
   data() {
     return {
+      message: "No hay barcos para mostrar",
+      search: "",
       ships: [],
+      array_filter: [],
       selectedOption: null,
       isChecked: false,
       icons: {
@@ -90,9 +134,25 @@ export default {
   methods: {
     ...mapMutations(["saveItem", "setShip"]),
 
-    navigate(item) {
-      this.saveItem(item);
-      this.setShip(item);
+    filter() {
+      if (this.search.length > 0) {
+        this.array_filter = this.ships.filter(
+          (prev) =>
+            !this.search ||
+            prev.text.toLowerCase().includes(this.search.toLowerCase())
+        );
+      } else if (this.search.length === 0) {
+        this.array_filter = [];
+      }
+    },
+
+    clear() {
+      this.array_filter = this.ships;
+    },
+
+    navigate(event) {
+      this.saveItem(event.item);
+      this.setShip(event.item);
       this.$router.push("warehouses.index");
     },
 
@@ -139,7 +199,11 @@ export default {
     shipInfo(item) {
       const listRows = ShipList.listRows;
       this.$showModal(ListModal, {
-        props: { title: "Informacion del Barco", info: item, listRows: listRows },
+        props: {
+          title: "Informacion del Barco",
+          info: item,
+          listRows: listRows,
+        },
       });
     },
 
@@ -164,10 +228,6 @@ export default {
       }
     },
 
-    operations() {
-      /* menu de opciones */
-    },
-
     async getShips() {
       try {
         this.loadingCharge(true);
@@ -180,11 +240,12 @@ export default {
             journey: ships[i][2],
           });
         }
-        this.loadingCharge();
+        this.array_filter = this.ships
       } catch (error) {
-        this.loadingCharge();
         Alert.danger("Hubo un error", error);
         console.error("error al traer lo datos ", error);
+      } finally {
+        this.loadingCharge();
       }
     },
   },
@@ -218,5 +279,9 @@ export default {
 
 .colorTimes {
   color: #e92222;
+}
+
+.search-bar {
+  font-size: 15; /* Cambia el tamaño del texto aquí */
 }
 </style>

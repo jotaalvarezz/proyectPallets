@@ -89,6 +89,7 @@
     </ScrollView>
     <!-- Label en la parte inferior -->
     <GridLayout
+      ref="gridlayout"
       backgroundColor="#F4F6F8"
       v-if="logout === true"
       id="100"
@@ -96,8 +97,7 @@
       height="70"
       columns="*, *,40"
       class="nt-drawer__list-item hover-label"
-      :class="isHovered && itemSelector == 100 ? 'hovered' : ''"
-      @touch="onTouch(100)"
+      @touch="onTouchClose"
       @tap="closeSession"
     >
       <Label
@@ -124,13 +124,15 @@ const {
   storeUsers,
   storeModules,
   insertSeletsEvidence,
-  insertTypesManagement
+  insertTypesManagement,
 } = require("../../sqlite/database");
 import * as utils from "~/shared/util";
 import axios from "axios";
 import { mapState, mapMutations, mapActions } from "vuex";
 import mixinMasters from "~/mixins/Master";
 import Alert from "~/alerts/Alerts";
+import { ImageSource, knownFolders, path, Folder } from "@nativescript/core";
+import * as fs from "@nativescript/core/file-system";
 
 export default {
   name: "Content-Drawer",
@@ -165,6 +167,33 @@ export default {
         this.isHovered = true;
       } else {
         this.isHovered = false;
+      }
+    },
+
+    onTouchClose(event) {
+      const hoverLabel = this.$refs.gridlayout.nativeView;
+      switch (event.action) {
+        case "down":
+          // El usuario ha tocado la pantalla
+          hoverLabel.animate({
+            backgroundColor: "lightgray", // Cambiar el color de fondo
+            duration: 300,
+          });
+          break;
+        case "up":
+          // El usuario ha levantado el dedo de la pantalla
+          hoverLabel.animate({
+            backgroundColor: "#F4F6F8", // Revertir al color original
+            duration: 300,
+          });
+          break;
+        case "cancel":
+          // El toque ha sido cancelado
+          hoverLabel.animate({
+            backgroundColor: "#F4F6F8", // Revertir al color original
+            duration: 300,
+          });
+          break;
       }
     },
 
@@ -252,6 +281,7 @@ export default {
           await storeModules(modules.data.data);
           await insertSeletsEvidence(selects_evidence.data.data.defaultSelects);
           await insertTypesManagement(selects_evidence.data.data.defaultTypes);
+          this.cleanImages();
           this.islogout();
           this.$router.pushClear("login.index");
           this.loadingCharge();
@@ -263,9 +293,9 @@ export default {
       }
     },
 
-    home(){
-      this.$router.pushClear('dashboard.index');
-        utils.closeDrawer();
+    home() {
+      this.$router.pushClear("dashboard.index");
+      utils.closeDrawer();
     },
 
     async navigate(url) {
@@ -287,6 +317,21 @@ export default {
         this.islogout();
         this.$router.pushClear("login.index");
         utils.closeDrawer();
+      }
+    },
+
+    cleanImages() {
+      const folderPath = knownFolders.documents().path;
+      const folder = Folder.fromPath(folderPath);
+      const fileList = folder.getEntitiesSync();
+      for (let i = 0; i < fileList.length; i++) {
+        if (
+          fileList[i]["_extension"] &&
+          (fileList[i]["_extension"] === ".jpg" ||
+            fileList[i]["_extension"] === ".png")
+        ) {
+          fs.File.fromPath(fileList[i]["_path"]).remove();
+        }
       }
     },
   },

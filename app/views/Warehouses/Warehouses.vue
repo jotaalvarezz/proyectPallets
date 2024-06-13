@@ -11,10 +11,10 @@
         textWrap="true"
       />
       <Stripe row="1" color="#3c495e" />
-      <ListView for="(item, index) in warehouses" row="2">
+      <ListView row="2" for="(item, index) in warehouses" @itemTap="navigate">
         <v-template>
-          <GridLayout columns="* ,40">
-            <StackLayout orientation="horizontal" @tap="navigate(item)" col="0">
+          <GridLayout columns="* ,50">
+            <StackLayout orientation="horizontal" col="0">
               <Label
                 backgroundColor="#D8E2E8"
                 :text="'fa-warehouse' | fonticon"
@@ -39,12 +39,14 @@
                 />
               </StackLayout>
             </StackLayout>
-            <Label
-              :text="'fa-times' | fonticon"
-              class="fas colorMinus"
-              fontSize="15"
+            <ButtonNavigate
               col="1"
-              @tap="deleteRow(item.id, index)"
+              height="50"
+              width="50"
+              icon="fa-times"
+              iconColor="#e92222"
+              radius="50"
+              :handleEvent="() => deleteRow(item.id, index)"
             />
           </GridLayout>
         </v-template>
@@ -84,8 +86,8 @@ export default {
   methods: {
     ...mapMutations(["saveItem"]),
 
-    navigate(item) {
-      this.saveItem(item);
+    navigate(event) {
+      this.saveItem(event.item);
       this.$router.push("pallets.index");
     },
 

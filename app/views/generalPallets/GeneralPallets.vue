@@ -7,23 +7,54 @@
       :operation2="navigate"
       :search="true"
     />
-    <grid-layout rows="*" backgroundColor="#F4F6F8">
-      <Label class="info" v-if="pallets.length == 0">
+    <GridLayout rows="auto, *" backgroundColor="#F4F6F8">
+      <GridLayout margin="5" row="0" rows="*" columns="*, 70">
+        <SearchBar
+          row="0"
+          col="0"
+          height="60"
+          margin="10"
+          class="search-bar"
+          hint="Buscar..."
+          v-model="search"
+          @textChange="filter"
+          @submit="filter"
+          @clear="clear"
+        />
+        <ButtonNavigate
+          row="0"
+          col="1"
+          height="60"
+          width="60"
+          icon="fa-sync-alt"
+          size="22"
+          radius="50"
+          :handleEvent="() => refreshPallets()"
+        />
+      </GridLayout>
+      <Label
+        row="1"
+        textWrap="true"
+        class="info"
+        v-if="array_filter.length == 0"
+        verticalAlignment="center"
+      >
         <FormattedString>
-          <Span class="fas" text.decode="&#x1F6A2; " />
+          <Span class="fas" text.decode="&#x1F4E6;" />
           <Span :text="message" />
         </FormattedString>
       </Label>
       <ListView
-        for="(item, index) in pallets"
-        @itemTap="onItemTap"
+        row="1"
+        for="(item, index) in array_filter"
+        @itemTap="showInfo"
         @itemLoading="onScroll"
         :class="spaceButtom"
         ref="listView"
-        v-if="pallets.length > 0"
+        v-if="array_filter.length > 0"
       >
         <v-template>
-          <GridLayout columns="30,*,40">
+          <GridLayout columns="30,*,50">
             <Label
               col="0"
               :text="index + 1"
@@ -32,7 +63,7 @@
               fontWeight="bold"
               class="styleIndex"
             />
-            <StackLayout orientation="horizontal" @tap="showInfo(item)" col="1">
+            <StackLayout orientation="horizontal" col="1">
               <Label
                 backgroundColor="#D8E2E8"
                 :text="'fa-pallet' | fonticon"
@@ -57,18 +88,26 @@
                 />
               </StackLayout>
             </StackLayout>
-            <Label
+            <ButtonNavigate
+              col="2"
+              height="50"
+              width="50"
+              icon="fa-ellipsis-v"
+              radius="50"
+              :handleEvent="() => navigate(item, index)"
+            />
+            <!-- <Label
               :text="'fa-ellipsis-v' | fonticon"
               class="fas iconOptions"
               fontSize="15"
               col="2"
               @tap="navigate(item, index)"
-            />
+            /> -->
           </GridLayout>
         </v-template>
       </ListView>
-      <FloatingButton :icon="'fa-cloud-upload-alt'" :method="sendAll" />
-    </grid-layout>
+      <FloatingButton row="1" :icon="'fa-cloud-upload-alt'" :method="sendAll" />
+    </GridLayout>
   </Page>
 </template>
 
@@ -100,7 +139,9 @@ export default {
   data() {
     return {
       message: "No hay Pallets Escaneados",
+      search: "",
       pallets: [],
+      array_filter: [],
       infoPallet: {},
       icons: {
         iconLogo: "fa-pallet",
@@ -126,7 +167,17 @@ export default {
   methods: {
     ...mapMutations(["indicatorState"]),
 
-    onItemTap() {},
+    filter() {
+      if (this.search.length > 0) {
+        this.array_filter = this.pallets.filter(
+          (prev) =>
+            !this.search ||
+            prev.text.toLowerCase().includes(this.search.toLowerCase())
+        );
+      } else if (this.search.length === 0) {
+        this.array_filter = [];
+      }
+    },
 
     onScroll(args) {
       if (args.index < this.pallets.length - 1) {
@@ -134,6 +185,14 @@ export default {
       } else if (args.index == this.pallets.length - 1) {
         this.space = true;
       }
+    },
+
+    clear() {
+      this.array_filter = this.pallets;
+    },
+
+    refreshPallets(){
+      this.getAll();
     },
 
     async palletInfo(item) {
@@ -156,10 +215,10 @@ export default {
       }
     },
 
-    async showInfo(item) {
+    async showInfo(event) {
       try {
         const listRows = GeneralPalletList.listRows;
-        await this.palletInfo(item);
+        await this.palletInfo(event.item);
         this.$showModal(ListModal, {
           props: {
             title: "Infomacion del Pallet",
@@ -197,6 +256,7 @@ export default {
 
     async getAll() {
       try {
+        this.loadingCharge(true);
         this.pallets = [];
         const pallets = await getPalletsAll();
         for (let i = 0; i < pallets.length; i++) {
@@ -207,8 +267,11 @@ export default {
             warehouse_id: pallets[i][3],
           });
         }
+        this.array_filter = this.pallets;
       } catch (error) {
         console.error("error al traer lo datos ", error);
+      } finally {
+        this.loadingCharge();
       }
     },
 

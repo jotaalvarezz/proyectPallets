@@ -1,26 +1,17 @@
 <template>
   <ActionBar backgroundColor="#00acc1" flat="true">
-    <GridLayout rows="auto, *" columns="auto, 3*, auto" height="100%">
-      <!-- Contenido de tu GridLayout aquí -->
-      <!-- <Label
-        row="1"
-        col="1"
-        text="label de prueba"
-        fontSize="12"
-        padding="0"
-        color="#F4F6F8"
-        fontWeight="bold"
-      /> -->
-      <Label
+    <GridLayout rows="*" columns="60, 3*, 60" height="65">
+      <ButtonNavigate
         col="0"
-        rowSpan="2"
-        class="fas text-left"
-        text.decode="&#xf0c9;"
-        color="white"
-        @tap="openDrawer"
-        fontSize="20"
+        height="60"
+        width="60"
+        icon="fa-bars"
+        size="20"
+        iconColor="#F4F6F8"
+        radius="50"
+        :handleEvent="() => openDrawer()"
       />
-      <StackLayout rowSpan="2" col="1" style="width: 100%">
+      <StackLayout col="1" padding="10" style="width: 100%">
         <Image
           src="~/assets/images/logobarco.png"
           width="30"
@@ -36,7 +27,18 @@
           horizontalAlignment="center"
         />
       </StackLayout>
-      <Label
+      <ButtonNavigate
+        v-show="search"
+        col="2"
+        height="60"
+        width="60"
+        icon="fa-search"
+        size="20"
+        iconColor="#F4F6F8"
+        radius="50"
+        :handleEvent="() => modalSearch()"
+      />
+      <!-- <Label
         v-show="search"
         rowSpan="2"
         col="2"
@@ -45,7 +47,7 @@
         color="white"
         fontSize="20"
         @tap="modalSearch"
-      />
+      /> -->
     </GridLayout>
   </ActionBar>
 </template>
@@ -55,7 +57,7 @@ import * as util from "~/shared/util";
 import searchView from "../search/searchView.vue";
 
 export default {
-  name:"Header",
+  name: "Header",
   props: {
     data: {
       type: Array,

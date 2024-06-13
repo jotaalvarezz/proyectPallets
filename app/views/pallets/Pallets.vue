@@ -114,12 +114,14 @@
                 />
               </StackLayout>
             </StackLayout>
-            <Label
-              :text="'fa-times' | fonticon"
-              class="fas colorMinus"
-              fontSize="15"
+            <ButtonNavigate
               col="2"
-              @tap="deleteRow(item.id, index)"
+              height="50"
+              width="50"
+              icon="fa-times"
+              iconColor="#e92222"
+              radius="50"
+              :handleEvent="() => deleteRow(item.id, index)"
             />
           </GridLayout>
         </v-template>

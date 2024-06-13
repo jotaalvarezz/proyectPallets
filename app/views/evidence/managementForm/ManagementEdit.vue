@@ -1,30 +1,6 @@
 <template>
   <StackLayout backgroundColor="#F4F6F8">
-    <GridLayout
-      height="55"
-      rows="*"
-      columns="50, 3*, 50"
-      backgroundColor="#00acc1"
-    >
-      <Label
-        row="0"
-        col="0"
-        :text="'fa-chevron-left' | fonticon"
-        fontSize="16"
-        class="fas text-center"
-        color="#F4F6F8"
-        @tap="$modal.close"
-      />
-      <Label
-        row="0"
-        col="1"
-        class="text-center"
-        text="Actualizar Gestion"
-        fontSize="15"
-        color="#F4F6F8"
-        fontWeight="bold"
-      ></Label>
-    </GridLayout>
+    <HeaderComponent title="Actualizar Gestion" :handleback="$modal.close"/>
     <GridLayout
       @loaded="index"
       rows="auto,auto,auto,auto,auto,auto,auto,auto,auto"
@@ -78,23 +54,36 @@
       />
       <GridLayout
         row="5"
-        columns="35,auto"
-        style="width: 80%; margin-top: 15px"
+        rows="auto"
+        columns="auto"
+        style="margin-top: 20px; width: 85%;"
       >
-        <Label
-          col="0"
-          :text="'fa-signature' | fonticon"
-          class="fas colorIcons"
-          fontSize="22"
-        />
-        <Label
-          col="1"
-          textWrap="true"
-          text="Firmar"
-          fontSize="14"
-          class="colorIcons"
+        <StackLayout
+          row="0"
+          marginLeft="5"
+          padding="10"
+          orientation="horizontal"
+          borderWidth="1"
+          backgroundColor="#F4F6F8"
+          borderColor="#222a37"
+          borderRadius="30"
           @tap="signatureCaptain"
-        />
+        >
+          <Label
+            col="0"
+            :text="'fa-signature' | fonticon"
+            class="fas colorIcons"
+            fontSize="22"
+            marginRight="2"
+          />
+          <Label
+            col="1"
+            textWrap="true"
+            text="Firmar"
+            fontSize="14"
+            class="colorIcons"
+          />
+        </StackLayout>
       </GridLayout>
       <!-- <Signature row="5" /> -->
       <Stripe row="6" color="#3c495e" mt="20" mb="20" />

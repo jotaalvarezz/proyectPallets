@@ -1,42 +1,16 @@
 <template>
   <page @loaded="getEvidences" actionBarHidden="false">
-    <ActionBar backgroundColor="#00acc1">
-      <GridLayout height="65" rows="65" columns="auto, 3*, auto">
-        <Label
-          row="0"
-          col="0"
-          :text="'fa-chevron-left' | fonticon"
-          class="fas exitIcon text-center"
-          color="#F4F6F8"
-          fontSize="16"
-          @tap="navigateBack"
-        />
-        <Label
-          row="0"
-          col="1"
-          fontSize="16"
-          class="fas text-center"
-          text="Creacion de Reporte/Contenedor"
-          color="#F4F6F8"
-          fontWeight="bold"
-        ></Label>
-        <Label
-          v-show="search"
-          row="0"
-          col="2"
-          class="fas iconSearch"
-          :text="'fa-search' | fonticon"
-          color="white"
-          fontSize="20"
-          @tap="modalSearch"
-        />
-      </GridLayout>
+    <ActionBar backgroundColor="#00acc1" padding="0">
+      <HeaderComponent title="Reportes/Evidencias" :handleback="navigateBack" />
     </ActionBar>
     <GridLayout rows="auto,*" backgroundColor="#F4F6F8">
-      <GridLayout margin="5" row="0" rows="auto" columns="3*, 50">
+      <GridLayout margin="5" row="0" rows="auto" columns="*, 70">
         <SearchBar
+          height="60"
+          ref="mySearchBar"
           row="0"
           col="0"
+          class="search-bar"
           margin="10"
           hint="Buscar..."
           v-model="search"
@@ -44,23 +18,22 @@
           @submit="filter"
           @clear="clear"
         />
-        <Label
+        <ButtonNavigate
           row="0"
           col="1"
-          margin="10"
-          :text="'fa-sync-alt' | fonticon"
-          class="fas text-center"
-          width="40"
-          color="#3c495e"
-          fontSize="22"
-          @tap="refreshEvidences"
+          height="60"
+          width="60"
+          icon="fa-sync-alt"
+          size="22"
+          radius="50"
+          :handleEvent="() => refreshEvidences()"
         />
       </GridLayout>
       <Label
         row="1"
         textWrap="true"
         class="info"
-        v-if="container_reports.length == 0"
+        v-if="array_filter.length == 0"
         verticalAlignment="center"
       >
         <FormattedString>
@@ -73,10 +46,10 @@
         row="1"
         ref="listView"
         for="(item, index) in array_filter"
-        v-if="container_reports.length > 0"
+        v-if="array_filter.length > 0"
       >
         <v-template>
-          <GridLayout columns="*, 40">
+          <GridLayout columns="*, 50">
             <StackLayout>
               <Label
                 backgroundColor="#D8E2E8"
@@ -155,38 +128,32 @@
                       :items="repair.repair_damage"
                       labelIterator="name"
                     />
-                    <Label
-                      width="20%"
-                      height="40"
-                      :text="'fa-times' | fonticon"
-                      class="fas text-center"
-                      fontWeight="bold"
-                      fontSize="15"
-                      @tap="deleteRowRepair(item, repair.id)"
+                    <ButtonNavigate
+                      height="50"
+                      width="50"
+                      icon="fa-times"
+                      radius="50"
+                      :handleEvent="() => deleteRowRepair(item, repair.id)"
                     />
                   </StackLayout>
-                  <Label
-                    width="50"
-                    height="50"
-                    marginTop="10"
-                    backgroundColor="#D8E2E8"
-                    :text="'fa-toolbox' | fonticon"
-                    class="text-center fas"
-                    fontWeight="bold"
-                    fontSize="15"
-                    borderRadius="50"
-                    @tap="openFormDamaged(item)"
+                  <ButtonNavigate
+                    height="60"
+                    width="60"
+                    icon="fa-toolbox"
+                    iconBackground="#D8E2E8"
+                    radius="50"
+                    :handleEvent="() => openFormDamaged(item)"
                   />
                 </StackLayout>
               </StackLayout>
             </StackLayout>
-            <Label
-              :text="'fa-ellipsis-v' | fonticon"
-              class="fas iconOptions"
-              fontSize="14"
+            <ButtonNavigate
               col="1"
-              style="text-align: center"
-              @tap="navigateOptions(item, index)"
+              height="50"
+              width="50"
+              icon="fa-ellipsis-v"
+              radius="50"
+              :handleEvent="() => navigateOptions(item, index)"
             />
           </GridLayout>
         </v-template>
@@ -245,7 +212,7 @@ export default {
       if (this.search.length > 0) {
         this.array_filter = this.container_reports.filter(
           (data) =>
-            !this.search || data.code.toLowerCase().includes(this.search)
+            !this.search || data.code.toLowerCase().includes(this.search.toLowerCase())
         );
       } else if (this.search.length === 0) {
         this.array_filter = this.container_reports;
@@ -427,5 +394,14 @@ export default {
   font-size: 16;
   horizontal-align: center;
   vertical-align: center;
+}
+
+.animated {
+  /* background-color: #d8e2e8; */
+  border-radius: 60px;
+}
+
+.search-bar {
+  font-size: 15; /* Cambia el tamaño del texto aquí */
 }
 </style>

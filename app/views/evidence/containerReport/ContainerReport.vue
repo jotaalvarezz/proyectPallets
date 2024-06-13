@@ -1,30 +1,6 @@
 <template>
   <StackLayout @loaded="initialMethods" backgroundColor="#F4F6F8">
-    <GridLayout
-      height="65"
-      rows="*"
-      columns="50, 3*, 50"
-      backgroundColor="#00acc1"
-    >
-      <Label
-        row="0"
-        col="0"
-        :text="'fa-chevron-left' | fonticon"
-        fontSize="16"
-        class="fas text-center"
-        color="#F4F6F8"
-        @tap="$modal.close"
-      />
-      <Label
-        row="0"
-        col="1"
-        class="text-center"
-        text="Creacion de Reporte/Contenedor"
-        fontSize="15"
-        color="#F4F6F8"
-        fontWeight="bold"
-      ></Label>
-    </GridLayout>
+    <HeaderComponent title="Creacion de Reporte/Contenedor" :handleback="$modal.close"/>
     <ScrollView>
       <StackLayout backgroundColor="#F4F6F8">
         <StackLayout
@@ -92,42 +68,6 @@
                 />
               </FormattedString>
             </Label>
-            <!-- <GridLayout
-              row="6"
-              columns="35,auto,*,35,auto"
-              style="width: 80%; margin-top: 15px"
-            >
-              <Label
-                col="0"
-                :text="'fa-tools' | fonticon"
-                class="fas colorIcons"
-                color="#EAB14D"
-                fontSize="22"
-              />
-              <Label
-                col="1"
-                textWrap="true"
-                text="Agregar Reparaciones"
-                fontSize="14"
-                class="colorIcons"
-                @tap="openFormDamaged"
-              />
-              <Label
-                col="3"
-                :text="'fa-eye' | fonticon"
-                class="fas colorIcons"
-                color="#24D311"
-                fontSize="22"
-              />
-              <Label
-                col="4"
-                textWrap="true"
-                text="Ver Reparaciones"
-                fontSize="14"
-                class="colorIcons"
-                @tap="listRepairs"
-              />
-            </GridLayout> -->
             <SelectField
               row="6"
               :value="model.additional_damage_id"
@@ -136,7 +76,6 @@
               :multiple="true"
               icon="fa-tools"
               @value="model.additional_damage_id = $event"
-              :required="errors.additional_damage_id"
             />
             <FormGroupTextField
               row="7"
@@ -198,10 +137,12 @@ import DamagedItems from "~/views/evidence/containerReport/damagedItems/DamagedI
 import DamagedItemsList from "~/views/evidence/containerReport/damagedItems/DamagedItemsList.vue";
 import Alert from "~/alerts/Alerts";
 import { mapState, mapMutations } from "vuex";
+import HeaderComponent from '~/components/header/HeaderComponent.vue';
 
 export default {
   components: {
     DamagedItems,
+    HeaderComponent,
   },
 
   data() {
@@ -227,7 +168,6 @@ export default {
         code: false,
         role: false,
         type_id:false,
-        additional_damage_id:false
       },
     };
   },
@@ -263,7 +203,6 @@ export default {
       this.errors.code = !this.model.code.trim();
       this.errors.role = !this.model.role.trim();
       this.errors.type_id = this.model.type_id === null ? true : false
-      this.errors.additional_damage_id = this.model.additional_damage_id.length === 0 ? true : false
       let fullfield = "";
       for (const key in this.errors) {
         if (this.errors.hasOwnProperty(key) && this.errors[key] != false) {

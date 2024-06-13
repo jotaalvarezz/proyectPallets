@@ -1,78 +1,65 @@
 <template>
-    <ActionBar backgroundColor="#00acc1" flat="true">
-      <GridLayout
-        rows="*"
-        columns="auto, 3*, auto"
-        height="100%"
-      >
-        <!-- Contenido de tu GridLayout aquí -->
-        <Label
-          row="0"
-          col="0"
-          class="fas text-left"
-          text.decode="&#xf0c9;"
-          color="white"
-          @tap="openDrawer"
-          fontSize="20"
-        />
-        <StackLayout
-          row="0"
-          col="1"
-          style="width: 100%"
-        >
-          <Image
-            src="~/assets/images/logobarco.png"
-            width="30"
-            height="30"
-            horizontalAlignment="center"
-          />
-          <Label
-            text="WSP"
-            fontSize="12"
-            padding="0"
-            color="#F4F6F8"
-            fontWeight="bold"
-            horizontalAlignment="center"
-          />
-        </StackLayout>
-      </GridLayout>
-    </ActionBar>
-  </template>
+  <GridLayout
+    height="65"
+    rows="*"
+    columns="60, *, 60"
+    backgroundColor="#00acc1"
+  >
+    <ButtonNavigate
+      height="60"
+      width="60"
+      icon="fa-chevron-left"
+      iconColor="#F4F6F8"
+      radius="50"
+      :handleEvent="() => back()"
+    />
+    <Label
+      row="0"
+      col="1"
+      class="text-center"
+      :text="title"
+      :fontSize="textSize"
+      color="#F4F6F8"
+      fontWeight="bold"
+    ></Label>
+  </GridLayout>
+</template>
 
-  <script>
-  import * as util from "~/shared/util";
-  import searchView from "../search/searchView.vue";
-
-  export default {
-    props: {
-
-    },
-    computed: {},
-    methods: {
-
+<script>
+export default {
+  name: "HeaderComponent",
+  props: {
+    title: {
+      type: String,
+      default: "Sin Titulo",
     },
 
-    created() {},
-  };
-  </script>
+    handleback: {
+      type: Function,
+      default: () => {},
+    },
 
-  <style scoped lang="scss">
-  @import "@nativescript/theme/scss/variables/blue";
+    textSize: {
+      type: Number,
+      default: 15,
+    },
+  },
 
-  // Custom styles
-  .fas {
-    @include colorize($color: accent);
-  }
+  methods: {
+    back() {
+      this.handleback();
+    },
+  },
 
-  .info {
-    font-size: 20;
-    horizontal-align: center;
-    vertical-align: center;
-  }
+  created() {},
+};
+</script>
 
-  .iconSearch {
-    padding-right: 0px;
-    margin-left: 5px;
-    opacity: 0.8;
-  }
-  </style>
+<style scoped>
+.animated {
+  /* background-color: #d8e2e8; */
+  border-radius: 60px;
+  padding: 20px;
+  margin: 24px 20px 20px 20px;
+}
+</style>
