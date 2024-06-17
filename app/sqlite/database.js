@@ -38,6 +38,22 @@ const {
   deleteShip
 } = require("~/sqlite/queries/ship")
 
+const {
+  getWarehouses,
+  insertWarehuse,
+  deleteWarehouse
+} = require("~/sqlite/queries/warehouse")
+
+const {
+  getPallets,
+  getPalletsAll,
+  getPallet,
+  loadPallets,
+  insertPallet,
+  updatePallet,
+  deletePallet
+} = require("~/sqlite/queries/pallet")
+
 const { storeModules } = require("~/sqlite/queries/login/modules");
 
 const { storeRepair, deleteRepair } = require("~/sqlite/queries/repair");
@@ -54,7 +70,7 @@ const Querys = [
       name TEXT,
       warehouse_id TEXT,
       ship_id INTEGER ,
-      FOREIGN KEY (ship_id) REFERENCES ships(ship_id)
+      FOREIGN KEY (ship_id) REFERENCES ships(id)
     )`,
   /*  `CREATE TABLE IF NOT EXISTS ship_warehouses
      (
@@ -67,10 +83,11 @@ const Querys = [
   `CREATE TABLE IF NOT EXISTS pallets
     (
       id INTEGER PRIMARY KEY,
-      code TEXT, observation TEXT,
+      code TEXT,
+      observation TEXT,
       warehouse_id INTEGER,
       date_creation DATETIME,
-      FOREIGN KEY (warehouse_id) REFERENCES warehouses(warehouse_id)
+      FOREIGN KEY (warehouse_id) REFERENCES warehouses(id)
     )`,
 
   /* *************************************************************** */
@@ -376,160 +393,6 @@ const insertDefaultData = async (db, shipsWarehouses) => {
     return { postShip: postData, postWarehouse: postWarehouse };
   } catch (error) {
     console.log("ocurrio un problema al insertar la fila", error);
-  }
-};
-
-//traer todos los datos
-/* ************************************************************************************** */
-
-
-const getWarehouses = async (ship_id) => {
-  try {
-    const db = await openDatabase();
-    const data = await db.all("SELECT * FROM warehouses WHERE ship_id = (?)", [
-      ship_id,
-    ]);
-    return data;
-  } catch (error) {
-    console.log("error al traer los datos ", error);
-  }
-};
-
-const getPallets = async (warehouse_id) => {
-  try {
-    const db = await openDatabase();
-    const data = await db.all(
-      "SELECT * FROM pallets WHERE warehouse_id = (?)",
-      [warehouse_id]
-    );
-    return data;
-  } catch (error) {
-    console.log("error al traer los datos ", error);
-  }
-};
-
-const getPalletsAll = async () => {
-  try {
-    const db = await openDatabase();
-    const data = await db.all("SELECT * FROM pallets", []);
-    return data;
-  } catch (error) {
-    console.log("error al traer los datos ", error);
-  }
-};
-
-const getPallet = async (item) => {
-  try {
-    const db = await openDatabase();
-    const data = await db.all(
-      `SELECT p.id, p.code, p.observation, sh.name, w.name
-                                        FROM pallets p
-                                        INNER JOIN warehouses w on w.id = p.warehouse_id
-                                        INNER JOIN ships sh on sh.id = w.ship_id
-                                        WHERE p.id = (?)`,
-      [item.id]
-    );
-    return data;
-  } catch (error) {
-    console.log("error al traer los datos ", error);
-  }
-};
-
-//carga los pallets que se van a enviar al backend de MCP
-const loadPallets = async () => {
-  try {
-    const db = await openDatabase();
-    const data = await db.all(
-      `SELECT p.id,
-                                      p.code,
-                                      p.observation,
-                                      sh.id,
-                                      sh.name,
-                                      sh.journey,
-                                      w.warehouse_id,
-                                      w.name,
-                                      p.date_creation
-                                FROM pallets p
-                                INNER JOIN warehouses w on w.id = p.warehouse_id
-                                INNER JOIN ships sh on sh.id = w.ship_id`,
-      []
-    );
-    return data;
-  } catch (error) {
-    console.log("error al traer los datos ", error);
-  }
-};
-
-/* ************************************************************************************** */
-
-// Función para insertar datos en la tabla
-/* ************************************************************************************** */
-
-const insertWarehuse = async (data) => {
-  try {
-    const db = await openDatabase();
-    let postData = db.execSQL(
-      "INSERT INTO warehouses (name, ship_id) VALUES (?, ?)",
-      [data.nameWarehouse, data.ship_id]
-    );
-    return postData;
-  } catch (error) {
-    console.log("ocurrio un problema al insertar la fila", error);
-  }
-};
-
-const insertPallet = async (data) => {
-  try {
-    const db = await openDatabase();
-    let postData = db.execSQL(
-      "INSERT INTO pallets (code, warehouse_id, date_creation) VALUES (?, ?, ?)",
-      [data.codePallet, data.warehouse_id, data.pallet_creation]
-    );
-    return postData;
-  } catch (error) {
-    console.log("ocurrio un problema al insertar la fila", error);
-  }
-};
-/* ************************************************************************************** */
-
-// Funciónes para editar datos en la tabla
-/* ************************************************************************************** */
-const updatePallet = async (item) => {
-  try {
-    const db = await openDatabase();
-    let updateData = db.execSQL(
-      `UPDATE pallets
-                                        SET observation = (?)
-                                        WHERE id = (?)`,
-      [item.observation, item.id]
-    );
-    return updateData;
-  } catch (error) {
-    console.error("Error al editar el pallet ", error);
-  }
-};
-/* ************************************************************************************** */
-
-//Funcion para eliminar registros de una tabla
-/* ************************************************************************************** */
-
-const deleteWarehouse = async (id) => {
-  try {
-    const db = await openDatabase();
-    const data = await db.execSQL("DELETE FROM warehouses WHERE id = ?", [id]);
-    return data;
-  } catch (error) {
-    console.log("Hubo un error intentando eliminar el registro ", error);
-  }
-};
-
-const deletePallet = async (id) => {
-  try {
-    const db = await openDatabase();
-    const data = await db.execSQL("DELETE FROM pallets WHERE id = ?", [id]);
-    return data;
-  } catch (error) {
-    console.log("Hubo un error intentando eliminar el registro ", error);
   }
 };
 

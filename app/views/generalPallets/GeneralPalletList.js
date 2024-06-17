@@ -15,6 +15,10 @@ const listRows = [
     prop: 'warehouse_id',
     label: 'Bodega'
   },
+  {
+    prop: 'date_creation',
+    label: 'Fecha'
+  }
 ]
 
 export default { listRows }

@@ -2,6 +2,7 @@ import Vue from "nativescript-vue";
 import Vuex from "vuex";
 import evidenceStore from '~/store/Modules/evidenceStore'
 import auth from "./Modules/auth";
+import managementStore from "./Modules/managementStore";
 
 Vue.use(Vuex);
 
@@ -52,7 +53,8 @@ const store = new Vuex.Store({
 
   modules: {
     evidenceStore,
-    auth
+    auth,
+    managementStore
   },
 });
 

@@ -88,7 +88,7 @@
           ref="mySearchBar"
           row="0"
           col="0"
-          height="60"
+          height="50"
           class="search-bar"
           margin="10"
           hint="Buscar..."
@@ -199,6 +199,7 @@
           </GridLayout>
         </v-template>
       </ListView>
+      <FloatingButton row="2" :icon="!close ? 'fa-unlock-alt' : 'fa-lock'" :method="() => {closeManagement(!close)}" />
     </GridLayout>
   </page>
 </template>
@@ -257,10 +258,12 @@ export default {
 
   computed: {
     ...mapState("evidenceStore", ["managementModel"]),
+    ...mapState("managementStore", ["close"]),
   },
 
   methods: {
     ...mapMutations("evidenceStore", ["setManagementModel"]),
+    ...mapMutations("managementStore", ["closeManagement"]),
 
     /* ****************************************************************** */
     validateField(fields) {

@@ -293,7 +293,9 @@ export default {
       }
     },
 
-    home() {
+    async home() {
+      const struc = await structure()
+      console.log(struc)
       this.$router.pushClear("dashboard.index");
       utils.closeDrawer();
     },

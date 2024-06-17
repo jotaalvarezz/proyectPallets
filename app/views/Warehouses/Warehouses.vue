@@ -4,7 +4,7 @@
     <GridLayout rows="auto, auto ,*" backgroundColor="#F4F6F8">
       <Label
         row="0"
-        :text="'Bodegas ' + shipName"
+        :text="'Bodegas ' + ship.name"
         class="tittle text-center"
         fontSize="18"
         fontWeight="bold"
@@ -32,7 +32,7 @@
                   fontSize="14"
                 />
                 <Label
-                  :text="item.text"
+                  :text="item.name"
                   class="p-l-10 colorIcons"
                   width="auto"
                   fontSize="14"
@@ -58,21 +58,13 @@
 
 <script>
 import Alert from "~/alerts/Alerts";
-import Header from "~/components/header/Header.vue";
-import FloatingButton from "~/components/floatingButton/FloatingButton.vue";
 import CreateEditWarehouse from "./createEditWarehouse/CreateEditWarehouse.vue";
-import Stripe from "~/components/stripe/Stripe";
 const { getWarehouses, deleteWarehouse } = require("~/sqlite/database");
 import { mapState, mapMutations } from "vuex";
 
 export default {
   name: "Ships",
-  components: {
-    FloatingButton,
-    /*  CreateEditShip, */
-    Stripe,
-    Header,
-  },
+  components: {},
   data() {
     return {
       valor: true,
@@ -96,10 +88,7 @@ export default {
         fullscreen: true,
         props: {
           textBar: "Nueva Bodega",
-          textHint1: "Nombre de Bodega...",
-          shipName: this.shipName,
-          item: this.item,
-          update: false,
+          item: this.item
         },
       }).then(() => {
         this.getWarehouses();
@@ -121,15 +110,8 @@ export default {
     async getWarehouses() {
       try {
         this.warehouses = [];
-        const warehouses = await getWarehouses(this.ship.id);
-        for (let i = 0; i < warehouses.length; i++) {
-          this.warehouses.push({
-            id: warehouses[i][0],
-            text: warehouses[i][1],
-            warehouse_id: warehouses[i][2],
-            ship_id: warehouses[i][3],
-          });
-        }
+        const res = await getWarehouses(this.ship.id);
+        this.warehouses = res.data
       } catch (error) {
         console.error("error al traer lo datos ", error);
       }
@@ -137,7 +119,6 @@ export default {
   },
 
   created() {
-    this.shipName = this.item.text;
     this.getWarehouses();
   },
 };

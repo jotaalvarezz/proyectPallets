@@ -1,6 +1,6 @@
 const listRows = [
   {
-    prop: 'text',
+    prop: 'name',
     label: 'Nombre'
   },
   {

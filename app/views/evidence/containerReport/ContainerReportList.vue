@@ -6,7 +6,7 @@
     <GridLayout rows="auto,*" backgroundColor="#F4F6F8">
       <GridLayout margin="5" row="0" rows="auto" columns="*, 70">
         <SearchBar
-          height="60"
+          height="50"
           ref="mySearchBar"
           row="0"
           col="0"

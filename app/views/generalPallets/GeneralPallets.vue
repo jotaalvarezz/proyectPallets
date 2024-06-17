@@ -1,18 +1,12 @@
 <template>
   <Page>
-    <Header
-      :data="pallets"
-      :icons="icons"
-      :operation1="showInfo"
-      :operation2="navigate"
-      :search="true"
-    />
+    <Header :search="false" />
     <GridLayout rows="auto, *" backgroundColor="#F4F6F8">
       <GridLayout margin="5" row="0" rows="*" columns="*, 70">
         <SearchBar
           row="0"
           col="0"
-          height="60"
+          height="50"
           margin="10"
           class="search-bar"
           hint="Buscar..."
@@ -73,19 +67,31 @@
               />
               <StackLayout class="heigth">
                 <Label
-                  text="Codigo:"
-                  class="p-l-10 subTittle"
+                  text="Pallet:"
+                  class="subTittle"
                   textWrap="true"
                   width="auto"
-                  fontSize="14"
+                  fontSize="15"
                 />
-                <Label
-                  :text="item.text"
-                  class="p-l-10 colorIcons"
-                  textWrap="true"
-                  width="auto"
-                  fontSize="14"
-                />
+                <Label textWrap="true">
+                  <FormattedString>
+                    <Span text="Codigo: " fontWeight="bold" fontSize="15" />
+                    <Span :text="item.code + '\n'" fontSize="15" />
+                    <Span
+                      text="Observacion: "
+                      fontWeight="bold"
+                      fontSize="15"
+                    />
+                    <Span
+                      :text="
+                        item.observation
+                          ? item.observation
+                          : 'Sin observacion...'
+                      "
+                      fontSize="15"
+                    />
+                  </FormattedString>
+                </Label>
               </StackLayout>
             </StackLayout>
             <ButtonNavigate
@@ -165,14 +171,13 @@ export default {
   },
 
   methods: {
-    ...mapMutations(["indicatorState"]),
 
     filter() {
       if (this.search.length > 0) {
         this.array_filter = this.pallets.filter(
           (prev) =>
             !this.search ||
-            prev.text.toLowerCase().includes(this.search.toLowerCase())
+            prev.code.toLowerCase().includes(this.search.toLowerCase())
         );
       } else if (this.search.length === 0) {
         this.array_filter = [];
@@ -191,25 +196,15 @@ export default {
       this.array_filter = this.pallets;
     },
 
-    refreshPallets(){
+    refreshPallets() {
       this.getAll();
     },
 
     async palletInfo(item) {
       try {
-        const pallet = await getPallet(item);
-        for (let i = 0; i < pallet.length; i++) {
-          this.infoPallet = Object.assign(
-            {},
-            {
-              id: pallet[i][0],
-              code: pallet[i][1],
-              observation: pallet[i][2],
-              ship_id: pallet[i][3],
-              warehouse_id: pallet[i][4],
-            }
-          );
-        }
+        const res = await getPallet(item);
+        this.infoPallet = res.data
+        console.log("info pallet ",res)
       } catch (error) {
         console.log("error al traer los datos ", error);
       }
@@ -249,24 +244,15 @@ export default {
           someEvent: (value) => {},
         },
       };
-      this.$showBottomSheet(ButtomSheet, options).then(() => {
-        this.getAll();
-      });
+      this.$showBottomSheet(ButtomSheet, options);
     },
 
     async getAll() {
       try {
         this.loadingCharge(true);
         this.pallets = [];
-        const pallets = await getPalletsAll();
-        for (let i = 0; i < pallets.length; i++) {
-          this.pallets.push({
-            id: pallets[i][0],
-            text: pallets[i][1],
-            observation: pallets[i][2],
-            warehouse_id: pallets[i][3],
-          });
-        }
+        const res = await getPalletsAll();
+        this.pallets = res.data;
         this.array_filter = this.pallets;
       } catch (error) {
         console.error("error al traer lo datos ", error);
@@ -279,28 +265,17 @@ export default {
       try {
         this.loadingCharge(true);
         this.sendPallets = [];
-        const pallets = await loadPallets();
-        if (pallets.length > 0) {
-          for (let i = 0; i < pallets.length; i++) {
-            this.sendPallets.push({
-              code: pallets[i][1],
-              observation: pallets[i][2],
-              ship_id: pallets[i][3],
-              ship_name: pallets[i][4],
-              journey: pallets[i][5],
-              warehouse_id: pallets[i][6] || 0,
-              warehouse_name: pallets[i][7],
-              pallet_creation: pallets[i][8],
-            });
-          }
+        const res = await loadPallets();
+        if (res.data.length > 0) {
+          this.sendPallets = res.data
           //const postPallets = await axios.post('http://186.1.181.146:8811/mcp-backend/public/api/mobile/loadpallets', this.sendPallets)
           //const postPallets = await axios.post('http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/loadpallets', this.sendPallets)
           const postPallets = await axios.post(
-            "http://172.70.8.122/mcp-backend/public/api/mobile/loadpallets",
+            "http://172.70.9.110/mcp-backend/public/api/mobile/loadpallets",
             this.sendPallets
           );
           this.loadingCharge();
-          Alert.success("Cargue");
+          Alert.success("Cargue Exitoso!");
         } else {
           this.loadingCharge();
           Alert.danger(

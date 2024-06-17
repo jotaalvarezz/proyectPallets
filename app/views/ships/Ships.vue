@@ -1,18 +1,12 @@
 <template>
   <Page @loaded="getShips">
-    <Header
-      :data="ships"
-      :icons="icons"
-      :operation1="navigate"
-      :operation2="navigateOptions"
-      :search="true"
-    />
+    <Header :search="false" />
     <GridLayout rows="auto, *" backgroundColor="#F4F6F8">
       <GridLayout margin="5" row="0" rows="*" columns="*, 70">
         <SearchBar
           row="0"
           col="0"
-          height="60"
+          height="50"
           margin="10"
           class="search-bar"
           hint="Buscar..."
@@ -29,7 +23,7 @@
           icon="fa-sync-alt"
           size="22"
           radius="50"
-          :handleEvent="() => refreshEvidenceRports()"
+          :handleEvent="() => refresShips()"
         />
       </GridLayout>
       <Label
@@ -47,7 +41,7 @@
       <ListView
         row="1"
         v-if="array_filter.length > 0"
-        for="(item, index) in ships"
+        for="(item, index) in array_filter"
         @itemTap="navigate"
       >
         <v-template>
@@ -69,7 +63,7 @@
                   fontSize="14"
                 />
                 <Label
-                  :text="item.text"
+                  :text="item.name"
                   class="p-l-10 colorIcons"
                   fontSize="14"
                 />
@@ -137,9 +131,9 @@ export default {
     filter() {
       if (this.search.length > 0) {
         this.array_filter = this.ships.filter(
-          (prev) =>
+          (data) =>
             !this.search ||
-            prev.text.toLowerCase().includes(this.search.toLowerCase())
+            data.name.toLowerCase().includes(this.search.toLowerCase())
         );
       } else if (this.search.length === 0) {
         this.array_filter = [];
@@ -148,6 +142,10 @@ export default {
 
     clear() {
       this.array_filter = this.ships;
+    },
+
+    refresShips() {
+      this.getShips();
     },
 
     navigate(event) {
@@ -208,9 +206,10 @@ export default {
     },
 
     shipEdit(item) {
+      item.action = true;
       this.$showModal(CreateEditShip, {
         fullscreen: true,
-        props: { info: item },
+        props: { textBar: "Actualizar Barco", info: item },
       }).then((res) => {
         this.$emit("someEvent", "Valor de ejemplo");
       });
@@ -232,15 +231,9 @@ export default {
       try {
         this.loadingCharge(true);
         this.ships = [];
-        const ships = await getShips();
-        for (let i = 0; i < ships.length; i++) {
-          this.ships.push({
-            id: ships[i][0],
-            text: ships[i][1],
-            journey: ships[i][2],
-          });
-        }
-        this.array_filter = this.ships
+        const res = await getShips();
+        this.ships = res.data;
+        this.array_filter = this.ships;
       } catch (error) {
         Alert.danger("Hubo un error", error);
         console.error("error al traer lo datos ", error);
@@ -249,11 +242,6 @@ export default {
       }
     },
   },
-
-  created() {
-    /* this.loadingCharge() */
-  },
-  /* components: { GridLayout }, */
 };
 </script>
 <style lang="scss" scoped>

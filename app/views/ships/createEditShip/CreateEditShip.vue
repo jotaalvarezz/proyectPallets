@@ -1,7 +1,7 @@
 <template>
   <Page>
     <StackLayout backgroundColor="#F4F6F8">
-      <HeaderComponent title="Registro de Barco" :handleback="$modal.close" />
+      <HeaderComponent :title="textBar" :handleback="$modal.close" />
       <GridLayout
         rows="auto,auto,auto,auto,auto"
         class="shadow"
@@ -24,25 +24,10 @@
           label="Barco:"
           placeholder="nombre de barco..."
           fontsize="14"
-          v-model="model.nameShip"
+          v-model="model.name"
           :enable="model.action == false ? 'true' : 'false'"
+          :required="errors.name"
         />
-        <!-- <TextField
-            row="1"
-            v-model="model.nameShip"
-            padding="10"
-            hint="Nombre de Barco..."
-            height="45"
-            fontSize="18"
-            boder="none"
-            style="
-              placeholder-color: #3c495e;
-              color: #3c495e;
-              background-color: #c0c9d7;
-              width: 80%;
-            "
-            :isEnabled="model.action == false ? 'true' : 'false'"
-          /> -->
         <FormGroupTextField
           row="2"
           label="Viaje:"
@@ -50,21 +35,6 @@
           fontsize="14"
           v-model="model.journey"
         />
-        <!-- <TextField
-            row="2"
-            padding="10"
-            v-model="model.journey"
-            hint="Viaje..."
-            height="45"
-            fontSize="18"
-            boder="none"
-            style="
-              placeholder-color: #3c495e;
-              color: #3c495e;
-              background-color: #c0c9d7;
-              width: 80%;
-            "
-          /> -->
         <Stripe
           row="3"
           class="stripe"
@@ -105,20 +75,11 @@
   </Page>
 </template>
 <script>
-import { fonticon } from "nativescript-fonticon";
-import Header from "~/components/header/Header.vue";
-import ListOptions from "~/components/listOptions/ListOptions.vue";
-import FormGroupTextField from "~/components/input/FormGroupTextField";
-import Stripe from "~/components/stripe/Stripe";
 const { insertShip, getShips, updateShip } = require("~/sqlite/database");
 import Alerts from "~/alerts/Alerts";
 
 export default {
-  components: {
-    Header,
-    FormGroupTextField,
-    Stripe,
-  },
+  components: {},
   props: {
     textBar: {
       type: String,
@@ -130,38 +91,43 @@ export default {
   },
   data() {
     return {
-      model: {},
-      options: ["Cala Pedra", "Cala Pino", "Cala Pula"],
-      selectedIndex: 1,
+      model: {
+        name: "",
+        journey: "",
+        action: false,
+      },
+
+      errors: {
+        name: false,
+      },
     };
   },
-  computed: {
-    setJourney() {
-      this.journey = this.item.text;
-      return this.journey;
-    },
-  },
+  computed: {},
   methods: {
-    onSelectedIndexChanged(event) {
-      this.selectedIndex = event.value;
-      this.model.nameShip = this.options[this.selectedIndex];
-    },
-
-    modalOption() {
-      this.$showModal(ListOptions);
+    validateField(fields) {
+      this.errors.name = !this.model.name.trim();
+      let fullfield = "";
+      for (const key in this.errors) {
+        if (this.errors.hasOwnProperty(key) && this.errors[key] != false) {
+          return !this.errors[key];
+        }
+        fullfield = !this.errors[key];
+      }
+      return fullfield;
     },
 
     async addShip() {
+      const isValid = this.validateField();
+      if (!isValid) {
+        // Detener la ejecución si la validación falla
+        return;
+      }
+
       try {
-        if (this.model.nameShip.length > 0) {
-          const ship = await insertShip(this.model);
-          const newShip = this.model;
-          this.model.nameShip = "";
-          this.model.journey = "";
-          this.$modal.close();
-        } else {
-          Alerts.info("La campo nombre de Barco vacio...", 1);
-        }
+        const ship = await insertShip(this.model);
+        this.model.name = "";
+        this.model.journey = "";
+        this.$modal.close();
       } catch (error) {
         console.log("al insertar error ", error);
       }
@@ -172,7 +138,7 @@ export default {
       if (confirmated) {
         try {
           if (this.model.journey.length > 0) {
-            const ship = await updateShip(this.model);
+            const res = await updateShip(this.model);
             this.$modal.close();
           } else {
             Alerts.info("Debe llenar el campo ' Viaje... ' ", 1);
@@ -185,8 +151,9 @@ export default {
   },
 
   created() {
-    this.model = this.info;
-    this.model.nameShip = this.model.text;
+    if (this.info.action) {
+      this.model = this.info;
+    }
   },
 };
 </script>

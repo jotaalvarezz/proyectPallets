@@ -70,6 +70,7 @@
       <ListView
         for="(item, index) in pallets"
         :class="spaceEnd"
+        @itemTap="onItemTap"
         @itemLoading="scrolling"
         @loadMoreItems="onScroll"
         row="1"
@@ -85,11 +86,7 @@
               fontWeight="bold"
               class="styleIndex"
             />
-            <StackLayout
-              col="1"
-              orientation="horizontal"
-              @tap="addObservation(item)"
-            >
+            <StackLayout col="1" orientation="horizontal">
               <Label
                 backgroundColor="#D8E2E8"
                 :text="'fa-pallet' | fonticon"
@@ -99,19 +96,20 @@
               />
               <StackLayout class="heigth">
                 <Label
-                  text="Codigo:"
-                  class="p-l-10 subTittle"
+                  text="Pallet:"
+                  class="subTittle"
                   textWrap="true"
                   width="auto"
-                  fontSize="14"
+                  fontSize="15"
                 />
-                <Label
-                  :text="item.text"
-                  class="p-l-10 colorIcons"
-                  textWrap="true"
-                  width="auto"
-                  fontSize="14"
-                />
+                <Label textWrap="true">
+                  <FormattedString>
+                    <Span text="Codigo: " fontWeight="bold" fontSize="15" />
+                    <Span :text="item.code + '\n'" fontSize="15" />
+                    <Span text="Observacion: " fontWeight="bold" fontSize="15" />
+                    <Span :text="item.observation ? item.observation  : 'Sin observacion...'" fontSize="15" />
+                  </FormattedString>
+                </Label>
               </StackLayout>
             </StackLayout>
             <ButtonNavigate
@@ -157,7 +155,7 @@ export default {
       message: "No hay Pallets Escaneados",
       bandera: false,
       model: {
-        codePallet: "",
+        code: "",
         warehouse_id: "",
       },
       code: "",
@@ -193,11 +191,8 @@ export default {
       this.bandera = true;
     },
 
-    openModal() {
-      this.$showModal(CreateEditPallet, {
-        fullscreen: true,
-        props: { item: this.item },
-      });
+    onItemTap(event) {
+      this.addObservation(event.item);
     },
 
     addObservation(item) {
@@ -238,15 +233,15 @@ export default {
     },
 
     checkRepeated() {
-      const pallet = this.pallets.find((d) => d.text == this.code);
+      const pallet = this.pallets.find((d) => d.code == this.code);
 
       return pallet;
     },
 
     async savePallet() {
       try {
-        if (this.code.length > 0 && !this.checkRepeated()) {
-          this.model.codePallet = this.code;
+        if (this.code.length > 0 && !this.checkRepeated() && this.code.trim()) {
+          this.model.code = this.code;
           this.model.warehouse_id = this.item.id;
           this.model.pallet_creation = moment().format("YYYY-MM-DD HH:mm:ss");
           const pallet = await insertPallet(this.model);
@@ -270,15 +265,8 @@ export default {
     async getPallets() {
       try {
         this.pallets = [];
-        const pallets = await getPallets(this.item.id);
-        for (let i = 0; i < pallets.length; i++) {
-          this.pallets.push({
-            id: pallets[i][0],
-            text: pallets[i][1],
-            observation: pallets[i][2],
-            warehouse_id: pallets[i][3],
-          });
-        }
+        const res = await getPallets(this.item.id);
+        this.pallets = res.data;
         this.pallets.reverse();
       } catch (error) {
         console.error("error", error);

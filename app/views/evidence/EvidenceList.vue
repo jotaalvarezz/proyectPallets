@@ -6,7 +6,7 @@
         <SearchBar
           row="0"
           col="0"
-          height="60"
+          height="50"
           margin="10"
           class="search-bar"
           hint="Buscar..."

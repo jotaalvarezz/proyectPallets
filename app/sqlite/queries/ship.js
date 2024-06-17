@@ -9,9 +9,8 @@ const getShips = async () => {
   try {
     const db = await openDatabase();
     const data = await db.all("SELECT * FROM ships", []);
-    return data
-    /* const dataFormatted = await showData("ships", data);
-    return { data: dataFormatted }; */
+    const dataFormatted = await showData("ships", data);
+    return { data: dataFormatted };
   } catch (error) {
     console.log("error al traer los datos ", error);
   }
@@ -22,7 +21,7 @@ const insertShip = async (data) => {
     const db = await openDatabase();
     let postData = db.execSQL(
       "INSERT INTO ships (name, journey) VALUES (?, ?)",
-      [data.nameShip, data.journey]
+      [data.name, data.journey]
     );
     return postData;
   } catch (error) {
@@ -35,8 +34,8 @@ const updateShip = async (item) => {
     const db = await openDatabase();
     let updateData = db.execSQL(
       `UPDATE ships
-                                      SET journey = (?)
-                                      WHERE id = (?)`,
+            SET journey = (?)
+            WHERE id = (?)`,
       [item.journey, item.id]
     );
     return updateData;

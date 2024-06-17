@@ -24,7 +24,8 @@
           label="Bodega:"
           placeholder="nombre de bodega..."
           fontsize="14"
-          v-model="model.nameWarehouse"
+          v-model="model.name"
+          :required="errors.name"
         />
         <FormGroupTextField
           row="2"
@@ -34,37 +35,6 @@
           v-model="nameShip"
           enable="false"
         />
-        <!-- <GridLayout
-          row="2"
-          height="50"
-          columns="auto, *,auto"
-          padding="10"
-          @tap="modalOption"
-          style="background-color: #c0c9d7; width: 80%"
-        >
-          <Label
-            :text="'fa-ship' | fonticon"
-            fontSize="18"
-            class="fas"
-            col="0"
-            color="#3c495e"
-          />
-          <Label
-            :text="nameShip"
-            ccolor="white"
-            class="p-l-10"
-            fontSize="15"
-            col="1"
-            color="#3c495e"
-          />
-          <Label
-            :text="'fa-sort-down' | fonticon"
-            fontSize="18"
-            class="fas"
-            col="2"
-            color="#3c495e"
-          />
-        </GridLayout> -->
         <Stripe
           row="3"
           class="stripe"
@@ -88,94 +58,70 @@
   </Page>
 </template>
 <script>
-import { fonticon } from "nativescript-fonticon";
-import Header from "~/components/header/Header.vue";
-import ListOptions from "~/components/listOptions/ListOptions.vue";
-import FormGroupTextField from "~/components/input/FormGroupTextField";
-import SelectField from "~/components/selectField/SelectField";
-import Stripe from "~/components/stripe/Stripe";
-const { insertWarehuse, getShips } = require("~/sqlite/database");
+const { insertWarehuse } = require("~/sqlite/database");
 import Alerts from "~/alerts/Alerts";
 import { mapState } from "vuex";
 
 export default {
-  components: {
-    Header,
-    FormGroupTextField,
-    SelectField,
-    Stripe,
-  },
+  components: {},
   props: {
     textBar: {
       type: String,
       required: true,
     },
-    textHint1: {
-      type: String,
-      required: true,
-    },
-    shipName: {
-      type: String,
-      required: true,
-    },
     item: {
       type: Object,
-    },
-    update: {
-      type: Boolean,
-      required: true,
-    },
+    }
   },
   data() {
     return {
       model: {
-        nameWarehouse: "",
+        name: "",
         ship_id: "",
       },
-      options: [],
-      selectedIndex: "",
+
+      errors: {
+        name: false,
+      },
     };
   },
   computed: {
     ...mapState(["ship"]),
     nameShip() {
       this.model.ship_id = this.ship.id;
-      return this.ship.text;
+      return this.ship.name;
     },
   },
   methods: {
-    modalOption() {
-      /* this.$showModal(ListOptions); */
-    },
-
-    onSelectedIndexChanged(event) {
-      this.selectedIndex = event.value;
-      this.model.nameShip = this.options[this.selectedIndex];
+    validateField(fields) {
+      this.errors.name = !this.model.name.trim();
+      let fullfield = "";
+      for (const key in this.errors) {
+        if (this.errors.hasOwnProperty(key) && this.errors[key] != false) {
+          return !this.errors[key];
+        }
+        fullfield = !this.errors[key];
+      }
+      return fullfield;
     },
 
     async addWarehouse() {
+      const isValid = this.validateField();
+      if (!isValid) {
+        // Detener la ejecución si la validación falla
+        return;
+      }
+
       try {
-        if (this.model.nameWarehouse.length > 0) {
+        if (this.model.name.length > 0) {
           const warehouse = await insertWarehuse(this.model);
-          this.model.nameWarehouse = "";
+          this.model.name = "";
           this.$modal.close();
         } else {
           Alerts.info("El campo nombre de Bodega esta vacio...", 1);
         }
       } catch (error) {
         console.log("al insertar error ", error);
-      }
-    },
-
-    async getShips() {
-      try {
-        this.ships = [];
-        const ships = await getShips();
-        for (let i = 0; i < ships.length; i++) {
-          this.options.push(ships[i][1]);
-        }
-      } catch (error) {
-        console.error("error al traer lo datos ", error);
       }
     },
   },

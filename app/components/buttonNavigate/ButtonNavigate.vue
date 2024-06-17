@@ -38,7 +38,7 @@ export default {
 
     iconColor:{
       type: String,
-      default: "#222a37"
+      default: "#3c495e"
     },
 
     iconBackground: {
