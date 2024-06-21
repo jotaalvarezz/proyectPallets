@@ -29,6 +29,7 @@
           fontsize="14"
           icon="fa-arrows-alt-h"
           @value="model.location = $event"
+          :required="errors.location"
         />
         <SelectField
           :value="model.position"
@@ -38,11 +39,12 @@
           fontsize="14"
           icon="fa-arrows-alt-v"
           @value="model.position = $event"
+          :required="errors.position"
         />
         <Label
           text="DAÑO:"
           marginTop="10"
-          fontsize="14"
+          fontSize="14"
           fontWeight="bold"
           style="color: #3c495e; width: 80%"
         />
@@ -192,8 +194,9 @@ export default {
   methods: {
     /* ****************************************************************** */
     validateField(fields) {
-      this.errors.container_element_id =
-        this.model.container_element_id === null ? true : false;
+      this.errors.container_element_id = this.model.container_element_id === null ? true : false;
+      this.errors.position = this.model.position === null ? true : false;
+      this.errors.location = this.model.location === null ? true : false;
       let fullfield = "";
       for (const key in this.errors) {
         if (this.errors.hasOwnProperty(key) && this.errors[key] != false) {

@@ -41,7 +41,7 @@
       <ListView
         row="1"
         for="(item, index) in array_filter"
-        @itemTap="showInfo"
+        @itemTap="onItemTap"
         @itemLoading="onScroll"
         :class="spaceButtom"
         ref="listView"
@@ -210,10 +210,10 @@ export default {
       }
     },
 
-    async showInfo(event) {
+    async showInfo(item) {
       try {
         const listRows = GeneralPalletList.listRows;
-        await this.palletInfo(event.item);
+        await this.palletInfo(item);
         this.$showModal(ListModal, {
           props: {
             title: "Infomacion del Pallet",
@@ -234,8 +234,9 @@ export default {
         transparent: true,
         props: {
           item: this.infoPallet,
-          generalOptions: false,
+          generalOptions: true,
           component: CreateEditPallet,
+          infoRegister: () => this.showInfo(item),
           updateRegister: () => this.palletEdit(this.infoPallet),
           deleteRow: () => this.removePallet(item.id, index),
         },

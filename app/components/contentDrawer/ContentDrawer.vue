@@ -294,8 +294,7 @@ export default {
     },
 
     async home() {
-      const struc = await structure()
-      console.log(struc)
+      /* const struc = await structure() */
       this.$router.pushClear("dashboard.index");
       utils.closeDrawer();
     },

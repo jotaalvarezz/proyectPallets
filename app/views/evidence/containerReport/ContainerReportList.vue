@@ -1,5 +1,5 @@
 <template>
-  <page @loaded="getEvidences" actionBarHidden="false">
+  <page @loaded="initialFunction" actionBarHidden="false">
     <ActionBar backgroundColor="#00acc1" padding="0">
       <HeaderComponent title="Reportes/Evidencias" :handleback="navigateBack" />
     </ActionBar>
@@ -129,6 +129,7 @@
                       labelIterator="name"
                     />
                     <ButtonNavigate
+                      :isEnabled="type_management.status === 1 ? true : false"
                       height="50"
                       width="50"
                       icon="fa-times"
@@ -137,6 +138,7 @@
                     />
                   </StackLayout>
                   <ButtonNavigate
+                    :isEnabled="type_management.status === 1 ? true : false"
                     height="60"
                     width="60"
                     icon="fa-toolbox"
@@ -158,7 +160,7 @@
           </GridLayout>
         </v-template>
       </ListView>
-      <FloatingButton row="1" :icon="'fa-plus'" :method="openModal" />
+      <FloatingButton :isEnabled="type_management.status === 1 ? true : false" row="1" :icon="'fa-plus'" :method="openModal" />
     </GridLayout>
   </page>
 </template>
@@ -169,6 +171,7 @@ const {
   getTypes,
   deleteContainerReport,
   deleteRepair,
+  showTypesManagement,
   getRepairDamage,
   getRepairs,
 } = require("~/sqlite/database");
@@ -193,13 +196,14 @@ export default {
       container_reports: [],
       types: [],
       array_filter: [],
-      state: true,
+      type_management: {},
     };
   },
   mixins: [mixinMasters],
 
   computed: {
     ...mapState("evidenceStore", ["managementModel", "containerReport"]),
+    ...mapState("managementStore", ["close"]),
   },
 
   methods: {
@@ -207,6 +211,11 @@ export default {
       "setContainerReport",
       "setContainerReportEdit",
     ]),
+
+    initialFunction(){
+      this.getEvidences()
+      this.typeManagement()
+    },
 
     filter() {
       if (this.search.length > 0) {
@@ -255,7 +264,7 @@ export default {
         transparent: true,
         props: {
           item: item,
-          generalOptions: true,
+          generalOptions: this.type_management.status === 1 ? true : false,
           infoRegister: () => this.containerReportInfo(item),
           updateRegister: () => this.containerReportEdit(item),
           deleteRow: () => this.deleteRow(item.id),
@@ -271,6 +280,18 @@ export default {
     navigateBack() {
       /* this.$router.push("container_report.index"); */
       this.$router.back();
+    },
+
+    async typeManagement(){
+      try {
+        this.loadingCharge(true);
+        const res = await showTypesManagement(this.managementModel.type_management_id)
+        this.type_management = res.data
+      } catch (error) {
+        Alert.danger("Hubo un error al traer los tipos de gestion", error.message);
+      } finally {
+        this.loadingCharge();
+      }
     },
 
     async getEvidences() {

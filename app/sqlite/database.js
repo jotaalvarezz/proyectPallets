@@ -1,4 +1,7 @@
 const Sqlite = require("nativescript-sqlite");
+
+const moment = require("moment");
+
 const {
   getTypes,
   getAdditionalDamage,
@@ -13,6 +16,7 @@ const {
   getRepairDamage,
   deleteContainerReport,
   updateContainerReport,
+  showContainerReport,
 } = require("~/sqlite/queries/evidence");
 
 const {
@@ -22,7 +26,9 @@ const {
   getAllManagements,
   deleteManagement,
   updateManagement,
-  sendEvidenceReports
+  sendEvidenceReports,
+  finishOperations,
+  showTypesManagement,
 } = require("~/sqlite/queries/management");
 
 const {
@@ -56,7 +62,7 @@ const {
 
 const { storeModules } = require("~/sqlite/queries/login/modules");
 
-const { storeRepair, deleteRepair } = require("~/sqlite/queries/repair");
+const { storeRepair, deleteRepair, getRepairsReport } = require("~/sqlite/queries/repair");
 const Querys = [
   `CREATE TABLE IF NOT EXISTS ships
     (
@@ -124,6 +130,7 @@ const Querys = [
         id INTEGER PRIMARY KEY,
         name TEXT,
         icon TEXT,
+        status INTEGER,
         date_creation DATETIME
       )`,
 
@@ -349,12 +356,13 @@ const insertTypesManagement = async (data) => {
     let post = [];
     for (let i = 0; i < DefaultTypesManagement.length; i++) {
       post[i] = db.execSQL(
-        `INSERT INTO types_management (id, name, icon, date_creation) VALUES (?, ?, ?, ?)`,
+        `INSERT INTO types_management (id, name, icon, status, date_creation) VALUES (?, ?, ?, ?, ?)`,
         [
           DefaultTypesManagement[i].id,
           DefaultTypesManagement[i].name,
           DefaultTypesManagement[i].icon,
-          DefaultTypesManagement[i].created_at,
+          1,
+          moment(DefaultTypesManagement[i].created_at).format("YYYY-MM-DD HH:mm:ss"),
         ]
       );
     }
@@ -449,5 +457,9 @@ module.exports = {
   storeModules,
   insertSeletsEvidence,
   insertTypesManagement,
-  sendEvidenceReports
+  sendEvidenceReports,
+  finishOperations,
+  showContainerReport,
+  showTypesManagement,
+  getRepairsReport,
 };

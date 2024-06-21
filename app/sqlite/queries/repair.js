@@ -24,6 +24,20 @@ const showRepair = async (id) => {
   }
 }
 
+const getRepairsReport = async (id) => {
+  try {
+    const db = await openDatabase();
+    const data = await db.all(`SELECT r.id, r.container_element_id, e.name, r.location, r.position, r.container_report_id, r.photo
+                                FROM  repairs r
+                                INNER JOIN container_elements e on e.id = r.container_element_id
+                                WHERE r.container_report_id = ?`, [id]);
+    const dataFormatted = await showData('repairs', data, ['id', 'container_element_id', 'name', 'location', 'position', 'container_report_id', 'photo'])
+    return { data: dataFormatted };
+  } catch (error) {
+    console.log("error al traer los datos ", error);
+  }
+}
+
 const storeRepair = async (data) => {
   try {
     const repair = data.repair
@@ -96,5 +110,6 @@ const deleteRepair = async (id) => {
 
 module.exports = {
   storeRepair,
-  deleteRepair
+  deleteRepair,
+  getRepairsReport
 }

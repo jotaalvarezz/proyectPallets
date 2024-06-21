@@ -419,4 +419,5 @@ module.exports = {
   getRepairDamage,
   deleteContainerReport,
   updateContainerReport,
+  showContainerReport
 };

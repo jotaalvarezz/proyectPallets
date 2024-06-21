@@ -43,7 +43,6 @@
         row="1"
         ref="listView"
         for="item in array_filter"
-        @itemTap="onItemTap"
       >
         <v-template>
           <!-- Shows the list item label in the default color and style. -->
@@ -68,7 +67,7 @@
                   />
                   <Label textWrap="true">
                     <!-- Barco -->
-                    <FormattedString v-if="item.type_management_id === 1">
+                    <FormattedString>
                       <Span
                         text="Contenedor: "
                         fontWeight="bold"
@@ -77,9 +76,9 @@
                       <Span :text="item.code + '\n'" fontSize="15" />
                       <Span text="Tipo: " fontWeight="bold" fontSize="15" />
                       <Span :text="item.nameType + '\n'" fontSize="15" />
-                      <Span text="Buque: " fontWeight="bold" fontSize="15" />
+                      <Span :text="item.type_management_id === 1 ? 'Buque: ': 'Patio: '" fontWeight="bold" fontSize="15" />
                       <Span :text="item.vessel + '\n'" fontSize="15" />
-                      <Span text="Capitan: " fontWeight="bold" fontSize="15" />
+                      <Span :text="item.type_management_id === 1 ? 'Capitan: ' : 'Conductor: '" fontWeight="bold" fontSize="15" />
                       <Span :text="item.titular_name + '\n'" fontSize="15" />
                       <Span text="Tecnico: " fontWeight="bold" fontSize="15" />
                       <Span :text="item.role + '\n'" fontSize="15" />
@@ -88,28 +87,6 @@
                         fontWeight="bold"
                         fontSize="15"
                       />
-                    </FormattedString>
-                    <!-- Patio -->
-                    <FormattedString v-if="item.type_management_id === 2">
-                      <Span
-                        text="Contenedor: "
-                        fontWeight="bold"
-                        fontSize="15"
-                      />
-                      <Span :text="item.code + '\n'" fontSize="15" />
-                      <Span text="Tipo: " fontWeight="bold" fontSize="15" />
-                      <Span :text="item.nameType + '\n'" fontSize="15" />
-                      <Span text="Patio: " fontWeight="bold" fontSize="15" />
-                      <Span :text="'Alieva' + '\n'" fontSize="15" />
-                      <Span
-                        text="Conductor: "
-                        fontWeight="bold"
-                        fontSize="15"
-                      />
-                      <Span :text="item.titular_name + '\n'" fontSize="15" />
-                      <Span text="Tecnico: " fontWeight="bold" fontSize="15" />
-                      <Span :text="item.role + '\n'" fontSize="15" />
-                      <Span text="Elemntos:" fontWeight="bold" fontSize="15" />
                     </FormattedString>
                   </Label>
                   <StackLayout
@@ -124,28 +101,7 @@
                       :items="repair.repair_damage"
                       labelIterator="name"
                     />
-                    <!-- <Label
-                    width="20%"
-                    height="40"
-                    :text="'fa-times' | fonticon"
-                    class="fas text-center"
-                    fontWeight="bold"
-                    fontSize="15"
-                    @tap="deleteRowRepair(item, repair.id)"
-                  /> -->
                   </StackLayout>
-                  <!-- <Label
-                  width="50"
-                  height="50"
-                  marginTop="10"
-                  backgroundColor="#D8E2E8"
-                  :text="'fa-toolbox' | fonticon"
-                  class="text-center fas"
-                  fontWeight="bold"
-                  fontSize="15"
-                  borderRadius="50"
-                  @tap="openFormDamaged(item)"
-                /> -->
                 </StackLayout>
               </StackLayout>
             </StackLayout>
@@ -171,6 +127,7 @@ const {
   getAllManagements,
   sendEvidenceReports,
   deleteContainerReport,
+  showTypesManagement,
 } = require("~/sqlite/database");
 import { mapState, mapMutations } from "vuex";
 import mixinMasters from "~/mixins/Master";
@@ -189,6 +146,7 @@ export default {
       message: "No hay registros para mostrar",
       evidenceReports: [],
       array_filter: [],
+      type_management:{}
     };
   },
 
@@ -201,7 +159,9 @@ export default {
     ]),
 
     index() {
-      this.getEvidenceReports();
+      /* setTimeout(() => { */
+        this.getEvidenceReports();
+      /* }, 400) */
     },
 
     refreshEvidenceRports() {
@@ -228,12 +188,10 @@ export default {
         transparent: true,
         props: {
           item: item,
-          generalOptions: true,
+          generalOptions: item.status === 1 ? true : false,
           infoRegister: () => this.evidenceReportsInfo(item),
           updateRegister: () => this.evidenceReportsEdit(item),
           deleteRow: () => this.deleteRow(item.id),
-          /* updateRegister: () => this.containerReportEdit(item),
-          deleteRow: () => this.deleteRow(item.id), */
         },
         // listeners to be connected to MyComponent
         on: {
@@ -243,6 +201,18 @@ export default {
       this.$showBottomSheet(ButtomSheet, options);
     },
 
+    async typeManagement(){
+      try {
+        this.loadingCharge(true);
+        const res = await showTypesManagement(this.managementModel.type_management_id)
+        this.type_management = res.data
+      } catch (error) {
+        Alert.danger("Hubo un error al traer los tipos de gestion", error.message);
+      } finally {
+        this.loadingCharge();
+      }
+    },
+
     async getEvidenceReports() {
       try {
         this.loadingCharge(true);
@@ -250,6 +220,7 @@ export default {
         this.evidenceReports = res.data;
         this.array_filter = res.data;
       } catch (error) {
+        Alert.danger("Hubo un error al traer los reportes", error.message);
       } finally {
         this.loadingCharge();
       }
@@ -315,36 +286,18 @@ export default {
         this.loadingCharge(true);
         const reports = await sendEvidenceReports();
         if (reports.data.length > 0) {
-          /* validar si tienen la firma del titular */
-          for (let i = 0; i < reports.data.length; i++) {
-            if (
-              reports.data[i].signature === "" ||
-              reports.data[i].signature === null
-            ) {
+          /* validar si ya las gestiones estan finalizadas */
+          for (let i = 0; i < reports.managementsStatus.length; i++) {
+            if(reports.managementsStatus[i].status){
               Alert.info(
-                `Los reportes de la gestion en ` +
-                  reports.data[i].name +
-                  ` no tiene la firma del titular!`,
+                `La operacion en `+
+                reports.managementsStatus[i].name+
+                ` aun no esta finalizada.`+
+                `\n\n* Finalice las operaciones antes de sincronizar`,
                 1,
-                `¡Firma Vacia!`
+                `Sin Finalizar`
               );
               return;
-            }
-
-            let container_report = reports.data[i].containerReports;
-            for (let j = 0; j < container_report.length; j++) {
-              if (container_report[j].repairs.length === 0) {
-                Alert.info(
-                  `El reporte de la gestion ` +
-                    reports.data[i].name +
-                    ` con el contenedor ` +
-                    container_report[j].code +
-                    ` no tiene reparaciones asigandas, por favor revisar!`,
-                  1,
-                  `¡Reporte invalido!`
-                );
-                return;
-              }
             }
           }
           //const postPallets = await axios.post('http://186.1.181.146:8811/mcp-backend/public/api/mobile/loadpallets', this.sendPallets)

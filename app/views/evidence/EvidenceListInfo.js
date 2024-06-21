@@ -17,7 +17,7 @@ const listRowsVeesel = [
   },
   {
     prop: 'role',
-    label: 'Mecanico'
+    label: 'Tecnico'
   },
   {
     prop: 'repairs',
@@ -56,7 +56,7 @@ const listRowsPatio = [
   },
   {
     prop: 'role',
-    label: 'Mecanico'
+    label: 'Tecnico'
   },
   {
     prop: 'repairs',

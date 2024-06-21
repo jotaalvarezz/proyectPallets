@@ -1,7 +1,7 @@
 <template>
   <page @loaded="index">
     <Header :search="false" />
-    <GridLayout rows="auto, auto, *" backgroundColor="#F4F6F8">
+    <GridLayout rows="auto, auto ,auto, *" backgroundColor="#F4F6F8">
       <Collapse
         ref="Collapse"
         row="0"
@@ -59,12 +59,12 @@
             placeholder="nombre de titular..."
             fontsize="14"
             v-model="model.titular_name"
-            :required="errors.titular_name"
           />
           <Stripe row="5" color="#3c495e" mt="20" mb="20" mr="40" ml="40" />
           <!-- Boton para Crear -->
           <Button
             row="6"
+            :isEnabled="status"
             text="Agregar"
             backgroundColor="#F4F6F8"
             color="#222a37"
@@ -77,6 +77,17 @@
           <!-- <Image row="7" ref="imageRef" margin="25" src="" loadMode="sync" /> -->
         </GridLayout>
       </Collapse>
+      <StackLayout v-show="collapseValue === false" row="2" padding="20">
+        <Label
+          text="Finalizar Operacion:"
+          textWrap="true"
+          width="auto"
+          fontSize="15"
+        />
+        <StackLayout width="80" horizontalAlignment="left">
+          <Switch ref="switch" v-model="status" @tap="finish" />
+        </StackLayout>
+      </StackLayout>
       <GridLayout
         v-if="collapseValue === false"
         margin="5"
@@ -109,7 +120,7 @@
         />
       </GridLayout>
       <Label
-        row="2"
+        row="3"
         textWrap="true"
         class="info"
         v-if="array_filter.length == 0"
@@ -122,7 +133,7 @@
       </Label>
       <ListView
         v-if="array_filter.length > 0"
-        row="2"
+        row="3"
         ref="listView"
         for="item in array_filter"
         @itemTap="onItemTap"
@@ -163,7 +174,7 @@
                   <!-- en patio -->
                   <FormattedString v-if="management_id === 2">
                     <Span text="Patio: " fontWeight="bold" fontSize="15" />
-                    <Span :text="'Alieva' + '\n'" fontSize="15" />
+                    <Span :text="item.name + '\n'" fontSize="15" />
                     <Span
                       text="Nombre del Conductor: "
                       fontWeight="bold"
@@ -199,7 +210,11 @@
           </GridLayout>
         </v-template>
       </ListView>
-      <FloatingButton row="2" :icon="!close ? 'fa-unlock-alt' : 'fa-lock'" :method="() => {closeManagement(!close)}" />
+      <!-- <FloatingButton
+        row="3"
+        :icon="!close ? 'fa-unlock-alt' : 'fa-lock'"
+        :method="() => {closeManagement(!close)}"
+      /> -->
     </GridLayout>
   </page>
 </template>
@@ -210,6 +225,10 @@ const {
   storeManagement,
   getManagements,
   deleteManagement,
+  finishOperations,
+  showContainerReport,
+  showTypesManagement,
+  getRepairsReport,
 } = require("~/sqlite/database");
 import ManagementEdit from "~/views/evidence/managementForm/ManagementEdit";
 import ButtomSheet from "~/components/buttomSheet/ButtomSheet.vue";
@@ -234,6 +253,7 @@ export default {
 
   data() {
     return {
+      status: true,
       search: "",
       collapseValue: false,
       message: "No hay registros para mostrar",
@@ -244,12 +264,12 @@ export default {
         titular_name: "Gerson Calvo",
         signature: "",
       },
+      type_management: {},
       array_filter: [],
       managments: [],
 
       errors: {
         name: false,
-        titular_name: false,
       },
     };
   },
@@ -266,9 +286,41 @@ export default {
     ...mapMutations("managementStore", ["closeManagement"]),
 
     /* ****************************************************************** */
+    async finish() {
+      try {
+        let confirmated = await Alert.info(
+          "Al finalizar la operacion no podra realizar mas cambios.",
+          3,
+          "Finalizar Operacion"
+        );
+        if (confirmated) {
+          if (this.status === false) {
+            const res = await finishOperations(
+              this.model.type_management_id,
+              this.status
+            );
+
+            if (res.status === 400) {
+              this.status = this.type_management.status === 1 ? true : false;
+              Alert.info(res.message, 1, res.error);
+              return;
+            }
+
+            this.status = res.data.status === 1 ? true : false;
+            this.$refs.switch.nativeView.isEnabled = false;
+          }
+        }
+        this.status = this.type_management.status === 1 ? true : false;
+      } catch (error) {
+        Alert.danger(
+          "¡Hubo un error al finalizar la operacion!",
+          error.message
+        );
+      }
+    },
+
     validateField(fields) {
       this.errors.name = !this.model.name.trim();
-      this.errors.titular_name = !this.model.titular_name.trim();
       let fullfield = "";
       for (const key in this.errors) {
         if (this.errors.hasOwnProperty(key) && this.errors[key] != false) {
@@ -306,7 +358,7 @@ export default {
 
         this.$refs.Collapse.activated();
         // Continuar con el envío del formulario
-        alert("Formulario enviado exitosamente!");
+        Alert.info("la Gestion se ah creado con exito.", 1, "Registro Agregado");
       } catch (error) {
         Alert.danger("Hubo un error al traer los datos ", error.message);
       } finally {
@@ -340,21 +392,15 @@ export default {
       this.getManagements(this.model.type_management_id);
     },
 
-    signatureCaptain() {
-      this.$showModal(Signature, {
-        props: {
-          signature: this.model.signature,
-        },
-        animated: true,
-        cancelable: true,
-      }).then((res) => {
-        this.model.signature = res.signature;
-      });
-    },
-
     async getManagements(id) {
       try {
         this.loadingCharge(true);
+        const response = await showTypesManagement(id);
+        this.type_management = response.data;
+        this.status = this.type_management.status === 1 ? true : false;
+        if (this.status === false) {
+          this.$refs.switch.nativeView.isEnabled = false;
+        }
         const res = await getManagements(id);
         this.managments = res.data;
         this.array_filter = res.data;
@@ -410,7 +456,7 @@ export default {
         transparent: true,
         props: {
           item: item,
-          generalOptions: true,
+          generalOptions: this.status,
           component: ManagementEdit,
           infoRegister: () => this.managmentInfo(item),
           updateRegister: () => this.managementEdit(item),

@@ -59,21 +59,21 @@ export default {
           // El usuario ha tocado la pantalla
           hoverLabel.animate({
             backgroundColor: "lightgray", // Cambiar el color de fondo
-            duration: 300,
+            duration: 500,
           });
           break;
         case "up":
           // El usuario ha levantado el dedo de la pantalla
           hoverLabel.animate({
             backgroundColor: this.iconBackground, // Revertir al color original
-            duration: 300,
+            duration: 500,
           });
           break;
         case "cancel":
           // El toque ha sido cancelado
           hoverLabel.animate({
             backgroundColor: this.iconBackground, // Revertir al color original
-            duration: 300,
+            duration: 500,
           });
           break;
       }

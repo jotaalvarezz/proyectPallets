@@ -17,7 +17,8 @@
         class="fas text-center animated"
         fontSize="20"
         dock="right"
-        width="35"
+        height="45"
+        width="45"
         @touch="onTouch"
       />
       <Label dock="bottom" height="auto" />

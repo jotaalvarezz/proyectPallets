@@ -49,7 +49,7 @@
         v-if="pass === true"
         ref="hoverLabel"
         :text="securefield ? 'fa-eye' : 'fa-eye-slash' | fonticon"
-        fontSize="20"
+        fontSize="16"
         class="far label-Lock text-center"
         width="8%"
         height="45"

@@ -4,17 +4,18 @@
       <GridLayout
         height="55"
         rows="*"
-        columns="50, 3*, 50"
+        columns="60, 3*, 60"
         backgroundColor="#00acc1"
       >
-        <Label
+        <ButtonNavigate
           row="0"
           col="2"
-          :text="'fa-times' | fonticon"
-          fontSize="16"
-          class="fas text-center"
-          color="#F4F6F8"
-          @tap="$modal.close"
+          height="50"
+          width="50"
+          icon="fa-times"
+          iconColor="#F4F6F8"
+          radius="50"
+          :handleEvent="() => {$modal.close()}"
         />
         <Label
           row="0"
@@ -55,7 +56,7 @@
             </Label>
             <GeneralComponent
               v-if="item.prop === showMulTags"
-              :label="item.label+':'"
+              :label="item.label + ':'"
               :data="info[item.prop]"
               :labelTag="propsGeneralComponent.labelTag"
               :itemsKey="propsGeneralComponent.itemsKey"
@@ -112,10 +113,10 @@ export default {
       type: String,
       default: "",
     },
-    propsGeneralComponent:{
-      type:Object,
-      default:{}
-    }
+    propsGeneralComponent: {
+      type: Object,
+      default: {},
+    },
   },
 
   data() {
@@ -127,8 +128,6 @@ export default {
     };
   },
 
-  created() {
-
-  },
+  created() {},
 };
 </script>

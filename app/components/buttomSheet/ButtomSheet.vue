@@ -7,7 +7,6 @@
     <GridLayout
       id="1"
       row="0"
-      v-if="generalOptions"
       columns="*,50,120,*"
       @tap="infoItem"
       @touch="onTouch(1)"
@@ -32,6 +31,7 @@
     </GridLayout>
     <!-- **** -->
     <GridLayout
+      :isEnabled="generalOptions"
       id="2"
       row="1"
       columns="*,50,120,*"
@@ -50,7 +50,7 @@
       />
       <Label
         col="2"
-        text="Editar"
+        text="Actualizar"
         fontSize="14"
         class="colorIcons"
         :class="isHovered && itemSelector == 2 ? 'underline' : ''"
@@ -58,6 +58,7 @@
     </GridLayout>
     <!-- **** -->
     <GridLayout
+      :isEnabled="generalOptions"
       id="3"
       row="2"
       columns="*,50,120,*"
@@ -109,28 +110,33 @@ export default {
   props: {
     generalOptions: {
       type: Boolean,
+      default: true
     },
     item: {
       type: Object,
     },
     updateRegister: {
       type: Function,
-      default : () => {Alert("En construccion...!")}
+      default: () => {
+        Alert("En construccion...!");
+      },
     },
-    infoRegister:{
+    infoRegister: {
       type: Function,
-      default : () => {Alert("En construccion...!")}
+      default: () => {
+        Alert("En construccion...!");
+      },
     },
     deleteRow: {
       type: Function,
     },
     component: {
       type: Object,
-      default: {}
+      default: {},
     },
     componentInfo: {
       type: Object,
-      default: {}
+      default: {},
     },
   },
   data() {
@@ -142,7 +148,7 @@ export default {
   },
   methods: {
     infoItem() {
-      this.infoRegister()
+      this.infoRegister();
     },
 
     navigate() {
@@ -151,7 +157,7 @@ export default {
         fullscreen: true,
         props: { info: this.item },
       }).then(() => {
-        this.$emit('someEvent', 'Valor de ejemplo');
+        this.$emit("someEvent", "Valor de ejemplo");
         this.$closeBottomSheet();
       });
       //this.$router.push('editpallets.index')
@@ -159,8 +165,8 @@ export default {
       this.$navigateTo(CreateEditPallet) */
     },
 
-    update(){
-      this.updateRegister()
+    update() {
+      this.updateRegister();
       this.$closeBottomSheet();
     },
 
@@ -200,7 +206,7 @@ export default {
   color: #0096b7;
 }
 
-.icon{
+.icon {
   color: #3c495e;
 }
 
