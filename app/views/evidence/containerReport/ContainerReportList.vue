@@ -142,7 +142,8 @@
                     height="60"
                     width="60"
                     icon="fa-toolbox"
-                    iconBackground="#D8E2E8"
+                    iconColor="#f4f6f8"
+                    iconBackground="#eab14d"
                     radius="50"
                     :handleEvent="() => openFormDamaged(item)"
                   />

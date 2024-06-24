@@ -258,7 +258,6 @@ export default {
         }
       } catch (error) {
         console.log("al insertar error ", error);
-        0;
       }
     },
 

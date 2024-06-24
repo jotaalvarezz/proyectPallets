@@ -77,15 +77,46 @@
           <!-- <Image row="7" ref="imageRef" margin="25" src="" loadMode="sync" /> -->
         </GridLayout>
       </Collapse>
-      <StackLayout v-show="collapseValue === false" row="2" padding="20">
-        <Label
-          text="Finalizar Operacion:"
-          textWrap="true"
+      <StackLayout
+        v-show="collapseValue === false"
+        orientation="horizontal"
+        row="2"
+        padding="20"
+      >
+        <StackLayout>
+          <Label
+            text="Finalizar Operacion:"
+            textWrap="true"
+            width="auto"
+            fontSize="16"
+          />
+          <StackLayout width="80" horizontalAlignment="left">
+            <Switch ref="switch" v-model="status" @tap="finish" />
+          </StackLayout>
+        </StackLayout>
+        <Label width="1" margin="15" backgroundColor="#c0c9d7" />
+        <StackLayout
+          orientation="horizontal"
           width="auto"
-          fontSize="15"
-        />
-        <StackLayout width="80" horizontalAlignment="left">
-          <Switch ref="switch" v-model="status" @tap="finish" />
+        >
+          <Label
+            :text="status ? 'Operacion Abierta' : 'Operacion Cerrada'"
+            class="text-center"
+            width="auto"
+            fontWeight="none"
+            verticalAlignment="bottom"
+            fontSize="16"
+            margin="10"
+            borderRadius="5"
+          />
+          <Label
+            :text="(status ? 'fa-lock-open' : 'fa-lock') | fonticon"
+            class="fas text-center"
+            verticalAlignment="bottom"
+            padding="10"
+            fontSize="30"
+            color="#EAB14D"
+          />
         </StackLayout>
       </StackLayout>
       <GridLayout
@@ -96,7 +127,7 @@
         columns="*, 65"
       >
         <SearchBar
-          ref="mySearchBar"
+          ref="searchbar"
           row="0"
           col="0"
           height="50"
@@ -259,9 +290,9 @@ export default {
       message: "No hay registros para mostrar",
       model: {
         type_management_id: null,
-        name: "Cala Pino",
-        journey: "U.S.A",
-        titular_name: "Gerson Calvo",
+        name: "",
+        journey: "",
+        titular_name: "",
         signature: "",
       },
       type_management: {},
@@ -358,7 +389,11 @@ export default {
 
         this.$refs.Collapse.activated();
         // Continuar con el envío del formulario
-        Alert.info("la Gestion se ah creado con exito.", 1, "Registro Agregado");
+        Alert.info(
+          "la Gestion se ah creado con exito.",
+          1,
+          "Registro Agregado"
+        );
       } catch (error) {
         Alert.danger("Hubo un error al traer los datos ", error.message);
       } finally {

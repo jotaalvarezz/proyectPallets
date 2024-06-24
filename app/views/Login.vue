@@ -62,8 +62,8 @@ export default {
   data() {
     return {
       model:{
-        user: "adminWsp",
-        password: "Admin2024."
+        user: "",
+        password: ""
       }
     };
   },

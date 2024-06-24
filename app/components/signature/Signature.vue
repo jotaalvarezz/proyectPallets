@@ -142,7 +142,6 @@ export default {
         this.$modal.close({
           signature: "",
         });
-        console.log("err ", error);
       }
     },
 

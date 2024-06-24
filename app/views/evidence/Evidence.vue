@@ -8,7 +8,7 @@
         ripple="true"
         margin="30"
         elevation="10"
-        radius="5"
+        radius="15"
         @tap="navigate(item.id)"
       >
         <StackLayout>

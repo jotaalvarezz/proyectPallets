@@ -10,7 +10,7 @@
         :marginLeft="ml"
         style="height: 1px"
       ></StackLayout>
-      <Label :text="title" dock="left" width="auto" />
+      <Label :text="title" dock="left" fontSize="15" width="auto" />
       <Label
         ref="hoverLabel"
         :text="value ? 'fa-angle-down' : 'fa-angle-right' | fonticon"

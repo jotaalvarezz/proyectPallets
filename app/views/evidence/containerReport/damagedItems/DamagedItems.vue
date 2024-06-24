@@ -62,6 +62,12 @@
             style="color: #3c495e; width: 45%"
           />
         </FlexboxLayout>
+        <Label
+          v-if="errors.damage_id"
+          class="label-error"
+          style="width: 80%"
+          :text="'*debe selecionar los daños, oblogatorio'"
+        />
         <FloatingButton
           style="margin: 60px"
           :icon="'fa-camera'"
@@ -93,6 +99,12 @@
             color="#3c495e"
           />
         </GridLayout>
+        <Label
+          v-if="errors.photo"
+          class="label-error"
+          style="width: 80%"
+          :text="'*debe tomar la foto, para la evidencia'"
+        />
         <Stripe color="#3c495e" mr="40" ml="40" mt="20" mb="20" />
         <Button
           backgroundColor="#F4F6F8"
@@ -183,6 +195,8 @@ export default {
         container_element_id: false,
         location: false,
         position: false,
+        photo: false,
+        damage_id: false
       },
     };
   },
@@ -197,6 +211,8 @@ export default {
       this.errors.container_element_id = this.model.container_element_id === null ? true : false;
       this.errors.position = this.model.position === null ? true : false;
       this.errors.location = this.model.location === null ? true : false;
+      this.errors.photo = this.model.photo === "" ? true : false;
+      this.errors.damage_id = this.model.damage_id.length === 0 ? true : false;
       let fullfield = "";
       for (const key in this.errors) {
         if (this.errors.hasOwnProperty(key) && this.errors[key] != false) {
@@ -378,6 +394,12 @@ export default {
 
 .picture {
   width: auto;
+  text-align: left;
+}
+
+.label-error {
+  color: #e92222;
+  width: 90%;
   text-align: left;
 }
 </style>

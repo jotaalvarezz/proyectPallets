@@ -211,7 +211,10 @@ export default {
       } catch (error) {
         /* this.loadingCharge()
                 Alert.danger("No se pudieron cargados los datos de MCP a la DB",error) */
-        console.log(error);
+        return Alert.danger(
+          "¡Hubo un error al cargar los barcos y las bodegas!",
+          error.message
+        );
       }
     },
 
@@ -228,7 +231,10 @@ export default {
       } catch (error) {
         /* this.loadingCharge()
                 Alert.danger("No se pudieron cargados los datos de MCP a la DB",error) */
-        console.log(error);
+        return Alert.danger(
+          "¡Hubo un error al cargar los usuarios!",
+          error.message
+        );
       }
     },
 
@@ -245,7 +251,10 @@ export default {
       } catch (error) {
         /* this.loadingCharge()
                 Alert.danger("No se pudieron cargados los datos de MCP a la DB",error) */
-        console.log(error);
+        return Alert.danger(
+          "¡Hubo un error al cargar los modulos!",
+          error.message
+        );
       }
     },
 

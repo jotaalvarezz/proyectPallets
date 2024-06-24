@@ -151,12 +151,12 @@ export default {
       formCollapse: false,
       model: {
         management_id: null,
-        code: "MSG1112020000567896",
+        code: "",
         type_id: null,
-        role: "Mecanico",
+        role: "",
         repairs: [],
         additional_damage_id: [],
-        observation: "Testing",
+        observation: "",
       },
       types: [],
       additionalDamage: [],
@@ -194,7 +194,7 @@ export default {
           repairs: this.model.repairs,
         },
       }).then((res) => {
-        console.log("console damage");
+
       });
     },
 

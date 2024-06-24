@@ -53,7 +53,7 @@ export default {
 <style scoped>
 .tag {
   height: 26rem;
-  margin: 3px 6px 3px 0px;
+  margin: 6px 12px 6px 0px;
   border-radius: 5px;
   border-width: 1px;
   padding-left: 5px;

@@ -159,9 +159,9 @@ export default {
     ]),
 
     index() {
-      /* setTimeout(() => { */
+      setTimeout(() => {
         this.getEvidenceReports();
-      /* }, 400) */
+      }, 400)
     },
 
     refreshEvidenceRports() {
@@ -234,6 +234,8 @@ export default {
         listRows = EvidenceListInfo.listRowsPatio;
       }
       this.$showModal(ListModal, {
+        fullscreen: true,
+        animated: true,
         props: {
           title: "Informacion del reporte",
           info: item,
