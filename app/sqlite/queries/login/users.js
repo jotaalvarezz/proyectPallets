@@ -55,7 +55,6 @@ const storeUsers = async (data) => {
     let postData = [];
 
     for (let i = 0; i < data.length; i++) {
-      const encryptedPassword = SHA256(data[i].passwordWsp).toString(enc.Hex);
       postData[i] = await db.execSQL(
         `INSERT INTO users (
                             first_name,
@@ -68,7 +67,7 @@ const storeUsers = async (data) => {
           data[i].first_name,
           data[i].last_name,
           data[i].username,
-          encryptedPassword,
+          data[i].password,
           moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
         ]
       );
@@ -103,7 +102,7 @@ const storeModuleUser = async (data) => {
     }
     return postData;
   } catch (error) {
-    onsole.log("ocurrio un problema al insertar la fila", error);
+    console.log("ocurrio un problema al insertar la fila", error);
   }
 };
 

@@ -2,13 +2,6 @@
   <Page>
     <Header :search="false" />
     <FlexboxLayout justifyContent="space-around" backgroundColor="#F4F6F8">
-      <!-- <Label
-        text="second"
-        alignSelf="center"
-        width="70"
-        height="70"
-        backgroundColor="#1c6b48"
-      /> -->
       <StackLayout
         class="img"
         alignSelf="center"
@@ -19,13 +12,7 @@
         borderColor="#D5D8DC"
         borderRadius="5"
       >
-        <!-- <Image
-          src="~/assets/images/logobarco.png"
-          stretch="aspectFit"
-          height="30%"
-          width="60%"
-        /> -->
-        <Label class="login-title" text="WSP"/>
+        <Label class="login-title" text="WSP" />
         <FormGroupTextField
           label="Usuario:"
           placeholder="usuario..."
@@ -54,33 +41,46 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex';
+import { mapState, mapActions } from "vuex";
 import mixinMasters from "~/mixins/Master";
+import Alert from "~/alerts/Alerts";
 
 export default {
   name: "LoginIndex",
   data() {
     return {
-      model:{
+      model: {
         user: "",
-        password: ""
-      }
+        password: "",
+      },
+      secretKey: "security",
     };
   },
 
   mixins: [mixinMasters],
 
   methods: {
-    ...mapActions('auth',['isLogin']),
+    ...mapActions("auth", ["isLogin"]),
 
     async submit() {
-      // ...
-      this.loadingCharge(true);
-      const aux = await this.isLogin(this.model)
-      this.loadingCharge();
-      this.$router.pushClear("dashboard.index");
-
-      // ...
+      try {
+        // ...
+        this.loadingCharge(true);
+        const res = await this.isLogin(this.model);
+        if (res.status === 400) {
+          Alert.info(res.message, 1, res.error);
+          return;
+        }
+        this.$router.pushClear("dashboard.index");
+        // ...
+      } catch (error) {
+        Alert.danger(
+          "¡Hubo un error al intentar iniciar sesion!",
+          error.message
+        );
+      } finally {
+        this.loadingCharge();
+      }
     },
   },
 };
@@ -90,11 +90,7 @@ export default {
   box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.19);
 }
 
-.img{
-
-}
-
-.login-title{
+.login-title {
   text-align: center;
   font-size: 55px;
   font-weight: bold;
