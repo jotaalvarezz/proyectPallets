@@ -1,6 +1,5 @@
 const { showUser } = require("~/sqlite/database");
-
-import { enc, SHA256 } from "crypto-js";
+import bcrypt from "bcryptjs";
 
 export default {
   namespaced: true,
@@ -31,17 +30,36 @@ export default {
     async isLogin({ commit, state }, modelUser) {
       try {
         const user = modelUser.user;
-        const password = modelUser.password
+        const password = modelUser.password;
         const userDb = await showUser(user);
-        const encryptedPassword = SHA256(password).toString(enc.Hex);
-        if (userDb) {
-          if (encryptedPassword === userDb.data.password) {
+        if (Object.keys(userDb.data).length > 0) {
+          const isValid = await bcrypt.compare(password, userDb.data.password);
+          if (isValid) {
             commit("setUser", userDb.data);
             commit("setModules", userDb.data.modules);
             commit("setLogout", true);
+            return {
+              status: 200,
+              message: `success. `,
+              error: "Exitoso",
+            };
+          } else {
+            return {
+              status: 400,
+              message: `la Contraseña ingresada no coincide o esta mal escrita. `,
+              error: "Contraseña Invalida",
+            };
           }
+        } else {
+          return {
+            status: 400,
+            message: `Nombre de usuario no existe o esta mal escrito. `,
+            error: "Usuario Invalido",
+          };
         }
-      } catch (error) {}
+      } catch (error) {
+        console.log("ERROR AL VERIFICARF USUARIO ",error)
+      }
     },
 
     async islogout({ commit }) {
