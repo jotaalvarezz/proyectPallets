@@ -220,13 +220,13 @@ export default {
 
     async getUsersWsp() {
       try {
-        //const shipsWarehouses = await axios.get('http://186.1.181.146:8811/mcp-backend/public/api/mobile/wsp_users');
-        /*  const shipsWarehouses = await axios.get(
+        //const users_wsp = await axios.get('http://186.1.181.146:8811/mcp-backend/public/api/mobile/wsp_users');
+         const users_wsp = await axios.get(
           "http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/wsp_users"
-        ); */
-        const users_wsp = await axios.get(
-          "http://172.70.9.110/mcp-backend/public/api/mobile/wsp_users"
         );
+        /* const users_wsp = await axios.get(
+          "http://172.70.9.110/mcp-backend/public/api/mobile/wsp_users"
+        ); */
         return users_wsp;
       } catch (error) {
         /* this.loadingCharge()
@@ -240,13 +240,13 @@ export default {
 
     async getModulesWsp() {
       try {
-        //const shipsWarehouses = await axios.get('http://186.1.181.146:8811/mcp-backend/public/api/mobile/wsp_modules');
-        /*  const shipsWarehouses = await axios.get(
+        //const modules_wsp = await axios.get('http://186.1.181.146:8811/mcp-backend/public/api/mobile/wsp_modules');
+         const modules_wsp = await axios.get(
           "http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/wsp_modules"
-        ); */
-        const modules_wsp = await axios.get(
-          "http://172.70.9.110/mcp-backend/public/api/mobile/wsp_modules"
         );
+        /* const modules_wsp = await axios.get(
+          "http://172.70.9.110/mcp-backend/public/api/mobile/wsp_modules"
+        ); */
         return modules_wsp;
       } catch (error) {
         /* this.loadingCharge()
@@ -260,13 +260,13 @@ export default {
 
     async defaultSelects() {
       try {
-        //const shipsWarehouses = await axios.get('http://186.1.181.146:8811/mcp-backend/public/api/mobile/wsp_modules');
-        /*  const shipsWarehouses = await axios.get(
-          "http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/wsp_modules"
-        ); */
-        const selects_evidence = await axios.get(
-          "http://172.70.9.110/mcp-backend/public/api/mobile/selects_evidence"
+        //const selects_evidence = await axios.get('http://186.1.181.146:8811/mcp-backend/public/api/mobile/selects_evidence');
+         const selects_evidence = await axios.get(
+          "http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/selects_evidence"
         );
+        /* const selects_evidence = await axios.get(
+          "http://172.70.9.110/mcp-backend/public/api/mobile/selects_evidence"
+        ); */
         return selects_evidence;
       } catch (error) {
         /* this.loadingCharge()
