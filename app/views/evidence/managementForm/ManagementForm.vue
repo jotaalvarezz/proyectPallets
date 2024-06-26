@@ -147,6 +147,7 @@
           icon="fa-sync-alt"
           size="22"
           radius="50"
+          rotate="360"
           :handleEvent="() => refreshManagments()"
         />
       </GridLayout>
@@ -339,6 +340,7 @@ export default {
 
             this.status = res.data.status === 1 ? true : false;
             this.$refs.switch.nativeView.isEnabled = false;
+            return;
           }
         }
         this.status = this.type_management.status === 1 ? true : false;

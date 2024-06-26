@@ -23,6 +23,7 @@
           icon="fa-sync-alt"
           size="22"
           radius="50"
+          rotate="360"
           :handleEvent="() => refreshEvidenceRports()"
         />
       </GridLayout>
@@ -303,11 +304,11 @@ export default {
             }
           }
           //const postPallets = await axios.post('http://186.1.181.146:8811/mcp-backend/public/api/mobile/loadpallets', this.sendPallets)
-          //const postPallets = await axios.post('http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/loadpallets', this.sendPallets)
-          const postEvidence = await axios.post(
+          const postPallets = await axios.post('http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/loadevidence', reports.data)
+          /* const postEvidence = await axios.post(
             "http://172.70.9.110/mcp-backend/public/api/mobile/loadevidence",
             reports.data
-          );
+          ); */
           Alert.success("Cargue");
         } else {
           Alert.danger(

@@ -33,23 +33,28 @@ export default {
 
     radius: {
       type: Number,
-      default: 0
+      default: 0,
     },
 
-    iconColor:{
+    iconColor: {
       type: String,
-      default: "#3c495e"
+      default: "#3c495e",
     },
 
     iconBackground: {
       type: String,
-      default: "transparent"
-    }
+      default: "transparent",
+    },
+
+    rotate: {
+      type: Number,
+      default: 0,
+    },
   },
 
-  methods:{
-    action(){
-        this.handleEvent()
+  methods: {
+    action() {
+      this.handleEvent();
     },
 
     onTouch(event) {
@@ -57,28 +62,27 @@ export default {
       switch (event.action) {
         case "down":
           // El usuario ha tocado la pantalla
+          this.isAnimating = true;
           hoverLabel.animate({
             backgroundColor: "lightgray", // Cambiar el color de fondo
-            duration: 500,
+            rotate: this.rotate,
+            duration: 1000,
           });
           break;
         case "up":
-          // El usuario ha levantado el dedo de la pantalla
-          hoverLabel.animate({
-            backgroundColor: this.iconBackground, // Revertir al color original
-            duration: 500,
-          });
-          break;
         case "cancel":
-          // El toque ha sido cancelado
-          hoverLabel.animate({
-            backgroundColor: this.iconBackground, // Revertir al color original
-            duration: 500,
-          });
+          // El usuario ha levantado el dedo de la pantalla o el toque ha sido cancelado
+          setTimeout(() => {
+            hoverLabel.animate({
+              backgroundColor: this.iconBackground, // Revertir al color original
+              rotate: 0,
+              duration: 500,
+            });
+          }, 1000); // Retrasar hasta que la animación down termine
           break;
       }
     },
-  }
+  },
 };
 </script>
 
