@@ -23,6 +23,7 @@
           icon="fa-sync-alt"
           size="22"
           radius="50"
+          rotate="360"
           :handleEvent="() => refreshPallets()"
         />
       </GridLayout>
@@ -270,11 +271,11 @@ export default {
         if (res.data.length > 0) {
           this.sendPallets = res.data
           //const postPallets = await axios.post('http://186.1.181.146:8811/mcp-backend/public/api/mobile/loadpallets', this.sendPallets)
-          //const postPallets = await axios.post('http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/loadpallets', this.sendPallets)
-          const postPallets = await axios.post(
+          const postPallets = await axios.post('http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/loadpallets', this.sendPallets)
+          /* const postPallets = await axios.post(
             "http://172.70.9.110/mcp-backend/public/api/mobile/loadpallets",
             this.sendPallets
-          );
+          ); */
           this.loadingCharge();
           Alert.success("Cargue Exitoso!");
         } else {

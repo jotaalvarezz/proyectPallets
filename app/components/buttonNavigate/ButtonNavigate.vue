@@ -75,7 +75,7 @@ export default {
           setTimeout(() => {
             hoverLabel.animate({
               backgroundColor: this.iconBackground, // Revertir al color original
-              /* rotate: 0, */
+              rotate: 0,
               duration: 500,
             });
           }, 1000); // Retrasar hasta que la animación down termine
