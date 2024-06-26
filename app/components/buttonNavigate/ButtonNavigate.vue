@@ -66,7 +66,7 @@ export default {
           hoverLabel.animate({
             backgroundColor: "lightgray", // Cambiar el color de fondo
             rotate: this.rotate,
-            duration: 1000,
+            duration: 300,
           });
           break;
         case "up":
@@ -76,9 +76,9 @@ export default {
             hoverLabel.animate({
               backgroundColor: this.iconBackground, // Revertir al color original
               rotate: 0,
-              duration: 500,
+              duration: 300,
             });
-          }, 1000); // Retrasar hasta que la animación down termine
+          }, 300); // Retrasar hasta que la animación down termine
           break;
       }
     },

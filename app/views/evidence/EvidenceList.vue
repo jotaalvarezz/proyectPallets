@@ -23,7 +23,7 @@
           icon="fa-sync-alt"
           size="22"
           radius="50"
-          rotate="360"
+          :rotate="360"
           :handleEvent="() => refreshEvidenceRports()"
         />
       </GridLayout>

@@ -115,6 +115,7 @@
             verticalAlignment="bottom"
             padding="10"
             fontSize="30"
+            width="60"
             color="#EAB14D"
           />
         </StackLayout>
@@ -147,7 +148,7 @@
           icon="fa-sync-alt"
           size="22"
           radius="50"
-          rotate="360"
+          :rotate="360"
           :handleEvent="() => refreshManagments()"
         />
       </GridLayout>
