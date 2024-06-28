@@ -85,6 +85,7 @@ export default {
 
     openModal() {
       this.$showModal(CreateEditWarehouse, {
+        animated: true,
         fullscreen: true,
         props: {
           textBar: "Nueva Bodega",

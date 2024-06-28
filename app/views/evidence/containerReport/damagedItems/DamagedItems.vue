@@ -342,7 +342,7 @@ export default {
               </StackLayout>
             </Page>
         `,
-      });
+      },{animated: true,});
     },
 
     cleanImage(folderPath) {

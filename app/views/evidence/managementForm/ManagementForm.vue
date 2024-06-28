@@ -516,6 +516,8 @@ export default {
         listRows = ManagmentShipList.listRowsPatio;
       }
       this.$showModal(ListModal, {
+        animated: true,
+        stretched: false,
         props: {
           title: "Informacion del reporte",
           info: item,
@@ -529,6 +531,8 @@ export default {
     managementEdit(item) {
       this.$showModal(ManagementEdit, {
         fullscreen: true,
+        animated: true,
+        stretched: false,
         props: { info: item },
       }).then(async (res) => {
         this.getManagements(res.model.type_management_id);

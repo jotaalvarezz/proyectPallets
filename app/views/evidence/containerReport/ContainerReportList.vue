@@ -366,6 +366,8 @@ export default {
     containerReportInfo(item) {
       let listRows = containerReportListInfo.listRowsContainerReport;
       this.$showModal(ListModal, {
+        animated: true,
+        stretched: false,
         props: {
           title: "Informacion del reporte",
           info: item,
