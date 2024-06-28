@@ -64,7 +64,7 @@
                 <StackLayout class="heigth" width="75%">
                   <Label
                     text="Reporte:"
-                    class="p-l-10 subTittle"
+                    class="subTittle"
                     textWrap="true"
                     width="auto"
                     fontSize="18"

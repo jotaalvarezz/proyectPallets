@@ -181,31 +181,27 @@ export default {
           });
           break;
         case "up":
-          // El usuario ha levantado el dedo de la pantalla
-          hoverLabel.animate({
-            backgroundColor: "#F4F6F8", // Revertir al color original
-            duration: 300,
-          });
-          break;
         case "cancel":
           // El toque ha sido cancelado
-          hoverLabel.animate({
-            backgroundColor: "#F4F6F8", // Revertir al color original
-            duration: 300,
-          });
+          setTimeout(() => {
+            hoverLabel.animate({
+              backgroundColor: "#F4F6F8", // Revertir al color original
+              duration: 300,
+            });
+          }, 300);
           break;
       }
     },
 
     async getShipsWarehouses() {
       try {
-        const shipsWarehouses = await axios.get('http://186.1.181.146:8811/mcp-backend/public/api/mobile/ships');
+        /* const shipsWarehouses = await axios.get('http://186.1.181.146:8811/mcp-backend/public/api/mobile/ships'); */
         /* const shipsWarehouses = await axios.get(
           "http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/ships"
         ); */
-        /* const shipsWarehouses = await axios.get(
-          "http://192.168.20.38/mcp-backend/public/api/mobile/ships"
-        ); */
+        const shipsWarehouses = await axios.get(
+          "http://172.70.9.110/mcp-backend/public/api/mobile/ships"
+        );
         this.saveShipsWarehouses(shipsWarehouses);
         return shipsWarehouses;
       } catch (error) {
@@ -220,13 +216,13 @@ export default {
 
     async getUsersWsp() {
       try {
-        const users_wsp = await axios.get('http://186.1.181.146:8811/mcp-backend/public/api/mobile/wsp_users');
-         /* const users_wsp = await axios.get(
+        /* const users_wsp = await axios.get('http://186.1.181.146:8811/mcp-backend/public/api/mobile/wsp_users'); */
+        /* const users_wsp = await axios.get(
           "http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/wsp_users"
         ); */
-        /* const users_wsp = await axios.get(
+        const users_wsp = await axios.get(
           "http://172.70.9.110/mcp-backend/public/api/mobile/wsp_users"
-        ); */
+        );
         return users_wsp;
       } catch (error) {
         /* this.loadingCharge()
@@ -240,13 +236,13 @@ export default {
 
     async getModulesWsp() {
       try {
-        const modules_wsp = await axios.get('http://186.1.181.146:8811/mcp-backend/public/api/mobile/wsp_modules');
-         /* const modules_wsp = await axios.get(
+        /* const modules_wsp = await axios.get('http://186.1.181.146:8811/mcp-backend/public/api/mobile/wsp_modules'); */
+        /* const modules_wsp = await axios.get(
           "http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/wsp_modules"
         ); */
-        /* const modules_wsp = await axios.get(
+        const modules_wsp = await axios.get(
           "http://172.70.9.110/mcp-backend/public/api/mobile/wsp_modules"
-        ); */
+        );
         return modules_wsp;
       } catch (error) {
         /* this.loadingCharge()
@@ -260,13 +256,13 @@ export default {
 
     async defaultSelects() {
       try {
-        const selects_evidence = await axios.get('http://186.1.181.146:8811/mcp-backend/public/api/mobile/selects_evidence');
-         /* const selects_evidence = await axios.get(
+        /* const selects_evidence = await axios.get('http://186.1.181.146:8811/mcp-backend/public/api/mobile/selects_evidence'); */
+        /* const selects_evidence = await axios.get(
           "http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/selects_evidence"
         ); */
-        /* const selects_evidence = await axios.get(
+        const selects_evidence = await axios.get(
           "http://172.70.9.110/mcp-backend/public/api/mobile/selects_evidence"
-        ); */
+        );
         return selects_evidence;
       } catch (error) {
         /* this.loadingCharge()

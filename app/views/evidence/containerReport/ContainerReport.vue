@@ -44,7 +44,7 @@
             <FormGroupTextField
               row="4"
               label="TECNICO:"
-              placeholder="Cargo..."
+              placeholder="Nombre..."
               v-model="model.role"
               :required="errors.role"
             />
