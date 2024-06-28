@@ -98,6 +98,7 @@
         <StackLayout
           orientation="horizontal"
           width="auto"
+          backgroundColor="#D8E2E8"
         >
           <Label
             :text="status ? 'Operacion Abierta' : 'Operacion Cerrada'"
