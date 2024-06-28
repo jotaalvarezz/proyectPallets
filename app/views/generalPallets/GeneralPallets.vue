@@ -216,6 +216,7 @@ export default {
         const listRows = GeneralPalletList.listRows;
         await this.palletInfo(item);
         this.$showModal(ListModal, {
+          animated: true,
           props: {
             title: "Infomacion del Pallet",
             info: this.infoPallet,
@@ -293,6 +294,7 @@ export default {
 
     palletEdit(item) {
       this.$showModal(CreateEditPallet, {
+        animated: true,
         fullscreen: true,
         props: { info: item },
       }).then((res) => {

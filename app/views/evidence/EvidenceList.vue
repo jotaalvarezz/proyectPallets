@@ -309,7 +309,7 @@ export default {
             "http://172.70.9.110/mcp-backend/public/api/mobile/loadevidence",
             reports.data
           ); */
-          Alert.success("Cargue");
+          Alert.success("Reportes sincronizados...");
         } else {
           Alert.danger(
             "No se encontraron reportes",
