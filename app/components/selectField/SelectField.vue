@@ -136,6 +136,7 @@ export default {
 
     infoSelect() {
       this.$showModal(ListOptions, {
+        animated: true,
         props: {
           listOfItems: this.items,
           value: this.value,

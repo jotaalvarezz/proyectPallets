@@ -106,8 +106,19 @@
                   <FormattedString>
                     <Span text="Codigo: " fontWeight="bold" fontSize="15" />
                     <Span :text="item.code + '\n'" fontSize="15" />
-                    <Span text="Observacion: " fontWeight="bold" fontSize="15" />
-                    <Span :text="item.observation ? item.observation  : 'Sin observacion...'" fontSize="15" />
+                    <Span
+                      text="Observacion: "
+                      fontWeight="bold"
+                      fontSize="15"
+                    />
+                    <Span
+                      :text="
+                        item.observation
+                          ? item.observation
+                          : 'Sin observacion...'
+                      "
+                      fontSize="15"
+                    />
                   </FormattedString>
                 </Label>
               </StackLayout>
@@ -196,15 +207,10 @@ export default {
     },
 
     addObservation(item) {
-      this.$showModal(
-        CustomInput
-        /* {
-          fullscreen: false,
-          props: {
-            item: item
-          }
-        } */
-      ).then((res) => {
+      this.$showModal(CustomInput, {
+        fullscreen: false,
+        animated: true,
+      }).then((res) => {
         if (res.option) {
           item.observation = res.observation;
           this.editPallet(item);

@@ -177,6 +177,7 @@ export default {
 
     signatureCaptain() {
       this.$showModal(Signature, {
+        animated: true,
         props: {
           id: this.model.id,
           signature: this.model.signature,

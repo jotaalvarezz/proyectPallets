@@ -181,6 +181,7 @@ export default {
 
     openModal() {
       this.$showModal(CreateEditShip, {
+        animated: true,
         fullscreen: true,
         props: {
           textBar: "Nuevo Barco",
@@ -198,6 +199,7 @@ export default {
     shipInfo(item) {
       const listRows = ShipList.listRows;
       this.$showModal(ListModal, {
+        animated: true,
         props: {
           title: "Informacion del Barco",
           info: item,
@@ -209,6 +211,7 @@ export default {
     shipEdit(item) {
       item.action = true;
       this.$showModal(CreateEditShip, {
+        animated: true,
         fullscreen: true,
         props: { textBar: "Actualizar Barco", info: item },
       }).then((res) => {

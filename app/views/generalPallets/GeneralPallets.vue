@@ -216,6 +216,7 @@ export default {
         const listRows = GeneralPalletList.listRows;
         await this.palletInfo(item);
         this.$showModal(ListModal, {
+          animated: true,
           props: {
             title: "Infomacion del Pallet",
             info: this.infoPallet,
@@ -270,12 +271,12 @@ export default {
         const res = await loadPallets();
         if (res.data.length > 0) {
           this.sendPallets = res.data
-          const postPallets = await axios.post('http://186.1.181.146:8811/mcp-backend/public/api/mobile/loadpallets', this.sendPallets)
+          /* const postPallets = await axios.post('http://186.1.181.146:8811/mcp-backend/public/api/mobile/loadpallets', this.sendPallets) */
           //const postPallets = await axios.post('http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/loadpallets', this.sendPallets)
-          /* const postPallets = await axios.post(
+          const postPallets = await axios.post(
             "http://172.70.9.110/mcp-backend/public/api/mobile/loadpallets",
             this.sendPallets
-          ); */
+          );
           this.loadingCharge();
           Alert.success("Cargue Exitoso!");
         } else {
@@ -293,6 +294,7 @@ export default {
 
     palletEdit(item) {
       this.$showModal(CreateEditPallet, {
+        animated: true,
         fullscreen: true,
         props: { info: item },
       }).then((res) => {
