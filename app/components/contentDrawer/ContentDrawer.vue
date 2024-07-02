@@ -195,7 +195,9 @@ export default {
 
     async getShipsWarehouses() {
       try {
-        const shipsWarehouses = await axios.get('http://186.1.181.146:8811/mcp-backend/public/api/mobile/ships');
+        const shipsWarehouses = await axios.get(
+          "http://186.1.181.146:8811/mcp-backend/public/api/mobile/ships"
+        );
         /* const shipsWarehouses = await axios.get(
           "http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/ships"
         ); */
@@ -216,7 +218,9 @@ export default {
 
     async getUsersWsp() {
       try {
-        const users_wsp = await axios.get('http://186.1.181.146:8811/mcp-backend/public/api/mobile/wsp_users');
+        const users_wsp = await axios.get(
+          "http://186.1.181.146:8811/mcp-backend/public/api/mobile/wsp_users"
+        );
         /* const users_wsp = await axios.get(
           "http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/wsp_users"
         ); */
@@ -236,7 +240,9 @@ export default {
 
     async getModulesWsp() {
       try {
-        const modules_wsp = await axios.get('http://186.1.181.146:8811/mcp-backend/public/api/mobile/wsp_modules');
+        const modules_wsp = await axios.get(
+          "http://186.1.181.146:8811/mcp-backend/public/api/mobile/wsp_modules"
+        );
         /* const modules_wsp = await axios.get(
           "http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/wsp_modules"
         ); */
@@ -256,7 +262,9 @@ export default {
 
     async defaultSelects() {
       try {
-        const selects_evidence = await axios.get('http://186.1.181.146:8811/mcp-backend/public/api/mobile/selects_evidence');
+        const selects_evidence = await axios.get(
+          "http://186.1.181.146:8811/mcp-backend/public/api/mobile/selects_evidence"
+        );
         /* const selects_evidence = await axios.get(
           "http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/selects_evidence"
         ); */
@@ -320,9 +328,11 @@ export default {
     async closeSession() {
       let confirmated = await Alert.info("Se cerrara la sesion", 3, "Cerrar");
       if (confirmated) {
+        this.loadingCharge(true);
         this.islogout();
         this.$router.pushClear("login.index");
         utils.closeDrawer();
+        this.loadingCharge();
       }
     },
 

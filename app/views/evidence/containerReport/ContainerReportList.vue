@@ -131,9 +131,11 @@
                     />
                     <ButtonNavigate
                       :isEnabled="type_management.status === 1 ? true : false"
-                      height="50"
-                      width="50"
-                      icon="fa-times"
+                      height="45"
+                      width="45"
+                      icon="fa-minus"
+                      :size='12'
+                      iconColor="#e92222"
                       radius="50"
                       :handleEvent="() => deleteRowRepair(item, repair.id)"
                     />
@@ -314,7 +316,7 @@ export default {
     },
 
     async deleteRowRepair(item, id) {
-      let confirmated = await Alert.Danger(1);
+      let confirmated = await Alert.info("Se removera la reparacion...!",3,"Quitar");
       if (confirmated) {
         try {
           const record = await deleteRepair(id);

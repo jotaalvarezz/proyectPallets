@@ -162,7 +162,7 @@ export default {
     index() {
       setTimeout(() => {
         this.getEvidenceReports();
-      }, 400)
+      }, 300)
     },
 
     refreshEvidenceRports() {
