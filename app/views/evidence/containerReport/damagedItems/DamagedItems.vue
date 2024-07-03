@@ -258,7 +258,7 @@ export default {
           container_report_id: this.container_report_id,
           repair: this.model,
         });
-        Alert.success("Reparacion agrgada");
+        Alert.success("Reparacion agregada");
 
         this.model = {
           container_element_id: null,
