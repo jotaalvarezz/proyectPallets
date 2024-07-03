@@ -361,7 +361,7 @@ const finishOperations = async (id, status) => {
           message:
             `No hay reportes creados en la gestion ` +
             managements.data[i].name +
-            ` \n la gestion operacion debe tener al menos un reporte, por favor verifique...`,
+            ` \n la gestion debe tener al menos un reporte, por favor verifique...`,
           error: "Sin Reporte",
         };
       }

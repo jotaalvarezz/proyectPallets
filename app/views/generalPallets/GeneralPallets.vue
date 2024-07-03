@@ -205,7 +205,6 @@ export default {
       try {
         const res = await getPallet(item);
         this.infoPallet = res.data
-        console.log("info pallet ",res)
       } catch (error) {
         console.log("error al traer los datos ", error);
       }
