@@ -27,7 +27,7 @@ class Alert {
           title: "Actualizar aplicacion",
           message: `Tenga en cuenta que esta opcion solo debe utilizarse antes de empezar la operacion en el barco.
                     \n* Por favor verifique que de ser el caso, haya realizado la sincronizacion de la informacion con MCP.
-                    \n* Nota: Se realizara un reseteo y de borraran los pallets escaneados de forma permanente!!`,
+                    \n* Nota: Se realizara un reseteo y de borraran los datos registrados de forma permanente!!`,
           okButtonText: "Aceptar",
           cancelButtonText: "Cancelar",
         });

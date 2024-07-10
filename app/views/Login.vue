@@ -8,6 +8,8 @@
         backgroundColor="#F4F6F8"
         margin="30"
         padding="20"
+        width="510"
+        height="410"
         borderWidth="1"
         borderColor="#D5D8DC"
         borderRadius="5"
@@ -16,11 +18,13 @@
         <FormGroupTextField
           label="Usuario:"
           placeholder="usuario..."
+          fontsize="18"
           v-model="model.user"
         />
         <FormGroupTextField
           label="Contraseña:"
           placeholder="contraseña..."
+          fontsize="18"
           v-model="model.password"
           :pass="true"
         />
