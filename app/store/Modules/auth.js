@@ -1,5 +1,6 @@
 const { showUser } = require("~/sqlite/database");
 import bcrypt from "bcryptjs";
+import localStorage from "nativescript-localstorage";
 
 export default {
   namespaced: true,
@@ -38,6 +39,9 @@ export default {
             commit("setUser", userDb.data);
             commit("setModules", userDb.data.modules);
             commit("setLogout", true);
+            // Guardar un valor
+            localStorage.setItem("user", JSON.stringify(userDb.data));
+            localStorage.setItem("autenticate", state.logout);
             return {
               status: 200,
               message: `success. `,
@@ -58,7 +62,7 @@ export default {
           };
         }
       } catch (error) {
-        console.log("ERROR AL VERIFICARF USUARIO ",error)
+        console.log("ERROR AL VERIFICARF USUARIO ", error);
       }
     },
 
@@ -67,6 +71,27 @@ export default {
         commit("setUser", {});
         commit("setModules", []);
         commit("setLogout", false);
+        localStorage.clear();
+      } catch (error) {}
+    },
+
+    async isActive({ commit, state }) {
+      try {
+        const user = localStorage.getItem("user");
+        const logout = localStorage.getItem("autenticate");
+        console.log("user ", user.length);
+        console.log("logg", logout.length);
+        const autenticate = await JSON.parse(logout);
+        const user_active = await JSON.parse(user);
+        if (user_active != null && autenticate === true) {
+          commit("setUser", user_active);
+          commit("setModules", user_active.modules);
+          commit("setLogout", autenticate);
+
+          return true;
+        }
+
+        return false;
       } catch (error) {}
     },
   },

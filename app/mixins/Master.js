@@ -17,7 +17,7 @@ const mixinMasters = {
   methods: {
     ...mapMutations(["indicatorState", "setShowError"]),
 
-    loadingCharge(activated = false) {
+    loadingCharge(activated = false, msg="Cargando...") {
       if (activated) {
         this.$showModal(Loading, {
           fullscreen: false,
@@ -25,6 +25,7 @@ const mixinMasters = {
           cancelable: false,
           props: {
             state: activated,
+            msg: msg
           },
         });
       }else{

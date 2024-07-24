@@ -1,8 +1,8 @@
 <template>
     <Page>
-        <GridLayout rows="auto, auto" columns="115" margin="30">
+        <GridLayout rows="auto, auto" columns="130" margin="20">
             <ActivityIndicator row="0" :busy="controlIndicator" color="#00acc1" width="55" height="55"  @busyChange="onBusyChanged" />
-            <Label row="1" text="Cargando..." style="text-align: center;" fontSize="14" textWrap="true"/>
+            <Label row="1" :text="msg" style="text-align: center;" fontSize="14" textWrap="true"/>
         </GridLayout>
     </Page>
 </template>

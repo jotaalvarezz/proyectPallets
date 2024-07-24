@@ -68,7 +68,7 @@ export default {
   methods: {
     navegate(url) {
       try {
-        this.$router.pushClear(url);
+        this.$router.push(url);
       } catch (error) {
         Alert.info(
           "error intentando al dirigirse a la ruta " + error,

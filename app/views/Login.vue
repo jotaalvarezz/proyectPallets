@@ -1,5 +1,5 @@
 <template>
-  <Page>
+  <Page @loaded="verifySesion">
     <Header :search="false" />
     <FlexboxLayout justifyContent="space-around" backgroundColor="#F4F6F8">
       <StackLayout
@@ -48,6 +48,7 @@
 import { mapState, mapActions } from "vuex";
 import mixinMasters from "~/mixins/Master";
 import Alert from "~/alerts/Alerts";
+import localStorage from "nativescript-localstorage";
 
 export default {
   name: "LoginIndex",
@@ -63,8 +64,12 @@ export default {
 
   mixins: [mixinMasters],
 
+  computed: {
+    ...mapState("auth", ["logout", "modules", "user"]),
+  },
+
   methods: {
-    ...mapActions("auth", ["isLogin"]),
+    ...mapActions("auth", ["isLogin", "isActive"]),
 
     async submit() {
       try {
@@ -77,6 +82,22 @@ export default {
         }
         this.$router.pushClear("dashboard.index");
         // ...
+      } catch (error) {
+        Alert.danger(
+          "¡Hubo un error al intentar iniciar sesion!",
+          error.message
+        );
+      } finally {
+        this.loadingCharge();
+      }
+    },
+
+    async verifySesion() {
+      try {
+        this.loadingCharge(true, "Validando Usuario...");
+        if (await this.isActive()) {
+          this.$router.pushClear("dashboard.index");
+        }
       } catch (error) {
         Alert.danger(
           "¡Hubo un error al intentar iniciar sesion!",

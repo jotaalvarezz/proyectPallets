@@ -314,7 +314,7 @@ export default {
 
     async navigate(url) {
       try {
-        this.$router.pushClear(url);
+        this.$router.push(url);
         utils.closeDrawer();
       } catch (error) {
         Alert.info(
