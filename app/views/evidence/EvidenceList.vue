@@ -303,12 +303,7 @@ export default {
               return;
             }
           }
-          const postEvidence = await axios.post('http://186.1.181.146:8811/mcp-backend/public/api/mobile/loadevidence', reports.data)
-          //const postPallets = await axios.post('http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/loadevidence', reports.data)
-          /* const postEvidence = await axios.post(
-            "http://172.70.9.110/mcp-backend/public/api/mobile/loadevidence",
-            reports.data
-          ); */
+          const postEvidence = await axios.post(process.env.VUE_APP_API_URL+'/loadevidence', reports.data)
           Alert.success("Reportes sincronizados...");
         } else {
           Alert.danger(
