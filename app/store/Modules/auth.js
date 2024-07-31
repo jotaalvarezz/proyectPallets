@@ -79,8 +79,6 @@ export default {
       try {
         const user = localStorage.getItem("user");
         const logout = localStorage.getItem("autenticate");
-        console.log("user ", user.length);
-        console.log("logg", logout.length);
         const autenticate = await JSON.parse(logout);
         const user_active = await JSON.parse(user);
         if (user_active != null && autenticate === true) {

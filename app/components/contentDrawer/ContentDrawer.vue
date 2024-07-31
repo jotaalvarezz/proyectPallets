@@ -196,14 +196,8 @@ export default {
     async getShipsWarehouses() {
       try {
         const shipsWarehouses = await axios.get(
-          "http://186.1.181.146:8811/mcp-backend/public/api/mobile/ships"
+          process.env.VUE_APP_API_URL+"/ships"
         );
-        /* const shipsWarehouses = await axios.get(
-          "http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/ships"
-        ); */
-        /* const shipsWarehouses = await axios.get(
-          "http://172.70.9.110/mcp-backend/public/api/mobile/ships"
-        ); */
         this.saveShipsWarehouses(shipsWarehouses);
         return shipsWarehouses;
       } catch (error) {
@@ -219,14 +213,8 @@ export default {
     async getUsersWsp() {
       try {
         const users_wsp = await axios.get(
-          "http://186.1.181.146:8811/mcp-backend/public/api/mobile/wsp_users"
+          process.env.VUE_APP_API_URL+"/wsp_users"
         );
-        /* const users_wsp = await axios.get(
-          "http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/wsp_users"
-        ); */
-        /* const users_wsp = await axios.get(
-          "http://172.70.9.110/mcp-backend/public/api/mobile/wsp_users"
-        ); */
         return users_wsp;
       } catch (error) {
         /* this.loadingCharge()
@@ -241,14 +229,8 @@ export default {
     async getModulesWsp() {
       try {
         const modules_wsp = await axios.get(
-          "http://186.1.181.146:8811/mcp-backend/public/api/mobile/wsp_modules"
+          process.env.VUE_APP_API_URL+"/wsp_modules"
         );
-        /* const modules_wsp = await axios.get(
-          "http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/wsp_modules"
-        ); */
-        /* const modules_wsp = await axios.get(
-          "http://172.70.9.110/mcp-backend/public/api/mobile/wsp_modules"
-        ); */
         return modules_wsp;
       } catch (error) {
         /* this.loadingCharge()
@@ -263,14 +245,8 @@ export default {
     async defaultSelects() {
       try {
         const selects_evidence = await axios.get(
-          "http://186.1.181.146:8811/mcp-backend/public/api/mobile/selects_evidence"
+          process.env.VUE_APP_API_URL+"/selects_evidence"
         );
-        /* const selects_evidence = await axios.get(
-          "http://186.1.181.146:8811/mcp-testing-backend/public/api/mobile/selects_evidence"
-        ); */
-        /* const selects_evidence = await axios.get(
-          "http://172.70.9.110/mcp-backend/public/api/mobile/selects_evidence"
-        ); */
         return selects_evidence;
       } catch (error) {
         /* this.loadingCharge()
