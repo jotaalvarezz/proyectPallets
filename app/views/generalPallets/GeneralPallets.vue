@@ -1,9 +1,10 @@
 <template>
-  <Page>
+  <Page @loaded="onPageLoaded">
     <Header :search="false" />
     <GridLayout rows="auto, *" backgroundColor="#F4F6F8">
       <GridLayout margin="5" row="0" rows="*" columns="*, 70">
         <SearchBar
+          ref="searchBar"
           row="0"
           col="0"
           height="50"
@@ -172,6 +173,11 @@ export default {
   },
 
   methods: {
+
+    onPageLoaded() {
+      // Quita el foco inicial del SearchBar para evitar que el teclado se active
+      this.$refs.searchBar.nativeView.dismissSoftInput();
+    },
 
     filter() {
       if (this.search.length > 0) {

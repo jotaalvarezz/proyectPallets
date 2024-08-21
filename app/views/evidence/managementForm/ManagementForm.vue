@@ -5,7 +5,7 @@
       <Collapse
         ref="Collapse"
         row="0"
-        title="Gestion de Contenedor"
+        title="Diligenciar Gestion"
         @value="collapseValue = $event"
       >
         <!-- Contenido que se insertará dentro del componente -->
@@ -39,8 +39,8 @@
           <FormGroupTextField
             v-if="management_id === 2"
             row="2"
-            label="Patio:"
-            placeholder="nombre del patio..."
+            label="Gestion:"
+            placeholder="nombre..."
             fontsize="14"
             v-model="model.name"
             :required="errors.name"
@@ -207,8 +207,10 @@
                   </FormattedString>
                   <!-- en patio -->
                   <FormattedString v-if="management_id === 2">
-                    <Span text="Patio: " fontWeight="bold" fontSize="15" />
+                    <Span text="Nombre de Gestion: " fontWeight="bold" fontSize="15" />
                     <Span :text="item.name + '\n'" fontSize="15" />
+                    <Span text="Patio: " fontWeight="bold" fontSize="15" />
+                    <Span :text="'Alieva' + '\n'" fontSize="15" />
                     <Span
                       text="Nombre del Conductor: "
                       fontWeight="bold"

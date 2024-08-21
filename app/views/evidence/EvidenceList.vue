@@ -4,6 +4,7 @@
     <GridLayout rows="auto,*" backgroundColor="#F4F6F8">
       <GridLayout margin="5" row="0" rows="*" columns="*, 70">
         <SearchBar
+          ref="searchBar"
           row="0"
           col="0"
           height="50"
@@ -77,8 +78,10 @@
                       <Span :text="item.code + '\n'" fontSize="15" />
                       <Span text="Tipo: " fontWeight="bold" fontSize="15" />
                       <Span :text="item.nameType + '\n'" fontSize="15" />
-                      <Span :text="item.type_management_id === 1 ? 'Buque: ': 'Patio: '" fontWeight="bold" fontSize="15" />
+                      <Span :text="item.type_management_id === 1 ? 'Buque: ': 'Nombre de Gestion: '" fontWeight="bold" fontSize="15" />
                       <Span :text="item.vessel + '\n'" fontSize="15" />
+                      <Span v-if="item.type_management_id === 2" text="Patio: " fontWeight="bold" fontSize="15" />
+                      <Span v-if="item.type_management_id === 2" :text="'Alieva' + '\n'" fontSize="15" />
                       <Span :text="item.type_management_id === 1 ? 'Capitan: ' : 'Conductor: '" fontWeight="bold" fontSize="15" />
                       <Span :text="item.titular_name + '\n'" fontSize="15" />
                       <Span text="Tecnico: " fontWeight="bold" fontSize="15" />
@@ -162,6 +165,7 @@ export default {
     index() {
       setTimeout(() => {
         this.getEvidenceReports();
+        this.$refs.searchBar.nativeView.dismissSoftInput();
       }, 300)
     },
 

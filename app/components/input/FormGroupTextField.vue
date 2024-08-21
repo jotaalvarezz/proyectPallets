@@ -29,6 +29,7 @@
         ref="field"
         margin="0"
         class="input"
+        autocapitalizationType="none"
         :width="pass === true ? '92%' : '100%'"
         :isEnabled="enable"
         :text="value"
@@ -155,13 +156,10 @@ export default {
 
     showPassword() {
       let field = this.$refs.field.nativeView;
-      if (field.secure) {
-        this.securefield = false;
-        field.secure = this.securefield;
-      } else {
-        this.securefield = true;
-        field.secure = this.securefield;
-      }
+      this.securefield = !this.securefield
+      field.secure = this.securefield
+      const textLength = field.text.length;
+      field.setSelection(textLength);
     },
 
     onTouch(event) {
