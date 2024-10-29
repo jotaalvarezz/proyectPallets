@@ -40,6 +40,18 @@ const storeModules = async (data) => {
   }
 };
 
+const getModules = async () => {
+  try {
+    const db = await openDatabase()
+    const modules = await db.all("SELECT * FROM modules", []);
+    const dataFormatted = await showData("modules", modules)
+    return {data: dataFormatted}
+  } catch (error) {
+    console.log("Error a consultar los usuarios ",error)
+  }
+}
+
 module.exports = {
   storeModules,
+  getModules
 };

@@ -114,7 +114,7 @@
                       <Span :text="'Alieva' + '\n'" fontSize="15" />
                       <Span text="Tecnico: " fontWeight="bold" fontSize="15" />
                       <Span :text="item.role + '\n'" fontSize="15" />
-                      <Span text="Elemntos:" fontWeight="bold" fontSize="15" />
+                      <Span text="Estructura:" fontWeight="bold" fontSize="15" />
                     </FormattedString>
                   </Label>
                   <StackLayout

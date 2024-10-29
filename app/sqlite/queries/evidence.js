@@ -51,7 +51,7 @@ const getContainerReport = async (management_id) => {
       let repairs = await db.all(
         `SELECT r.id, r.container_element_id, e.name, r.location, r.position, r.container_report_id, r.photo
                                     FROM  repairs r
-                                    INNER JOIN container_elements e on e.id = r.container_element_id
+                                    LEFT JOIN container_elements e on e.id = r.container_element_id
                                     WHERE container_report_id = ?`,
         [dataFormatted[i].id]
       );

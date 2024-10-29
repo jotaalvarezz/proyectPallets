@@ -2,7 +2,7 @@
   <!-- <Page> -->
   <GridLayout
     rows="auto, *"
-    columns="300,auto"
+    columns="400,auto"
     style="max-height: 300px"
     backgroundColor="white"
   >

@@ -117,15 +117,14 @@
   </GridLayout>
 </template>
 <script>
-const {
+/* const {
   createTable,
   DBdelete,
-  structure,
   storeUsers,
   storeModules,
   insertSeletsEvidence,
   insertTypesManagement,
-} = require("../../sqlite/database");
+} = require("../../sqlite/database"); */
 import * as utils from "~/shared/util";
 import axios from "axios";
 import { mapState, mapMutations, mapActions } from "vuex";
@@ -133,6 +132,7 @@ import mixinMasters from "~/mixins/Master";
 import Alert from "~/alerts/Alerts";
 import { ImageSource, knownFolders, path, Folder } from "@nativescript/core";
 import * as fs from "@nativescript/core/file-system";
+import { doUpdate } from "~/shared/doUpdate"
 
 export default {
   name: "Content-Drawer",
@@ -146,7 +146,7 @@ export default {
 
   computed: {
     ...mapState(["indicator"]),
-    ...mapState("auth", ["logout", "modules", "user"]),
+    ...mapState("auth", ["logout", "modules", "user", "users"]),
   },
 
   mixins: [mixinMasters],
@@ -193,7 +193,7 @@ export default {
       }
     },
 
-    async getShipsWarehouses() {
+    /* async getShipsWarehouses() {
       try {
         const shipsWarehouses = await axios.get(
           process.env.VUE_APP_API_URL+"/ships"
@@ -201,75 +201,58 @@ export default {
         this.saveShipsWarehouses(shipsWarehouses);
         return shipsWarehouses;
       } catch (error) {
-        /* this.loadingCharge()
-                Alert.danger("No se pudieron cargados los datos de MCP a la DB",error) */
         return Alert.danger(
           "¡Hubo un error al cargar los barcos y las bodegas!",
           error.message
         );
       }
-    },
+    }, */
 
-    async getUsersWsp() {
+    /* async getUsersWsp() {
       try {
         const users_wsp = await axios.get(
           process.env.VUE_APP_API_URL+"/wsp_users"
         );
         return users_wsp;
       } catch (error) {
-        /* this.loadingCharge()
-                Alert.danger("No se pudieron cargados los datos de MCP a la DB",error) */
         return Alert.danger(
           "¡Hubo un error al cargar los usuarios!",
           error.message
         );
       }
-    },
+    }, */
 
-    async getModulesWsp() {
+    /* async getModulesWsp() {
       try {
         const modules_wsp = await axios.get(
           process.env.VUE_APP_API_URL+"/wsp_modules"
         );
         return modules_wsp;
       } catch (error) {
-        /* this.loadingCharge()
-                Alert.danger("No se pudieron cargados los datos de MCP a la DB",error) */
         return Alert.danger(
           "¡Hubo un error al cargar los modulos!",
           error.message
         );
       }
-    },
+    }, */
 
-    async defaultSelects() {
+    /* async defaultSelects() {
       try {
         const selects_evidence = await axios.get(
           process.env.VUE_APP_API_URL+"/selects_evidence"
         );
         return selects_evidence;
       } catch (error) {
-        /* this.loadingCharge()
-                Alert.danger("No se pudieron cargados los datos de MCP a la DB",error) */
         console.log(error);
       }
-    },
+    }, */
 
     async createTables() {
       try {
         let confirmated = await Alert.Danger(2);
         if (confirmated) {
           this.loadingCharge(true);
-          const shipsWarehouses = await this.getShipsWarehouses();
-          const selects_evidence = await this.defaultSelects();
-          const modules = await this.getModulesWsp();
-          const users = await this.getUsersWsp();
-          this.setUsers(modules.data.data);
-          const db = await createTable(shipsWarehouses.data.data);
-          await storeUsers(users.data.data);
-          await storeModules(modules.data.data);
-          await insertSeletsEvidence(selects_evidence.data.data.defaultSelects);
-          await insertTypesManagement(selects_evidence.data.data.defaultTypes);
+          await doUpdate.updateApp();
           this.cleanImages();
           this.islogout();
           this.$router.pushClear("login.index");
@@ -283,7 +266,8 @@ export default {
     },
 
     async home() {
-      /* const struc = await structure() */
+      /* const struct = await doUpdate.structure()
+      console.log("estructura ",struct) */
       this.$router.pushClear("dashboard.index");
       utils.closeDrawer();
     },

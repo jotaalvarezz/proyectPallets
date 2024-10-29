@@ -12,6 +12,29 @@ const { getRepairsReport } = require("~/sqlite/queries/repair");
 
 const moment = require("moment");
 
+const storeTypesManagement = async (data) => {
+  try {
+    const db = await openDatabase();
+    const DefaultTypesManagement = data.types_management
+    let post = [];
+    for (let i = 0; i < DefaultTypesManagement.length; i++) {
+      post[i] = db.execSQL(
+        `INSERT INTO types_management (id, name, icon, status, date_creation) VALUES (?, ?, ?, ?, ?)`,
+        [
+          DefaultTypesManagement[i].id,
+          DefaultTypesManagement[i].name,
+          DefaultTypesManagement[i].icon,
+          1,
+          moment(DefaultTypesManagement[i].created_at).format("YYYY-MM-DD HH:mm:ss"),
+        ]
+      );
+    }
+    return post;
+  } catch (error) {
+    console.log("error al crear registro en types management ", error);
+  }
+};
+
 const getTypesManagement = async () => {
   try {
     const db = await openDatabase();
@@ -85,7 +108,7 @@ const getAllManagements = async () => {
       let repairs = await db.all(
         `SELECT r.id, r.container_element_id, e.name, r.location, r.position, r.container_report_id, r.photo
                                     FROM  repairs r
-                                    INNER JOIN container_elements e on e.id = r.container_element_id
+                                    LEFT JOIN container_elements e on e.id = r.container_element_id
                                     WHERE container_report_id = ?`,
         [dataFormatted[i].id]
       );
@@ -103,7 +126,7 @@ const getAllManagements = async () => {
         let damages = await db.all(
           `SELECT rd.damage_id, d.name
                                     FROM  repair_damage rd
-                                    INNER JOIN damage d on d.id = rd.damage_id
+                                    LEFT JOIN damage d on d.id = rd.damage_id
                                     WHERE rd.repair_id = ?`,
           [repairsFormatted[i].id]
         );
@@ -423,4 +446,5 @@ module.exports = {
   sendEvidenceReports,
   finishOperations,
   showTypesManagement,
+  storeTypesManagement
 };

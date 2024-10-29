@@ -18,6 +18,17 @@ const getWarehouses = async (ship_id) => {
   }
 };
 
+const getAllWarehouses = async () => {
+  try {
+    const db = await openDatabase();
+    const data = await db.all("SELECT * FROM warehouses", []);
+    const dataFormatted = await showData("warehouses", data)
+    return {data:dataFormatted};
+  } catch (error) {
+    console.log("errot al traer los warehouses ",error)
+  }
+}
+
 const insertWarehuse = async (data) => {
   try {
     const db = await openDatabase();
@@ -44,5 +55,6 @@ const deleteWarehouse = async (id) => {
 module.exports = {
   getWarehouses,
   insertWarehuse,
-  deleteWarehouse
+  deleteWarehouse,
+  getAllWarehouses
 };

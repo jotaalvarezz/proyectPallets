@@ -54,9 +54,42 @@ const deleteShip = async (id) => {
   }
 };
 
+const storeShips = async (shipsWarehouses) => {
+  try {
+    const db = await openDatabase();
+    let postWarehouse = [];
+    let postData = [];
+    let selects = [];
+    for (let i = 0; i < shipsWarehouses.length; i++) {
+      postData[i] = await db.execSQL(
+        "INSERT INTO ships (id, name, journey) VALUES (?, ?, ?)",
+        [
+          shipsWarehouses[i].id,
+          shipsWarehouses[i].name_ship,
+          shipsWarehouses[i].journey,
+        ]
+      );
+      for (let j = 0; j < shipsWarehouses[i].warehouses.length; j++) {
+        postWarehouse[j] = db.execSQL(
+          "INSERT INTO warehouses (name, warehouse_id, ship_id) VALUES (?, ?, ?)",
+          [
+            shipsWarehouses[i].warehouses[j].name_warehouse,
+            shipsWarehouses[i].warehouses[j].id,
+            shipsWarehouses[i].id,
+          ]
+        );
+      }
+    }
+    return { postShip: postData, postWarehouse: postWarehouse };
+  } catch (error) {
+    console.log("ocurrio un problema al insertar la fila", error);
+  }
+};
+
 module.exports = {
   getShips,
   insertShip,
   updateShip,
-  deleteShip
+  deleteShip,
+  storeShips
 };

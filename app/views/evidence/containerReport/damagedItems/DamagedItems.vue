@@ -208,11 +208,11 @@ export default {
   methods: {
     /* ****************************************************************** */
     validateField(fields) {
-      this.errors.container_element_id = this.model.container_element_id === null ? true : false;
+      /* this.errors.container_element_id = this.model.container_element_id === null ? true : false;
       this.errors.position = this.model.position === null ? true : false;
-      this.errors.location = this.model.location === null ? true : false;
+      this.errors.location = this.model.location === null ? true : false; */
       this.errors.photo = this.model.photo === "" ? true : false;
-      this.errors.damage_id = this.model.damage_id.length === 0 ? true : false;
+      /* this.errors.damage_id = this.model.damage_id.length === 0 ? true : false; */
       let fullfield = "";
       for (const key in this.errors) {
         if (this.errors.hasOwnProperty(key) && this.errors[key] != false) {

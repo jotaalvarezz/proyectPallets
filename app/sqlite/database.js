@@ -1,8 +1,9 @@
-const Sqlite = require("nativescript-sqlite");
+/* const Sqlite = require("nativescript-sqlite"); */
 
-const moment = require("moment");
+/* const moment = require("moment"); */
 
 const {
+  storeSeletsEvidence,
   getTypes,
   getAdditionalDamage,
   getContainerElements,
@@ -29,6 +30,7 @@ const {
   sendEvidenceReports,
   finishOperations,
   showTypesManagement,
+  storeTypesManagement
 } = require("~/sqlite/queries/management");
 
 const {
@@ -38,6 +40,7 @@ const {
 } = require("~/sqlite/queries/login/users");
 
 const {
+  storeShips,
   getShips,
   insertShip,
   updateShip,
@@ -60,10 +63,10 @@ const {
   deletePallet
 } = require("~/sqlite/queries/pallet")
 
-const { storeModules } = require("~/sqlite/queries/login/modules");
+const { storeModules, getModules } = require("~/sqlite/queries/login/modules");
 
 const { storeRepair, deleteRepair, getRepairsReport } = require("~/sqlite/queries/repair");
-const Querys = [
+/* const Querys = [
   `CREATE TABLE IF NOT EXISTS ships
     (
       id INTEGER PRIMARY KEY,
@@ -78,14 +81,6 @@ const Querys = [
       ship_id INTEGER ,
       FOREIGN KEY (ship_id) REFERENCES ships(id)
     )`,
-  /*  `CREATE TABLE IF NOT EXISTS ship_warehouses
-     (
-       id INTEGER PRIMARY KEY,
-       ship_id INTEGER ,
-       warehouse_id INTEGER,
-       FOREIGN KEY (ship_id) REFERENCES ships(ship_id),
-       FOREIGN KEY (warehouse_id) REFERENCES warehouses(warehouse_id)
-     )`, */
   `CREATE TABLE IF NOT EXISTS pallets
     (
       id INTEGER PRIMARY KEY,
@@ -95,8 +90,6 @@ const Querys = [
       date_creation DATETIME,
       FOREIGN KEY (warehouse_id) REFERENCES warehouses(id)
     )`,
-
-  /* *************************************************************** */
   `CREATE TABLE IF NOT EXISTS types
     (
       id INTEGER PRIMARY KEY,
@@ -194,8 +187,6 @@ const Querys = [
       FOREIGN KEY (container_report_id) REFERENCES container_reports(id),
       FOREIGN KEY (additional_damage_id) REFERENCES additional_damage(id)
     )`,
-
-  /* Tablas de usuarios y modulos */
   `CREATE TABLE IF NOT EXISTS users
     (
       id INTEGER PRIMARY KEY,
@@ -226,76 +217,20 @@ const Querys = [
       FOREIGN KEY (user_id) REFERENCES users(id),
       FOREIGN KEY (module_id) REFERENCES modules(id)
     )`,
-];
-
-/* const DefaultSelects = {
-  types: [
-    { name: "Refrigerado", date_creation: new Date() },
-    { name: "Seco", date_creation: new Date() },
-    { name: "Lleno", date_creation: new Date() },
-    { name: "Vacio", date_creation: new Date() },
-  ],
-  additional_damage: [
-    { name: "VENTILADOR", date_creation: new Date() },
-    { name: "TEMPERATURA", date_creation: new Date() },
-    { name: "PLUG", date_creation: new Date() },
-    { name: "CABLE ELECTRICO", date_creation: new Date() },
-    { name: "CONVERTIDOR DE FRECUENCIA", date_creation: new Date() },
-    { name: "MICRO", date_creation: new Date() },
-    { name: "FREON", date_creation: new Date() },
-    { name: "COMPRESOR", date_creation: new Date() },
-    { name: "PANTALLA", date_creation: new Date() },
-  ],
-  container_elements: [
-    { name: "Viga Frontal", date_creation: new Date() },
-    { name: "Travesaño", date_creation: new Date() },
-    { name: "Ventilador", date_creation: new Date() },
-    { name: "Soporte de Uña", date_creation: new Date() },
-    { name: "Manija de Puerta", date_creation: new Date() },
-    { name: "Barra de Cierre", date_creation: new Date() },
-    { name: "Empaque de Puerta", date_creation: new Date() },
-    { name: "Bisagras", date_creation: new Date() },
-    { name: "Seguro de Puerta", date_creation: new Date() },
-  ],
-  damage: [
-    { name: "AB - ABOLLADO", date_creation: new Date() },
-    { name: "DO - DOBLADO", date_creation: new Date() },
-    { name: "OX - OXIDADO", date_creation: new Date() },
-    { name: "SU - SUMIDO", date_creation: new Date() },
-    { name: "SC - SUCIO", date_creation: new Date() },
-    { name: "CO - CORTADO", date_creation: new Date() },
-    { name: "FA - FALTA", date_creation: new Date() },
-    { name: "RO - ROTO", date_creation: new Date() },
-    { name: "ZA - ZAFO", date_creation: new Date() },
-    { name: "AC - MANCHAS DE ACEITE", date_creation: new Date() },
-  ],
-};
-
-const DefaultTypesManagement = [
-  {
-    name: "Gestion en Barco",
-    icon: "~/assets/images/gestion_barco.jpg",
-    date_creation: new Date(),
-  },
-  {
-    name: "Gestion en Patio",
-    icon: "~/assets/images/gestion_patio.jpg",
-    date_creation: new Date(),
-  },
 ]; */
 
 // Función para abrir o crear la base de datos
 /* ************************************************************************************** */
-const openDatabase = async () => {
+/* const openDatabase = async () => {
   try {
     const lite = await new Sqlite("mydatabase.db");
     return lite;
   } catch (error) {
     console.log("error al abrir la db: ", error);
   }
-};
+}; */
 
-const structure = async () => {
+/* const structure = async () => {
   try {
     const db = await openDatabase();
     return db
@@ -309,10 +244,10 @@ const structure = async () => {
         });
       });
   } catch (error) {}
-};
+}; */
 
 // Función para crear las tablas
-const createTable = async (shipsWarehouses) => {
+/* const createTable = async (shipsWarehouses) => {
   try {
     DBdelete();
     let database = [];
@@ -325,10 +260,10 @@ const createTable = async (shipsWarehouses) => {
   } catch (error) {
     console.log("error e la creacion de la tabla ", error);
   }
-};
+}; */
 /* ************************************************************************************** */
 
-const insertSeletsEvidence = async (DefaultSelects) => {
+/* const insertSeletsEvidence = async (DefaultSelects) => {
   try {
     const db = await openDatabase();
     let post = [];
@@ -346,10 +281,10 @@ const insertSeletsEvidence = async (DefaultSelects) => {
   } catch (error) {
     console.log("errores ", error);
   }
-};
+}; */
 
 //datos por defecto de tipos de gestion
-const insertTypesManagement = async (data) => {
+/* const storeTypesManagement = async (data) => {
   try {
     const db = await openDatabase();
     const DefaultTypesManagement = data.types_management
@@ -370,10 +305,10 @@ const insertTypesManagement = async (data) => {
   } catch (error) {
     console.log("error al crear registro en types management ", error);
   }
-};
+}; */
 
 //Creacion de datos por defecto
-const insertDefaultData = async (db, shipsWarehouses) => {
+/* const insertDefaultData = async (db, shipsWarehouses) => {
   try {
     let postWarehouse = [];
     let postData = [];
@@ -402,10 +337,10 @@ const insertDefaultData = async (db, shipsWarehouses) => {
   } catch (error) {
     console.log("ocurrio un problema al insertar la fila", error);
   }
-};
+}; */
 
 //Funcion para eliminar la Base de datos
-const DBdelete = async () => {
+/* const DBdelete = async () => {
   try {
     //const db = await openDatabase()
     const deleteDB = Sqlite.deleteDatabase("mydatabase.db");
@@ -413,22 +348,22 @@ const DBdelete = async () => {
   } catch (error) {
     console.log("error al eliminar ", error);
   }
-};
+}; */
 
 module.exports = {
-  createTable,
+  /* createTable, */
   insertShip,
   insertWarehuse,
   insertPallet,
   getShips,
   getWarehouses,
   getPallets,
-  openDatabase,
-  DBdelete,
+  /* openDatabase, */
+  /* DBdelete, */
   deleteShip,
   deleteWarehouse,
   deletePallet,
-  structure,
+  /* structure, */
   getPalletsAll,
   getPallet,
   updatePallet,
@@ -455,11 +390,17 @@ module.exports = {
   storeUsers,
   showUser,
   storeModules,
-  insertSeletsEvidence,
-  insertTypesManagement,
+  /* insertSeletsEvidence, */
+  /* insertTypesManagement, */
+  storeSeletsEvidence,
+  storeTypesManagement,
   sendEvidenceReports,
   finishOperations,
   showContainerReport,
   showTypesManagement,
   getRepairsReport,
+  getUsers,
+  /* insertDefaultData, */
+  storeShips,
+  getModules
 };

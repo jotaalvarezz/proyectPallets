@@ -7,7 +7,7 @@ const showRepair = async (id) => {
     const db = await openDatabase();
     const data = await db.get(`SELECT r.id, r.container_element_id, e.name, r.location, r.position, r.container_report_id, r.photo
                                 FROM  repairs r
-                                INNER JOIN container_elements e on e.id = r.container_element_id
+                                lEFT JOIN container_elements e on e.id = r.container_element_id
                                 WHERE r.id = ?`, [id]);
     const dataFormatted = await first('repairs', data, ['id', 'container_element_id', 'name', 'location', 'position', 'container_report_id', 'photo'])
     if (Object.keys(dataFormatted).length > 0) {

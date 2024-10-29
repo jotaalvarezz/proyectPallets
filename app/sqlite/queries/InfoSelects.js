@@ -1,5 +1,25 @@
 const {openDatabase, showData} = require('~/sqlite/openDatabase');
 
+const storeSeletsEvidence = async (DefaultSelects) => {
+  try {
+    const db = await openDatabase();
+    let post = [];
+    for (const key in DefaultSelects) {
+      if (DefaultSelects.hasOwnProperty(key)) {
+        for (let j = 0; j < DefaultSelects[key].length; j++) {
+          post[j] = db.execSQL(
+            `INSERT INTO ${key} (id, name, date_creation) VALUES (?, ?, ?)`,
+            [DefaultSelects[key][j].id, DefaultSelects[key][j].name, DefaultSelects[key][j].created_at]
+          );
+        }
+      }
+    }
+    return post;
+  } catch (error) {
+    console.log("errores ", error);
+  }
+};
+
 const getTypes = async () => {
   try {
     const db = await openDatabase();
@@ -48,5 +68,6 @@ module.exports = {
   getTypes,
   getAdditionalDamage,
   getContainerElements,
-  getDamage
+  getDamage,
+  storeSeletsEvidence
 }
