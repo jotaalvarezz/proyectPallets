@@ -1,5 +1,9 @@
 const listRowsContainerReport = [
   {
+    prop:'prefix',
+    label:'Prefijo'
+  },
+  {
     prop: 'code',
     label: 'Contenedor'
   },

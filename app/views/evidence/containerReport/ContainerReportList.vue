@@ -14,6 +14,7 @@
           margin="10"
           hint="Buscar..."
           v-model="search"
+          @loaded="focus"
           @textChange="filter"
           @submit="filter"
           @clear="clear"
@@ -79,7 +80,7 @@
                         fontWeight="bold"
                         fontSize="15"
                       />
-                      <Span :text="item.code + '\n'" fontSize="15" />
+                      <Span :text="item.prefix + item.code + '\n'" fontSize="15" />
                       <Span text="Tipo: " fontWeight="bold" fontSize="15" />
                       <Span
                         :text="nameType(item.type_id) + '\n'"
@@ -125,7 +126,7 @@
                   >
                     <Tag
                       width="80%"
-                      :label="repair.name"
+                      :label="repair.name ? repair.name : ''"
                       :items="repair.repair_damage"
                       labelIterator="name"
                     />
@@ -187,6 +188,7 @@ import ListModal from "~/components/listModal/ListModal.vue";
 import containerReportListInfo from "~/views/evidence/containerReport/ContainerReportListInfo";
 import ContainerReport from "~/views/evidence/containerReport/ContainerReport.vue";
 import DamagedItems from "~/views/evidence/containerReport/damagedItems/DamagedItems.vue";
+import { onSearchBarLoaded } from "~/shared/helpers"
 
 export default {
   name: "containerReportList",
@@ -400,6 +402,11 @@ export default {
       }
       return type.name;
     },
+
+    //evento para quitarle foco al searhBar cuando se carga la vista
+    focus(event){
+      onSearchBarLoaded(event)
+    }
 
     /* async InfoSelect() {
       try {

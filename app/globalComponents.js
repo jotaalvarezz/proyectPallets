@@ -16,6 +16,7 @@ import GeneralComponent from "~/components/GeneralComponent/GeneralComponent.vue
 import FilterSearhBar from "~/components/filterBar/FilterSearhBar.vue"
 import HeaderComponent from "~/components/header/HeaderComponent.vue"
 import ButtonNavigate from "~/components/buttonNavigate/ButtonNavigate.vue"
+import FilterSelectField from '~/components/filterSelectField/FilterSelectField.vue'
 
 const GlobalComponents = {
   install(Vue) {
@@ -37,6 +38,7 @@ const GlobalComponents = {
     Vue.component(FilterSearhBar.name, FilterSearhBar);
     Vue.component(HeaderComponent.name, HeaderComponent)
     Vue.component(ButtonNavigate.name, ButtonNavigate)
+    Vue.component(FilterSelectField.name, FilterSelectField)
   }
 }
 

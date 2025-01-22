@@ -57,12 +57,12 @@ export default {
         } else {
           return {
             status: 400,
-            message: `Nombre de usuario no existe o esta mal escrito. `,
+            message: `El usuario ingresado, esta mal escrito o no existe`,
             error: "Usuario Invalido",
           };
         }
       } catch (error) {
-        console.log("ERROR AL VERIFICARF USUARIO ", error);
+        return { status: 400, message: error, error: "Error"};
       }
     },
 

@@ -12,6 +12,7 @@
           class="search-bar"
           hint="Buscar..."
           v-model="search"
+          @loaded="focus"
           @textChange="filter"
           @submit="filter"
           @clear="clear"
@@ -136,6 +137,7 @@ import { mapMutations } from "vuex";
 import mixinMasters from "~/mixins/Master";
 import ListModal from "~/components/listModal/ListModal.vue";
 import GeneralPalletList from "~/views/generalPallets/GeneralPalletList";
+import { onSearchBarLoaded } from "~/shared/helpers"
 
 export default {
   name: "Ships",
@@ -314,6 +316,10 @@ export default {
         }
       }
     },
+    //evento para quitarle foco al searhBar cuando se carga la vista
+    focus(event){
+      onSearchBarLoaded(event)
+    }
   },
 
   created() {

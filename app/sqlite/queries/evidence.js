@@ -13,10 +13,16 @@ const getContainerReport = async (management_id) => {
     const data = await db.all(
       `SELECT cr.id, m.name, m.journey, cr.management_id,
                                       cr.consecutive,
-                                      cr.code, cr.type_id, cr.role,
-                                      cr.observation, cr.date_creation
+                                      p.id,
+                                      cr.prefix,
+                                      cr.code,
+                                      cr.type_id,
+                                      cr.role,
+                                      cr.observation,
+                                      cr.date_creation
                                 FROM container_reports cr
                                 INNER JOIN management m on m.id = cr.management_id
+                                INNER JOIN  prefixes p on p.prefix = cr.prefix
                                 WHERE cr.management_id = ?`,
       [management_id]
     );
@@ -26,6 +32,8 @@ const getContainerReport = async (management_id) => {
       "journey",
       "management_id",
       "consecutive_report",
+      "prefixId",
+      "prefix",
       "code",
       "type_id",
       "role",
@@ -92,6 +100,7 @@ const showContainerReport = async (id) => {
     const db = await openDatabase();
     const data = await db.get(
       `SELECT cr.id, m.name, m.journey, cr.management_id,
+                                      cr.prefix,
                                       cr.code, cr.type_id, cr.role,
                                       cr.observation, cr.date_creation
                                 FROM container_reports cr
@@ -104,6 +113,7 @@ const showContainerReport = async (id) => {
       "vessel",
       "journey",
       "management_id",
+      "prefix",
       "code",
       "type_id",
       "role",
@@ -215,15 +225,17 @@ const storeContainerReport = async (data) => {
       `INSERT INTO container_reports (
                           consecutive,
                           management_id,
+                          prefix,
                           code,
                           type_id,
                           role,
                           observation,
                           date_creation)
-      VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         Date.now() + Math.random(),
         data.management_id,
+        data.prefixCode,
         data.code,
         data.type_id,
         data.role,
@@ -340,12 +352,13 @@ const updateContainerReport = async (item) => {
     const db = await openDatabase();
     let updateData = db.execSQL(
       `UPDATE container_reports
-                                      SET code = (?),
+                                      SET prefix = (?),
+                                      code = (?),
                                       type_id = (?),
                                       role = (?),
                                       observation = (?)
                                       WHERE id = (?)`,
-      [item.code, item.type_id, item.role, item.observation, item.id]
+      [item.prefixCode ,item.code, item.type_id, item.role, item.observation, item.id]
     );
     storeCReportADamage(
       {

@@ -252,16 +252,20 @@ export default {
         let confirmated = await Alert.Danger(2);
         if (confirmated) {
           this.loadingCharge(true);
-          await doUpdate.updateApp();
+          const res = await doUpdate.updateApp();
+          if(res.status && res.status === 400){
+            Alert.danger("Fallo la conexion con el servidor ",res.message)
+            return;
+          }
           this.cleanImages();
           this.islogout();
           this.$router.pushClear("login.index");
-          this.loadingCharge();
           Alert.success("Actualizacion de DB");
         }
       } catch (error) {
-        this.loadingCharge();
         Alert.danger("No se pudo actualizar la DB", error);
+      } finally {
+        this.loadingCharge();
       }
     },
 

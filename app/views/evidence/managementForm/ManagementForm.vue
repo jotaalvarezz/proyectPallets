@@ -137,6 +137,7 @@
           margin="10"
           hint="Buscar..."
           v-model="search"
+          @loaded="focus"
           @textChange="filter"
           @submit="filter"
           @clear="clear"
@@ -274,6 +275,7 @@ import Alert from "~/alerts/Alerts";
 import { mapState, mapMutations } from "vuex";
 import ListModal from "~/components/listModal/ListModal.vue";
 import ManagmentShipList from "~/views/evidence/managementForm/ManagmentShipList";
+import { onSearchBarLoaded } from "~/shared/helpers"
 
 export default {
   name: "Management",
@@ -557,6 +559,11 @@ export default {
         }
       }
     },
+
+    //evento para quitarle foco al searhBar cuando se carga la vista
+    focus(event){
+      onSearchBarLoaded(event)
+    }
   },
 };
 </script>

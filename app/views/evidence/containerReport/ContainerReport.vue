@@ -1,6 +1,9 @@
 <template>
   <StackLayout @loaded="initialMethods" backgroundColor="#F4F6F8">
-    <HeaderComponent title="Creacion de Reporte/Contenedor" :handleback="$modal.close"/>
+    <HeaderComponent
+      title="Creacion de Reporte/Contenedor"
+      :handleback="$modal.close"
+    />
     <ScrollView>
       <StackLayout backgroundColor="#F4F6F8">
         <StackLayout
@@ -14,26 +17,36 @@
         >
           <GridLayout
             ref="form2"
-            rows="auto,auto,auto,auto,auto,60,auto,auto,auto,auto,auto"
+            rows="auto,auto,auto,auto,auto,auto,60,auto,auto,auto,auto,auto"
             padding="30"
           >
             <Label
               class="text-center"
-              text="CONTAINER DAMAGE REPORT"
+              text="INFORME DE DAÑOS DEL CONTENEDOR"
               fontSize="18"
               color="#3c495e"
               fontWeight="bold"
             ></Label>
             <Stripe row="1" margin="20" />
-            <FormGroupTextField
+            <FilterSelectField
               row="2"
-              label="# CONTENEDOR:"
+              :value="model.prefix"
+              :items="prefixes"
+              label="PREFIJO:"
+              labelIterator="prefix"
+              icon="fa-memory"
+              @value="model.prefix = $event"
+              :required="errors.prefix"
+            />
+            <FormGroupTextField
+              row="3"
+              label="CONTENEDOR:"
               placeholder="Codigo..."
               v-model="model.code"
               :required="errors.code"
             />
             <SelectField
-              row="3"
+              row="4"
               :value="model.type_id"
               :items="types"
               label="TIPO:"
@@ -42,7 +55,7 @@
               :required="errors.type_id"
             />
             <FormGroupTextField
-              row="4"
+              row="5"
               label="TECNICO:"
               placeholder="Nombre..."
               v-model="model.role"
@@ -50,7 +63,7 @@
             />
             <!-- tabla de descripcion de daños y elementos -->
             <Label
-              row="5"
+              row="6"
               textWrap="true"
               marginTop="5"
               style="
@@ -69,7 +82,7 @@
               </FormattedString>
             </Label>
             <SelectField
-              row="6"
+              row="7"
               :value="model.additional_damage_id"
               :items="additionalDamage"
               label="DAÑO ADICIONAL:"
@@ -78,17 +91,17 @@
               @value="model.additional_damage_id = $event"
             />
             <FormGroupTextField
-              row="7"
+              row="8"
               label="OBSERVACION:"
               textArea="true"
               placeholder="Observaciones..."
               v-model="model.observation"
             />
-            <Stripe row="8" margin="20" />
+            <Stripe row="9" margin="20" />
             <!-- Boton para Crear -->
             <Button
               v-if="containerReportEdit == false"
-              row="9"
+              row="10"
               backgroundColor="#F4F6F8"
               color="#222a37"
               text="Enviar"
@@ -102,7 +115,7 @@
             <!-- Boton para Editar -->
             <Button
               v-if="containerReportEdit == true"
-              row="9"
+              row="10"
               backgroundColor="#F4F6F8"
               color="#222a37"
               text="Actualizar"
@@ -124,24 +137,20 @@
 
 <script>
 const {
-  getContainerReport,
+  getPrefixes,
   getTypes,
   getAdditionalDamage,
   storeContainerReport,
-  getContainerElements,
-  getDamage,
   updateContainerReport,
 } = require("~/sqlite/database");
 import mixinMasters from "~/mixins/Master";
-import DamagedItems from "~/views/evidence/containerReport/damagedItems/DamagedItems.vue";
-import DamagedItemsList from "~/views/evidence/containerReport/damagedItems/DamagedItemsList.vue";
 import Alert from "~/alerts/Alerts";
 import { mapState, mapMutations } from "vuex";
-import HeaderComponent from '~/components/header/HeaderComponent.vue';
+import HeaderComponent from "~/components/header/HeaderComponent.vue";
+import { identifyObject } from "~/shared/helpers";
 
 export default {
   components: {
-    DamagedItems,
     HeaderComponent,
   },
 
@@ -151,6 +160,7 @@ export default {
       formCollapse: false,
       model: {
         management_id: null,
+        prefix: null,
         code: "",
         type_id: null,
         role: "",
@@ -158,6 +168,7 @@ export default {
         additional_damage_id: [],
         observation: "",
       },
+      prefixes: [],
       types: [],
       additionalDamage: [],
       elements: [],
@@ -165,9 +176,10 @@ export default {
       isScrolling: false,
 
       errors: {
+        prefix: false,
         code: false,
         role: false,
-        type_id:false,
+        type_id: false,
       },
     };
   },
@@ -177,32 +189,18 @@ export default {
   computed: {
     ...mapState("evidenceStore", [
       "managementModel",
-      "damagedItems",
       "containerReport",
       "containerReportEdit",
     ]),
   },
 
   methods: {
-    openFormDamaged() {
-      this.$showModal(DamagedItems, {
-        fullscreen: true,
-        animated: true,
-        cancelable: false,
-        props: {
-          container_elements: this.elements,
-          repairs: this.model.repairs,
-        },
-      }).then((res) => {
-
-      });
-    },
-
     /* ****************************************************************** */
     validateField(fields) {
+      this.errors.prefix = this.model.prefix === null ? true : false;
       this.errors.code = !this.model.code.trim();
       this.errors.role = !this.model.role.trim();
-      this.errors.type_id = this.model.type_id === null ? true : false
+      this.errors.type_id = this.model.type_id === null ? true : false;
       let fullfield = "";
       for (const key in this.errors) {
         if (this.errors.hasOwnProperty(key) && this.errors[key] != false) {
@@ -222,6 +220,8 @@ export default {
 
       try {
         this.loadingCharge(true);
+        const object = identifyObject(this.model.prefix, this.prefixes)
+        this.model.prefixCode = object.prefix;
         const res = await storeContainerReport(this.model);
         if (res.status === 500) {
           Alert.info(res.message, 1, "Ya existe");
@@ -243,34 +243,23 @@ export default {
           // Detener la ejecución si la validación falla
           return;
         }
+        const object = identifyObject(this.model.prefix, this.prefixes)
+        this.model.prefixCode = object.prefix;
         const res = await updateContainerReport(this.model);
         Alert.success("Reporte Actualizado!");
         this.$modal.close();
       } catch (error) {}
     },
 
-    listRepairs() {
-      this.$showModal(DamagedItemsList, {
-        fullscreen: true,
-        animated: true,
-        props: {
-          listOfItems: this.model.repairs,
-          container_elements: this.elements,
-        },
-      });
-    },
-
     async InfoSelect() {
       try {
         /* this.loadingCharge(true); */
+        const prefixes = await getPrefixes();
         const types = await getTypes();
         const additionalDamage = await getAdditionalDamage();
-        const containerElements = await getContainerElements();
-        const damage = await getDamage();
+        this.prefixes = prefixes.data;
         this.types = types.data;
         this.additionalDamage = additionalDamage.data;
-        this.elements = containerElements.data;
-        this.damages = damage.data;
       } catch (error) {
         Alert.danger("Hubo un error al traer informacion", error.message);
       } finally {
@@ -286,6 +275,7 @@ export default {
           additional_damage_id.push(additionalDamage[i].id);
         }
         this.model.id = this.containerReport.id;
+        this.model.prefix = this.containerReport.prefixId;
         this.model.code = this.containerReport.code;
         this.model.type_id = this.containerReport.type_id;
         this.model.role = this.containerReport.role;

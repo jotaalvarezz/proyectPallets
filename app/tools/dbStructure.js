@@ -79,6 +79,7 @@ export const Querys = [
       id INTEGER PRIMARY KEY,
       consecutive TEXT,
       management_id INTEGER,
+      prefix TEXT,
       code TEXT,
       type_id INTEGER,
       role TEXT,
@@ -153,4 +154,11 @@ export const Querys = [
       FOREIGN KEY (user_id) REFERENCES users(id),
       FOREIGN KEY (module_id) REFERENCES modules(id)
     )`,
+  /* ************************************************************** */
+  `CREATE TABLE IF NOT EXISTS prefixes
+    (
+      id INTEGER PRIMARY KEY,
+      prefix TEXT,
+      date_creation DATETIME
+    )`
 ];

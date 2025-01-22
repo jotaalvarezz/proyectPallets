@@ -1,4 +1,4 @@
-import { Configuration } from "~/config/Contiguration"
+import { Configuration } from "~/config/Contiguration";
 const Sqlite = require("nativescript-sqlite");
 import axios from "axios";
 import { Querys } from "~/tools/dbStructure";
@@ -9,19 +9,20 @@ const {
   storeShips,
   storeSeletsEvidence,
   storeTypesManagement,
-  getTypesManagement
+  storePrefixes,
 } = require("~/sqlite/database");
-import store from "../store/index"
+import store from "../store/index";
 
-export class doUpdate{
+export class doUpdate {
   static tablesToUpdates = [
-    {table:"users", url: Configuration.getUsers()},
-    {table:"ships", url: Configuration.getShips()},
-    {table:"modules", url: Configuration.getModules()},
-    {table:"selectEvidences", url: Configuration.getSelectEvidences()},
-  ]
+    { table: "users", url: Configuration.getUsers() },
+    { table: "ships", url: Configuration.getShips() },
+    { table: "modules", url: Configuration.getModules() },
+    { table: "selectEvidences", url: Configuration.getSelectEvidences() },
+    { table: "prefixes", url: Configuration.getPrefixes() },
+  ];
 
-  static async createTable(){
+  static async createTable() {
     try {
       let database = [];
       const db = await openDatabase();
@@ -34,7 +35,7 @@ export class doUpdate{
     }
   }
 
-  static async structure(){
+  static async structure() {
     try {
       const db = await openDatabase();
       return db
@@ -48,19 +49,19 @@ export class doUpdate{
           });
         });
     } catch (error) {}
-  };
+  }
 
-  static async updateApp(){
+  static async updateApp() {
     try {
       await this.DBdelete();
-      const result = await rebuildTables(this.tablesToUpdates)
-      return result;
+      const result = await rebuildTables(this.tablesToUpdates);
+      return { status: 200, message: result };
     } catch (error) {
       console.log("error al actualizar la base datos ", error);
     }
   }
 
-  static async DBdelete(){
+  static async DBdelete() {
     try {
       const dbDelete = await Sqlite.deleteDatabase("mydatabase.db");
       return dbDelete;
@@ -71,23 +72,24 @@ export class doUpdate{
 }
 
 const rebuildTables = async (tables) => {
-  let object = {}
+  let object = {};
   try {
+    await doUpdate.createTable();
+
     for (const table of tables) {
-      const key = table.table
-      let query = await axios.get(table.url)
+      const key = table.table;
+      console.log("url ", table.url);
+      let query = await axios.get(table.url);
       object[key] = query.data.data;
     }
 
-    await doUpdate.createTable();
-
-    if (Object.keys(object).length > 0){
+    if (Object.keys(object).length > 0) {
       for (const table of tables) {
         const dbTable = table.table;
         switch (dbTable) {
           case "users":
             await storeUsers(object.users);
-            store.commit("auth/setUsers",object.users)
+            store.commit("auth/setUsers", object.users);
             break;
 
           case "modules":
@@ -95,22 +97,22 @@ const rebuildTables = async (tables) => {
             break;
 
           case "ships":
-            await storeShips(object.ships)
+            await storeShips(object.ships);
             break;
 
           case "selectEvidences":
             await storeSeletsEvidence(object.selectEvidences.defaultSelects);
             await storeTypesManagement(object.selectEvidences.defaultTypes);
             break;
+
+          case "prefixes":
+            await storePrefixes(object.prefixes);
+            break;
         }
       }
     }
-
-    const allModules = await getTypesManagement()
-    console.log("moduls ",allModules)
-
+    /* console.log("moduls ", await doUpdate.structure()); */
   } catch (error) {
-    return {code:400, message:error};
+    return { status: 400, message: error };
   }
-}
-
+};

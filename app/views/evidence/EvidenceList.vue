@@ -12,6 +12,7 @@
           class="search-bar"
           hint="Buscar..."
           v-model="search"
+          @loaded="focus"
           @textChange="filter"
           @submit="filter"
           @clear="clear"
@@ -36,7 +37,7 @@
         verticalAlignment="center"
       >
         <FormattedString>
-          <Span class="fas" text.decode="&#x1f6e0; " />
+          <!-- <Span class="fas" text.decode="&#x1f6e0; " /> -->
           <Span :text="message" />
         </FormattedString>
       </Label>
@@ -75,7 +76,7 @@
                         fontWeight="bold"
                         fontSize="15"
                       />
-                      <Span :text="item.code + '\n'" fontSize="15" />
+                      <Span :text="item.prefix + item.code + '\n'" fontSize="15" />
                       <Span text="Tipo: " fontWeight="bold" fontSize="15" />
                       <Span :text="item.nameType + '\n'" fontSize="15" />
                       <Span :text="item.type_management_id === 1 ? 'Buque: ': 'Nombre de Gestion: '" fontWeight="bold" fontSize="15" />
@@ -141,6 +142,7 @@ import EvidenceListInfo from "./EvidenceListInfo";
 import ContainerReport from "~/views/evidence/containerReport/ContainerReport.vue";
 import Alert from "~/alerts/Alerts";
 import axios from "axios";
+import { onSearchBarLoaded } from "~/shared/helpers"
 
 export default {
   name: "EvidenceList",
@@ -163,9 +165,9 @@ export default {
     ]),
 
     index() {
+      //this.$refs.searchBar.nativeView.dismissSoftInput();
       setTimeout(() => {
         this.getEvidenceReports();
-        this.$refs.searchBar.nativeView.dismissSoftInput();
       }, 300)
     },
 
@@ -324,6 +326,10 @@ export default {
         this.loadingCharge();
       }
     },
+    //evento para quitarle foco al searhBar cuando se carga la vista
+    focus(event){
+      onSearchBarLoaded(event)
+    }
   },
 };
 </script>

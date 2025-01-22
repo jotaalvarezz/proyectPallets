@@ -16,4 +16,8 @@ export class Configuration {
   static getSelectEvidences(){
     return this.url.concat("/selects_evidence");
   }
+
+  static getPrefixes(){
+    return this.url.concat("/prefixes")
+  }
 }

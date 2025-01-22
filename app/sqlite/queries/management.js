@@ -63,13 +63,14 @@ const getAllManagements = async () => {
   try {
     const db = await openDatabase();
     const data = await db.all(
-      `SELECT cr.id, cr.consecutive, m.name, m.journey, cr.management_id, m.type_management_id, tm.status,
-                                      cr.code, cr.type_id, t.name, cr.role, m.titular_name, m.signature,
+      `SELECT cr.id, cr.consecutive, m.name, m.journey, cr.management_id, m.type_management_id, tm.status, p.id,
+                                      cr.prefix, cr.code, cr.type_id, t.name, cr.role, m.titular_name, m.signature,
                                       cr.observation, cr.date_creation
                                 FROM container_reports cr
                                 INNER JOIN management m on m.id = cr.management_id
                                 INNER JOIN types_management tm on tm.id = m.type_management_id
-                                INNER JOIN types t on t.id = cr.type_id`,
+                                INNER JOIN types t on t.id = cr.type_id
+                                INNER JOIN  prefixes p on p.prefix = cr.prefix`,
       []
     );
     const dataFormatted = await showData("container_reports", data, [
@@ -80,6 +81,8 @@ const getAllManagements = async () => {
       "management_id",
       "type_management_id",
       "status",
+      "prefixId",
+      "prefix",
       "code",
       "type_id",
       "nameType",
@@ -155,7 +158,7 @@ const getManagements = async (id) => {
     const dataFormatted = await showData("management", data);
     for (let i = 0; i < dataFormatted.length; i++) {
       const containersReport = await db.all(
-        `SELECT id, code
+        `SELECT id, prefix || code AS code
                                               FROM container_reports
                                               WHERE management_id = ?`,
         [dataFormatted[i].id]

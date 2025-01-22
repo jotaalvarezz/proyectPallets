@@ -11,6 +11,7 @@
           class="search-bar"
           hint="Buscar..."
           v-model="search"
+          @loaded="focus"
           @textChange="filter"
           @submit="filter"
           @clear="clear"
@@ -98,6 +99,7 @@ import ButtomSheet from "~/components/buttomSheet/ButtomSheet.vue";
 import mixinMasters from "~/mixins/Master";
 import ListModal from "~/components/listModal/ListModal.vue";
 import ShipList from "~/views/ships/ShipList";
+import { onSearchBarLoaded } from "~/shared/helpers"
 
 export default {
   name: "Ships",
@@ -245,6 +247,11 @@ export default {
         this.loadingCharge();
       }
     },
+
+    //evento para quitarle foco al searhBar cuando se carga la vista
+    focus(event){
+      onSearchBarLoaded(event)
+    }
   },
 };
 </script>

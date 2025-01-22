@@ -66,6 +66,8 @@ const {
 const { storeModules, getModules } = require("~/sqlite/queries/login/modules");
 
 const { storeRepair, deleteRepair, getRepairsReport } = require("~/sqlite/queries/repair");
+
+const { storePrefixes, getPrefixes } = require("~/sqlite/queries/prefix")
 /* const Querys = [
   `CREATE TABLE IF NOT EXISTS ships
     (
@@ -402,5 +404,7 @@ module.exports = {
   getUsers,
   /* insertDefaultData, */
   storeShips,
-  getModules
+  getModules,
+  storePrefixes,
+  getPrefixes
 };
