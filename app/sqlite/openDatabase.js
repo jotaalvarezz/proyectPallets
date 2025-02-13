@@ -155,6 +155,6 @@ export const encriptImg = async (directory) => {
     return '';
   }
   const imageSource = await ImageSource.fromFile(directory);
-  const base64Image = imageSource.toBase64String("jpg", 60);
+  const base64Image = imageSource.toBase64String("jpg", 80);
   return base64Image;
 };

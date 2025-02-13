@@ -4,20 +4,21 @@
       title="Creacion de Reporte/Contenedor"
       :handleback="$modal.close"
     />
-    <ScrollView>
-      <StackLayout backgroundColor="#F4F6F8">
-        <StackLayout
-          ref="form"
-          class="shadow"
-          backgroundColor="#F4F6F8"
-          margin="10"
-          borderWidth="1"
-          borderColor="#c0c9d7"
-          borderRadius="5"
-        >
+    <!-- <StackLayout backgroundColor="#F4F6F8"> -->
+      <GridLayout
+        ref="form"
+        class="shadow"
+        rows="*"
+        backgroundColor="#F4F6F8"
+        margin="10"
+        borderWidth="1"
+        borderColor="#c0c9d7"
+        borderRadius="5"
+      >
+        <ScrollView>
           <GridLayout
             ref="form2"
-            rows="auto,auto,auto,auto,auto,auto,60,auto,auto,auto,auto,auto"
+            rows="auto,auto,auto,auto,auto,auto,60,auto,auto,auto"
             padding="30"
           >
             <Label
@@ -42,6 +43,7 @@
               row="3"
               label="CONTENEDOR:"
               placeholder="Codigo..."
+              typeInput="number"
               v-model="model.code"
               :required="errors.code"
             />
@@ -97,9 +99,9 @@
               placeholder="Observaciones..."
               v-model="model.observation"
             />
-            <Stripe row="9" margin="20" />
+           <!--  <Stripe row="9" margin="20" /> -->
             <!-- Boton para Crear -->
-            <Button
+            <!-- <Button
               v-if="containerReportEdit == false"
               row="10"
               backgroundColor="#F4F6F8"
@@ -110,10 +112,10 @@
               borderWidth="1"
               borderColor="#222a37"
               borderRadius="30"
-            />
+            /> -->
             <!-- ******************* -->
             <!-- Boton para Editar -->
-            <Button
+            <!-- <Button
               v-if="containerReportEdit == true"
               row="10"
               backgroundColor="#F4F6F8"
@@ -124,14 +126,16 @@
               borderWidth="1"
               borderColor="#222a37"
               borderRadius="30"
-            />
-            <!-- ************************************************* -->
-            <!-- <Signature row="14" /> -->
+            /> -->
           </GridLayout>
-          <!-- <Signature /> -->
-        </StackLayout>
-      </StackLayout>
-    </ScrollView>
+        </ScrollView>
+        <FloatingButton
+          :icon="'fa-save'"
+          iconSize="sm"
+          :method="containerReportEdit == false ? addContainerReport : updateContainerReport"
+        />
+      </GridLayout>
+    <!-- </StackLayout> -->
   </StackLayout>
 </template>
 
@@ -220,7 +224,7 @@ export default {
 
       try {
         this.loadingCharge(true);
-        const object = identifyObject(this.model.prefix, this.prefixes)
+        const object = identifyObject(this.model.prefix, this.prefixes);
         this.model.prefixCode = object.prefix;
         const res = await storeContainerReport(this.model);
         if (res.status === 500) {
@@ -243,7 +247,7 @@ export default {
           // Detener la ejecución si la validación falla
           return;
         }
-        const object = identifyObject(this.model.prefix, this.prefixes)
+        const object = identifyObject(this.model.prefix, this.prefixes);
         this.model.prefixCode = object.prefix;
         const res = await updateContainerReport(this.model);
         Alert.success("Reporte Actualizado!");

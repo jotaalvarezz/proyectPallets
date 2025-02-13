@@ -105,7 +105,7 @@
                         fontWeight="bold"
                         fontSize="15"
                       />
-                      <Span :text="item.code + '\n'" fontSize="15" />
+                      <Span :text="item.prefix + item.code + '\n'" fontSize="15" />
                       <Span text="Tipo: " fontWeight="bold" fontSize="15" />
                       <Span
                         :text="nameType(item.type_id) + '\n'"
@@ -134,8 +134,8 @@
                       :isEnabled="type_management.status === 1 ? true : false"
                       height="45"
                       width="45"
-                      icon="fa-minus"
-                      :size='12'
+                      icon="fa-times"
+                      :size='13'
                       iconColor="#e92222"
                       radius="50"
                       :handleEvent="() => deleteRowRepair(item, repair.id)"
@@ -143,8 +143,8 @@
                   </StackLayout>
                   <ButtonNavigate
                     :isEnabled="type_management.status === 1 ? true : false"
-                    height="60"
-                    width="60"
+                    height="50"
+                    width="50"
                     icon="fa-toolbox"
                     iconColor="#f4f6f8"
                     iconBackground="#eab14d"

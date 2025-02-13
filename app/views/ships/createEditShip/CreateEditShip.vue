@@ -3,73 +3,82 @@
     <StackLayout backgroundColor="#F4F6F8">
       <HeaderComponent :title="textBar" :handleback="$modal.close" />
       <GridLayout
-        rows="auto,auto,auto,auto,auto"
+        ref="form"
         class="shadow"
+        rows="*"
         backgroundColor="#F4F6F8"
         margin="10"
         borderWidth="1"
         borderColor="#c0c9d7"
         borderRadius="5"
-        padding="30"
       >
-        <Image
-          row="0"
-          src="~/assets/images/logobarco.png"
-          stretch="aspectFit"
-          height="30%"
-          width="60%"
+        <ScrollView>
+          <GridLayout rows="auto,auto,auto" padding="30">
+            <Image
+              row="0"
+              src="~/assets/images/logobarco.png"
+              stretch="aspectFit"
+              height="10%"
+              width="50%"
+            />
+            <FormGroupTextField
+              row="1"
+              label="Barco:"
+              placeholder="nombre de barco..."
+              fontsize="14"
+              v-model="model.name"
+              :enable="model.action == false ? 'true' : 'false'"
+              :required="errors.name"
+            />
+            <FormGroupTextField
+              row="2"
+              label="Viaje:"
+              placeholder="viaje..."
+              fontsize="14"
+              v-model="model.journey"
+            />
+            <!-- <Stripe
+              row="3"
+              class="stripe"
+              color="#3c495e"
+              marginTop="20"
+              marginBottom="20"
+            /> -->
+            <!-- Boton para Crear -->
+            <!-- <Button
+              v-if="model.action == false"
+              row="4"
+              text="Agregar"
+              backgroundColor="#F4F6F8"
+              color="#222a37"
+              style="width: 80%; margin-bottom: 20px"
+              @tap="addShip"
+              borderWidth="1"
+              borderColor="#222a37"
+              borderRadius="30"
+            /> -->
+            <!-- ******************* -->
+            <!-- Boton para Editar -->
+            <!-- <Button
+              v-if="model.action == true"
+              row="4"
+              text="Actualizar"
+              backgroundColor="#F4F6F8"
+              color="#222a37"
+              style="width: 80%; margin-bottom: 20px"
+              @tap="updateShip"
+              borderWidth="1"
+              borderColor="#222a37"
+              borderRadius="30"
+            /> -->
+            <!-- ******************* -->
+          </GridLayout>
+        </ScrollView>
+        <FloatingButton
+          :icon="'fa-save'"
+          iconSize="sm"
+          :method="model.action == false ? addShip : updateShip"
         />
-        <FormGroupTextField
-          row="1"
-          label="Barco:"
-          placeholder="nombre de barco..."
-          fontsize="14"
-          v-model="model.name"
-          :enable="model.action == false ? 'true' : 'false'"
-          :required="errors.name"
-        />
-        <FormGroupTextField
-          row="2"
-          label="Viaje:"
-          placeholder="viaje..."
-          fontsize="14"
-          v-model="model.journey"
-        />
-        <Stripe
-          row="3"
-          class="stripe"
-          color="#3c495e"
-          marginTop="20"
-          marginBottom="20"
-        />
-        <!-- Boton para Crear -->
-        <Button
-          v-if="model.action == false"
-          row="4"
-          text="Agregar"
-          backgroundColor="#F4F6F8"
-          color="#222a37"
-          style="width: 80%; margin-bottom: 20px"
-          @tap="addShip"
-          borderWidth="1"
-          borderColor="#222a37"
-          borderRadius="30"
-        />
-        <!-- ******************* -->
-        <!-- Boton para Editar -->
-        <Button
-          v-if="model.action == true"
-          row="4"
-          text="Actualizar"
-          backgroundColor="#F4F6F8"
-          color="#222a37"
-          style="width: 80%; margin-bottom: 20px"
-          @tap="updateShip"
-          borderWidth="1"
-          borderColor="#222a37"
-          borderRadius="30"
-        />
-        <!-- ******************* -->
       </GridLayout>
     </StackLayout>
   </Page>

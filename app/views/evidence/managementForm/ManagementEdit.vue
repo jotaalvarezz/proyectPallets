@@ -1,105 +1,117 @@
 <template>
   <StackLayout backgroundColor="#F4F6F8">
-    <HeaderComponent title="Actualizar Gestion" :handleback="$modal.close"/>
+    <HeaderComponent title="Actualizar Gestion" :handleback="$modal.close" />
     <GridLayout
-      @loaded="index"
-      rows="auto,auto,auto,auto,auto,auto,auto,auto,auto"
+      ref="form"
       class="shadow"
+      rows="*"
       backgroundColor="#F4F6F8"
       margin="10"
       borderWidth="1"
       borderColor="#c0c9d7"
       borderRadius="5"
-      padding="20"
     >
-      <Label
-        row="0"
-        class="text-center"
-        text="GESTION DE CONTENEDOR"
-        fontSize="18"
-        color="#3c495e"
-        fontWeight="bold"
-      ></Label>
-      <Stripe row="1" color="#3c495e" mt="20" mb="20" />
-      <FormGroupTextField
-        v-if="info.type_management_id === 1"
-        row="2"
-        label="Buque:"
-        placeholder="nombre de barco..."
-        fontsize="14"
-        v-model="model.name"
-      />
-      <FormGroupTextField
-        v-if="info.type_management_id === 2"
-        row="2"
-        label="Patio:"
-        placeholder="nombre del patio..."
-        fontsize="14"
-        v-model="model.name"
-      />
-      <FormGroupTextField
-        v-if="info.type_management_id === 1"
-        row="3"
-        label="Viaje:"
-        placeholder="viaje..."
-        fontsize="14"
-        v-model="model.journey"
-      />
-      <FormGroupTextField
-        row="4"
-        label="Titular:"
-        placeholder="nombre de titular..."
-        fontsize="14"
-        v-model="model.titular_name"
-      />
-      <GridLayout
-        row="5"
-        rows="auto"
-        columns="auto"
-        style="margin-top: 20px; width: 85%;"
-      >
-        <StackLayout
-          row="0"
-          marginLeft="5"
-          padding="10"
-          orientation="horizontal"
-          borderWidth="1"
-          backgroundColor="#F4F6F8"
-          borderColor="#222a37"
-          borderRadius="30"
-          @tap="signatureCaptain"
+      <ScrollView>
+        <GridLayout
+          @loaded="index"
+          rows="auto,auto,auto,auto,auto,auto,auto,auto,auto"
+          padding="30"
         >
           <Label
-            col="0"
-            :text="'fa-signature' | fonticon"
-            class="fas colorIcons"
-            fontSize="22"
-            marginRight="2"
+            row="0"
+            class="text-center"
+            text="GESTION DE CONTENEDOR"
+            fontSize="18"
+            color="#3c495e"
+            fontWeight="bold"
+          ></Label>
+          <Stripe row="1" color="#3c495e" mt="20" mb="20" />
+          <FormGroupTextField
+            v-if="info.type_management_id === 1"
+            row="2"
+            label="Buque:"
+            placeholder="nombre de barco..."
+            fontsize="14"
+            v-model="model.name"
           />
-          <Label
-            col="1"
-            textWrap="true"
-            text="Firmar"
-            fontSize="14"
-            class="colorIcons"
+          <FormGroupTextField
+            v-if="info.type_management_id === 2"
+            row="2"
+            label="Patio:"
+            placeholder="nombre del patio..."
+            fontsize="14"
+            v-model="model.name"
           />
-        </StackLayout>
-      </GridLayout>
-      <!-- <Signature row="5" /> -->
-      <Stripe row="6" color="#3c495e" mt="20" mb="20" />
-      <!-- Boton para Crear -->
-      <Button
-        row="7"
-        text="Actualizar"
-        backgroundColor="#F4F6F8"
-        color="#222a37"
-        style="width: 80%; margin-bottom: 20px"
-        @tap="editManagement"
-        borderWidth="1"
-        borderColor="#222a37"
-        borderRadius="30"
-      />
-      <Image row="8" ref="imageRef" margin="25" src="" loadMode="sync" />
+          <FormGroupTextField
+            v-if="info.type_management_id === 1"
+            row="3"
+            label="Viaje:"
+            placeholder="viaje..."
+            fontsize="14"
+            v-model="model.journey"
+          />
+          <FormGroupTextField
+            row="4"
+            label="Titular:"
+            placeholder="nombre de titular..."
+            fontsize="14"
+            v-model="model.titular_name"
+          />
+          <GridLayout
+            row="5"
+            rows="auto"
+            columns="auto"
+            style="margin-top: 20px; width: 85%"
+          >
+            <StackLayout
+              row="0"
+              marginLeft="5"
+              padding="10"
+              orientation="horizontal"
+              borderWidth="1"
+              backgroundColor="#F4F6F8"
+              borderColor="#222a37"
+              borderRadius="30"
+              @tap="signatureCaptain"
+            >
+              <Label
+                col="0"
+                :text="'fa-signature' | fonticon"
+                class="fas colorIcons"
+                fontSize="22"
+                marginRight="2"
+              />
+              <Label
+                col="1"
+                textWrap="true"
+                text="Firmar"
+                fontSize="14"
+                class="colorIcons"
+              />
+            </StackLayout>
+          </GridLayout>
+          <!-- <Signature row="5" /> -->
+          <!-- <Stripe row="6" color="#3c495e" mt="20" mb="20" /> -->
+          <!-- Boton para Crear -->
+          <!-- <Button
+            row="7"
+            text="Actualizar"
+            backgroundColor="#F4F6F8"
+            color="#222a37"
+            style="width: 80%; margin-bottom: 20px"
+            @tap="editManagement"
+            borderWidth="1"
+            borderColor="#222a37"
+            borderRadius="30"
+          /> -->
+          <Image row="8" ref="imageRef" margin="25" src="" loadMode="sync" />
+        </GridLayout>
+      </ScrollView>
+      <FloatingButton
+          :icon="'fa-save'"
+          iconSize="sm"
+          :method="editManagement"
+        />
     </GridLayout>
   </StackLayout>
 </template>

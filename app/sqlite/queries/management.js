@@ -15,7 +15,7 @@ const moment = require("moment");
 const storeTypesManagement = async (data) => {
   try {
     const db = await openDatabase();
-    const DefaultTypesManagement = data.types_management
+    const DefaultTypesManagement = data.types_management;
     let post = [];
     for (let i = 0; i < DefaultTypesManagement.length; i++) {
       post[i] = db.execSQL(
@@ -25,7 +25,9 @@ const storeTypesManagement = async (data) => {
           DefaultTypesManagement[i].name,
           DefaultTypesManagement[i].icon,
           1,
-          moment(DefaultTypesManagement[i].created_at).format("YYYY-MM-DD HH:mm:ss"),
+          moment(DefaultTypesManagement[i].created_at).format(
+            "YYYY-MM-DD HH:mm:ss"
+          ),
         ]
       );
     }
@@ -274,14 +276,31 @@ const sendEvidenceReports = async () => {
         dataFormatted[i].signature
       );
       const dataContainerReports = await db.all(
-        `SELECT *
-                                FROM container_reports cr
-                                WHERE cr.management_id = ?`,
+        `SELECT id,
+                consecutive,
+                management_id,
+                prefix || code  AS code,
+                type_id,
+                role,
+                observation,
+                date_creation
+              FROM container_reports cr
+              WHERE cr.management_id = ?`,
         [dataFormatted[i].id]
       );
       const ContainerReportsFormatted = await showData(
         "container_reports",
-        dataContainerReports
+        dataContainerReports,
+        [
+          "id",
+          "consecutive",
+          "management_id",
+          "code",
+          "type_id",
+          "role",
+          "observation",
+          "date_creation",
+        ]
       );
       for (let i = 0; i < ContainerReportsFormatted.length; i++) {
         /* consulta para traer los daños adicionales */
@@ -449,5 +468,5 @@ module.exports = {
   sendEvidenceReports,
   finishOperations,
   showTypesManagement,
-  storeTypesManagement
+  storeTypesManagement,
 };

@@ -32,6 +32,7 @@
     <StackLayout row="1">
       <ListView
         ref="listView"
+        height="60%"
         for="(item, index) in array_filter "
         @itemTap="onItemTap"
         :selectedItem="selectedItem"
@@ -146,7 +147,6 @@ export default {
     },
   },
   created() {
-    console.log("lista ", this.listOfItems);
     this.array_filter = this.listOfItems;
     if (this.multiple) {
       this.selectedsItem = this.value;

@@ -55,8 +55,8 @@ export default {
   data() {
     return {
       model: {
-        user: "",
-        password: "",
+        user: "wadmin",
+        password: "Tecbaco2025*",
       },
       secretKey: "security",
     };
@@ -76,7 +76,7 @@ export default {
         // ...
         this.loadingCharge(true);
         const res = await this.isLogin(this.model);
-        if (res.status === 400) {
+        if (res.status && res.status === 400) {
           Alert.info(res.message, 1, res.error);
           return;
         }

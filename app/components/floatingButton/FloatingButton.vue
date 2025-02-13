@@ -51,9 +51,9 @@ export default {
 <style lang="scss">
 
 .fab-button {
-  height: 70;
-  width: 70; /// this is required on iOS - Android does not require width so you might need to adjust styles
-  margin: 15;
+  height: 60;
+  width: 60; /// this is required on iOS - Android does not require width so you might need to adjust styles
+  margin: 25;
   background-color: #eab14d;
   color: #f4f6f8;
   opacity: 0.8;

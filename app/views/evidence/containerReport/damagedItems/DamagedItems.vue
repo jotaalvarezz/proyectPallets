@@ -1,133 +1,135 @@
 <template>
   <StackLayout @loaded="InfoSelect" backgroundColor="#F4F6F8">
-    <HeaderComponent title="Registro de Daños/Reparaciones" :handleback="$modal.close"/>
-    <ScrollView>
-      <StackLayout
-        class="shadow"
-        backgroundColor="#F4F6F8"
-        margin="10"
-        borderWidth="1"
-        borderColor="#c0c9d7"
-        borderRadius="5"
-        padding="30"
-      >
-        <SelectField
-          row="4"
-          :value="model.container_element_id"
-          :items="elements"
-          label="ELEMENTO:"
-          fontsize="14"
-          icon="fa-toolbox"
-          @value="model.container_element_id = $event"
-          :required="errors.container_element_id"
-        />
-        <SelectField
-          :value="model.location"
-          :items="locations"
-          label="UBICACION:"
-          labelIterator="location"
-          fontsize="14"
-          icon="fa-arrows-alt-h"
-          @value="model.location = $event"
-          :required="errors.location"
-        />
-        <SelectField
-          :value="model.position"
-          :items="positions"
-          label="POSICION:"
-          labelIterator="position"
-          fontsize="14"
-          icon="fa-arrows-alt-v"
-          @value="model.position = $event"
-          :required="errors.position"
-        />
-        <Label
-          text="DAÑO:"
-          marginTop="10"
-          fontSize="14"
-          fontWeight="bold"
-          style="color: #3c495e; width: 80%"
-        />
-        <FlexboxLayout flexWrap="wrap" style="width: 80%">
-          <check-box
-            v-for="item in damages"
-            ref="checkbok"
-            height="30"
-            :key="item.id"
-            :id="item.id"
-            :text="item.name"
+    <HeaderComponent
+      title="Registro de Daños/Reparaciones"
+      :handleback="$modal.close"
+    />
+    <GridLayout
+      ref="form"
+      class="shadow"
+      rows="*"
+      backgroundColor="#F4F6F8"
+      margin="10"
+      borderWidth="1"
+      borderColor="#c0c9d7"
+      borderRadius="5"
+    >
+      <ScrollView>
+        <StackLayout class="shadow" padding="30">
+          <SelectField
+            row="4"
+            :value="model.container_element_id"
+            :items="elements"
+            label="ELEMENTO:"
             fontsize="14"
-            :checked="isChecked"
-            @checkedChange="onCheckedChange"
-            style="color: #3c495e; width: 45%"
+            icon="fa-toolbox"
+            @value="model.container_element_id = $event"
+            :required="errors.container_element_id"
           />
-        </FlexboxLayout>
-        <Label
-          v-if="errors.damage_id"
-          class="label-error"
-          style="width: 80%"
-          :text="'*debe selecionar los daños, oblogatorio'"
-        />
-        <FloatingButton
-          style="margin: 60px"
-          :icon="'fa-camera'"
-          alignX="center"
-          iconSize="md"
-          :method="onTakePictureTap"
-        />
-        <GridLayout
-          v-if="namePhoto.length > 0"
-          dock="left"
-          width="80%"
-          columns="auto, auto"
-          backgroundColor="#F4F6F8"
-          class="picture"
-          @tap="showPhoto(namePhoto)"
-        >
-          <Label
-            col="0"
-            class="fas"
-            fontSize="20"
-            :text="'fa-image' | fonticon"
-            color="#00acc1"
+          <SelectField
+            :value="model.location"
+            :items="locations"
+            label="UBICACION:"
+            labelIterator="location"
+            fontsize="14"
+            icon="fa-arrows-alt-h"
+            @value="model.location = $event"
+            :required="errors.location"
+          />
+          <SelectField
+            :value="model.position"
+            :items="positions"
+            label="POSICION:"
+            labelIterator="position"
+            fontsize="14"
+            icon="fa-arrows-alt-v"
+            @value="model.position = $event"
+            :required="errors.position"
           />
           <Label
-            col="1"
+            text="DAÑO:"
+            marginTop="10"
             fontSize="14"
-            marginLeft="10"
-            :text="namePhoto"
-            color="#3c495e"
+            fontWeight="bold"
+            style="color: #3c495e; width: 80%"
           />
-        </GridLayout>
-        <Label
-          v-if="errors.photo"
-          class="label-error"
-          style="width: 80%"
-          :text="'*debe tomar la foto, para la evidencia'"
-        />
-        <Stripe color="#3c495e" mr="40" ml="40" mt="20" mb="20" />
-        <Button
-          backgroundColor="#F4F6F8"
-          color="#222a37"
-          text="Agregar"
-          @tap="addRepair"
-          style="width: 80%"
-          borderWidth="1"
-          borderColor="#222a37"
-          borderRadius="30"
-        />
-        <!-- <Button
-          backgroundColor="#F4F6F8"
-          color="#222a37"
-          text="En Memoria"
-          @tap="cleanImage"
-          style="width: 80%; margin-bottom: 20px"
-          borderWidth="1"
-          borderColor="#222a37"
-          borderRadius="30"
-        /> -->
-      </StackLayout>
-    </ScrollView>
+          <FlexboxLayout flexWrap="wrap" style="width: 80%">
+            <check-box
+              v-for="item in damages"
+              ref="checkbok"
+              height="30"
+              :key="item.id"
+              :id="item.id"
+              :text="item.name"
+              fontsize="14"
+              :checked="isChecked"
+              @checkedChange="onCheckedChange"
+              style="color: #3c495e; width: 45%"
+            />
+          </FlexboxLayout>
+          <Label
+            v-if="errors.damage_id"
+            class="label-error"
+            style="width: 80%"
+            :text="'*debe selecionar los daños, oblogatorio'"
+          />
+          <FloatingButton
+            style="margin: 60px"
+            :icon="'fa-camera'"
+            alignX="center"
+            iconSize="sm"
+            :method="onTakePictureTap"
+          />
+          <GridLayout
+            v-if="namePhoto.length > 0"
+            dock="left"
+            width="80%"
+            columns="auto, auto"
+            backgroundColor="#F4F6F8"
+            class="picture"
+            @tap="showPhoto(namePhoto)"
+          >
+            <Label
+              col="0"
+              class="fas"
+              fontSize="20"
+              :text="'fa-image' | fonticon"
+              color="#00acc1"
+            />
+            <Label
+              col="1"
+              fontSize="14"
+              marginLeft="10"
+              :text="namePhoto"
+              color="#3c495e"
+            />
+          </GridLayout>
+          <Label
+            v-if="errors.photo"
+            class="label-error"
+            style="width: 80%"
+            :text="'*debe tomar la foto, para la evidencia'"
+          />
+          <!--  <Stripe color="#3c495e" mr="40" ml="40" mt="20" mb="20" />
+          <Button
+            backgroundColor="#F4F6F8"
+            color="#222a37"
+            text="Agregar"
+            @tap="addRepair"
+            style="width: 80%"
+            borderWidth="1"
+            borderColor="#222a37"
+            borderRadius="30"
+          /> -->
+        </StackLayout>
+      </ScrollView>
+      <FloatingButton
+        style="margin-bottom: 15px"
+        :icon="'fa-save'"
+        iconSize="sm"
+        :method="addRepair"
+      />
+    </GridLayout>
   </StackLayout>
 </template>
 
@@ -196,7 +198,7 @@ export default {
         location: false,
         position: false,
         photo: false,
-        damage_id: false
+        damage_id: false,
       },
     };
   },
@@ -208,7 +210,8 @@ export default {
   methods: {
     /* ****************************************************************** */
     validateField(fields) {
-       this.errors.container_element_id = this.model.container_element_id === null ? true : false;
+      this.errors.container_element_id =
+        this.model.container_element_id === null ? true : false;
       /*this.errors.position = this.model.position === null ? true : false;
       this.errors.location = this.model.location === null ? true : false; */
       this.errors.photo = this.model.photo === "" ? true : false;
@@ -323,26 +326,27 @@ export default {
     },
 
     showPhoto(photo) {
-      const folderPath = knownFolders.documents().path
+      const folderPath = knownFolders.documents().path;
       const folder = Folder.fromPath(folderPath);
       const fileList = folder.getEntitiesSync();
-      const imageFiles = fileList.filter(
-        (file) => file["_name"] === photo
-      );
-      const path = imageFiles[0]
-      this.$showModal({
-        template: `
+      const imageFiles = fileList.filter((file) => file["_name"] === photo);
+      const path = imageFiles[0];
+      this.$showModal(
+        {
+          template: `
             <Page>
               <StackLayout>
                 <Image
-                  src="${path['_path']}"
+                  src="${path["_path"]}"
                   stretch="aspectFit"
                   width="700px"
                 />
               </StackLayout>
             </Page>
         `,
-      },{animated: true,});
+        },
+        { animated: true }
+      );
     },
 
     cleanImage(folderPath) {
