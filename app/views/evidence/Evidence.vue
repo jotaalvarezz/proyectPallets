@@ -2,9 +2,11 @@
   <page @loaded="typesManagement">
     <Header :search="false" />
     <GridLayout rows="*, *" backgroundColor="#F4F6F8" padding="30">
-      <card-view v-for="(item, index) in types_management"
+      <card-view
+        v-for="(item, index) in types_management"
         :key="index"
         :row="index"
+        backgroundColor="#D8E2E8"
         ripple="true"
         margin="30"
         elevation="10"
@@ -13,14 +15,20 @@
       >
         <StackLayout>
           <Image
-            height="88%"
             ref="imageRef"
-            stretch="fill"
+            stretch="aspectFit"
+            height="88%"
+            width="40%"
             :src="item.icon"
             loadMode="sync"
-            style="border-bottom-color: #3c495e; border-bottom-width: 1px"
           />
-          <Label height="12%" :text="item.name" class="text-center" />
+          <Stripe margin="0" />
+          <Label
+            height="12%"
+            :text="item.name"
+            fontSize="15"
+            class="text-center"
+          />
         </StackLayout>
       </card-view>
     </GridLayout>
@@ -28,7 +36,7 @@
 </template>
 
 <script>
-const {getTypesManagement} = require("~/sqlite/database");
+const { getTypesManagement } = require("~/sqlite/database");
 import Alert from "~/alerts/Alerts";
 
 export default {
@@ -36,27 +44,27 @@ export default {
 
   data() {
     return {
-      types_management:[]
+      types_management: [],
     };
   },
 
   methods: {
     navigate(id) {
-      this.$router.push("verification.details",{
-        props:{
-          management_id: id
-        }
+      this.$router.push("verification.details", {
+        props: {
+          management_id: id,
+        },
       });
     },
 
     async typesManagement() {
       try {
-        const res = await getTypesManagement()
-        this.types_management = res.data
+        const res = await getTypesManagement();
+        this.types_management = res.data;
       } catch (error) {
         Alert.danger("Hubo un error al traer los datos ", error.message);
       }
-    }
+    },
   },
 };
 </script>
