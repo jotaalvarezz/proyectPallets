@@ -80,7 +80,10 @@
                         fontWeight="bold"
                         fontSize="15"
                       />
-                      <Span :text="item.prefix + item.code + '\n'" fontSize="15" />
+                      <Span
+                        :text="item.prefix + item.code + '\n'"
+                        fontSize="15"
+                      />
                       <Span text="Tipo: " fontWeight="bold" fontSize="15" />
                       <Span
                         :text="nameType(item.type_id) + '\n'"
@@ -105,7 +108,10 @@
                         fontWeight="bold"
                         fontSize="15"
                       />
-                      <Span :text="item.prefix + item.code + '\n'" fontSize="15" />
+                      <Span
+                        :text="item.prefix + item.code + '\n'"
+                        fontSize="15"
+                      />
                       <Span text="Tipo: " fontWeight="bold" fontSize="15" />
                       <Span
                         :text="nameType(item.type_id) + '\n'"
@@ -115,32 +121,40 @@
                       <Span :text="'Alieva' + '\n'" fontSize="15" />
                       <Span text="Tecnico: " fontWeight="bold" fontSize="15" />
                       <Span :text="item.role + '\n'" fontSize="15" />
-                      <Span text="Estructura:" fontWeight="bold" fontSize="15" />
+                      <Span
+                        text="Estructura:"
+                        fontWeight="bold"
+                        fontSize="15"
+                      />
                     </FormattedString>
                   </Label>
-                  <StackLayout
-                    orientation="horizontal"
+                  <GridLayout
+                    columns="*, 50"
+                    backgroundColor="#D8E2E8"
                     v-for="(repair, index) in item.repairs"
                     :key="index"
-                    style="padding: 0px 5px 5px 8px"
+                    style="padding: 0px 5px 5px 8px; margin-bottom: 3dp;"
+                    borderRadius="5"
                   >
                     <Tag
+                      col="0"
                       width="80%"
                       :label="repair.name ? repair.name : ''"
                       :items="repair.repair_damage"
                       labelIterator="name"
                     />
                     <ButtonNavigate
+                      col="1"
                       :isEnabled="type_management.status === 1 ? true : false"
                       height="45"
                       width="45"
                       icon="fa-times"
-                      :size='13'
+                      :size="13"
                       iconColor="#e92222"
                       radius="50"
                       :handleEvent="() => deleteRowRepair(item, repair.id)"
                     />
-                  </StackLayout>
+                  </GridLayout>
                   <ButtonNavigate
                     :isEnabled="type_management.status === 1 ? true : false"
                     height="50"
@@ -165,7 +179,12 @@
           </GridLayout>
         </v-template>
       </ListView>
-      <FloatingButton :isEnabled="type_management.status === 1 ? true : false" row="1" :icon="'fa-plus'" :method="openModal" />
+      <FloatingButton
+        :isEnabled="type_management.status === 1 ? true : false"
+        row="1"
+        :icon="'fa-plus'"
+        :method="openModal"
+      />
     </GridLayout>
   </page>
 </template>
@@ -188,7 +207,7 @@ import ListModal from "~/components/listModal/ListModal.vue";
 import containerReportListInfo from "~/views/evidence/containerReport/ContainerReportListInfo";
 import ContainerReport from "~/views/evidence/containerReport/ContainerReport.vue";
 import DamagedItems from "~/views/evidence/containerReport/damagedItems/DamagedItems.vue";
-import { onSearchBarLoaded } from "~/shared/helpers"
+import { onSearchBarLoaded } from "~/shared/helpers";
 
 export default {
   name: "containerReportList",
@@ -218,16 +237,17 @@ export default {
       "setContainerReportEdit",
     ]),
 
-    initialFunction(){
-      this.getEvidences()
-      this.typeManagement()
+    initialFunction() {
+      this.getEvidences();
+      this.typeManagement();
     },
 
     filter() {
       if (this.search.length > 0) {
         this.array_filter = this.container_reports.filter(
           (data) =>
-            !this.search || data.code.toLowerCase().includes(this.search.toLowerCase())
+            !this.search ||
+            data.code.toLowerCase().includes(this.search.toLowerCase())
         );
       } else if (this.search.length === 0) {
         this.array_filter = this.container_reports;
@@ -288,13 +308,18 @@ export default {
       this.$router.back();
     },
 
-    async typeManagement(){
+    async typeManagement() {
       try {
         this.loadingCharge(true);
-        const res = await showTypesManagement(this.managementModel.type_management_id)
-        this.type_management = res.data
+        const res = await showTypesManagement(
+          this.managementModel.type_management_id
+        );
+        this.type_management = res.data;
       } catch (error) {
-        Alert.danger("Hubo un error al traer los tipos de gestion", error.message);
+        Alert.danger(
+          "Hubo un error al traer los tipos de gestion",
+          error.message
+        );
       } finally {
         this.loadingCharge();
       }
@@ -318,7 +343,11 @@ export default {
     },
 
     async deleteRowRepair(item, id) {
-      let confirmated = await Alert.info("Se removera la reparacion...!",3,"Quitar");
+      let confirmated = await Alert.info(
+        "Se removera la reparacion...!",
+        3,
+        "Quitar"
+      );
       if (confirmated) {
         try {
           const record = await deleteRepair(id);
@@ -404,9 +433,9 @@ export default {
     },
 
     //evento para quitarle foco al searhBar cuando se carga la vista
-    focus(event){
-      onSearchBarLoaded(event)
-    }
+    focus(event) {
+      onSearchBarLoaded(event);
+    },
 
     /* async InfoSelect() {
       try {

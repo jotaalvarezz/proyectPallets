@@ -24,9 +24,10 @@
           />
           <Stripe margin="0" />
           <Label
+            style="font-weight: bold;"
             height="12%"
             :text="item.name"
-            fontSize="15"
+            fontSize="18"
             class="text-center"
           />
         </StackLayout>
