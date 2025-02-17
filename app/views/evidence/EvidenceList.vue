@@ -76,14 +76,42 @@
                         fontWeight="bold"
                         fontSize="15"
                       />
-                      <Span :text="item.prefix + item.code + '\n'" fontSize="15" />
+                      <Span
+                        :text="item.prefix + item.code + '\n'"
+                        fontSize="15"
+                      />
                       <Span text="Tipo: " fontWeight="bold" fontSize="15" />
                       <Span :text="item.nameType + '\n'" fontSize="15" />
-                      <Span :text="item.type_management_id === 1 ? 'Buque: ': 'Nombre de Gestion: '" fontWeight="bold" fontSize="15" />
+                      <Span
+                        :text="
+                          item.type_management_id === 1
+                            ? 'Buque: '
+                            : 'Nombre de Gestion: '
+                        "
+                        fontWeight="bold"
+                        fontSize="15"
+                      />
                       <Span :text="item.vessel + '\n'" fontSize="15" />
-                      <Span v-if="item.type_management_id === 2" text="Patio: " fontWeight="bold" fontSize="15" />
-                      <Span v-if="item.type_management_id === 2" :text="'Alieva' + '\n'" fontSize="15" />
-                      <Span :text="item.type_management_id === 1 ? 'Capitan: ' : 'Conductor: '" fontWeight="bold" fontSize="15" />
+                      <Span
+                        v-if="item.type_management_id === 2"
+                        text="Patio: "
+                        fontWeight="bold"
+                        fontSize="15"
+                      />
+                      <Span
+                        v-if="item.type_management_id === 2"
+                        :text="'Alieva' + '\n'"
+                        fontSize="15"
+                      />
+                      <Span
+                        :text="
+                          item.type_management_id === 1
+                            ? 'Capitan: '
+                            : 'Conductor: '
+                        "
+                        fontWeight="bold"
+                        fontSize="15"
+                      />
                       <Span :text="item.titular_name + '\n'" fontSize="15" />
                       <Span text="Tecnico: " fontWeight="bold" fontSize="15" />
                       <Span :text="item.role + '\n'" fontSize="15" />
@@ -94,19 +122,22 @@
                       />
                     </FormattedString>
                   </Label>
-                  <StackLayout
-                    orientation="horizontal"
+                  <GridLayout
+                    columns="*"
+                    backgroundColor="#D8E2E8"
                     v-for="(repair, index) in item.repairs"
                     :key="index"
-                    style="padding: 0px 5px 5px 8px"
+                    style="padding: 0px 5px 5px 8px; margin-bottom: 3dp;"
+                    borderRadius="5"
                   >
                     <Tag
+                      col="0"
                       width="80%"
                       :label="repair.name"
                       :items="repair.repair_damage"
                       labelIterator="name"
                     />
-                  </StackLayout>
+                  </GridLayout>
                 </StackLayout>
               </StackLayout>
             </StackLayout>
@@ -142,7 +173,7 @@ import EvidenceListInfo from "./EvidenceListInfo";
 import ContainerReport from "~/views/evidence/containerReport/ContainerReport.vue";
 import Alert from "~/alerts/Alerts";
 import axios from "axios";
-import { onSearchBarLoaded } from "~/shared/helpers"
+import { onSearchBarLoaded } from "~/shared/helpers";
 
 export default {
   name: "EvidenceList",
@@ -152,7 +183,7 @@ export default {
       message: "No hay registros para mostrar",
       evidenceReports: [],
       array_filter: [],
-      type_management:{}
+      type_management: {},
     };
   },
 
@@ -168,7 +199,7 @@ export default {
       //this.$refs.searchBar.nativeView.dismissSoftInput();
       setTimeout(() => {
         this.getEvidenceReports();
-      }, 300)
+      }, 300);
     },
 
     refreshEvidenceRports() {
@@ -208,13 +239,18 @@ export default {
       this.$showBottomSheet(ButtomSheet, options);
     },
 
-    async typeManagement(){
+    async typeManagement() {
       try {
         this.loadingCharge(true);
-        const res = await showTypesManagement(this.managementModel.type_management_id)
-        this.type_management = res.data
+        const res = await showTypesManagement(
+          this.managementModel.type_management_id
+        );
+        this.type_management = res.data;
       } catch (error) {
-        Alert.danger("Hubo un error al traer los tipos de gestion", error.message);
+        Alert.danger(
+          "Hubo un error al traer los tipos de gestion",
+          error.message
+        );
       } finally {
         this.loadingCharge();
       }
@@ -297,19 +333,22 @@ export default {
         if (reports.data.length > 0) {
           /* validar si ya las gestiones estan finalizadas */
           for (let i = 0; i < reports.managementsStatus.length; i++) {
-            if(reports.managementsStatus[i].status){
+            if (reports.managementsStatus[i].status) {
               Alert.info(
-                `La operacion en `+
-                reports.managementsStatus[i].name+
-                ` aun no esta finalizada.`+
-                `\n\n* Finalice las operaciones antes de sincronizar`,
+                `La operacion en ` +
+                  reports.managementsStatus[i].name +
+                  ` aun no esta finalizada.` +
+                  `\n\n* Finalice las operaciones antes de sincronizar`,
                 1,
                 `Sin Finalizar`
               );
               return;
             }
           }
-          const postEvidence = await axios.post(process.env.VUE_APP_API_URL+'/loadevidence', reports.data)
+          const postEvidence = await axios.post(
+            process.env.VUE_APP_API_URL + "/loadevidence",
+            reports.data
+          );
           Alert.success("Reportes sincronizados...");
         } else {
           Alert.danger(
@@ -327,9 +366,9 @@ export default {
       }
     },
     //evento para quitarle foco al searhBar cuando se carga la vista
-    focus(event){
-      onSearchBarLoaded(event)
-    }
+    focus(event) {
+      onSearchBarLoaded(event);
+    },
   },
 };
 </script>

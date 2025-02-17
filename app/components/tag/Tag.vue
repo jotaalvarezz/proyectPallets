@@ -55,9 +55,10 @@ export default {
   height: 26rem;
   margin: 6px 12px 6px 0px;
   border-radius: 5px;
-  border-width: 1px;
+  border-width: 2px;
   padding-left: 5px;
   padding-right: 5px;
+  font-weight: bold;
   /* background-color: rgba(0, 172, 193, 0.19); */
   border-color: #00acc1;
   color: #00acc1;
