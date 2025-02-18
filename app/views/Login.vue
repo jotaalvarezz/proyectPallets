@@ -55,8 +55,8 @@ export default {
   data() {
     return {
       model: {
-        user: "wadmin",
-        password: "Tecbaco2025*",
+        user: "",
+        password: "",
       },
       secretKey: "security",
     };
