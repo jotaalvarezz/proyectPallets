@@ -15,9 +15,13 @@
       borderRadius="5"
     >
       <ScrollView>
-        <StackLayout class="shadow" padding="30">
+        <GridLayout
+          ref="form2"
+          rows="auto,auto,auto,auto,auto,auto,auto,auto,auto"
+          padding="30"
+        >
           <SelectField
-            row="4"
+            row="0"
             :value="model.container_element_id"
             :items="elements"
             label="ELEMENTO:"
@@ -27,6 +31,7 @@
             :required="errors.container_element_id"
           />
           <SelectField
+            row="1"
             :value="model.location"
             :items="locations"
             label="UBICACION:"
@@ -37,6 +42,7 @@
             :required="errors.location"
           />
           <SelectField
+            row="2"
             :value="model.position"
             :items="positions"
             label="POSICION:"
@@ -47,13 +53,14 @@
             :required="errors.position"
           />
           <Label
+            row="3"
             text="DAÑO:"
             marginTop="10"
             fontSize="14"
             fontWeight="bold"
             style="color: #3c495e; width: 80%"
           />
-          <FlexboxLayout flexWrap="wrap" style="width: 80%">
+          <FlexboxLayout row="4" flexWrap="wrap" style="width: 80%">
             <check-box
               v-for="item in damages"
               ref="checkbok"
@@ -68,19 +75,22 @@
             />
           </FlexboxLayout>
           <Label
+            row="5"
             v-if="errors.damage_id"
             class="label-error"
             style="width: 80%"
             :text="'*debe selecionar los daños, oblogatorio'"
           />
           <FloatingButton
+            row="6"
             style="margin: 60px"
             :icon="'fa-camera'"
             alignX="center"
             iconSize="sm"
-            :method="onTakePictureTap"
+            :method="showPhotoOptions"
           />
           <GridLayout
+            row="7"
             v-if="namePhoto.length > 0"
             dock="left"
             width="80%"
@@ -105,6 +115,7 @@
             />
           </GridLayout>
           <Label
+            row="8"
             v-if="errors.photo"
             class="label-error"
             style="width: 80%"
@@ -121,14 +132,9 @@
             borderColor="#222a37"
             borderRadius="30"
           /> -->
-        </StackLayout>
+        </GridLayout>
       </ScrollView>
-      <FloatingButton
-        style="margin-bottom: 15px"
-        :icon="'fa-save'"
-        iconSize="sm"
-        :method="addRepair"
-      />
+      <FloatingButton :icon="'fa-save'" iconSize="sm" :method="addRepair" />
     </GridLayout>
   </StackLayout>
 </template>
@@ -145,7 +151,7 @@ import { requestPermissions } from "@nativescript/camera";
 import * as camera from "@nativescript/camera";
 import { ImageSource, knownFolders, path, Folder } from "@nativescript/core";
 import * as fs from "@nativescript/core/file-system";
-import { mapMutations, mapState } from "vuex";
+import * as imagepicker from "@nativescript/imagepicker";
 
 export default {
   props: {
@@ -321,7 +327,7 @@ export default {
         const saved = imageSource.saveToFile(filePath, "jpg");
         this.model.photo = filePath;
       } catch (error) {
-        console.log("Error -> " + error.message);
+        Alert.danger("Hubo un error al guardar ", error.message);
       }
     },
 
@@ -347,6 +353,76 @@ export default {
         },
         { animated: true }
       );
+    },
+
+    async selectFromGallery() {
+      try {
+        const context = imagepicker.create({ mode: "single" });
+        await context.authorize(); // Solicita permisos
+        const selection = await context.present();
+        if (selection.length > 0) {
+          const selectedImage = selection[0];
+
+          // Conversión correcta a ImageSource
+          const imageSource = await ImageSource.fromAsset(selectedImage.asset);
+          const folderPath = knownFolders.documents().path;
+
+          this.cleanImage(folderPath); // Limpia imágenes previas
+
+          // Generar nombre único para la imagen
+          const fileName = selectedImage.filename; // Nombre del archivo
+          const filePath = fs.path.join(folderPath, fileName);
+          // Guardar la imagen
+          const saved = imageSource.saveToFile(filePath, "jpg");
+          if (saved) {
+            this.model.photo = filePath;
+            this.namePhoto = fileName;
+          }
+        }
+      } catch (error) {
+        Alert.danger("Error al seleccionar imagen: ", error.message);
+      }
+    },
+
+    showPhotoOptions() {
+      this.$showModal(
+        {
+          template: `
+        <Page>
+          <GridLayout width="250" rows="auto, auto, auto" padding="20">
+            <Button row="0" color="#222a37"
+                      borderWidth="1"
+                      borderColor="#222a37"
+                      borderRadius="30"
+                      text="Tomar Foto"
+                      @tap="$modal.close('camera')" />
+            <Button row="1" color="#222a37"
+                      borderWidth="1"
+                      borderColor="#222a37"
+                      borderRadius="30"
+                      text="Galería"
+                      @tap="$modal.close('gallery')" />
+            <Button row="2" color="#222a37"
+                      borderWidth="1"
+                      borderColor="#222a37"
+                      borderRadius="30"
+                      text="Cancelar"
+                      @tap="$modal.close()" />
+          </GridLayout>
+        </Page>
+      `,
+        },
+        {
+          fullscreen: false,
+          animated: true,
+        }
+      ).then((result) => {
+        if (result === "camera") {
+          this.onTakePictureTap();
+        } else if (result === "gallery") {
+          this.selectFromGallery();
+        }
+      });
     },
 
     cleanImage(folderPath) {

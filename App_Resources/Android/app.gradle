@@ -1,4 +1,4 @@
-// You can add your native dependencies here
+/* // You can add your native dependencies here
 dependencies {
 //  implementation 'androidx.multidex:multidex:2.0.1'
 }
@@ -15,11 +15,32 @@ android {
     // Version Information
     versionCode 1
     versionName "1.0.0"
-    
+
     generatedDensities = []
   }
 
   aaptOptions {
     additionalParameters "--no-version-vectors"
   }
+} */
+
+android {
+    compileSdkVersion 34  // ✅ Aumentado a 34
+    defaultConfig {
+        //applicationId "org.nativescript.application"
+        minSdkVersion 21   // ✅ Recomendado para NativeScript
+        targetSdkVersion 34
+        versionCode 1
+        versionName "1.0.0"
+        multiDexEnabled true
+    }
+
+    aaptOptions {
+        additionalParameters "--no-version-vectors"
+    }
 }
+
+dependencies {
+    implementation 'androidx.multidex:multidex:2.0.1'
+}
+
