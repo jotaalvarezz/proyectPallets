@@ -2,7 +2,7 @@
   <!-- <Page> -->
   <GridLayout
     rows="auto, *"
-    columns="400,auto"
+    columns="auto,auto"
     style="max-height: 300px"
     backgroundColor="white"
   >
@@ -14,9 +14,10 @@
       :selectedItem="selectedItem"
     >
       <v-template>
-        <GridLayout columns="*,auto">
+        <GridLayout columns="250,auto">
           <Label
             :text="item[labelIterator]"
+            textWrap="true"
             class="p-l-10"
             color="black"
             fontSize="18"
