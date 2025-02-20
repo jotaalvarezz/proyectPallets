@@ -152,6 +152,7 @@ import * as camera from "@nativescript/camera";
 import { ImageSource, knownFolders, path, Folder } from "@nativescript/core";
 import * as fs from "@nativescript/core/file-system";
 import * as imagepicker from "@nativescript/imagepicker";
+import { Toasty } from "@triniwiz/nativescript-toasty";
 
 export default {
   props: {
@@ -327,7 +328,9 @@ export default {
         const saved = imageSource.saveToFile(filePath, "jpg");
         this.model.photo = filePath;
       } catch (error) {
-        Alert.danger("Hubo un error al guardar ", error.message);
+        if (error.message === "cancelled") {
+          new Toasty({ text: "Foto cancelada" }).show();
+        }
       }
     },
 
@@ -360,7 +363,8 @@ export default {
         const context = imagepicker.create({ mode: "single" });
         await context.authorize(); // Solicita permisos
         const selection = await context.present();
-        if (selection.length > 0) {
+
+        if (selection || selection.length > 0) {
           const selectedImage = selection[0];
 
           // Conversión correcta a ImageSource
@@ -380,6 +384,9 @@ export default {
           }
         }
       } catch (error) {
+        if (error.message === "Image picker activity result code 0") {
+          return;
+        }
         Alert.danger("Error al seleccionar imagen: ", error.message);
       }
     },
