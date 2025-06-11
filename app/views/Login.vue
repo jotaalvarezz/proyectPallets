@@ -43,7 +43,7 @@
         </StackLayout>
       </ScrollView>
 
-      <Button
+      <!--<Button
         row="1"
         backgroundColor="#F4F6F8"
         color="#222a37"
@@ -53,7 +53,7 @@
         borderColor="#222a37"
         borderRadius="30"
         @tap="updateApk"
-      />
+      />-->
 
       <!-- Footer fijo al final -->
       <StackLayout row="2" backgroundColor="#D8E2E8" width="100%" padding="5">
@@ -75,14 +75,15 @@ import {
 import { Toasty } from "@triniwiz/nativescript-toasty";
 import axios from 'axios';
 import { knownFolders, File, path, Http } from "@nativescript/core";
+import * as utils from '@nativescript/core/utils';
 
 export default {
   name: "LoginIndex",
   data() {
     return {
       model: {
-        user: "wadmin",
-        password: "Tecbaco2025*",
+        user: "",
+        password: "",
       },
       textFooter: "WSP V",
       versionApp: "",
@@ -139,17 +140,71 @@ export default {
       }
     },
 
+    // ✅ Verificar permisos para instalar desde fuentes desconocidas (Android 8+)
+    checkInstallPermission() {
+      const context = utils.ad.getApplicationContext();
+      if (android.os.Build.VERSION.SDK_INT >= 26) { // Android 8+
+        if (!context.getPackageManager().canRequestPackageInstalls()) {
+          const intent = new android.content.Intent(android.provider.Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES);
+          intent.setData(android.net.Uri.parse(`package:${context.getPackageName()}`));
+          intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+          context.startActivity(intent);
+          return false;
+        }
+      }
+      return true;
+    },
+
+    // 🚀 Método para instalar la APK descargada
+    installApk(apkFileName) {
+      try {
+        const context = utils.ad.getApplicationContext();
+        const apkFilePath = path.join(knownFolders.externalDocuments().path, apkFileName);
+        console.log("apkFilePath ",apkFilePath)
+        const apkFile = new java.io.File(apkFilePath);
+        console.log("apkfile ",apkFile)
+        if (!apkFile.exists()) {
+          console.error('Archivo APK no encontrado:', apkFilePath);
+          return;
+        }
+
+        const authority = `${context.getPackageName()}.provider`;
+        const apkUri = androidx.core.content.FileProvider.getUriForFile(context, authority, apkFile);
+
+        const intent = new android.content.Intent(android.content.Intent.ACTION_VIEW);
+        //intent.setDataAndType(apkUri, 'application/vnd.android.package-archive');
+        intent.setDataAndType(apkUri, "*/*");
+        intent.addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        context.startActivity(intent);
+      } catch (error) {
+        console.error('⚡ Error al intentar instalar la APK:', error);
+      }
+    },
+
     async download(url){
       try {
-        const documents = knownFolders.documents()
-        const filePath = path.join(documents.path, "wsp.apk")
+        console.log("daldhañuf ",url)
+        const documents = knownFolders.externalDocuments()
+        //const documents = knownFolders.externalStorage()
+        console.log("documento ",documents)
+        const filePath = path.join(documents.path, "wspTest.apk")
+        this.loadingCharge(true, "Descargando actualizacion...");
         const file = File.fromPath(filePath)
         const response = await Http.getFile(url, filePath);
         if(response && response.path){
-          console.log("documento ",response)
+          console.log(`📏 Tamaño del archivo APK descargado: ${file.size} bytes`);
+          if (this.checkInstallPermission()) {
+            this.installApk("wsp.apk");
+          } else {
+            console.log('⚠️ El usuario debe permitir la instalación desde fuentes desconocidas.');
+          }
         }
       } catch(error) {
-
+        console.error('⚡ Error al intentar instalar la APK:', error);
+      } finally {
+        this.loadingCharge();
       }
     },
 
@@ -168,6 +223,7 @@ export default {
           if (res.data.code == 1) {
             new Toasty({ text: "Actualizacion disponible" }).show();
             this.download(res.data.url);
+
           } else {
             new Toasty({ text: "No hay actualizacion disponible" }).show();
           }
