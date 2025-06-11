@@ -25,18 +25,20 @@ android {
 } */
 
 android {
-    compileSdkVersion 34  // ✅ Aumentado a 34
+    namespace 'org.nativescript.PalletsWarehouse'  // ⚡ Requerido para AGP 8+
+    compileSdkVersion 34
+    buildToolsVersion '34.0.0'
     defaultConfig {
         //applicationId "org.nativescript.application"
         minSdkVersion 21   // ✅ Recomendado para NativeScript
         targetSdkVersion 34
         versionCode 1
-        versionName "1.0.0"
+        versionName '1.0.0'
         multiDexEnabled true
     }
 
     aaptOptions {
-        additionalParameters "--no-version-vectors"
+        additionalParameters '--no-version-vectors'
     }
 }
 

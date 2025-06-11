@@ -78,7 +78,7 @@ const rebuildTables = async (tables) => {
 
     for (const table of tables) {
       const key = table.table;
-      console.log("url ", table.url);
+      //console.log("url ", table.url);
       let query = await axios.get(table.url);
       object[key] = query.data.data;
     }
