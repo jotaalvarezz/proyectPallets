@@ -1,6 +1,6 @@
 <template>
   <Page>
-    <ActionBar title="Registro de Tiendas">
+    <!-- <ActionBar title="Registro de Tiendas">
       <ActionItem
         @tap="prev"
         ios.systemIcon="13"
@@ -16,7 +16,8 @@
         android.position="actionBar"
       />
     </ActionBar>
-
+ -->
+    <ViewFlipper/>
     <ScrollView>
       <StackLayout>
         <!-- Paso 1: Datos de la tienda -->
@@ -103,7 +104,9 @@
 </template>
 
 <script>
+import ViewFlipper from "~/components/viewFlipper/ViewFlipper.vue";
 export default {
+  components: { ViewFlipper },
   data() {
     return {
       step: 0,
