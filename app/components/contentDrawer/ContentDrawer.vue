@@ -60,6 +60,30 @@
             class="p-l-10 colorIcons"
           />
         </GridLayout>
+
+          <GridLayout
+          id="3"
+          columns="40,*"
+          class="nt-drawer__list-item"
+          :class="isHovered && itemSelector == 3 ? 'hovered' : ''"
+          @touch="onTouch(3)"
+          @tap="test"
+        >
+          <Label
+            col="0"
+            :text="'fa-sync' | fonticon"
+            class="fas"
+            color="#3c495e"
+            fontSize="22"
+          />
+          <Label
+            col="1"
+            text="Prueba"
+            fontSize="14"
+            class="p-l-10 colorIcons"
+          />
+        </GridLayout>
+        
         <!-- create modules -->
         <GridLayout
           v-for="(item, index) in modules"
@@ -267,6 +291,10 @@ export default {
       } finally {
         this.loadingCharge();
       }
+    },
+
+    test(){
+        this.$router.push("view.test");
     },
 
     async home() {

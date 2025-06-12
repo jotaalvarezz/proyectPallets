@@ -14,6 +14,8 @@ import ContainerReportList from '~/views/evidence/containerReport/ContainerRepor
 import EvidenceList from '~/views/evidence/EvidenceList.vue'
 import Login from '~/views/Login'
 import Dashboard from '~/views/dashboard/Dashboard'
+import Test from '~/views/TestView/Test'
+import auth from '~/store/Modules/auth'
 
 Vue.use(NSVueRouter)
 
@@ -72,6 +74,12 @@ const routes = [
     name: 'login.index',
     component: Login,
     meta: { guest: true }
+  },
+  {
+    name: 'view.test',
+    component: Test,
+    meta: { auth: true},
+
   }
 ]
 
