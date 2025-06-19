@@ -1,9 +1,9 @@
 <template>
   <StackLayout @loaded="initialMethods" backgroundColor="#F4F6F8">
-    <HeaderComponent
+    <!-- <HeaderComponent
       title="Creacion de Reporte/Contenedor"
       :handleback="$modal.close"
-    />
+    /> -->
     <!-- <StackLayout backgroundColor="#F4F6F8"> -->
       <GridLayout
         ref="form"
@@ -154,6 +154,7 @@ import HeaderComponent from "~/components/header/HeaderComponent.vue";
 import { identifyObject } from "~/shared/helpers";
 
 export default {
+  name:"ContainerReport",
   components: {
     HeaderComponent,
   },

@@ -1,9 +1,9 @@
 <template>
   <StackLayout @loaded="InfoSelect" backgroundColor="#F4F6F8">
-    <HeaderComponent
+    <!-- <HeaderComponent
       title="Registro de Daños/Reparaciones"
       :handleback="$modal.close"
-    />
+    /> -->
     <GridLayout
       ref="form"
       class="shadow"
@@ -155,6 +155,7 @@ import * as imagepicker from "@nativescript/imagepicker";
 import { Toasty } from "@triniwiz/nativescript-toasty";
 
 export default {
+  name:"DamagedItems",
   props: {
     container_elements: {
       type: Array,
