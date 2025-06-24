@@ -1,9 +1,9 @@
 <template>
-  <!-- <StackLayout> -->
-  <ScrollView>
+  <StackLayout>
+  <!-- <ScrollView> -->
     <slot></slot>
-  </ScrollView>
-  <!-- </StackLayout> -->
+  <!-- </ScrollView> -->
+  </StackLayout>
 </template>
 <script>
 export default {

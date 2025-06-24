@@ -1,10 +1,10 @@
 <template>
-  <ViewFlipper ref="flipper" v-model="position" :steps="2">
+  <ViewFlipper ref="flipper" v-model="position" :steps="2" :operation="mostrar">
     <FlipperItem ref="item1" v-show="position == 0">
-      <ContainerReport />
+      <ContainerReport v-model="reportModel" />
     </FlipperItem>
     <FlipperItem ref="item2" v-show="position == 1">
-      <DamagedItems />
+      <DamagedItems v-model="damageModel" />
     </FlipperItem>
   </ViewFlipper>
 </template>
@@ -21,19 +21,16 @@ export default {
   data() {
     return {
       position: 0,
-      stores: [""],
+      reportModel: {},
+      damageModel: {},
     };
   },
 
-  methods: {},
-
-  updated() {
-    console.log("CAMBIO ", this.position);
-  },
-
-  mounted() {
-    //console.log(this.$refs.item1.$slots.default[0]);  // Contenido del slot en item1
-    //console.log(this.$refs.item2.$slots.default);  // Contenido del slot en item2
+  methods: {
+    mostrar() {
+      console.log("model ", this.reportModel);
+      console.log("model ", this.damageModel);
+    },
   },
 
   created() {

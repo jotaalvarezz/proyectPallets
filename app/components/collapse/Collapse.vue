@@ -1,6 +1,6 @@
 <template>
-  <StackLayout :padding="paddinAll">
-    <DockLayout @tap="activated" marginBottom="15">
+  <StackLayout :padding="paddinAll" backgroundColor="#FFFFFF">
+    <DockLayout @tap="activated" marginBottom="15" >
       <StackLayout
         dock="top"
         :backgroundColor="color"

@@ -10,3 +10,13 @@ export const identifyObject = (id, collection) => {
   const object = collection.find((d) => d.id == id);
   return object;
 };
+
+export const objectKey = (id, key, collection, msg = "Vacio") => {
+  const object = collection.find((item) => item.id === id)
+  if(object){
+    return object[key]
+  }else {
+    return msg
+  }
+}
+

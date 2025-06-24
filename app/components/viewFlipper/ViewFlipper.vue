@@ -77,12 +77,12 @@
       </ActionItem>
     </ActionBar>
     <GridLayout ref="form" rows="*">
-      <ScrollView>
+      <!-- <ScrollView> -->
         <StackLayout>
           <slot></slot>
         </StackLayout>
-      </ScrollView>
-      <FloatingButton :icon="'fa-save'" iconSize="sm" />
+      <!-- </ScrollView> -->
+      <FloatingButton :icon="'fa-save'" iconSize="sm" :method="flipperSave"/>
     </GridLayout>
   </Page>
 </template>
@@ -109,6 +109,10 @@ export default {
     next: {
       type: Function,
     },
+    operation:{
+      type:Function,
+      default: () => ""
+    }
   },
   computed: {
     defaultIndex() {
@@ -147,6 +151,10 @@ export default {
         console.log("decremento");
         console.log("steps ", this.currentSteps);
       }
+    },
+
+    flipperSave(){
+      this.operation()
     },
 
     onTouchLft(event) {
