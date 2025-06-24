@@ -78,10 +78,10 @@ export default {
   methods: {
     activated() {
       if (this.value === true) {
-        this.$emit("value", false);
+        this.$emit("input", false);
         return (this.value = false);
       }
-      this.$emit("value", true);
+      this.$emit("input", true);
       return (this.value = true);
     },
 

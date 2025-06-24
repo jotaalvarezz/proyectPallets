@@ -6,7 +6,7 @@
         ref="Collapse"
         row="0"
         title="Diligenciar Gestion"
-        @value="collapseValue = $event"
+        v-model="collapseValue"
       >
         <!-- Contenido que se insertará dentro del componente -->
         <GridLayout

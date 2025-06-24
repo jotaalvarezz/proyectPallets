@@ -15,7 +15,7 @@
       borderRadius="5"
     > -->
     <!--  <ScrollView> -->
-    <Collapse>
+    <Collapse v-model="viewCollapse">
       <GridLayout
         ref="form2"
         class="shadow"
@@ -286,6 +286,7 @@ export default {
       height: 240,
       cameraImage: "",
       namePhoto: "",
+      viewCollapse: true,
 
       errors: {
         container_element_id: false,
@@ -364,7 +365,7 @@ export default {
         props: {
           item: item,
           events:[
-            {name:"Ver Evidenvias", icon:"fa-eye", event:() => this.showPhoto(item.photo)},
+            {name:"Ver Evidenvias", icon:"fa-eye", event:() => this.showPhoto(item.photo, true)},
             {name:"Eliminar", icon:"fa-times", event:() => this.deleteRow(index)}
           ],
           generalOptions: false,
@@ -427,7 +428,8 @@ export default {
         damage_id: [],
         photo: "",
       };
-
+      this.namePhoto = "";
+      this.viewCollapse = false
       this.unCheckAll();
     },
 
@@ -513,15 +515,18 @@ export default {
       }
     },
 
-    showPhoto(photo) {
+    showPhoto(photo, inPath = false) {
       const folderPath = knownFolders.documents().path;
       const folder = Folder.fromPath(folderPath);
       const fileList = folder.getEntitiesSync();
-      console.log("file ",fileList)
-      const imageFiles = fileList.filter((file) => file["_name"] === photo);
+      let imageFiles = "";
+      if(!inPath){
+        imageFiles = fileList.filter((file) => file["_name"] === photo);
+      } else {
+        imageFiles = fileList.filter((file) => file["_path"] === photo);
+      }
       const path = imageFiles[0];
-      console.log("path ",path)
-      /* this.$showModal(
+      this.$showModal(
         {
           template: `
             <Page>
@@ -536,7 +541,7 @@ export default {
         `,
         },
         { animated: true }
-      ); */
+      );
     },
 
     async selectFromGallery() {
