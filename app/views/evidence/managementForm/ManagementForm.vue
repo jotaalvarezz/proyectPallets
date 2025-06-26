@@ -1,7 +1,7 @@
 <template>
   <page @loaded="index">
     <Header :search="false" />
-    <GridLayout rows="auto, auto ,auto, *" backgroundColor="#F4F6F8">
+    <GridLayout rows="auto, auto ,auto, *" backgroundColor="#FFFFFF">
       <Collapse
         ref="Collapse"
         row="0"
@@ -12,7 +12,7 @@
         <GridLayout
           rows="auto,auto,auto,auto,auto,auto,auto,auto,auto"
           class="shadow"
-          backgroundColor="#F4F6F8"
+          backgroundColor="#FFFFFF"
           borderWidth="1"
           borderColor="#c0c9d7"
           borderRadius="5"
@@ -28,7 +28,7 @@
           ></Label>
           <Stripe row="1" color="#3c495e" mt="20" mb="20" mr="40" ml="40" />
           <FormGroupTextField
-            v-if="management_id === 1"
+            v-if="StoreTypeManagementId === 1"
             row="2"
             label="Buque:"
             placeholder="nombre de barco..."
@@ -37,7 +37,7 @@
             :required="errors.name"
           />
           <FormGroupTextField
-            v-if="management_id === 2"
+            v-if="StoreTypeManagementId === 2"
             row="2"
             label="Gestion:"
             placeholder="nombre..."
@@ -46,7 +46,7 @@
             :required="errors.name"
           />
           <FormGroupTextField
-            v-if="management_id === 1"
+            v-if="StoreTypeManagementId === 1"
             row="3"
             label="Viaje:"
             placeholder="viaje..."
@@ -194,7 +194,7 @@
                 />
                 <Label textWrap="true">
                   <!-- en barco -->
-                  <FormattedString v-if="management_id === 1">
+                  <FormattedString v-if="StoreTypeManagementId === 1">
                     <Span text="Barco: " fontWeight="bold" fontSize="15" />
                     <Span :text="item.name + '\n'" fontSize="15" />
                     <Span text="Viaje: " fontWeight="bold" fontSize="15" />
@@ -207,8 +207,12 @@
                     <Span :text="item.titular_name" fontSize="15" />
                   </FormattedString>
                   <!-- en patio -->
-                  <FormattedString v-if="management_id === 2">
-                    <Span text="Nombre de Gestion: " fontWeight="bold" fontSize="15" />
+                  <FormattedString v-if="StoreTypeManagementId === 2">
+                    <Span
+                      text="Nombre de Gestion: "
+                      fontWeight="bold"
+                      fontSize="15"
+                    />
                     <Span :text="item.name + '\n'" fontSize="15" />
                     <Span text="Patio: " fontWeight="bold" fontSize="15" />
                     <Span :text="'Alieva' + '\n'" fontSize="15" />
@@ -275,18 +279,12 @@ import Alert from "~/alerts/Alerts";
 import { mapState, mapMutations } from "vuex";
 import ListModal from "~/components/listModal/ListModal.vue";
 import ManagmentShipList from "~/views/evidence/managementForm/ManagmentShipList";
-import { onSearchBarLoaded } from "~/shared/helpers"
+import { onSearchBarLoaded } from "~/shared/helpers";
 
 export default {
   name: "Management",
   components: {
     ButtomSheet,
-  },
-
-  props: {
-    management_id: {
-      type: Number,
-    },
   },
 
   data() {
@@ -316,7 +314,7 @@ export default {
 
   computed: {
     ...mapState("evidenceStore", ["managementModel"]),
-    ...mapState("managementStore", ["close"]),
+    ...mapState("managementStore", ["close", "StoreTypeManagementId"]),
   },
 
   methods: {
@@ -388,7 +386,7 @@ export default {
         }
 
         this.model = {
-          type_management_id: this.management_id,
+          type_management_id: this.StoreTypeManagementId,
           name: "",
           journey: "",
           titular_name: "",
@@ -431,7 +429,7 @@ export default {
     },
 
     index() {
-      this.model.type_management_id = this.management_id;
+      this.model.type_management_id = this.StoreTypeManagementId;
       this.getManagements(this.model.type_management_id);
     },
 
@@ -468,7 +466,7 @@ export default {
           Alert.info("¡Revise que los campos no se encuentren vacios!", 1);
         }
         this.model = {
-          type_management_id: this.management_id,
+          type_management_id: this.StoreTypeManagementId,
           name: "",
           journey: "",
           titular_name: "",
@@ -484,7 +482,11 @@ export default {
 
     navigate(item) {
       this.setManagementModel(item);
-      this.$router.push("container_report.index");
+      this.$router.push("container_report.index", {
+        props: {
+          ship: true,
+        },
+      });
     },
 
     refreshManagments() {
@@ -561,9 +563,9 @@ export default {
     },
 
     //evento para quitarle foco al searhBar cuando se carga la vista
-    focus(event){
-      onSearchBarLoaded(event)
-    }
+    focus(event) {
+      onSearchBarLoaded(event);
+    },
   },
 };
 </script>

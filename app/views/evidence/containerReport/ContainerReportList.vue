@@ -3,7 +3,7 @@
     <ActionBar backgroundColor="#00acc1" padding="0">
       <HeaderComponent title="Reportes/Evidencias" :handleback="navigateBack" />
     </ActionBar>
-    <GridLayout rows="auto,*" backgroundColor="#F4F6F8">
+    <GridLayout rows="auto,auto,*" backgroundColor="#F4F6F8">
       <GridLayout margin="5" row="0" rows="auto" columns="*, 70">
         <SearchBar
           height="50"
@@ -31,8 +31,52 @@
           :handleEvent="() => refreshEvidences()"
         />
       </GridLayout>
-      <Label
+      <StackLayout
+        v-if="type === true"
+        orientation="horizontal"
         row="1"
+        padding="20"
+      >
+        <StackLayout>
+          <Label
+            text="Finalizar Operacion:"
+            textWrap="true"
+            width="auto"
+            fontSize="16"
+          />
+          <StackLayout width="80" horizontalAlignment="left">
+            <Switch ref="switch" v-model="status" @tap="finish" />
+          </StackLayout>
+        </StackLayout>
+        <Label width="1" margin="15" backgroundColor="#c0c9d7" />
+        <StackLayout
+          orientation="horizontal"
+          width="auto"
+          backgroundColor="#D8E2E8"
+        >
+          <Label
+            :text="status ? 'Operacion Abierta' : 'Operacion Cerrada'"
+            class="text-center"
+            width="auto"
+            fontWeight="none"
+            verticalAlignment="bottom"
+            fontSize="16"
+            margin="10"
+            borderRadius="5"
+          />
+          <Label
+            :text="(status ? 'fa-lock-open' : 'fa-lock') | fonticon"
+            class="fas text-center"
+            verticalAlignment="bottom"
+            padding="10"
+            fontSize="30"
+            width="60"
+            color="#EAB14D"
+          />
+        </StackLayout>
+      </StackLayout>
+      <Label
+        row="2"
         textWrap="true"
         class="info"
         v-if="array_filter.length == 0"
@@ -45,7 +89,7 @@
       </Label>
       <!-- Lista de reportes -->
       <ListView
-        row="1"
+        row="2"
         ref="listView"
         for="(item, index) in array_filter"
         v-if="array_filter.length > 0"
@@ -72,9 +116,7 @@
                   />
                   <Label textWrap="true">
                     <!-- Barco -->
-                    <FormattedString
-                      v-if="managementModel.type_management_id === 1"
-                    >
+                    <FormattedString v-if="StoreTypeManagementId === 1">
                       <Span
                         text="Contenedor: "
                         fontWeight="bold"
@@ -100,9 +142,7 @@
                       />
                     </FormattedString>
                     <!-- Patio -->
-                    <FormattedString
-                      v-if="managementModel.type_management_id === 2"
-                    >
+                    <FormattedString v-if="StoreTypeManagementId === 2">
                       <Span
                         text="Contenedor: "
                         fontWeight="bold"
@@ -133,7 +173,7 @@
                     backgroundColor="#D8E2E8"
                     v-for="(repair, index) in item.repairs"
                     :key="index"
-                    style="padding: 0px 5px 5px 8px; margin-bottom: 3dp;"
+                    style="padding: 0px 5px 5px 8px; margin-bottom: 3dp"
                     borderRadius="5"
                   >
                     <Tag
@@ -181,7 +221,7 @@
       </ListView>
       <FloatingButton
         :isEnabled="type_management.status === 1 ? true : false"
-        row="1"
+        row="2"
         :icon="'fa-plus'"
         :method="openModal"
       />
@@ -205,7 +245,7 @@ import { mapState, mapMutations } from "vuex";
 import ButtomSheet from "~/components/buttomSheet/ButtomSheet.vue";
 import ListModal from "~/components/listModal/ListModal.vue";
 import containerReportListInfo from "~/views/evidence/containerReport/ContainerReportListInfo";
-import ContainerReport from "~/views/evidence/containerReport/ContainerReport.vue";
+import Reports from "~/views/evidence/reports/Reports.vue";
 import DamagedItems from "~/views/evidence/containerReport/damagedItems/DamagedItems.vue";
 import { onSearchBarLoaded } from "~/shared/helpers";
 
@@ -216,6 +256,7 @@ export default {
   },
   data() {
     return {
+      status: true,
       search: "",
       message: "No hay reportes de contenedores para mostrar",
       container_reports: [],
@@ -228,7 +269,7 @@ export default {
 
   computed: {
     ...mapState("evidenceStore", ["managementModel", "containerReport"]),
-    ...mapState("managementStore", ["close"]),
+    ...mapState("managementStore", ["close", "type", "StoreTypeManagementId"]),
   },
 
   methods: {
@@ -259,12 +300,13 @@ export default {
     },
 
     openModal() {
-      this.$showModal(ContainerReport, {
+      /* this.$showModal(Reports, {
         fullscreen: true,
         animated: true,
       }).then(() => {
         this.getEvidences();
-      });
+      }); */
+      this.$router.push("reports.create");
     },
 
     openFormDamaged(item) {
@@ -311,9 +353,7 @@ export default {
     async typeManagement() {
       try {
         this.loadingCharge(true);
-        const res = await showTypesManagement(
-          this.managementModel.type_management_id
-        );
+        const res = await showTypesManagement(this.StoreTypeManagementId);
         this.type_management = res.data;
       } catch (error) {
         Alert.danger(
@@ -325,7 +365,15 @@ export default {
       }
     },
 
-    async getEvidences() {
+    getEvidences() {
+      if (this.type) {
+        this.yardEvidence();
+      } else {
+        this.shipEvidence();
+      }
+    },
+
+    async shipEvidence() {
       try {
         this.loadingCharge(true);
         const res = await getContainerReport(this.managementModel.id);
@@ -341,6 +389,8 @@ export default {
         this.loadingCharge();
       }
     },
+
+    async yardEvidence() {},
 
     async deleteRowRepair(item, id) {
       let confirmated = await Alert.info(

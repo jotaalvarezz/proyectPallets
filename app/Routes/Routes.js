@@ -15,6 +15,7 @@ import EvidenceList from '~/views/evidence/EvidenceList.vue'
 import Login from '~/views/Login'
 import Dashboard from '~/views/dashboard/Dashboard'
 import Test from '~/views/TestView/Test'
+import Reports from '~/views/evidence/reports/Reports.vue'
 import auth from '~/store/Modules/auth'
 
 Vue.use(NSVueRouter)
@@ -71,15 +72,15 @@ const routes = [
     meta: { auth: true }
   },
   {
+    name: 'reports.create',
+    component: Reports,
+    meta: { auth: true},
+
+  },
+  {
     name: 'login.index',
     component: Login,
     meta: { guest: true }
-  },
-  {
-    name: 'view.test',
-    component: Test,
-    meta: { auth: true},
-
   }
 ]
 

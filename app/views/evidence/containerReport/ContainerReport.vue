@@ -124,6 +124,13 @@ export default {
     HeaderComponent,
   },
 
+  props:{
+    validations:{
+      type:Object,
+      default: {}
+    }
+  },
+
   data() {
     return {
       message: "No hay registros para mostrar",
@@ -145,12 +152,7 @@ export default {
       icons: {},
       isScrolling: false,
 
-      errors: {
-        prefix: false,
-        code: false,
-        role: false,
-        type_id: false,
-      },
+      errors: this.validations
     };
   },
 
@@ -162,6 +164,7 @@ export default {
       "containerReport",
       "containerReportEdit",
     ]),
+    ...mapState("managementStore",["type"])
   },
   watch: {
     // Observar cambios en todo el objeto 'model'
@@ -176,7 +179,7 @@ export default {
   },
   methods: {
     /* ****************************************************************** */
-    validateField(fields) {
+    /* validateField(fields) {
       this.errors.prefix = this.model.prefix === null ? true : false;
       this.errors.code = !this.model.code.trim();
       this.errors.role = !this.model.role.trim();
@@ -189,9 +192,9 @@ export default {
         fullfield = !this.errors[key];
       }
       return fullfield;
-    },
+    }, */
 
-    async addContainerReport() {
+    /* async addContainerReport() {
       const isValid = this.validateField();
       if (!isValid) {
         // Detener la ejecución si la validación falla
@@ -214,9 +217,9 @@ export default {
       } finally {
         this.loadingCharge();
       }
-    },
+    }, */
 
-    async updateContainerReport() {
+    /* async updateContainerReport() {
       try {
         const isValid = this.validateField();
         if (!isValid) {
@@ -229,7 +232,7 @@ export default {
         Alert.success("Reporte Actualizado!");
         this.$modal.close();
       } catch (error) {}
-    },
+    }, */
 
     async InfoSelect() {
       try {
@@ -263,7 +266,9 @@ export default {
         this.model.additional_damage_id = additional_damage_id;
         this.model.observation = this.containerReport.observation;
       }
-      this.model.management_id = this.managementModel.id;
+      if(!this.type){
+        this.model.management_id = this.managementModel.id;
+      }
       this.InfoSelect();
     },
   },

@@ -15,12 +15,16 @@
       borderRadius="5"
     > -->
     <!--  <ScrollView> -->
-    <Collapse v-model="viewCollapse">
+    <Collapse v-model="viewCollapse" title="Agregar Reparacion">
       <GridLayout
         ref="form2"
         class="shadow"
+        backgroundColor="#FFFFFF"
+        borderWidth="1"
+        borderColor="#c0c9d7"
+        borderRadius="5"
         rows="auto,auto,auto,auto,auto,auto,auto,auto,auto,auto,auto"
-        padding="5"
+        padding="25%"
       >
         <SelectField
           row="0"
@@ -73,7 +77,7 @@
             fontsize="14"
             :checked="isChecked"
             @checkedChange="onCheckedChange"
-            style="color: #3c495e; width: 45%"
+            style="color: #3c495e; width: 33%"
           />
         </FlexboxLayout>
         <Label
@@ -85,7 +89,7 @@
         />
         <FloatingButton
           row="6"
-          style="margin: 60px"
+          style="margin: 20px"
           :icon="'fa-camera'"
           alignX="center"
           iconSize="sm"
@@ -123,7 +127,7 @@
           style="width: 80%"
           :text="'*debe tomar la foto, para la evidencia'"
         />
-        <Stripe color="#3c495e" mr="40" ml="40" mt="20" mb="20" row="9" />
+        <Stripe color="#3c495e" mr="40" ml="40" mt="10" mb="20" row="9" />
         <Button
           row="10"
           backgroundColor="#F4F6F8"
@@ -138,17 +142,17 @@
       </GridLayout>
     </Collapse>
     <GridLayout rows="*" backgroundColor="#FFFFFF">
-      <!-- <Label
+      <Label
         textWrap="true"
         class="info"
-        v-if="listOfItems.length == 0"
+        v-if="listOfItems.length === 0"
         verticalAlignment="center"
       >
         <FormattedString>
           <Span class="fas" text.decode="&#x1f6e0; " />
           <Span :text="message" />
         </FormattedString>
-      </Label> -->
+      </Label>
       <!-- Lista de daños -->
       <ListView
         ref="listView"
@@ -305,11 +309,8 @@ export default {
   computed: {},
 
   watch: {
-    model: {
-      deep: true,
-      handler(newVal, oldVal) {
-        this.$emit("input", newVal);
-      },
+    listOfItems(newItems, oldItems) {
+      this.$emit("input", this.listOfItems);
     },
   },
 
@@ -356,7 +357,7 @@ export default {
     },
 
     handleButton(item, index) {
-      console.log("item ", item)
+      console.log("item ", item);
       item.action = true;
       const options = {
         dismissOnBackgroundTap: true,
@@ -364,9 +365,17 @@ export default {
         transparent: true,
         props: {
           item: item,
-          events:[
-            {name:"Ver Evidenvias", icon:"fa-eye", event:() => this.showPhoto(item.photo, true)},
-            {name:"Eliminar", icon:"fa-times", event:() => this.deleteRow(index)}
+          events: [
+            {
+              name: "Ver Evidenvias",
+              icon: "fa-eye",
+              event: () => this.showPhoto(item.photo, true),
+            },
+            {
+              name: "Eliminar",
+              icon: "fa-times",
+              event: () => this.deleteRow(index),
+            },
           ],
           generalOptions: false,
         },
@@ -378,16 +387,16 @@ export default {
       this.$showBottomSheet(ButtomSheetDynamic, options);
     },
 
-    managmentInfo(item){
-      console.log("informacion", item)
+    managmentInfo(item) {
+      console.log("informacion", item);
     },
 
-    async deleteRow(index){
+    async deleteRow(index) {
       let confirmated = await Alert.Danger(1);
-      if(confirmated){
+      if (confirmated) {
         try {
           this.listOfItems.splice(index, 1);
-        } catch(error) {
+        } catch (error) {
           Alert.danger("eleminacion fallida ", error.message);
         }
       }
@@ -429,7 +438,7 @@ export default {
         photo: "",
       };
       this.namePhoto = "";
-      this.viewCollapse = false
+      this.viewCollapse = false;
       this.unCheckAll();
     },
 
@@ -520,7 +529,7 @@ export default {
       const folder = Folder.fromPath(folderPath);
       const fileList = folder.getEntitiesSync();
       let imageFiles = "";
-      if(!inPath){
+      if (!inPath) {
         imageFiles = fileList.filter((file) => file["_name"] === photo);
       } else {
         imageFiles = fileList.filter((file) => file["_path"] === photo);

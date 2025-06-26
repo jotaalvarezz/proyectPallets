@@ -1,6 +1,6 @@
 <template>
   <StackLayout :padding="paddinAll" backgroundColor="#FFFFFF">
-    <DockLayout @tap="activated" marginBottom="15" >
+    <DockLayout @tap="activated" marginBottom="5" >
       <StackLayout
         dock="top"
         :backgroundColor="color"
@@ -35,7 +35,10 @@
 export default {
   name: "Collapse",
   props: {
-    title: String,
+    title: {
+      type:String,
+      default:""
+    },
     color: {
       type: String,
       default: "#3c495e",

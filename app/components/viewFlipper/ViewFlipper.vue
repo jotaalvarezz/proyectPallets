@@ -137,6 +137,14 @@ export default {
       this.$emit("value", this.currentIndex);
     },
 
+    pageFlipper(index){
+      if (index >= 0 && index < this.currentSteps) {
+        this.index = index;
+        this.currentIndex = this.index
+        this.$emit("input", index);
+      }
+    },
+
     nextFlipper() {
       if (this.currentIndex < this.currentSteps - 1) {
         this.currentIndex++;

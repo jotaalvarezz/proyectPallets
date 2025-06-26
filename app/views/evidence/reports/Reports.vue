@@ -59,7 +59,7 @@ export default {
       }
 
       if (this.damageModel.length === 0) {
-        this.$refs.flipper.pageFlipper(1)
+        this.$refs.flipper.pageFlipper(1);
         new Toasty({ text: "No hay reparaciones agregadas" }).show();
         return;
       }
