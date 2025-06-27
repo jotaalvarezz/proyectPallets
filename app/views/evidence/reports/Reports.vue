@@ -1,5 +1,10 @@
 <template>
-  <ViewFlipper ref="flipper" v-model="position" :steps="2" :operation="mostrar">
+  <ViewFlipper
+    ref="flipper"
+    v-model="position"
+    :steps="2"
+    :operation="saveReport"
+  >
     <FlipperItem ref="item1" v-show="position == 0">
       <ContainerReport v-model="reportModel" :validations="errors" />
     </FlipperItem>
@@ -10,9 +15,19 @@
 </template>
 
 <script>
-const { storeContainerReport, getContainerReport } = require("~/sqlite/database");
-const { getManagementAll, getReportsAll } = require("~/sqlite/queries/management")
-const { storeContainerReportYard, getRepairs, getRepairDamage } = require("~/sqlite/queries/evidence")
+const {
+  storeContainerReport,
+  getContainerReport,
+} = require("~/sqlite/database");
+const {
+  getManagementAll,
+  getReportsAll,
+} = require("~/sqlite/queries/management");
+const {
+  storeContainerReportYard,
+  getRepairs,
+  getRepairDamage,
+} = require("~/sqlite/queries/evidence");
 import ContainerReport from "~/views/evidence/containerReport/ContainerReport.vue";
 import DamagedItems from "~/views/evidence/containerReport/damagedItems/DamagedItems.vue";
 import { Toasty } from "@triniwiz/nativescript-toasty";
@@ -26,12 +41,12 @@ export default {
   data() {
     return {
       position: 0,
-      model:{
-        type_management_id:null,
-        name:"patio",
-        journey:"",
-        titular_name:"jesus alvarez",
-        signature:"",
+      model: {
+        type_management_id: null,
+        name: "patio",
+        journey: "",
+        titular_name: "jesus alvarez",
+        signature: "",
       },
       reportModel: {},
       damageModel: [],
@@ -46,7 +61,7 @@ export default {
   },
 
   computed: {
-    ...mapState("managementStore", ["StoreTypeManagementId"]),
+    ...mapState("managementStore", ["StoreTypeManagementId", "type"]),
   },
 
   methods: {
@@ -66,9 +81,11 @@ export default {
       return fullfield;
     },
 
-    async mostrar() {
+    async store() {},
+
+    async saveReport() {
       try {
-        console.log("type ",this.StoreTypeManagementId)
+        console.log("type ", this.StoreTypeManagementId);
         const isValid = this.validateField();
         if (!isValid) {
           // Detener la ejecución si la validación falla
@@ -81,11 +98,15 @@ export default {
           return;
         }
 
-        this.reportModel.repairs = this.damageModel
-        this.model.type_management_id = this.StoreTypeManagementId;
-        const modelComple = Object.assign({},this.model,this.reportModel)
-        console.log("logger ", modelComple)
-        const post = await storeContainerReportYard(modelComple)
+        this.reportModel.repairs = this.damageModel;
+        console.log("logger ", this.type);
+        if (!this.type) {
+          await storeContainerReport(this.reportModel)
+        } else {
+          this.model.type_management_id = this.StoreTypeManagementId;
+          const modelComple = Object.assign({}, this.model, this.reportModel);
+          await storeContainerReportYard(modelComple);
+        }
         /* console.log("post ",post)
         const res = await getReportsAll()
         console.log("respuesta ", res)
@@ -96,7 +117,7 @@ export default {
         const res4 = await getRepairDamage();
         console.log("damages ", res4) */
       } catch (error) {
-        console.log("errores ",error)
+        console.log("errores ", error);
       }
     },
   },

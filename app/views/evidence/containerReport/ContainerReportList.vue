@@ -348,8 +348,10 @@ export default {
 
     getEvidences() {
       if (this.type) {
+        console.log("patio")
         this.yardEvidence();
       } else {
+        console.log("barco")
         this.shipEvidence();
       }
     },

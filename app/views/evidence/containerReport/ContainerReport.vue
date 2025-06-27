@@ -171,7 +171,8 @@ export default {
     model: {
       deep: true, // Observa cambios en cualquier propiedad dentro de 'model'
       handler(newValue, oldValue) {
-        newValue.prefixCode = (identifyObject(newValue.prefix, this.prefixes)).prefix
+        newValue.prefixCode = newValue.prefix ? (identifyObject(newValue.prefix, this.prefixes)).prefix : ""
+        console.log("cambio")
         // Aquí puedes realizar cualquier acción cuando el objeto cambia
         this.$emit("input", newValue);
       },
@@ -251,7 +252,7 @@ export default {
     },
 
     initialMethods() {
-      if (this.containerReportEdit) {
+      /* if (this.containerReportEdit) {
         console.log("dentro")
         const additionalDamage = this.containerReport.additionalDamage;
         let additional_damage_id = [];
@@ -266,13 +267,15 @@ export default {
         this.model.role = this.containerReport.role;
         this.model.additional_damage_id = additional_damage_id;
         this.model.observation = this.containerReport.observation;
-      }
-      /* if(!this.type){
+      } */
+      if(!this.type){
         console.log("afuera", this.type)
         console.log("item ", this.managementModel)
         this.model.management_id = this.managementModel.id;
-      } */
-      /* this.InfoSelect(); */
+      } else {
+        this.$emit("input", this.model);
+      }
+      this.InfoSelect();
     },
   },
 };
