@@ -3,7 +3,7 @@
     <ActionBar backgroundColor="#00acc1" padding="0">
       <HeaderComponent title="Reportes/Evidencias" :handleback="navigateBack" />
     </ActionBar>
-    <GridLayout rows="auto,auto,*" backgroundColor="#F4F6F8">
+    <GridLayout rows="auto,*" backgroundColor="#F4F6F8">
       <GridLayout margin="5" row="0" rows="auto" columns="*, 70">
         <SearchBar
           height="50"
@@ -31,50 +31,6 @@
           :handleEvent="() => refreshEvidences()"
         />
       </GridLayout>
-      <StackLayout
-        v-if="type === true"
-        orientation="horizontal"
-        row="1"
-        padding="20"
-      >
-        <StackLayout>
-          <Label
-            text="Finalizar Operacion:"
-            textWrap="true"
-            width="auto"
-            fontSize="16"
-          />
-          <StackLayout width="80" horizontalAlignment="left">
-            <Switch ref="switch" v-model="status" @tap="finish" />
-          </StackLayout>
-        </StackLayout>
-        <Label width="1" margin="15" backgroundColor="#c0c9d7" />
-        <StackLayout
-          orientation="horizontal"
-          width="auto"
-          backgroundColor="#D8E2E8"
-        >
-          <Label
-            :text="status ? 'Operacion Abierta' : 'Operacion Cerrada'"
-            class="text-center"
-            width="auto"
-            fontWeight="none"
-            verticalAlignment="bottom"
-            fontSize="16"
-            margin="10"
-            borderRadius="5"
-          />
-          <Label
-            :text="(status ? 'fa-lock-open' : 'fa-lock') | fonticon"
-            class="fas text-center"
-            verticalAlignment="bottom"
-            padding="10"
-            fontSize="30"
-            width="60"
-            color="#EAB14D"
-          />
-        </StackLayout>
-      </StackLayout>
       <Label
         row="2"
         textWrap="true"
@@ -205,6 +161,13 @@
         :icon="'fa-plus'"
         :method="openModal"
       />
+      <FloatingButton
+        marginBottom="100"
+        :isEnabled="type_management.status === 1 ? true : false"
+        row="2"
+        :icon="(status ? 'fa-lock-open' : 'fa-lock')"
+        :method="finish"
+      />
     </GridLayout>
   </page>
 </template>
@@ -226,7 +189,6 @@ import { mapState, mapMutations } from "vuex";
 import ButtomSheet from "~/components/buttomSheet/ButtomSheet.vue";
 import ListModal from "~/components/listModal/ListModal.vue";
 import containerReportListInfo from "~/views/evidence/containerReport/ContainerReportListInfo";
-import Reports from "~/views/evidence/reports/Reports.vue";
 import DamagedItems from "~/views/evidence/containerReport/damagedItems/DamagedItems.vue";
 import { onSearchBarLoaded } from "~/shared/helpers";
 
@@ -281,13 +243,11 @@ export default {
     },
 
     openModal() {
-      /* this.$showModal(Reports, {
-        fullscreen: true,
-        animated: true,
-      }).then(() => {
-        this.getEvidences();
-      }); */
-      this.$router.push("reports.create");
+      if(this.type){
+        this.$router.push("reportinyard.create");
+      } else {
+        this.$router.push("reportship.create");
+      }
     },
 
     openFormDamaged(item) {
@@ -445,10 +405,15 @@ export default {
     },
 
     containerReportInfo(item) {
-      let listRows = containerReportListInfo.listRowsContainerReport;
+      let listRows = [];
+      if (item.type_management_id === 1) {
+        listRows = containerReportListInfo.listRowsVeesel;
+      } else if (item.type_management_id === 2) {
+        listRows = containerReportListInfo.listRowsPatio;
+      }
       this.$showModal(ListModal, {
+        fullscreen: true,
         animated: true,
-        stretched: false,
         props: {
           title: "Informacion del reporte",
           info: item,

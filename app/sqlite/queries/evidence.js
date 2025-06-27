@@ -249,7 +249,7 @@ const storeContainerReport = async (data) => {
       container_report_id: postData,
       additional_damage_id: data.additional_damage_id,
     });
-    /* storeRepairs({ container_report_id: postData, damages_repairs: data.repairs }) */
+    storeRepairs({ container_report_id: postData, damages_repairs: data.repairs })
     return postData;
   } catch (error) {
     console.log("ocurrio un problema al insertar la fila", error);
@@ -372,13 +372,13 @@ const storeContainerReportYard = async (data) => {
         moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
       ]
     );
+    console.log("data ",data)
+    console.log("posData ",postData)
     /* validadr si ya existe un reporte del contenedor */
     const register = await getRegister(
       "container_reports",
       "code",
       data.code,
-      "management_id",
-      postData
     );
     console.log("register ", register)
     if (Object.keys(register.data).length > 0) {

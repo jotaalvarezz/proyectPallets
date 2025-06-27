@@ -15,7 +15,8 @@ import EvidenceList from '~/views/evidence/EvidenceList.vue'
 import Login from '~/views/Login'
 import Dashboard from '~/views/dashboard/Dashboard'
 import Test from '~/views/TestView/Test'
-import Reports from '~/views/evidence/reports/Reports.vue'
+import ReportShip from '~/views/evidence/reports/ReportShip.vue'
+import ReportInYard from '~/views/evidence/reports/ReportInYard.vue'
 import auth from '~/store/Modules/auth'
 
 Vue.use(NSVueRouter)
@@ -72,8 +73,14 @@ const routes = [
     meta: { auth: true }
   },
   {
-    name: 'reports.create',
-    component: Reports,
+    name: 'reportship.create',
+    component: ReportShip,
+    meta: { auth: true},
+
+  },
+  {
+    name: 'reportinyard.create',
+    component: ReportInYard,
     meta: { auth: true},
 
   },

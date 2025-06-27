@@ -32,6 +32,7 @@ import ContainerReport from "~/views/evidence/containerReport/ContainerReport.vu
 import DamagedItems from "~/views/evidence/containerReport/damagedItems/DamagedItems.vue";
 import { Toasty } from "@triniwiz/nativescript-toasty";
 import { mapState } from "vuex";
+import Alert from "~/alerts/Alerts";
 
 export default {
   components: {
@@ -100,24 +101,18 @@ export default {
 
         this.reportModel.repairs = this.damageModel;
         console.log("logger ", this.type);
-        if (!this.type) {
-          await storeContainerReport(this.reportModel)
+
+        this.model.type_management_id = this.StoreTypeManagementId;
+        const modelComple = Object.assign({}, this.model, this.reportModel);
+        const res = await storeContainerReportYard(modelComple);
+
+        if (res.status === 500) {
+          Alert.info(res.message, 1, "Ya existe");
         } else {
-          this.model.type_management_id = this.StoreTypeManagementId;
-          const modelComple = Object.assign({}, this.model, this.reportModel);
-          await storeContainerReportYard(modelComple);
+          Alert.success("Reporte creado");
         }
-        /* console.log("post ",post)
-        const res = await getReportsAll()
-        console.log("respuesta ", res)
-        const res2 = await getManagementAll();
-        console.log("respuesta2 ", res2);
-        const res3 = await getRepairs();
-        console.log("repairs ",res3)
-        const res4 = await getRepairDamage();
-        console.log("damages ", res4) */
       } catch (error) {
-        console.log("errores ", error);
+        Alert.danger("Hubo un error al guardar ", error.message);
       }
     },
   },
