@@ -2,7 +2,7 @@
   <ViewFlipper
     ref="flipper"
     v-model="position"
-    :steps="2"
+    :steps="3"
     :operation="saveReport"
   >
     <FlipperItem ref="item1" v-show="position == 0">
@@ -10,6 +10,9 @@
     </FlipperItem>
     <FlipperItem ref="item2" v-show="position == 1">
       <DamagedItems v-model="damageModel" />
+    </FlipperItem>
+    <FlipperItem ref="item3" v-show="position == 2">
+      <formSignature />
     </FlipperItem>
   </ViewFlipper>
 </template>
@@ -30,6 +33,7 @@ const {
 } = require("~/sqlite/queries/evidence");
 import ContainerReport from "~/views/evidence/containerReport/ContainerReport.vue";
 import DamagedItems from "~/views/evidence/containerReport/damagedItems/DamagedItems.vue";
+import formSignature from "~/views/evidence/formSignature/formSignature.vue";
 import { Toasty } from "@triniwiz/nativescript-toasty";
 import { mapState } from "vuex";
 import Alert from "~/alerts/Alerts";
@@ -38,6 +42,7 @@ export default {
   components: {
     ContainerReport,
     DamagedItems,
+    formSignature,
   },
   data() {
     return {
@@ -89,6 +94,7 @@ export default {
         console.log("type ", this.StoreTypeManagementId);
         const isValid = this.validateField();
         if (!isValid) {
+          this.$refs.flipper.pageFlipper(0);
           // Detener la ejecución si la validación falla
           return;
         }

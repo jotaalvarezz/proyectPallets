@@ -1,6 +1,7 @@
 <template>
   <StackLayout backgroundColor="#F4F6F8">
     <GridLayout
+      v-if="is_navbar"
       height="55"
       rows="*"
       columns="50, 3*, 50"
@@ -87,6 +88,10 @@ export default {
       type: Number,
       default: 0,
     },
+    is_navbar: {
+      type: Boolean,
+      default: true,
+    },
   },
 
   data() {
@@ -136,7 +141,6 @@ export default {
           signature: validatorSignature.filePath,
           deleteImages: deleteImages,
           fileExists: validatorSignature.fileExists,
-
         });
       } catch (error) {
         this.$modal.close({
@@ -156,8 +160,8 @@ export default {
       const fileName = "firma_usuario" + "_" + Date.now() + ".jpg";
       let filePath = fs.path.join(folderPath, fileName);
       let signature = "";
-      let signatureName = ""
-      let oldfilePath = ""
+      let signatureName = "";
+      let oldfilePath = "";
       if (this.signature.length > 0) {
         signature = this.signature.split("/");
         signatureName = signature[signature.length - 1];
@@ -183,7 +187,7 @@ export default {
       return {
         imageFiles,
         fileExists,
-        filePath
+        filePath,
       };
     },
   },

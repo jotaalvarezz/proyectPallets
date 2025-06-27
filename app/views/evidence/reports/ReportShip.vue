@@ -82,6 +82,7 @@ export default {
         console.log("type ", this.StoreTypeManagementId);
         const isValid = this.validateField();
         if (!isValid) {
+          this.$refs.flipper.pageFlipper(0);
           // Detener la ejecución si la validación falla
           return;
         }
