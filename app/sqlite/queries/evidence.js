@@ -181,7 +181,7 @@ const showContainerReport = async (id) => {
 const getRepairs = async () => {
   try {
     const db = await openDatabase();
-    const data = await db.all("SELECT * FROM repairs", []);
+    const data = await db.all(`SELECT * FROM repairs`, []);
     const dataFormatted = await showData("repairs", data);
     return { data: dataFormatted };
   } catch (error) {
@@ -193,7 +193,7 @@ const getRepairDamage = async () => {
   try {
     const db = await openDatabase();
     const data = await db.all(
-      "SELECT * FROM repair_damage WHERE repair_id = 2",
+      "SELECT * FROM repair_damage",
       []
     );
     const dataFormatted = await showData("repair_damage", data);
@@ -202,6 +202,8 @@ const getRepairDamage = async () => {
     console.log("error al traer los datos ", error);
   }
 };
+
+/* Metodos de insercion */
 
 const storeContainerReport = async (data) => {
   try {
@@ -347,6 +349,88 @@ const storeRepairDamage = async (data) => {
   }
 };
 
+const storeContainerReportYard = async (data) => {
+  try {
+    const db = await openDatabase();
+    const postData = await db.execSQL(
+      `INSERT INTO management (
+                              consecutive,
+                              type_management_id,
+                              name,
+                              journey,
+                              titular_name,
+                              signature,
+                              date_creation)
+            VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [
+        Date.now() + Math.random(),
+        data.type_management_id,
+        data.name,
+        data.journey,
+        data.titular_name,
+        data.signature,
+        moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
+      ]
+    );
+    /* validadr si ya existe un reporte del contenedor */
+    const register = await getRegister(
+      "container_reports",
+      "code",
+      data.code,
+      "management_id",
+      postData
+    );
+    console.log("register ", register)
+    if (Object.keys(register.data).length > 0) {
+      return {
+        status: 500,
+        message:
+          "Ya existe un registro creado con el mismo numero de contenedor!",
+      };
+    }
+    /* ************** */
+    /* insertar el reporte en container report */
+    console.log("postData ",postData)
+    let postDataReport = await db.execSQL(
+      `INSERT INTO container_reports (
+                          consecutive,
+                          management_id,
+                          prefix,
+                          code,
+                          type_id,
+                          role,
+                          observation,
+                          date_creation)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        Date.now() + Math.random(),
+        postData,
+        data.prefixCode,
+        data.code,
+        data.type_id,
+        data.role,
+        data.observation,
+        moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
+      ]
+    );
+    /* ******************************************************* */
+    /* insertar los daños adicionales */
+    storeCReportADamage({
+      container_report_id: postDataReport,
+      additional_damage_id: data.additional_damage_id,
+    });
+    /* ************************************************** */
+    /* insertar las reparaciones del reporte */
+    storeRepairs({ container_report_id: postData, damages_repairs: data.repairs })
+
+    return postDataReport
+  } catch (error) {
+    console.log("ah sucedido un error ",error)
+  }
+};
+
+/* ******************************************************************************** */
+
 const updateContainerReport = async (item) => {
   try {
     const db = await openDatabase();
@@ -358,7 +442,14 @@ const updateContainerReport = async (item) => {
                                       role = (?),
                                       observation = (?)
                                       WHERE id = (?)`,
-      [item.prefixCode ,item.code, item.type_id, item.role, item.observation, item.id]
+      [
+        item.prefixCode,
+        item.code,
+        item.type_id,
+        item.role,
+        item.observation,
+        item.id,
+      ]
     );
     storeCReportADamage(
       {
@@ -432,5 +523,6 @@ module.exports = {
   getRepairDamage,
   deleteContainerReport,
   updateContainerReport,
-  showContainerReport
+  showContainerReport,
+  storeContainerReportYard,
 };

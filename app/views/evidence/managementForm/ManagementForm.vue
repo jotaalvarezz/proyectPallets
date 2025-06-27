@@ -430,6 +430,7 @@ export default {
 
     index() {
       this.model.type_management_id = this.StoreTypeManagementId;
+      console.log("types management ",this.model.type_management_id)
       this.getManagements(this.model.type_management_id);
     },
 
@@ -482,11 +483,7 @@ export default {
 
     navigate(item) {
       this.setManagementModel(item);
-      this.$router.push("container_report.index", {
-        props: {
-          ship: true,
-        },
-      });
+      this.$router.push("container_report.index");
     },
 
     refreshManagments() {

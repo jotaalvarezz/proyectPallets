@@ -10,9 +10,13 @@
 </template>
 
 <script>
+const { storeContainerReport, getContainerReport } = require("~/sqlite/database");
+const { getManagementAll, getReportsAll } = require("~/sqlite/queries/management")
+const { storeContainerReportYard, getRepairs, getRepairDamage } = require("~/sqlite/queries/evidence")
 import ContainerReport from "~/views/evidence/containerReport/ContainerReport.vue";
 import DamagedItems from "~/views/evidence/containerReport/damagedItems/DamagedItems.vue";
 import { Toasty } from "@triniwiz/nativescript-toasty";
+import { mapState } from "vuex";
 
 export default {
   components: {
@@ -22,6 +26,13 @@ export default {
   data() {
     return {
       position: 0,
+      model:{
+        type_management_id:null,
+        name:"patio",
+        journey:"",
+        titular_name:"jesus alvarez",
+        signature:"",
+      },
       reportModel: {},
       damageModel: [],
 
@@ -32,6 +43,10 @@ export default {
         type_id: false,
       },
     };
+  },
+
+  computed: {
+    ...mapState("managementStore", ["StoreTypeManagementId"]),
   },
 
   methods: {
@@ -51,21 +66,38 @@ export default {
       return fullfield;
     },
 
-    mostrar() {
-      const isValid = this.validateField();
-      if (!isValid) {
-        // Detener la ejecución si la validación falla
-        return;
-      }
+    async mostrar() {
+      try {
+        console.log("type ",this.StoreTypeManagementId)
+        const isValid = this.validateField();
+        if (!isValid) {
+          // Detener la ejecución si la validación falla
+          return;
+        }
 
-      if (this.damageModel.length === 0) {
-        this.$refs.flipper.pageFlipper(1);
-        new Toasty({ text: "No hay reparaciones agregadas" }).show();
-        return;
-      }
+        if (this.damageModel.length === 0) {
+          this.$refs.flipper.pageFlipper(1);
+          new Toasty({ text: "No hay reparaciones agregadas" }).show();
+          return;
+        }
 
-      this.reportModel.repairs = this.damageModel;
-      console.log("data completa ", this.reportModel);
+        this.reportModel.repairs = this.damageModel
+        this.model.type_management_id = this.StoreTypeManagementId;
+        const modelComple = Object.assign({},this.model,this.reportModel)
+        console.log("logger ", modelComple)
+        const post = await storeContainerReportYard(modelComple)
+        /* console.log("post ",post)
+        const res = await getReportsAll()
+        console.log("respuesta ", res)
+        const res2 = await getManagementAll();
+        console.log("respuesta2 ", res2);
+        const res3 = await getRepairs();
+        console.log("repairs ",res3)
+        const res4 = await getRepairDamage();
+        console.log("damages ", res4) */
+      } catch (error) {
+        console.log("errores ",error)
+      }
     },
   },
 

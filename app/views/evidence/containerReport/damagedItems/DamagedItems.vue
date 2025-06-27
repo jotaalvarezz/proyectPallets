@@ -483,6 +483,8 @@ export default {
         const containerElements = await getContainerElements();
         this.damages = res.data;
         this.elements = containerElements.data;
+        console.log("itemmmodel ", this.damages)
+        console.log("item elements ", this.elements)
       } catch (error) {
         console.log("solucion de errores ", error);
       } finally {

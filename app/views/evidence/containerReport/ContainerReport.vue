@@ -164,14 +164,14 @@ export default {
       "containerReport",
       "containerReportEdit",
     ]),
-    ...mapState("managementStore",["type"])
+    ...mapState("managementStore", ["type"]),
   },
   watch: {
     // Observar cambios en todo el objeto 'model'
     model: {
       deep: true, // Observa cambios en cualquier propiedad dentro de 'model'
       handler(newValue, oldValue) {
-       /*  console.log("Model changed:", newValue); */
+        newValue.prefixCode = (identifyObject(newValue.prefix, this.prefixes)).prefix
         // Aquí puedes realizar cualquier acción cuando el objeto cambia
         this.$emit("input", newValue);
       },
@@ -252,6 +252,7 @@ export default {
 
     initialMethods() {
       if (this.containerReportEdit) {
+        console.log("dentro")
         const additionalDamage = this.containerReport.additionalDamage;
         let additional_damage_id = [];
         for (let i = 0; i < additionalDamage.length; i++) {
@@ -266,10 +267,12 @@ export default {
         this.model.additional_damage_id = additional_damage_id;
         this.model.observation = this.containerReport.observation;
       }
-      if(!this.type){
+      /* if(!this.type){
+        console.log("afuera", this.type)
+        console.log("item ", this.managementModel)
         this.model.management_id = this.managementModel.id;
-      }
-      this.InfoSelect();
+      } */
+      /* this.InfoSelect(); */
     },
   },
 };

@@ -89,12 +89,13 @@
       </Label>
       <!-- Lista de reportes -->
       <ListView
+        v-if="array_filter.length > 0"
         row="2"
         ref="listView"
-        for="(item, index) in array_filter"
-        v-if="array_filter.length > 0"
+        for="item in array_filter"
       >
         <v-template>
+          <!-- Shows the list item label in the default color and style. -->
           <GridLayout columns="*, 50">
             <StackLayout>
               <Label
@@ -116,7 +117,7 @@
                   />
                   <Label textWrap="true">
                     <!-- Barco -->
-                    <FormattedString v-if="StoreTypeManagementId === 1">
+                    <FormattedString>
                       <Span
                         text="Contenedor: "
                         fontWeight="bold"
@@ -127,12 +128,38 @@
                         fontSize="15"
                       />
                       <Span text="Tipo: " fontWeight="bold" fontSize="15" />
+                      <Span :text="item.nameType + '\n'" fontSize="15" />
                       <Span
-                        :text="nameType(item.type_id) + '\n'"
+                        :text="
+                          item.type_management_id === 1
+                            ? 'Buque: '
+                            : 'Nombre de Gestion: '
+                        "
+                        fontWeight="bold"
                         fontSize="15"
                       />
-                      <Span text="Buque: " fontWeight="bold" fontSize="15" />
                       <Span :text="item.vessel + '\n'" fontSize="15" />
+                      <Span
+                        v-if="item.type_management_id === 2"
+                        text="Patio: "
+                        fontWeight="bold"
+                        fontSize="15"
+                      />
+                      <Span
+                        v-if="item.type_management_id === 2"
+                        :text="'Alieva' + '\n'"
+                        fontSize="15"
+                      />
+                      <Span
+                        :text="
+                          item.type_management_id === 1
+                            ? 'Capitan: '
+                            : 'Conductor: '
+                        "
+                        fontWeight="bold"
+                        fontSize="15"
+                      />
+                      <Span :text="item.titular_name + '\n'" fontSize="15" />
                       <Span text="Tecnico: " fontWeight="bold" fontSize="15" />
                       <Span :text="item.role + '\n'" fontSize="15" />
                       <Span
@@ -141,35 +168,9 @@
                         fontSize="15"
                       />
                     </FormattedString>
-                    <!-- Patio -->
-                    <FormattedString v-if="StoreTypeManagementId === 2">
-                      <Span
-                        text="Contenedor: "
-                        fontWeight="bold"
-                        fontSize="15"
-                      />
-                      <Span
-                        :text="item.prefix + item.code + '\n'"
-                        fontSize="15"
-                      />
-                      <Span text="Tipo: " fontWeight="bold" fontSize="15" />
-                      <Span
-                        :text="nameType(item.type_id) + '\n'"
-                        fontSize="15"
-                      />
-                      <Span text="Patio: " fontWeight="bold" fontSize="15" />
-                      <Span :text="'Alieva' + '\n'" fontSize="15" />
-                      <Span text="Tecnico: " fontWeight="bold" fontSize="15" />
-                      <Span :text="item.role + '\n'" fontSize="15" />
-                      <Span
-                        text="Estructura:"
-                        fontWeight="bold"
-                        fontSize="15"
-                      />
-                    </FormattedString>
                   </Label>
                   <GridLayout
-                    columns="*, 50"
+                    columns="*"
                     backgroundColor="#D8E2E8"
                     v-for="(repair, index) in item.repairs"
                     :key="index"
@@ -179,32 +180,11 @@
                     <Tag
                       col="0"
                       width="80%"
-                      :label="repair.name ? repair.name : ''"
+                      :label="repair.name"
                       :items="repair.repair_damage"
                       labelIterator="name"
                     />
-                    <ButtonNavigate
-                      col="1"
-                      :isEnabled="type_management.status === 1 ? true : false"
-                      height="45"
-                      width="45"
-                      icon="fa-times"
-                      :size="13"
-                      iconColor="#e92222"
-                      radius="50"
-                      :handleEvent="() => deleteRowRepair(item, repair.id)"
-                    />
                   </GridLayout>
-                  <ButtonNavigate
-                    :isEnabled="type_management.status === 1 ? true : false"
-                    height="50"
-                    width="50"
-                    icon="fa-toolbox"
-                    iconColor="#f4f6f8"
-                    iconBackground="#eab14d"
-                    radius="50"
-                    :handleEvent="() => openFormDamaged(item)"
-                  />
                 </StackLayout>
               </StackLayout>
             </StackLayout>
@@ -239,6 +219,7 @@ const {
   getRepairDamage,
   getRepairs,
 } = require("~/sqlite/database");
+const { getAllManagementsYard } = require("~/sqlite/queries/management");
 import mixinMasters from "~/mixins/Master";
 import Alert from "~/alerts/Alerts";
 import { mapState, mapMutations } from "vuex";
@@ -379,8 +360,10 @@ export default {
         const res = await getContainerReport(this.managementModel.id);
         this.container_reports = res.data;
         this.array_filter = res.data;
+        console.log("getContainerReport ",res)
         if (this.types.length === 0) {
           const types = await getTypes();
+          console.log("getContainerReport ",types)
           this.types = types.data;
         }
       } catch (error) {
@@ -390,7 +373,20 @@ export default {
       }
     },
 
-    async yardEvidence() {},
+    async yardEvidence() {
+      try {
+        const res = await getAllManagementsYard(this.StoreTypeManagementId);
+        console.log("ress  ", res);
+        this.container_reports = res.data;
+        this.array_filter = res.data;
+        if (this.types.length === 0) {
+          const types = await getTypes();
+          this.types = types.data;
+        }
+      } catch (error) {
+        console.log("error en yard ", error);
+      }
+    },
 
     async deleteRowRepair(item, id) {
       let confirmated = await Alert.info(
