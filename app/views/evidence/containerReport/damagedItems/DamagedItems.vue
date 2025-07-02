@@ -1,5 +1,5 @@
 <template>
-  <StackLayout @loaded="InfoSelect" backgroundColor="#F4F6F8">
+  <StackLayout @loaded="initialMethods" backgroundColor="#F4F6F8">
     <!-- <HeaderComponent
       title="Registro de Daños/Reparaciones"
       :handleback="$modal.close"
@@ -180,11 +180,11 @@
               <Label textWrap="true" row="0">
                 <FormattedString>
                   <Span text="Elemento: " fontWeight="bold" fontSize="15" />
-                  <Span :text="item.labelElement + '\n'" fontSize="15" />
+                  <Span :text="item.name + '\n'" fontSize="15" />
                   <Span text="Ubicacion: " fontWeight="bold" fontSize="15" />
-                  <Span :text="item.labelLocation + '\n'" fontSize="15" />
+                  <Span :text="item.location + '\n'" fontSize="15" />
                   <Span text="Posicion: " fontWeight="bold" fontSize="15" />
-                  <Span :text="item.labelPosition" fontSize="15" />
+                  <Span :text="item.position" fontSize="15" />
                 </FormattedString>
               </Label>
               <Tag
@@ -193,7 +193,7 @@
                 width="100%"
                 label="Daño(s)"
                 :items="item.damage_id"
-                labelIterator="text"
+                labelIterator="name"
               />
               <ButtonNavigate
                 col="1"
@@ -242,6 +242,7 @@ import * as imagepicker from "@nativescript/imagepicker";
 import { Toasty } from "@triniwiz/nativescript-toasty";
 import { objectKey } from "~/shared/helpers";
 import ButtomSheetDynamic from "~/components/buttomSheet/ButtomSheetDynamic.vue";
+import { mapMutations, mapState } from "vuex";
 
 export default {
   name: "DamagedItems",
@@ -290,7 +291,7 @@ export default {
       height: 240,
       cameraImage: "",
       namePhoto: "",
-      viewCollapse: true,
+      viewCollapse: false,
 
       errors: {
         container_element_id: false,
@@ -306,15 +307,36 @@ export default {
 
   mixins: [mixinMasters],
 
-  computed: {},
+  computed: {
+    ...mapState(["recharge"]),
+    ...mapState("evidenceStore", [
+      "managementModel",
+      "containerReport",
+      "containerReportEdit",
+    ]),
+  },
 
   watch: {
     listOfItems(newItems, oldItems) {
-      this.$emit("input", this.listOfItems);
+      this.viewCollapse = false
+      this.$emit("input", newItems);
     },
   },
 
   methods: {
+    ...mapMutations(["setRecharge"]),
+    initialMethods() {
+      if(this.containerReportEdit){
+        if(this.recharge){
+          this.listOfItems = this.containerReport.repairs
+        }
+      }
+      this.InfoSelect()
+    },
+
+    clean(){
+      this.listOfItems = []
+    },
     /* ****************************************************************** */
     validateField(fields) {
       this.errors.container_element_id =
@@ -338,7 +360,7 @@ export default {
       if (checkbox.checked) {
         this.model.damage_id.push({
           id: checkbox.id,
-          text: checkbox.text,
+          name: checkbox.text,
           checked: checkbox.checked,
         });
       } else {
@@ -357,7 +379,6 @@ export default {
     },
 
     handleButton(item, index) {
-      console.log("item ", item);
       item.action = true;
       const options = {
         dismissOnBackgroundTap: true,
@@ -387,15 +408,12 @@ export default {
       this.$showBottomSheet(ButtomSheetDynamic, options);
     },
 
-    managmentInfo(item) {
-      console.log("informacion", item);
-    },
-
     async deleteRow(index) {
       let confirmated = await Alert.Danger(1);
       if (confirmated) {
         try {
           this.listOfItems.splice(index, 1);
+          this.$closeBottomSheet()
         } catch (error) {
           Alert.danger("eleminacion fallida ", error.message);
         }
@@ -425,9 +443,9 @@ export default {
         this.positions
       );
 
-      this.model.labelElement = element;
-      this.model.labelLocation = location;
-      this.model.labelPosition = position;
+      this.model.name = element;
+      this.model.location = location;
+      this.model.position = position;
 
       this.listOfItems.push(this.model);
       this.model = {
@@ -472,10 +490,6 @@ export default {
       }
     }, */
 
-    removeRepair() {
-      console.log("removiendo");
-    },
-
     async InfoSelect() {
       try {
         this.loadingCharge(true);
@@ -483,10 +497,8 @@ export default {
         const containerElements = await getContainerElements();
         this.damages = res.data;
         this.elements = containerElements.data;
-        console.log("itemmmodel ", this.damages)
-        console.log("item elements ", this.elements)
       } catch (error) {
-        console.log("solucion de errores ", error);
+        Alert.danger("Error al cargar ", error.message);
       } finally {
         this.loadingCharge();
       }
@@ -509,6 +521,7 @@ export default {
       };
 
       try {
+        this.setRecharge(false)
         const imageAsset = await camera.takePicture(options);
         let pathSplit = imageAsset._android.split("/");
         let photo = pathSplit[pathSplit.length - 1];
@@ -523,6 +536,8 @@ export default {
         if (error.message === "cancelled") {
           new Toasty({ text: "Foto cancelada" }).show();
         }
+      } finally {
+        this.setRecharge(true)
       }
     },
 
@@ -557,6 +572,7 @@ export default {
 
     async selectFromGallery() {
       try {
+        this.setRecharge(false)
         const context = imagepicker.create({ mode: "single" });
         await context.authorize(); // Solicita permisos
         const selection = await context.present();
@@ -585,6 +601,8 @@ export default {
           return;
         }
         Alert.danger("Error al seleccionar imagen: ", error.message);
+      } finally {
+        this.setRecharge(true)
       }
     },
 

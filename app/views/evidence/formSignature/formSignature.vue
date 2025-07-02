@@ -1,5 +1,5 @@
 <template>
-  <StackLayout backgroundColor="#F4F6F8">
+  <StackLayout @loaded="index" backgroundColor="#FFFFFF">
     <!-- GridLayout
       ref="form"
       class="form-container"
@@ -8,86 +8,83 @@
       margin="10"
       borderRadius="5"
     > -->
-      <ScrollView>
+    <ScrollView>
+      <GridLayout rows="auto, auto, auto, auto, auto, auto, auto" padding="20">
+        <!-- Card de Firma - Versión Mejorada -->
         <GridLayout
-          rows="auto, auto, auto, auto, auto, auto, auto"
-          padding="20"
+          row="5"
+          rows="auto, auto"
+          columns="*"
+          marginTop="20"
+          marginBottom="20"
+          borderRadius="10"
+          backgroundColor="white"
+          class="signature-card elevation"
         >
-          <!-- Card de Firma - Versión Mejorada -->
-          <GridLayout
-            row="5"
-            rows="auto, auto"
-            columns="*"
-            marginTop="20"
-            marginBottom="20"
-            borderRadius="10"
-            backgroundColor="white"
-            class="signature-card elevation"
+          <StackLayout
+            row="0"
+            orientation="horizontal"
+            padding="15"
+            backgroundColor="#00acc1"
+            borderTopLeftRadius="10"
+            borderTopRightRadius="10"
           >
-            <StackLayout
-              row="0"
-              orientation="horizontal"
-              padding="15"
-              backgroundColor="#00acc1"
-              borderTopLeftRadius="10"
-              borderTopRightRadius="10"
+            <Label
+              text="FIRMA DE AUTORIZACIÓN"
+              color="white"
+              fontSize="16"
+              fontWeight="bold"
+              horizontalAlignment="center"
+              width="100%"
+            />
+          </StackLayout>
+
+          <!-- Contenido de la tarjeta -->
+          <StackLayout
+            row="1"
+            padding="25"
+            @tap="signatureCaptain"
+            class="signature-content"
+          >
+            <GridLayout
+              v-if="!signature"
+              rows="*"
+              columns="*"
+              height="150"
+              verticalAlignment="center"
+              horizontalAlignment="center"
             >
               <Label
-                text="FIRMA DE AUTORIZACIÓN"
-                color="white"
-                fontSize="16"
-                fontWeight="bold"
-                horizontalAlignment="center"
-                width="100%"
+                text="Toque aquí para firmar"
+                fontSize="14"
+                color="#666"
+                textAlignment="center"
+                marginBottom="10"
               />
-            </StackLayout>
-
-            <!-- Contenido de la tarjeta -->
-            <StackLayout
-              row="1"
-              padding="25"
-              @tap="signatureCaptain"
-              class="signature-content"
-            >
-              <GridLayout
-                v-if="!model.signature"
-                rows="*"
-                columns="*"
-                height="150"
-                verticalAlignment="center"
-                horizontalAlignment="center"
-              >
-                <Label
-                  text="Toque aquí para firmar"
-                  fontSize="14"
-                  color="#666"
-                  textAlignment="center"
-                  marginBottom="10"
-                />
-                <Label
-                  :text="'fa-signature' | fonticon"
-                  class="fas"
-                  fontSize="50"
-                  color="#00acc1"
-                  opacity="0.6"
-                  textAlignment="center"
-                />
-              </GridLayout>
-
-              <Image
-                v-else
-                :src="model.signature"
-                stretch="aspectFit"
-                height="150"
-                borderRadius="5"
-                class="signature-image"
-                backgroundColor="#f8f9fa"
+              <Label
+                :text="'fa-signature' | fonticon"
+                class="fas"
+                fontSize="50"
+                color="#00acc1"
+                opacity="0.5"
+                textAlignment="center"
               />
-            </StackLayout>
-          </GridLayout>
+            </GridLayout>
+
+            <Image
+              v-else
+              :src="signature"
+              stretch="aspectFit"
+              height="150"
+              borderRadius="5"
+              class="signature-image"
+              backgroundColor="#f8f9fa"
+            />
+          </StackLayout>
         </GridLayout>
-      </ScrollView>
-  <!--   </GridLayout> -->
+      </GridLayout>
+    </ScrollView>
+    <!--   </GridLayout> -->
   </StackLayout>
 </template>
 
@@ -97,8 +94,10 @@ import Signature from "~/components/signature/Signature.vue";
 import mixinMasters from "~/mixins/Master";
 import * as fs from "@nativescript/core/file-system";
 import Alert from "~/alerts/Alerts";
+import { mapState } from "vuex";
 
 export default {
+  name: "formSignature",
   components: {
     Signature,
   },
@@ -112,29 +111,40 @@ export default {
 
   data() {
     return {
-      model: {
-        type_management_id: null,
-        name: "",
-        journey: "",
-        titular_name: "",
-        signature: "",
-      },
       propsSignature: {},
+      signature: "",
     };
+  },
+
+  watch: {
+    signature(newValue, oldValue) {
+      this.$emit("input", newValue);
+    },
   },
 
   mixins: [mixinMasters],
 
+  computed: {
+    ...mapState(["recharge"]),
+    ...mapState("evidenceStore", [
+      "managementModel",
+      "containerReport",
+      "containerReportEdit",
+    ]),
+  },
+
   methods: {
     index() {
-      this.model = {
-        id: this.info.id,
-        type_management_id: this.info.type_management_id,
-        name: this.info.name,
-        journey: this.info.journey,
-        titular_name: this.info.titular_name,
-        signature: this.info.signature,
-      };
+      if (this.containerReportEdit) {
+        if (this.recharge) {
+          this.signature = this.containerReport.signature;
+        }
+      }
+    },
+
+    clean() {
+      this.signature = "";
+      this.propsSignature = {};
     },
 
     async editManagement() {
@@ -160,14 +170,13 @@ export default {
       this.$showModal(Signature, {
         animated: true,
         props: {
-          id: this.model.id,
-          signature: this.model.signature,
+          signature: this.signature,
         },
         cancelable: true,
       }).then((res) => {
         if (res) {
           this.propsSignature = res;
-          this.model.signature = res.signature;
+          this.signature = res.signature;
         }
       });
     },

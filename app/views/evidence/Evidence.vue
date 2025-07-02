@@ -51,7 +51,7 @@ export default {
   },
 
   methods: {
-    ...mapMutations("managementStore",["setType","setTypeMangement"]),
+    ...mapMutations("managementStore",["setType","setTypeMangement","cleanStoreTypeManagementId"]),
     ...mapMutations("evidenceStore",["cleanManagementModel"]),
 
     navigate(id) {
@@ -69,6 +69,7 @@ export default {
     },
 
     async typesManagement() {
+      this.cleanStoreTypeManagementId()
       this.cleanManagementModel()
       try {
         const res = await getTypesManagement();

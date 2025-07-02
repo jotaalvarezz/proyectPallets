@@ -46,7 +46,7 @@ const storeTypesManagement = async (data) => {
           DefaultTypesManagement[i].id,
           DefaultTypesManagement[i].name,
           DefaultTypesManagement[i].icon,
-          1,
+          0,
           moment(DefaultTypesManagement[i].created_at).format(
             "YYYY-MM-DD HH:mm:ss"
           ),
@@ -161,7 +161,7 @@ const getAllManagements = async () => {
           "id",
           "name",
         ]);
-        repairsFormatted[i].repair_damage = damagesFormatted;
+        repairsFormatted[i].damage_id = damagesFormatted;
       }
       dataFormatted[i].repairs = repairsFormatted;
     }
@@ -250,7 +250,96 @@ const getAllManagementsYard = async (id) => {
           "id",
           "name",
         ]);
-        repairsFormatted[i].repair_damage = damagesFormatted;
+        repairsFormatted[i].damage_id = damagesFormatted;
+      }
+      dataFormatted[i].repairs = repairsFormatted;
+    }
+    return { data: dataFormatted };
+  } catch (error) {
+    console.log("error al traer los datos ", error);
+  }
+};
+
+const getReportingManagementShip = async (id) => {
+  try {
+    const db = await openDatabase();
+    const data = await db.all(
+      `SELECT cr.id, cr.consecutive, m.name, m.journey, cr.management_id, m.type_management_id, tm.status, p.id,
+                                      cr.prefix, cr.code, cr.type_id, t.name, cr.role, m.titular_name, m.signature,
+                                      cr.observation, cr.date_creation
+                                FROM container_reports cr
+                                INNER JOIN management m on m.id = cr.management_id
+                                INNER JOIN types_management tm on tm.id = m.type_management_id
+                                INNER JOIN types t on t.id = cr.type_id
+                                INNER JOIN  prefixes p on p.prefix = cr.prefix
+                                WHERE m.id = ?`,
+      [id]
+    );
+    const dataFormatted = await showData("container_reports", data, [
+      "id",
+      "consecutive",
+      "vessel",
+      "journey",
+      "management_id",
+      "type_management_id",
+      "status",
+      "prefixId",
+      "prefix",
+      "code",
+      "type_id",
+      "nameType",
+      "role",
+      "titular_name",
+      "signature",
+      "observation",
+      "date_creation",
+    ]);
+    for (let i = 0; i < dataFormatted.length; i++) {
+      /* consulta para traer los daños adicionales */
+      let additionalDamage = await db.all(
+        `SELECT a.id, a.name, a.date_creation
+                                    FROM  container_reports_additional_damage ca
+                                    INNER JOIN additional_damage a on a.id = ca.additional_damage_id
+                                    WHERE ca.container_report_id = ?`,
+        [dataFormatted[i].id]
+      );
+      const additionalDamageFormatted = await showData(
+        "additional_damage",
+        additionalDamage,
+        ["id", "name", "date_creation"]
+      );
+      dataFormatted[i].additionalDamage = additionalDamageFormatted;
+      /* consulta para traer los reparaciones */
+      let repairs = await db.all(
+        `SELECT r.id, r.container_element_id, e.name, r.location, r.position, r.container_report_id, r.photo
+                                    FROM  repairs r
+                                    LEFT JOIN container_elements e on e.id = r.container_element_id
+                                    WHERE container_report_id = ?`,
+        [dataFormatted[i].id]
+      );
+      const repairsFormatted = await showData("repairs", repairs, [
+        "id",
+        "container_element_id",
+        "name",
+        "location",
+        "position",
+        "container_report_id",
+        "photo",
+      ]);
+      /* consulta para traer los daños */
+      for (let i = 0; i < repairsFormatted.length; i++) {
+        let damages = await db.all(
+          `SELECT rd.damage_id, d.name
+                                    FROM  repair_damage rd
+                                    LEFT JOIN damage d on d.id = rd.damage_id
+                                    WHERE rd.repair_id = ?`,
+          [repairsFormatted[i].id]
+        );
+        const damagesFormatted = await showData("repair_damage", damages, [
+          "id",
+          "name",
+        ]);
+        repairsFormatted[i].damage_id = damagesFormatted;
       }
       dataFormatted[i].repairs = repairsFormatted;
     }
@@ -495,11 +584,10 @@ const sendEvidenceReports = async () => {
   }
 };
 
-const finishOperations = async (id, status) => {
+const finishOperations = async (id) => {
   try {
     const db = await openDatabase();
     const managements = await getManagements(id);
-
     /* Validad si existen gestiones creadas */
     if (managements.data.length === 0) {
       return {
@@ -560,7 +648,7 @@ const finishOperations = async (id, status) => {
       `UPDATE types_management
                 SET status  = (?)
                 WHERE id = (?)`,
-      [!status ? 0 : 1, id]
+      [1, id]
     );
     const post = showTypesManagement(id);
     return post;
@@ -582,5 +670,6 @@ module.exports = {
   storeTypesManagement,
   getManagementAll,
   getReportsAll,
-  getAllManagementsYard
+  getAllManagementsYard,
+  getReportingManagementShip
 };

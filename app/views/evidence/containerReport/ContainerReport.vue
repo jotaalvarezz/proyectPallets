@@ -124,11 +124,15 @@ export default {
     HeaderComponent,
   },
 
-  props:{
-    validations:{
-      type:Object,
-      default: {}
-    }
+  props: {
+    validations: {
+      type: Object,
+      default: {},
+    },
+    value: {
+      type: Object,
+      default: "",
+    },
   },
 
   data() {
@@ -152,13 +156,14 @@ export default {
       icons: {},
       isScrolling: false,
 
-      errors: this.validations
+      errors: this.validations,
     };
   },
 
   mixins: [mixinMasters],
 
   computed: {
+    ...mapState(["recharge"]),
     ...mapState("evidenceStore", [
       "managementModel",
       "containerReport",
@@ -171,8 +176,12 @@ export default {
     model: {
       deep: true, // Observa cambios en cualquier propiedad dentro de 'model'
       handler(newValue, oldValue) {
-        newValue.prefixCode = newValue.prefix ? (identifyObject(newValue.prefix, this.prefixes)).prefix : ""
-        console.log("cambio")
+        newValue.prefixCode = newValue.prefix
+          ? identifyObject(newValue.prefix, this.prefixes).prefix
+          : "";
+        newValue.typeName = newValue.type_id
+          ? identifyObject(newValue.type_id, this.types).name
+          : "";
         // Aquí puedes realizar cualquier acción cuando el objeto cambia
         this.$emit("input", newValue);
       },
@@ -180,60 +189,15 @@ export default {
   },
   methods: {
     /* ****************************************************************** */
-    /* validateField(fields) {
-      this.errors.prefix = this.model.prefix === null ? true : false;
-      this.errors.code = !this.model.code.trim();
-      this.errors.role = !this.model.role.trim();
-      this.errors.type_id = this.model.type_id === null ? true : false;
-      let fullfield = "";
-      for (const key in this.errors) {
-        if (this.errors.hasOwnProperty(key) && this.errors[key] != false) {
-          return !this.errors[key];
-        }
-        fullfield = !this.errors[key];
-      }
-      return fullfield;
-    }, */
-
-    /* async addContainerReport() {
-      const isValid = this.validateField();
-      if (!isValid) {
-        // Detener la ejecución si la validación falla
-        return;
-      }
-
-      try {
-        this.loadingCharge(true);
-        const object = identifyObject(this.model.prefix, this.prefixes);
-        this.model.prefixCode = object.prefix;
-        const res = await storeContainerReport(this.model);
-        if (res.status === 500) {
-          Alert.info(res.message, 1, "Ya existe");
-        } else {
-          Alert.success("Reporte creado");
-          this.$modal.close();
-        }
-      } catch (error) {
-        Alert.danger("Hubo un error al guardar ", error.message);
-      } finally {
-        this.loadingCharge();
-      }
-    }, */
-
-    /* async updateContainerReport() {
-      try {
-        const isValid = this.validateField();
-        if (!isValid) {
-          // Detener la ejecución si la validación falla
-          return;
-        }
-        const object = identifyObject(this.model.prefix, this.prefixes);
-        this.model.prefixCode = object.prefix;
-        const res = await updateContainerReport(this.model);
-        Alert.success("Reporte Actualizado!");
-        this.$modal.close();
-      } catch (error) {}
-    }, */
+    clean() {
+      this.model.prefix = null;
+      this.model.code = "";
+      this.model.type_id = null;
+      this.model.role = "";
+      this.model.repairs = [];
+      this.model.additional_damage_id = [];
+      this.model.observation = "";
+    },
 
     async InfoSelect() {
       try {
@@ -252,27 +216,31 @@ export default {
     },
 
     initialMethods() {
-      /* if (this.containerReportEdit) {
-        console.log("dentro")
-        const additionalDamage = this.containerReport.additionalDamage;
-        let additional_damage_id = [];
-        for (let i = 0; i < additionalDamage.length; i++) {
-          additional_damage_id.push(additionalDamage[i].id);
+      /* this.model.code = this.containerReport.code; */
+      if (this.containerReportEdit) {
+        if (this.recharge) {
+          const additionalDamage = this.containerReport.additionalDamage;
+          let additional_damage_id = [];
+          for (let i = 0; i < additionalDamage.length; i++) {
+            additional_damage_id.push(additionalDamage[i].id);
+          }
+          this.model.id = this.containerReport.id;
+          this.model.code = this.containerReport.code;
+          setTimeout(() => {
+            this.model.type_id = this.containerReport.type_id;
+            this.model.prefix = this.containerReport.prefixId;
+          }, 1000);
+          this.model.role = this.containerReport.role;
+          this.model.additional_damage_id = additional_damage_id;
+          this.model.observation = this.containerReport.observation;
         }
-        this.model.id = this.containerReport.id;
-        this.model.prefix = this.containerReport.prefixId;
-        this.model.code = this.containerReport.code;
-        this.model.type_id = this.containerReport.type_id;
-        this.model.role = this.containerReport.role;
-        this.model.role = this.containerReport.role;
-        this.model.additional_damage_id = additional_damage_id;
-        this.model.observation = this.containerReport.observation;
-      } */
-      if(!this.type){
-        console.log("afuera", this.type)
-        console.log("item ", this.managementModel)
+      }
+      if (!this.type) {
         this.model.management_id = this.managementModel.id;
       } else {
+        this.model.management_id = this.containerReport.management_id
+          ? this.containerReport.management_id
+          : null;
         this.$emit("input", this.model);
       }
       this.InfoSelect();

@@ -10,7 +10,7 @@
       v-for="(item, index) in events"
       :key="index"
       columns="*,50,120,*"
-      @tap="item.event"
+      @tap="eventButtomSheet(item)"
       @touch="onTouch(index)"
       height="70"
       width="100%"
@@ -71,12 +71,8 @@ export default {
     };
   },
   methods: {
-    infoItem() {
-      this.infoRegister();
-    },
-
-    update() {
-      this.updateRegister();
+    eventButtomSheet(data){
+      data.event()
       this.$closeBottomSheet();
     },
 
@@ -87,11 +83,6 @@ export default {
       } else {
         this.isHovered = false;
       }
-    },
-
-    deleteItem() {
-      this.deleteRow();
-      this.$closeBottomSheet();
     },
   },
 

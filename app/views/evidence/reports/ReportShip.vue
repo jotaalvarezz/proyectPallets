@@ -3,13 +3,17 @@
     ref="flipper"
     v-model="position"
     :steps="2"
-    :operation="saveReport"
+    :operation="containerReportEdit == false ? saveReport : updateReport"
   >
     <FlipperItem ref="item1" v-show="position == 0">
-      <ContainerReport v-model="reportModel" :validations="errors" />
+      <ContainerReport
+        ref="containerReport"
+        v-model="reportModel"
+        :validations="errors"
+      />
     </FlipperItem>
     <FlipperItem ref="item2" v-show="position == 1">
-      <DamagedItems v-model="damageModel" />
+      <DamagedItems ref="damagedItems" v-model="damageModel" />
     </FlipperItem>
   </ViewFlipper>
 </template>
@@ -17,7 +21,9 @@
 <script>
 const {
   storeContainerReport,
+  updateContainerReport,
   getContainerReport,
+  updateRepaairs,
 } = require("~/sqlite/database");
 const {
   getManagementAll,
@@ -33,8 +39,10 @@ import DamagedItems from "~/views/evidence/containerReport/damagedItems/DamagedI
 import { Toasty } from "@triniwiz/nativescript-toasty";
 import { mapState } from "vuex";
 import Alert from "~/alerts/Alerts";
+import mixinMasters from "~/mixins/Master";
 
 export default {
+  name: "reportShip",
   components: {
     ContainerReport,
     DamagedItems,
@@ -54,8 +62,27 @@ export default {
     };
   },
 
+  mixins: [mixinMasters],
+
   computed: {
+    ...mapState("evidenceStore", [
+      "managementModel",
+      "containerReport",
+      "containerReportEdit",
+    ]),
     ...mapState("managementStore", ["StoreTypeManagementId", "type"]),
+    msgTask() {
+      const msg =
+        "Contenedor: " +
+        (this.reportModel.prefixCode + this.reportModel.code) +
+        "\nTipo: " +
+        this.reportModel.typeName +
+        "\nTecnico: " +
+        this.reportModel.role +
+        "\nObservacion: " +
+        this.reportModel.observation;
+      return msg;
+    },
   },
 
   methods: {
@@ -71,7 +98,6 @@ export default {
         }
         fullfield = !this.errors[key];
       }
-      console.log("fullfield ", fullfield);
       return fullfield;
     },
 
@@ -79,7 +105,6 @@ export default {
 
     async saveReport() {
       try {
-        console.log("type ", this.StoreTypeManagementId);
         const isValid = this.validateField();
         if (!isValid) {
           this.$refs.flipper.pageFlipper(0);
@@ -93,32 +118,91 @@ export default {
           return;
         }
 
-        this.reportModel.repairs = this.damageModel;
-        console.log("logger ", this.type);
-        const res = await storeContainerReport(this.reportModel);
+        let confirmated = await Alert.info(this.msgTask, 3, "Guardar reporte");
 
-        if (res.status === 500) {
-          Alert.info(res.message, 1, "Ya existe");
-        } else {
-          Alert.success("Reporte creado");
+        if (confirmated) {
+          this.reportModel.repairs = this.damageModel;
+          const model = this.reportModel;
+          this.loadingCharge(true);
+          const res = await storeContainerReport(model);
+          this.loadingCharge();
+          if (res.status === 500) {
+            Alert.info(res.message, 1, "Ya existe");
+            return;
+          }
+
+          this.$refs.containerReport.clean();
+          this.$refs.damagedItems.clean();
+
+          let continueModule = await Alert.info(
+            "¿Desea seguir creando reportes?",
+            3,
+            "Reporte creado"
+          );
+          if (continueModule) {
+            this.$refs.flipper.pageFlipper(0);
+          } else {
+            this.$router.back();
+          }
         }
-        /* console.log("post ",post)
-        const res = await getReportsAll()
-        console.log("respuesta ", res)
-        const res2 = await getManagementAll();
-        console.log("respuesta2 ", res2);
-        const res3 = await getRepairs();
-        console.log("repairs ",res3)
-        const res4 = await getRepairDamage();
-        console.log("damages ", res4) */
       } catch (error) {
         Alert.danger("Hubo un error al guardar ", error.message);
+      }
+    },
+
+    async updateReport() {
+      try {
+        this.reportModel.repairs = this.damageModel;
+        const isValid = this.validateField();
+        if (!isValid) {
+          // Detener la ejecución si la validación falla
+          return;
+        }
+
+        if (this.damageModel.length === 0) {
+          this.$refs.flipper.pageFlipper(1);
+          new Toasty({ text: "No hay reparaciones agregadas" }).show();
+          return;
+        }
+
+        let confirmated = await Alert.info(
+          this.msgTask,
+          3,
+          "Actualizar reporte"
+        );
+
+        if (confirmated) {
+          this.reportModel.repairs = this.damageModel;
+          const model = this.reportModel;
+          this.loadingCharge(true);
+          const res = await updateContainerReport(model);
+          this.loadingCharge();
+
+          this.$refs.containerReport.clean();
+          this.$refs.damagedItems.clean();
+
+          let continueModule = await Alert.info(
+            "Se actualizo el reporte de forma exitosa.",
+            3,
+            "Reporte actualizado"
+          );
+          if (continueModule) {
+            this.$router.back();
+          } else {
+            this.$router.back();
+          }
+        }
+      } catch (error) {
+        Alert.danger(
+          "Hubo un error al intentar actualizar el registro ",
+          error.message
+        );
       }
     },
   },
 
   created() {
-    //console.log("posicion: ", this.position);
+
   },
 };
 </script>

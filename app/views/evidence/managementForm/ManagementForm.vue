@@ -1,7 +1,7 @@
 <template>
   <page @loaded="index">
     <Header :search="false" />
-    <GridLayout rows="auto, auto ,auto, *" backgroundColor="#FFFFFF">
+    <GridLayout rows="auto, auto, *" backgroundColor="#FFFFFF">
       <Collapse
         ref="Collapse"
         row="0"
@@ -64,7 +64,6 @@
           <!-- Boton para Crear -->
           <Button
             row="6"
-            :isEnabled="status"
             text="Agregar"
             backgroundColor="#F4F6F8"
             color="#222a37"
@@ -77,50 +76,6 @@
           <!-- <Image row="7" ref="imageRef" margin="25" src="" loadMode="sync" /> -->
         </GridLayout>
       </Collapse>
-      <StackLayout
-        v-show="collapseValue === false"
-        orientation="horizontal"
-        row="2"
-        padding="20"
-      >
-        <StackLayout>
-          <Label
-            text="Finalizar Operacion:"
-            textWrap="true"
-            width="auto"
-            fontSize="16"
-          />
-          <StackLayout width="80" horizontalAlignment="left">
-            <Switch ref="switch" v-model="status" @tap="finish" />
-          </StackLayout>
-        </StackLayout>
-        <Label width="1" margin="15" backgroundColor="#c0c9d7" />
-        <StackLayout
-          orientation="horizontal"
-          width="auto"
-          backgroundColor="#D8E2E8"
-        >
-          <Label
-            :text="status ? 'Operacion Abierta' : 'Operacion Cerrada'"
-            class="text-center"
-            width="auto"
-            fontWeight="none"
-            verticalAlignment="bottom"
-            fontSize="16"
-            margin="10"
-            borderRadius="5"
-          />
-          <Label
-            :text="(status ? 'fa-lock-open' : 'fa-lock') | fonticon"
-            class="fas text-center"
-            verticalAlignment="bottom"
-            padding="10"
-            fontSize="30"
-            width="60"
-            color="#EAB14D"
-          />
-        </StackLayout>
-      </StackLayout>
       <GridLayout
         v-if="collapseValue === false"
         margin="5"
@@ -155,7 +110,7 @@
         />
       </GridLayout>
       <Label
-        row="3"
+        row="2"
         textWrap="true"
         class="info"
         v-if="array_filter.length == 0"
@@ -168,7 +123,7 @@
       </Label>
       <ListView
         v-if="array_filter.length > 0"
-        row="3"
+        row="2"
         ref="listView"
         for="item in array_filter"
         @itemTap="onItemTap"
@@ -251,35 +206,33 @@
           </GridLayout>
         </v-template>
       </ListView>
-      <!-- <FloatingButton
-        row="3"
-        :icon="!close ? 'fa-unlock-alt' : 'fa-lock'"
-        :method="() => {closeManagement(!close)}"
-      /> -->
+      <FloatingButton
+        row="2"
+        :opacity="type_management.status === 0 ? 1 : 0.5"
+        :icon="type_management.status == 0 ? 'fa-lock-open' : 'fa-lock'"
+        :method="finish"
+      />
     </GridLayout>
   </page>
 </template>
 
 <script>
 const {
-  getTypesManagement,
   storeManagement,
   getManagements,
   deleteManagement,
   finishOperations,
-  showContainerReport,
   showTypesManagement,
-  getRepairsReport,
 } = require("~/sqlite/database");
 import ManagementEdit from "~/views/evidence/managementForm/ManagementEdit";
 import ButtomSheet from "~/components/buttomSheet/ButtomSheet.vue";
 import mixinMasters from "~/mixins/Master";
-import { ImageSource, Utils } from "@nativescript/core";
 import Alert from "~/alerts/Alerts";
 import { mapState, mapMutations } from "vuex";
 import ListModal from "~/components/listModal/ListModal.vue";
 import ManagmentShipList from "~/views/evidence/managementForm/ManagmentShipList";
 import { onSearchBarLoaded } from "~/shared/helpers";
+import { Toasty } from "@triniwiz/nativescript-toasty";
 
 export default {
   name: "Management",
@@ -289,7 +242,6 @@ export default {
 
   data() {
     return {
-      status: true,
       search: "",
       collapseValue: false,
       message: "No hay registros para mostrar",
@@ -310,6 +262,13 @@ export default {
     };
   },
 
+  watch: {
+    // Observamos cambios en el objeto `user`
+    /* type_management(newValue, oldValue) {
+      this.type_management.status = newValue.status
+    }, */
+  },
+
   mixins: [mixinMasters],
 
   computed: {
@@ -322,32 +281,37 @@ export default {
     ...mapMutations("managementStore", ["closeManagement"]),
 
     /* ****************************************************************** */
+    index() {
+      this.model.type_management_id = this.StoreTypeManagementId;
+      this.getManagements(this.model.type_management_id);
+    },
+
+    refreshManagments() {
+      this.getManagements(this.model.type_management_id);
+    },
+
     async finish() {
       try {
+        if(this.type_management.status === 1){
+           new Toasty({ text: "La operacion ya esta finalizada" }).show();
+           return
+        }
         let confirmated = await Alert.info(
           "Al finalizar la operacion no podra realizar mas cambios.",
           3,
           "Finalizar Operacion"
         );
         if (confirmated) {
-          if (this.status === false) {
-            const res = await finishOperations(
-              this.model.type_management_id,
-              this.status
-            );
-
-            if (res.status === 400) {
-              this.status = this.type_management.status === 1 ? true : false;
-              Alert.info(res.message, 1, res.error);
-              return;
-            }
-
-            this.status = res.data.status === 1 ? true : false;
-            this.$refs.switch.nativeView.isEnabled = false;
+          const res = await finishOperations(this.model.type_management_id);
+          if (res.status === 400) {
+            Alert.info(res.message, 1, res.error);
             return;
           }
+
+          this.type_management.status = res.data.status;
+          new Toasty({ text: "Operacion "+res.data.name+" Finalizada" }).show();
+          return;
         }
-        this.status = this.type_management.status === 1 ? true : false;
       } catch (error) {
         Alert.danger(
           "¡Hubo un error al finalizar la operacion!",
@@ -428,21 +392,11 @@ export default {
       this.array_filter = this.managments;
     },
 
-    index() {
-      this.model.type_management_id = this.StoreTypeManagementId;
-      console.log("types management ",this.model.type_management_id)
-      this.getManagements(this.model.type_management_id);
-    },
-
     async getManagements(id) {
       try {
         this.loadingCharge(true);
         const response = await showTypesManagement(id);
         this.type_management = response.data;
-        this.status = this.type_management.status === 1 ? true : false;
-        if (this.status === false) {
-          this.$refs.switch.nativeView.isEnabled = false;
-        }
         const res = await getManagements(id);
         this.managments = res.data;
         this.array_filter = res.data;
@@ -486,10 +440,6 @@ export default {
       this.$router.push("container_report.index");
     },
 
-    refreshManagments() {
-      this.getManagements(this.model.type_management_id);
-    },
-
     navigateOptions(item, index) {
       item.action = true;
       const options = {
@@ -498,7 +448,7 @@ export default {
         transparent: true,
         props: {
           item: item,
-          generalOptions: this.status,
+          generalOptions: this.type_management.status == 1 ? false : true,
           component: ManagementEdit,
           infoRegister: () => this.managmentInfo(item),
           updateRegister: () => this.managementEdit(item),

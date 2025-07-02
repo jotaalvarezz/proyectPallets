@@ -127,14 +127,14 @@
                     backgroundColor="#D8E2E8"
                     v-for="(repair, index) in item.repairs"
                     :key="index"
-                    style="padding: 0px 5px 5px 8px; margin-bottom: 3dp;"
+                    style="padding: 0px 5px 5px 8px; margin-bottom: 3dp"
                     borderRadius="5"
                   >
                     <Tag
                       col="0"
                       width="80%"
                       :label="repair.name"
-                      :items="repair.repair_damage"
+                      :items="repair.damage_id"
                       labelIterator="name"
                     />
                   </GridLayout>
@@ -145,7 +145,7 @@
               col="1"
               height="50"
               width="50"
-              icon="fa-ellipsis-v"
+              icon="fa-eye"
               radius="50"
               :handleEvent="() => navigateOptions(item, index)"
             />
@@ -167,10 +167,8 @@ const {
 } = require("~/sqlite/database");
 import { mapState, mapMutations } from "vuex";
 import mixinMasters from "~/mixins/Master";
-import ButtomSheet from "~/components/buttomSheet/ButtomSheet.vue";
 import ListModal from "~/components/listModal/ListModal.vue";
 import EvidenceListInfo from "./EvidenceListInfo";
-import ContainerReport from "~/views/evidence/containerReport/ContainerReport.vue";
 import Alert from "~/alerts/Alerts";
 import axios from "axios";
 import { onSearchBarLoaded } from "~/shared/helpers";
@@ -189,6 +187,10 @@ export default {
 
   mixins: [mixinMasters],
 
+  computed: {
+    ...mapState("managementStore", ["close", "type", "StoreTypeManagementId"]),
+  },
+
   methods: {
     ...mapMutations("evidenceStore", [
       "setContainerReport",
@@ -197,6 +199,8 @@ export default {
 
     index() {
       //this.$refs.searchBar.nativeView.dismissSoftInput();
+      this.setContainerReport({});
+      this.setContainerReportEdit(false);
       setTimeout(() => {
         this.getEvidenceReports();
       }, 300);
@@ -219,24 +223,7 @@ export default {
     },
 
     navigateOptions(item, index) {
-      item.action = true;
-      const options = {
-        dismissOnBackgroundTap: true,
-        dismissOnDraggingDownSheet: false,
-        transparent: true,
-        props: {
-          item: item,
-          generalOptions: item.status === 1 ? true : false,
-          infoRegister: () => this.evidenceReportsInfo(item),
-          updateRegister: () => this.evidenceReportsEdit(item),
-          deleteRow: () => this.deleteRow(item.id),
-        },
-        // listeners to be connected to MyComponent
-        on: {
-          someEvent: (value) => {},
-        },
-      };
-      this.$showBottomSheet(ButtomSheet, options);
+      this.evidenceReportsInfo(item);
     },
 
     async typeManagement() {
@@ -301,14 +288,11 @@ export default {
     evidenceReportsEdit(item) {
       this.setContainerReport(item);
       this.setContainerReportEdit(true);
-      this.$showModal(ContainerReport, {
-        fullscreen: true,
-        animated: true,
-      }).then(() => {
-        this.setContainerReport({});
-        this.setContainerReportEdit(false);
-        this.getEvidenceReports();
-      });
+      if (item.type_management_id === 2) {
+        this.$router.push("reportinyard.create");
+      } else {
+        this.$router.push("reportship.create");
+      }
     },
 
     async deleteRow(id) {
@@ -328,33 +312,40 @@ export default {
 
     async sendAll() {
       try {
-        this.loadingCharge(true);
-        const reports = await sendEvidenceReports();
-        if (reports.data.length > 0) {
-          /* validar si ya las gestiones estan finalizadas */
-          for (let i = 0; i < reports.managementsStatus.length; i++) {
-            if (reports.managementsStatus[i].status) {
-              Alert.info(
-                `La operacion en ` +
-                  reports.managementsStatus[i].name +
-                  ` aun no esta finalizada.` +
-                  `\n\n* Finalice las operaciones antes de sincronizar`,
-                1,
-                `Sin Finalizar`
-              );
-              return;
+        let confirmated = await Alert.info(
+          "¿Desea sincronizar la informacion?",
+          3,
+          "Sincronizar"
+        );
+        if (confirmated) {
+          const reports = await sendEvidenceReports();
+          if (reports.data.length > 0) {
+            //validar si ya las gestiones estan finalizadas
+            for (let i = 0; i < reports.managementsStatus.length; i++) {
+              if (reports.managementsStatus[i].status === 0) {
+                Alert.info(
+                  `La operacion en ` +
+                    reports.managementsStatus[i].name +
+                    ` aun no esta finalizada.` +
+                    `\n\n* Finalice las operaciones antes de sincronizar`,
+                  1,
+                  `Sin Finalizar`
+                );
+                return;
+              }
             }
+            this.loadingCharge(true);
+            const postEvidence = await axios.post(
+              process.env.VUE_APP_API_URL + "/loadevidence",
+              reports.data
+            );
+            Alert.success("Reportes sincronizados...");
+          } else {
+            Alert.danger(
+              "No se encontraron reportes",
+              "por favor asegurese antes de sincronizar"
+            );
           }
-          const postEvidence = await axios.post(
-            process.env.VUE_APP_API_URL + "/loadevidence",
-            reports.data
-          );
-          Alert.success("Reportes sincronizados...");
-        } else {
-          Alert.danger(
-            "No se encontraron reportes",
-            "por favor asegurese antes de sincronizar"
-          );
         }
       } catch (error) {
         Alert.danger(

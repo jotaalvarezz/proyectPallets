@@ -14,7 +14,6 @@ import ContainerReportList from '~/views/evidence/containerReport/ContainerRepor
 import EvidenceList from '~/views/evidence/EvidenceList.vue'
 import Login from '~/views/Login'
 import Dashboard from '~/views/dashboard/Dashboard'
-import Test from '~/views/TestView/Test'
 import ReportShip from '~/views/evidence/reports/ReportShip.vue'
 import ReportInYard from '~/views/evidence/reports/ReportInYard.vue'
 import auth from '~/store/Modules/auth'

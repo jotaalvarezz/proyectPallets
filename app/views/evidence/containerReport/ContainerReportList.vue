@@ -137,7 +137,7 @@
                       col="0"
                       width="80%"
                       :label="repair.name"
-                      :items="repair.repair_damage"
+                      :items="repair.damage_id"
                       labelIterator="name"
                     />
                   </GridLayout>
@@ -156,16 +156,18 @@
         </v-template>
       </ListView>
       <FloatingButton
-        :isEnabled="type_management.status === 1 ? true : false"
+        :isEnabled="type_management.status === 0 ? true : false"
         row="2"
+        :opacity="type_management.status === 0 ? 1 : 0.5"
         :icon="'fa-plus'"
         :method="openModal"
       />
       <FloatingButton
+        v-if="type === true"
         marginBottom="100"
-        :isEnabled="type_management.status === 1 ? true : false"
         row="2"
-        :icon="(status ? 'fa-lock-open' : 'fa-lock')"
+        :opacity="type_management.status === 0 ? 1 : 0.5"
+        :icon="(type_management.status === 0 ? 'fa-lock-open' : 'fa-lock')"
         :method="finish"
       />
     </GridLayout>
@@ -179,6 +181,8 @@ const {
   deleteContainerReport,
   deleteRepair,
   showTypesManagement,
+  getReportingManagementShip,
+  finishOperations,
   getRepairDamage,
   getRepairs,
 } = require("~/sqlite/database");
@@ -191,6 +195,7 @@ import ListModal from "~/components/listModal/ListModal.vue";
 import containerReportListInfo from "~/views/evidence/containerReport/ContainerReportListInfo";
 import DamagedItems from "~/views/evidence/containerReport/damagedItems/DamagedItems.vue";
 import { onSearchBarLoaded } from "~/shared/helpers";
+import { Toasty } from "@triniwiz/nativescript-toasty";
 
 export default {
   name: "containerReportList",
@@ -222,6 +227,8 @@ export default {
     ]),
 
     initialFunction() {
+      this.setContainerReport({});
+      this.setContainerReportEdit(false);
       this.getEvidences();
       this.typeManagement();
     },
@@ -273,7 +280,7 @@ export default {
         transparent: true,
         props: {
           item: item,
-          generalOptions: this.type_management.status === 1 ? true : false,
+          generalOptions: this.type_management.status === 0 ? true : false,
           infoRegister: () => this.containerReportInfo(item),
           updateRegister: () => this.containerReportEdit(item),
           deleteRow: () => this.deleteRow(item.id),
@@ -289,6 +296,36 @@ export default {
     navigateBack() {
       /* this.$router.push("container_report.index"); */
       this.$router.back();
+    },
+
+     async finish() {
+      try {
+        if(this.type_management.status === 1){
+           new Toasty({ text: "La operacion ya esta finalizada" }).show();
+           return
+        }
+        let confirmated = await Alert.info(
+          "Al finalizar la operacion no podra realizar mas cambios.",
+          3,
+          "Finalizar Operacion"
+        );
+        if (confirmated) {
+          const res = await finishOperations(this.StoreTypeManagementId);
+          if (res.status === 400) {
+            Alert.info(res.message, 1, res.error);
+            return;
+          }
+
+          this.type_management.status = res.data.status;
+          new Toasty({ text: "Operacion "+res.data.name+" Finalizada" }).show();
+          return;
+        }
+      } catch (error) {
+        Alert.danger(
+          "¡Hubo un error al finalizar la operacion!",
+          error.message
+        );
+      }
     },
 
     async typeManagement() {
@@ -308,10 +345,8 @@ export default {
 
     getEvidences() {
       if (this.type) {
-        console.log("patio")
         this.yardEvidence();
       } else {
-        console.log("barco")
         this.shipEvidence();
       }
     },
@@ -319,13 +354,11 @@ export default {
     async shipEvidence() {
       try {
         this.loadingCharge(true);
-        const res = await getContainerReport(this.managementModel.id);
+        const res = await getReportingManagementShip(this.managementModel.id);
         this.container_reports = res.data;
         this.array_filter = res.data;
-        console.log("getContainerReport ",res)
         if (this.types.length === 0) {
           const types = await getTypes();
-          console.log("getContainerReport ",types)
           this.types = types.data;
         }
       } catch (error) {
@@ -337,8 +370,8 @@ export default {
 
     async yardEvidence() {
       try {
+        this.loadingCharge(true)
         const res = await getAllManagementsYard(this.StoreTypeManagementId);
-        console.log("ress  ", res);
         this.container_reports = res.data;
         this.array_filter = res.data;
         if (this.types.length === 0) {
@@ -346,7 +379,9 @@ export default {
           this.types = types.data;
         }
       } catch (error) {
-        console.log("error en yard ", error);
+        Alert.danger("Hubo un error al traer informacion", error.message);
+      } finally {
+        this.loadingCharge()
       }
     },
 
@@ -394,21 +429,18 @@ export default {
     containerReportEdit(item) {
       this.setContainerReport(item);
       this.setContainerReportEdit(true);
-      this.$showModal(ContainerReport, {
-        fullscreen: true,
-        animated: true,
-      }).then(() => {
-        this.setContainerReport({});
-        this.setContainerReportEdit(false);
-        this.getEvidences();
-      });
+      if(this.type){
+        this.$router.push("reportinyard.create");
+      } else {
+        this.$router.push("reportship.create");
+      }
     },
 
     containerReportInfo(item) {
       let listRows = [];
-      if (item.type_management_id === 1) {
+      if (!this.type) {
         listRows = containerReportListInfo.listRowsVeesel;
-      } else if (item.type_management_id === 2) {
+      } else {
         listRows = containerReportListInfo.listRowsPatio;
       }
       this.$showModal(ListModal, {
@@ -423,7 +455,7 @@ export default {
           showMulTags: "repairs",
           propsGeneralComponent: {
             labelTag: "name",
-            itemsKey: "repair_damage",
+            itemsKey: "damage_id",
             labelIterator: "name",
             titleCollapse: "Visualizar Evidencia",
             labelViewImage: "Foto",

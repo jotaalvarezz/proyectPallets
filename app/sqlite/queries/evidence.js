@@ -5,6 +5,7 @@ const {
   getRegister,
   first,
 } = require("~/sqlite/openDatabase");
+const { deleteRepairs, updateRepaairs } = require("~/sqlite/queries/repair");
 const moment = require("moment");
 
 const getContainerReport = async (management_id) => {
@@ -167,7 +168,7 @@ const showContainerReport = async (id) => {
           "damage_id",
           "name",
         ]);
-        repairsFormatted[i].repair_damage = damagesFormatted;
+        repairsFormatted[i].damage_id = damagesFormatted;
       }
       dataFormatted.repairs = repairsFormatted;
     }
@@ -372,15 +373,13 @@ const storeContainerReportYard = async (data) => {
         moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
       ]
     );
-    console.log("data ",data)
-    console.log("posData ",postData)
     /* validadr si ya existe un reporte del contenedor */
     const register = await getRegister(
       "container_reports",
       "code",
       data.code,
     );
-    console.log("register ", register)
+
     if (Object.keys(register.data).length > 0) {
       return {
         status: 500,
@@ -390,7 +389,6 @@ const storeContainerReportYard = async (data) => {
     }
     /* ************** */
     /* insertar el reporte en container report */
-    console.log("postData ",postData)
     let postDataReport = await db.execSQL(
       `INSERT INTO container_reports (
                           consecutive,
@@ -421,8 +419,7 @@ const storeContainerReportYard = async (data) => {
     });
     /* ************************************************** */
     /* insertar las reparaciones del reporte */
-    storeRepairs({ container_report_id: postData, damages_repairs: data.repairs })
-
+    storeRepairs({ container_report_id: postDataReport, damages_repairs: data.repairs })
     return postDataReport
   } catch (error) {
     console.log("ah sucedido un error ",error)
@@ -434,6 +431,7 @@ const storeContainerReportYard = async (data) => {
 const updateContainerReport = async (item) => {
   try {
     const db = await openDatabase();
+    const register = await showContainerReport(item.id);
     let updateData = db.execSQL(
       `UPDATE container_reports
                                       SET prefix = (?),
@@ -458,7 +456,60 @@ const updateContainerReport = async (item) => {
       },
       true
     );
+    deleteRepairs(register.data)
+    storeRepairs({
+      container_report_id: item.id,
+      damages_repairs: item.repairs,
+    });
     return updateData;
+  } catch (error) {
+    console.error("Error al editar el registro ", error);
+  }
+};
+
+const updateContainerReportYard = async (item) => {
+  try {
+    const db = await openDatabase();
+    const register = await showContainerReport(item.id);
+    let updateDataManagement = await db.execSQL(
+      `UPDATE management
+              SET name = (?),
+                  journey = (?),
+                  titular_name = (?),
+                  signature = (?)
+              WHERE id = (?)`,
+      [item.name, item.journey, item.titular_name, item.signature, item.management_id]
+    );
+    let updateData = await db.execSQL(
+      `UPDATE container_reports
+                                      SET prefix = (?),
+                                      code = (?),
+                                      type_id = (?),
+                                      role = (?),
+                                      observation = (?)
+                                      WHERE id = (?)`,
+      [
+        item.prefixCode,
+        item.code,
+        item.type_id,
+        item.role,
+        item.observation,
+        item.id,
+      ]
+    );
+    storeCReportADamage(
+      {
+        container_report_id: item.id,
+        additional_damage_id: item.additional_damage_id,
+      },
+      true
+    );
+    deleteRepairs(register.data)
+    storeRepairs({
+      container_report_id: item.id,
+      damages_repairs: item.repairs,
+    });
+    return Object.assign({},updateDataManagement,updateData);
   } catch (error) {
     console.error("Error al editar el registro ", error);
   }
@@ -490,13 +541,13 @@ const deleteContainerReport = async (id) => {
       const repairs = register.data.repairs;
       let deleteData = [];
       for (let i = 0; i < repairs.length; i++) {
-        const repair_damage = repairs[i].repair_damage;
+        const repair_damage = repairs[i].damage_id;
         let delete_repair_damage = [];
         if (repair_damage.length > 0) {
-          for (let i = 0; i < repair_damage.length; i++) {
-            delete_repair_damage[i] = await db.execSQL(
+          for (let j = 0; j < repair_damage.length; j++) {
+            delete_repair_damage[j] = await db.execSQL(
               "DELETE FROM repair_damage WHERE repair_id = ?",
-              [repair_damage[i].repair_id]
+              [repairs[i].id]
             );
           }
         }
@@ -523,6 +574,8 @@ module.exports = {
   getRepairDamage,
   deleteContainerReport,
   updateContainerReport,
+  updateContainerReportYard,
   showContainerReport,
   storeContainerReportYard,
+  storeRepairs
 };

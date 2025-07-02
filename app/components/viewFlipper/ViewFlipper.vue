@@ -51,6 +51,7 @@
           class="fas animated"
           :text="'fa-arrow-left' | fonticon"
           color="#F4F6F8"
+          :opacity="currentIndex === 0 ? 0.5 : 1"
           fontSize="20"
           borderRadius="50"
         />
@@ -71,6 +72,7 @@
           class="fas animated"
           :text="'fa-arrow-right' | fonticon"
           color="#F4F6F8"
+          :opacity="currentIndex === (this.steps - 1) ? 0.5 : 1"
           fontSize="20"
           borderRadius="50"
         />
@@ -123,7 +125,6 @@ export default {
   watch: {
     currentIndex(newVal, oldVal) {
       this.oldIndex = oldVal;
-      console.log("nuevo valor: " + newVal + " " + "viejo valor: " + oldVal);
       this.$emit("input", newVal);
     },
   },
@@ -148,16 +149,12 @@ export default {
     nextFlipper() {
       if (this.currentIndex < this.currentSteps - 1) {
         this.currentIndex++;
-        console.log("incremento");
-        console.log("steps ", this.currentSteps);
       }
     },
 
     prevFlipper() {
       if (this.currentIndex > 0) {
         this.currentIndex--;
-        console.log("decremento");
-        console.log("steps ", this.currentSteps);
       }
     },
 

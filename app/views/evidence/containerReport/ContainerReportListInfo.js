@@ -1,15 +1,23 @@
 const listRowsVeesel = [
   {
-    prop:'prefix',
-    label:'Prefijo'
-  },
-  {
     prop: 'code',
     label: 'Contenedor'
   },
   {
+    prop: 'nameType',
+    label: 'Tipo'
+  },
+  {
+    prop: 'vessel',
+    label: 'Buque'
+  },
+  {
+    prop: 'titular_name',
+    label: 'Capitan'
+  },
+  {
     prop: 'role',
-    label: 'Mecanico'
+    label: 'Tecnico'
   },
   {
     prop: 'repairs',
@@ -18,6 +26,10 @@ const listRowsVeesel = [
   {
     prop: 'additionalDamage',
     label: 'Daños Adicionales'
+  },
+  {
+    prop: 'signature',
+    label: 'Firma'
   },
   {
     prop: 'date_creation',
