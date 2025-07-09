@@ -17,7 +17,11 @@ const storePrefixes = async (data) => {
     }
     return post;
   } catch (error) {
-    console.log("ocurrio un problema al crear los prefijos", error);
+    return {
+      title:"ERROR",
+      message:"Ocurrio un problema al crear los prefijos. \n"+error.message,
+      code:406
+    }
   }
 };
 

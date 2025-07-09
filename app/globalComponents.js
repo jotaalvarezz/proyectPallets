@@ -17,6 +17,9 @@ import FilterSearhBar from "~/components/filterBar/FilterSearhBar.vue"
 import HeaderComponent from "~/components/header/HeaderComponent.vue"
 import ButtonNavigate from "~/components/buttonNavigate/ButtonNavigate.vue"
 import FilterSelectField from '~/components/filterSelectField/FilterSelectField.vue'
+import ViewFlipper from "~/components/viewFlipper/ViewFlipper.vue";
+import FlipperItem from "~/components/viewFlipper/flipperItem/FlipperItem.vue"
+import ButtonSheetDinamyc from "~/components/buttomSheet/ButtomSheetDynamic.vue";
 
 const GlobalComponents = {
   install(Vue) {
@@ -39,6 +42,9 @@ const GlobalComponents = {
     Vue.component(HeaderComponent.name, HeaderComponent)
     Vue.component(ButtonNavigate.name, ButtonNavigate)
     Vue.component(FilterSelectField.name, FilterSelectField)
+    Vue.component(ViewFlipper.name, ViewFlipper)
+    Vue.component(FlipperItem.name, FlipperItem)
+    Vue.component(ButtonSheetDinamyc.name, ButtonSheetDinamyc)
   }
 }
 

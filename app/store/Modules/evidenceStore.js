@@ -27,6 +27,10 @@ export default {
 
     cleanDamagedItems(state){
       state.damagedItems = []
+    },
+
+    cleanManagementModel(state){
+      state.managementModel = {}
     }
   },
   actions: {

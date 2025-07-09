@@ -36,7 +36,11 @@ const storeModules = async (data) => {
 
     return postData;
   } catch (error) {
-    console.log("ocurrio un problema al insertar la fila", error);
+    return {
+      title:"ERROR",
+      message:"Ocurrio un poblema guardar los modulos. \n"+error.message,
+      code:406
+    }
   }
 };
 

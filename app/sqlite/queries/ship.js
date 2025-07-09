@@ -82,7 +82,11 @@ const storeShips = async (shipsWarehouses) => {
     }
     return { postShip: postData, postWarehouse: postWarehouse };
   } catch (error) {
-    console.log("ocurrio un problema al insertar la fila", error);
+    return {
+      title:"ERROR",
+      message:"Ocurrio un poblema al crear los barcos. \n"+error.message,
+      code:406
+    }
   }
 };
 

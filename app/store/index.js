@@ -16,6 +16,7 @@ const store = new Vuex.Store({
     item: {},
     ship: {},
     collection: [],
+    recharge: true
   },
   mutations: {
     increment(state) {
@@ -48,6 +49,10 @@ const store = new Vuex.Store({
 
     setShowError(state, payload) {
       state.showError = payload
+    },
+
+    setRecharge(state, payload){
+      state.recharge = payload
     }
   },
 

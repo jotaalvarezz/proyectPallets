@@ -60,6 +60,7 @@
             class="p-l-10 colorIcons"
           />
         </GridLayout>
+
         <!-- create modules -->
         <GridLayout
           v-for="(item, index) in modules"
@@ -132,7 +133,8 @@ import mixinMasters from "~/mixins/Master";
 import Alert from "~/alerts/Alerts";
 import { ImageSource, knownFolders, path, Folder } from "@nativescript/core";
 import * as fs from "@nativescript/core/file-system";
-import { doUpdate } from "~/shared/doUpdate"
+import { doUpdate } from "~/shared/doUpdate";
+import { responseCatch } from "~/shared/helpers";
 
 export default {
   name: "Content-Drawer",
@@ -193,78 +195,27 @@ export default {
       }
     },
 
-    /* async getShipsWarehouses() {
-      try {
-        const shipsWarehouses = await axios.get(
-          process.env.VUE_APP_API_URL+"/ships"
-        );
-        this.saveShipsWarehouses(shipsWarehouses);
-        return shipsWarehouses;
-      } catch (error) {
-        return Alert.danger(
-          "¡Hubo un error al cargar los barcos y las bodegas!",
-          error.message
-        );
-      }
-    }, */
-
-    /* async getUsersWsp() {
-      try {
-        const users_wsp = await axios.get(
-          process.env.VUE_APP_API_URL+"/wsp_users"
-        );
-        return users_wsp;
-      } catch (error) {
-        return Alert.danger(
-          "¡Hubo un error al cargar los usuarios!",
-          error.message
-        );
-      }
-    }, */
-
-    /* async getModulesWsp() {
-      try {
-        const modules_wsp = await axios.get(
-          process.env.VUE_APP_API_URL+"/wsp_modules"
-        );
-        return modules_wsp;
-      } catch (error) {
-        return Alert.danger(
-          "¡Hubo un error al cargar los modulos!",
-          error.message
-        );
-      }
-    }, */
-
-    /* async defaultSelects() {
-      try {
-        const selects_evidence = await axios.get(
-          process.env.VUE_APP_API_URL+"/selects_evidence"
-        );
-        return selects_evidence;
-      } catch (error) {
-        console.log(error);
-      }
-    }, */
-
     async createTables() {
       try {
         let confirmated = await Alert.Danger(2);
         if (confirmated) {
           this.loadingCharge(true);
           const res = await doUpdate.updateApp();
-          if(res.status && res.status === 400){
-            Alert.danger("Fallo la conexion con el servidor ",res.message)
+          if (res.message && res.message.status && res.message.status === 400) {
+            responseCatch(res.message.message);
+          }
+          if (res.status && res.status === 400) {
+            Alert.danger("Fallo la conexion con el servidor ", res.message);
             return;
           }
-          this.cleanImages();
-          this.islogout();
-          this.$router.pushClear("login.index");
           Alert.success("Actualizacion de DB");
         }
       } catch (error) {
-        Alert.danger("No se pudo actualizar la DB", error);
+        Alert.danger("Ocurrio un error al actualizar la DB", error);
       } finally {
+        this.cleanImages();
+        this.islogout();
+        this.$router.pushClear("login.index");
         this.loadingCharge();
       }
     },

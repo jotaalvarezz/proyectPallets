@@ -24,7 +24,7 @@
           />
           <Stripe margin="0" />
           <Label
-            style="font-weight: bold;"
+            style="font-weight: bold"
             height="12%"
             :text="item.name"
             fontSize="18"
@@ -39,6 +39,7 @@
 <script>
 const { getTypesManagement } = require("~/sqlite/database");
 import Alert from "~/alerts/Alerts";
+import { mapMutations } from "vuex";
 
 export default {
   name: "Evidences",
@@ -50,15 +51,26 @@ export default {
   },
 
   methods: {
+    ...mapMutations("managementStore",["setType","setTypeMangement","cleanStoreTypeManagementId"]),
+    ...mapMutations("evidenceStore",["cleanManagementModel"]),
+
     navigate(id) {
-      this.$router.push("verification.details", {
-        props: {
-          management_id: id,
-        },
-      });
+      this.setTypeMangement(id)
+      switch (id) {
+        case 1:
+          this.setType(false)
+          this.$router.push("verification.details");
+          break;
+        case 2:
+          this.setType(true)
+          this.$router.push("container_report.index");
+          break;
+      }
     },
 
     async typesManagement() {
+      this.cleanStoreTypeManagementId()
+      this.cleanManagementModel()
       try {
         const res = await getTypesManagement();
         this.types_management = res.data;

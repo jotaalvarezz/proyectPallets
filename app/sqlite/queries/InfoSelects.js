@@ -7,7 +7,7 @@ const storeSeletsEvidence = async (DefaultSelects) => {
     for (const key in DefaultSelects) {
       if (DefaultSelects.hasOwnProperty(key)) {
         for (let j = 0; j < DefaultSelects[key].length; j++) {
-          post[j] = db.execSQL(
+          post[j] = await db.execSQL(
             `INSERT INTO ${key} (id, name, date_creation) VALUES (?, ?, ?)`,
             [DefaultSelects[key][j].id, DefaultSelects[key][j].name, DefaultSelects[key][j].created_at]
           );
@@ -16,7 +16,11 @@ const storeSeletsEvidence = async (DefaultSelects) => {
     }
     return post;
   } catch (error) {
-    console.log("errores ", error);
+    return {
+      title:"ERROR",
+      message:"Ocurrio un problemar cargar los datos. \n"+error.message,
+      code:406
+    }
   }
 };
 
