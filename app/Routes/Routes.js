@@ -14,6 +14,9 @@ import ContainerReportList from '~/views/evidence/containerReport/ContainerRepor
 import EvidenceList from '~/views/evidence/EvidenceList.vue'
 import Login from '~/views/Login'
 import Dashboard from '~/views/dashboard/Dashboard'
+import ReportShip from '~/views/evidence/reports/ReportShip.vue'
+import ReportInYard from '~/views/evidence/reports/ReportInYard.vue'
+import auth from '~/store/Modules/auth'
 
 Vue.use(NSVueRouter)
 
@@ -67,6 +70,18 @@ const routes = [
     name: 'dashboard.index',
     component: Dashboard,
     meta: { auth: true }
+  },
+  {
+    name: 'reportship.create',
+    component: ReportShip,
+    meta: { auth: true},
+
+  },
+  {
+    name: 'reportinyard.create',
+    component: ReportInYard,
+    meta: { auth: true},
+
   },
   {
     name: 'login.index',

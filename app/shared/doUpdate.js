@@ -12,6 +12,7 @@ const {
   storePrefixes,
 } = require("~/sqlite/database");
 import store from "../store/index";
+import { responseCatch } from "~/shared/helpers";
 
 export class doUpdate {
   static tablesToUpdates = [
@@ -88,25 +89,31 @@ const rebuildTables = async (tables) => {
         const dbTable = table.table;
         switch (dbTable) {
           case "users":
-            await storeUsers(object.users);
+            const resUsers = await storeUsers(object.users);
+            responseCatch(resUsers)
             store.commit("auth/setUsers", object.users);
             break;
 
           case "modules":
-            await storeModules(object.modules);
+            const resModules = await storeModules(object.modules);
+            responseCatch(resModules)
             break;
 
           case "ships":
-            await storeShips(object.ships);
+            const resShips = await storeShips(object.ships);
+            responseCatch(resShips)
             break;
 
           case "selectEvidences":
-            await storeSeletsEvidence(object.selectEvidences.defaultSelects);
-            await storeTypesManagement(object.selectEvidences.defaultTypes);
+            const resSelectEvidences = await storeSeletsEvidence(object.selectEvidences.defaultSelects);
+            responseCatch(resSelectEvidences)
+            const resTypesManagement = await storeTypesManagement(object.selectEvidences.defaultTypes);
+            responseCatch(resTypesManagement)
             break;
 
           case "prefixes":
-            await storePrefixes(object.prefixes);
+            const resPrefixes = await storePrefixes(object.prefixes);
+            responseCatch(resPrefixes)
             break;
         }
       }

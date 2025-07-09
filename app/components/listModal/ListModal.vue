@@ -1,6 +1,6 @@
 <template>
   <Page>
-    <StackLayout backgroundColor="#F4F6F8">
+    <StackLayout backgroundColor="#FFFFFF">
       <GridLayout
         height="55"
         rows="*"
@@ -30,7 +30,7 @@
       <ScrollView>
         <StackLayout
           padding="20"
-          backgroundColor="#F4F6F8"
+          backgroundColor="#FFFFFF"
           margin="20"
           borderWidth="1"
           borderColor="#3c495e"

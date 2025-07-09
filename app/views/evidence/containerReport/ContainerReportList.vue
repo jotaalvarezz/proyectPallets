@@ -32,7 +32,7 @@
         />
       </GridLayout>
       <Label
-        row="1"
+        row="2"
         textWrap="true"
         class="info"
         v-if="array_filter.length == 0"
@@ -45,12 +45,13 @@
       </Label>
       <!-- Lista de reportes -->
       <ListView
-        row="1"
-        ref="listView"
-        for="(item, index) in array_filter"
         v-if="array_filter.length > 0"
+        row="2"
+        ref="listView"
+        for="item in array_filter"
       >
         <v-template>
+          <!-- Shows the list item label in the default color and style. -->
           <GridLayout columns="*, 50">
             <StackLayout>
               <Label
@@ -72,9 +73,7 @@
                   />
                   <Label textWrap="true">
                     <!-- Barco -->
-                    <FormattedString
-                      v-if="managementModel.type_management_id === 1"
-                    >
+                    <FormattedString>
                       <Span
                         text="Contenedor: "
                         fontWeight="bold"
@@ -85,86 +84,63 @@
                         fontSize="15"
                       />
                       <Span text="Tipo: " fontWeight="bold" fontSize="15" />
+                      <Span :text="item.nameType + '\n'" fontSize="15" />
                       <Span
-                        :text="nameType(item.type_id) + '\n'"
+                        :text="
+                          item.type_management_id === 1
+                            ? 'Buque: '
+                            : 'Nombre de Gestion: '
+                        "
+                        fontWeight="bold"
                         fontSize="15"
                       />
-                      <Span text="Buque: " fontWeight="bold" fontSize="15" />
                       <Span :text="item.vessel + '\n'" fontSize="15" />
-                      <Span text="Tecnico: " fontWeight="bold" fontSize="15" />
-                      <Span :text="item.role + '\n'" fontSize="15" />
                       <Span
-                        :text="'Elemntos:' + '\t\t\t\t\t'"
-                        fontWeight="bold"
-                        fontSize="15"
-                      />
-                    </FormattedString>
-                    <!-- Patio -->
-                    <FormattedString
-                      v-if="managementModel.type_management_id === 2"
-                    >
-                      <Span
-                        text="Contenedor: "
+                        v-if="item.type_management_id === 2"
+                        text="Patio: "
                         fontWeight="bold"
                         fontSize="15"
                       />
                       <Span
-                        :text="item.prefix + item.code + '\n'"
+                        v-if="item.type_management_id === 2"
+                        :text="'Alieva' + '\n'"
                         fontSize="15"
                       />
-                      <Span text="Tipo: " fontWeight="bold" fontSize="15" />
                       <Span
-                        :text="nameType(item.type_id) + '\n'"
+                        :text="
+                          item.type_management_id === 1
+                            ? 'Capitan: '
+                            : 'Titular: '
+                        "
+                        fontWeight="bold"
                         fontSize="15"
                       />
-                      <Span text="Patio: " fontWeight="bold" fontSize="15" />
-                      <Span :text="'Alieva' + '\n'" fontSize="15" />
+                      <Span :text="item.titular_name + '\n'" fontSize="15" />
                       <Span text="Tecnico: " fontWeight="bold" fontSize="15" />
                       <Span :text="item.role + '\n'" fontSize="15" />
                       <Span
-                        text="Estructura:"
+                        :text="'Elementos:' + '\t\t\t\t\t'"
                         fontWeight="bold"
                         fontSize="15"
                       />
                     </FormattedString>
                   </Label>
                   <GridLayout
-                    columns="*, 50"
+                    columns="*"
                     backgroundColor="#D8E2E8"
                     v-for="(repair, index) in item.repairs"
                     :key="index"
-                    style="padding: 0px 5px 5px 8px; margin-bottom: 3dp;"
+                    style="padding: 0px 5px 5px 8px; margin-bottom: 3dp"
                     borderRadius="5"
                   >
                     <Tag
                       col="0"
                       width="80%"
-                      :label="repair.name ? repair.name : ''"
-                      :items="repair.repair_damage"
+                      :label="repair.name"
+                      :items="repair.damage_id"
                       labelIterator="name"
                     />
-                    <ButtonNavigate
-                      col="1"
-                      :isEnabled="type_management.status === 1 ? true : false"
-                      height="45"
-                      width="45"
-                      icon="fa-times"
-                      :size="13"
-                      iconColor="#e92222"
-                      radius="50"
-                      :handleEvent="() => deleteRowRepair(item, repair.id)"
-                    />
                   </GridLayout>
-                  <ButtonNavigate
-                    :isEnabled="type_management.status === 1 ? true : false"
-                    height="50"
-                    width="50"
-                    icon="fa-toolbox"
-                    iconColor="#f4f6f8"
-                    iconBackground="#eab14d"
-                    radius="50"
-                    :handleEvent="() => openFormDamaged(item)"
-                  />
                 </StackLayout>
               </StackLayout>
             </StackLayout>
@@ -180,10 +156,19 @@
         </v-template>
       </ListView>
       <FloatingButton
-        :isEnabled="type_management.status === 1 ? true : false"
-        row="1"
+        :isEnabled="type_management.status === 0 ? true : false"
+        row="2"
+        :opacity="type_management.status === 0 ? 1 : 0.5"
         :icon="'fa-plus'"
         :method="openModal"
+      />
+      <FloatingButton
+        v-if="type === true"
+        marginBottom="100"
+        row="2"
+        :opacity="type_management.status === 0 ? 1 : 0.5"
+        :icon="(type_management.status === 0 ? 'fa-lock-open' : 'fa-lock')"
+        :method="finish"
       />
     </GridLayout>
   </page>
@@ -196,18 +181,21 @@ const {
   deleteContainerReport,
   deleteRepair,
   showTypesManagement,
+  getReportingManagementShip,
+  finishOperations,
   getRepairDamage,
   getRepairs,
 } = require("~/sqlite/database");
+const { getAllManagementsYard } = require("~/sqlite/queries/management");
 import mixinMasters from "~/mixins/Master";
 import Alert from "~/alerts/Alerts";
 import { mapState, mapMutations } from "vuex";
 import ButtomSheet from "~/components/buttomSheet/ButtomSheet.vue";
 import ListModal from "~/components/listModal/ListModal.vue";
 import containerReportListInfo from "~/views/evidence/containerReport/ContainerReportListInfo";
-import ContainerReport from "~/views/evidence/containerReport/ContainerReport.vue";
 import DamagedItems from "~/views/evidence/containerReport/damagedItems/DamagedItems.vue";
 import { onSearchBarLoaded } from "~/shared/helpers";
+import { Toasty } from "@triniwiz/nativescript-toasty";
 
 export default {
   name: "containerReportList",
@@ -216,6 +204,7 @@ export default {
   },
   data() {
     return {
+      status: true,
       search: "",
       message: "No hay reportes de contenedores para mostrar",
       container_reports: [],
@@ -228,7 +217,7 @@ export default {
 
   computed: {
     ...mapState("evidenceStore", ["managementModel", "containerReport"]),
-    ...mapState("managementStore", ["close"]),
+    ...mapState("managementStore", ["close", "type", "StoreTypeManagementId"]),
   },
 
   methods: {
@@ -238,6 +227,8 @@ export default {
     ]),
 
     initialFunction() {
+      this.setContainerReport({});
+      this.setContainerReportEdit(false);
       this.getEvidences();
       this.typeManagement();
     },
@@ -259,12 +250,11 @@ export default {
     },
 
     openModal() {
-      this.$showModal(ContainerReport, {
-        fullscreen: true,
-        animated: true,
-      }).then(() => {
-        this.getEvidences();
-      });
+      if(this.type){
+        this.$router.push("reportinyard.create");
+      } else {
+        this.$router.push("reportship.create");
+      }
     },
 
     openFormDamaged(item) {
@@ -290,7 +280,7 @@ export default {
         transparent: true,
         props: {
           item: item,
-          generalOptions: this.type_management.status === 1 ? true : false,
+          generalOptions: this.type_management.status === 0 ? true : false,
           infoRegister: () => this.containerReportInfo(item),
           updateRegister: () => this.containerReportEdit(item),
           deleteRow: () => this.deleteRow(item.id),
@@ -308,12 +298,40 @@ export default {
       this.$router.back();
     },
 
+     async finish() {
+      try {
+        if(this.type_management.status === 1){
+           new Toasty({ text: "La operacion ya esta finalizada" }).show();
+           return
+        }
+        let confirmated = await Alert.info(
+          "Al finalizar la operacion no podra realizar mas cambios.",
+          3,
+          "Finalizar Operacion"
+        );
+        if (confirmated) {
+          const res = await finishOperations(this.StoreTypeManagementId);
+          if (res.status === 400) {
+            Alert.info(res.message, 1, res.error);
+            return;
+          }
+
+          this.type_management.status = res.data.status;
+          new Toasty({ text: "Operacion "+res.data.name+" Finalizada" }).show();
+          return;
+        }
+      } catch (error) {
+        Alert.danger(
+          "¡Hubo un error al finalizar la operacion!",
+          error.message
+        );
+      }
+    },
+
     async typeManagement() {
       try {
         this.loadingCharge(true);
-        const res = await showTypesManagement(
-          this.managementModel.type_management_id
-        );
+        const res = await showTypesManagement(this.StoreTypeManagementId);
         this.type_management = res.data;
       } catch (error) {
         Alert.danger(
@@ -325,10 +343,18 @@ export default {
       }
     },
 
-    async getEvidences() {
+    getEvidences() {
+      if (this.type) {
+        this.yardEvidence();
+      } else {
+        this.shipEvidence();
+      }
+    },
+
+    async shipEvidence() {
       try {
         this.loadingCharge(true);
-        const res = await getContainerReport(this.managementModel.id);
+        const res = await getReportingManagementShip(this.managementModel.id);
         this.container_reports = res.data;
         this.array_filter = res.data;
         if (this.types.length === 0) {
@@ -339,6 +365,23 @@ export default {
         Alert.danger("Hubo un error al traer informacion", error.message);
       } finally {
         this.loadingCharge();
+      }
+    },
+
+    async yardEvidence() {
+      try {
+        this.loadingCharge(true)
+        const res = await getAllManagementsYard(this.StoreTypeManagementId);
+        this.container_reports = res.data;
+        this.array_filter = res.data;
+        if (this.types.length === 0) {
+          const types = await getTypes();
+          this.types = types.data;
+        }
+      } catch (error) {
+        Alert.danger("Hubo un error al traer informacion", error.message);
+      } finally {
+        this.loadingCharge()
       }
     },
 
@@ -386,21 +429,23 @@ export default {
     containerReportEdit(item) {
       this.setContainerReport(item);
       this.setContainerReportEdit(true);
-      this.$showModal(ContainerReport, {
-        fullscreen: true,
-        animated: true,
-      }).then(() => {
-        this.setContainerReport({});
-        this.setContainerReportEdit(false);
-        this.getEvidences();
-      });
+      if(this.type){
+        this.$router.push("reportinyard.create");
+      } else {
+        this.$router.push("reportship.create");
+      }
     },
 
     containerReportInfo(item) {
-      let listRows = containerReportListInfo.listRowsContainerReport;
+      let listRows = [];
+      if (!this.type) {
+        listRows = containerReportListInfo.listRowsVeesel;
+      } else {
+        listRows = containerReportListInfo.listRowsPatio;
+      }
       this.$showModal(ListModal, {
+        fullscreen: true,
         animated: true,
-        stretched: false,
         props: {
           title: "Informacion del reporte",
           info: item,
@@ -410,7 +455,7 @@ export default {
           showMulTags: "repairs",
           propsGeneralComponent: {
             labelTag: "name",
-            itemsKey: "repair_damage",
+            itemsKey: "damage_id",
             labelIterator: "name",
             titleCollapse: "Visualizar Evidencia",
             labelViewImage: "Foto",

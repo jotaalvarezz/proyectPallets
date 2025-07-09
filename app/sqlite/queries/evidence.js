@@ -5,6 +5,7 @@ const {
   getRegister,
   first,
 } = require("~/sqlite/openDatabase");
+const { deleteRepairs, updateRepaairs } = require("~/sqlite/queries/repair");
 const moment = require("moment");
 
 const getContainerReport = async (management_id) => {
@@ -167,7 +168,7 @@ const showContainerReport = async (id) => {
           "damage_id",
           "name",
         ]);
-        repairsFormatted[i].repair_damage = damagesFormatted;
+        repairsFormatted[i].damage_id = damagesFormatted;
       }
       dataFormatted.repairs = repairsFormatted;
     }
@@ -181,7 +182,7 @@ const showContainerReport = async (id) => {
 const getRepairs = async () => {
   try {
     const db = await openDatabase();
-    const data = await db.all("SELECT * FROM repairs", []);
+    const data = await db.all(`SELECT * FROM repairs`, []);
     const dataFormatted = await showData("repairs", data);
     return { data: dataFormatted };
   } catch (error) {
@@ -193,7 +194,7 @@ const getRepairDamage = async () => {
   try {
     const db = await openDatabase();
     const data = await db.all(
-      "SELECT * FROM repair_damage WHERE repair_id = 2",
+      "SELECT * FROM repair_damage",
       []
     );
     const dataFormatted = await showData("repair_damage", data);
@@ -202,6 +203,8 @@ const getRepairDamage = async () => {
     console.log("error al traer los datos ", error);
   }
 };
+
+/* Metodos de insercion */
 
 const storeContainerReport = async (data) => {
   try {
@@ -247,7 +250,7 @@ const storeContainerReport = async (data) => {
       container_report_id: postData,
       additional_damage_id: data.additional_damage_id,
     });
-    /* storeRepairs({ container_report_id: postData, damages_repairs: data.repairs }) */
+    storeRepairs({ container_report_id: postData, damages_repairs: data.repairs })
     return postData;
   } catch (error) {
     console.log("ocurrio un problema al insertar la fila", error);
@@ -347,9 +350,88 @@ const storeRepairDamage = async (data) => {
   }
 };
 
+const storeContainerReportYard = async (data) => {
+  try {
+    const db = await openDatabase();
+    const postData = await db.execSQL(
+      `INSERT INTO management (
+                              consecutive,
+                              type_management_id,
+                              name,
+                              journey,
+                              titular_name,
+                              signature,
+                              date_creation)
+            VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [
+        Date.now() + Math.random(),
+        data.type_management_id,
+        data.name,
+        data.journey,
+        data.titular_name,
+        data.signature,
+        moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
+      ]
+    );
+    /* validadr si ya existe un reporte del contenedor */
+    const register = await getRegister(
+      "container_reports",
+      "code",
+      data.code,
+    );
+
+    if (Object.keys(register.data).length > 0) {
+      return {
+        status: 500,
+        message:
+          "Ya existe un registro creado con el mismo numero de contenedor!",
+      };
+    }
+    /* ************** */
+    /* insertar el reporte en container report */
+    let postDataReport = await db.execSQL(
+      `INSERT INTO container_reports (
+                          consecutive,
+                          management_id,
+                          prefix,
+                          code,
+                          type_id,
+                          role,
+                          observation,
+                          date_creation)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        Date.now() + Math.random(),
+        postData,
+        data.prefixCode,
+        data.code,
+        data.type_id,
+        data.role,
+        data.observation,
+        moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
+      ]
+    );
+    /* ******************************************************* */
+    /* insertar los daños adicionales */
+    storeCReportADamage({
+      container_report_id: postDataReport,
+      additional_damage_id: data.additional_damage_id,
+    });
+    /* ************************************************** */
+    /* insertar las reparaciones del reporte */
+    storeRepairs({ container_report_id: postDataReport, damages_repairs: data.repairs })
+    return postDataReport
+  } catch (error) {
+    console.log("ah sucedido un error ",error)
+  }
+};
+
+/* ******************************************************************************** */
+
 const updateContainerReport = async (item) => {
   try {
     const db = await openDatabase();
+    const register = await showContainerReport(item.id);
     let updateData = db.execSQL(
       `UPDATE container_reports
                                       SET prefix = (?),
@@ -358,7 +440,14 @@ const updateContainerReport = async (item) => {
                                       role = (?),
                                       observation = (?)
                                       WHERE id = (?)`,
-      [item.prefixCode ,item.code, item.type_id, item.role, item.observation, item.id]
+      [
+        item.prefixCode,
+        item.code,
+        item.type_id,
+        item.role,
+        item.observation,
+        item.id,
+      ]
     );
     storeCReportADamage(
       {
@@ -367,7 +456,60 @@ const updateContainerReport = async (item) => {
       },
       true
     );
+    deleteRepairs(register.data)
+    storeRepairs({
+      container_report_id: item.id,
+      damages_repairs: item.repairs,
+    });
     return updateData;
+  } catch (error) {
+    console.error("Error al editar el registro ", error);
+  }
+};
+
+const updateContainerReportYard = async (item) => {
+  try {
+    const db = await openDatabase();
+    const register = await showContainerReport(item.id);
+    let updateDataManagement = await db.execSQL(
+      `UPDATE management
+              SET name = (?),
+                  journey = (?),
+                  titular_name = (?),
+                  signature = (?)
+              WHERE id = (?)`,
+      [item.name, item.journey, item.titular_name, item.signature, item.management_id]
+    );
+    let updateData = await db.execSQL(
+      `UPDATE container_reports
+                                      SET prefix = (?),
+                                      code = (?),
+                                      type_id = (?),
+                                      role = (?),
+                                      observation = (?)
+                                      WHERE id = (?)`,
+      [
+        item.prefixCode,
+        item.code,
+        item.type_id,
+        item.role,
+        item.observation,
+        item.id,
+      ]
+    );
+    storeCReportADamage(
+      {
+        container_report_id: item.id,
+        additional_damage_id: item.additional_damage_id,
+      },
+      true
+    );
+    deleteRepairs(register.data)
+    storeRepairs({
+      container_report_id: item.id,
+      damages_repairs: item.repairs,
+    });
+    return Object.assign({},updateDataManagement,updateData);
   } catch (error) {
     console.error("Error al editar el registro ", error);
   }
@@ -399,13 +541,13 @@ const deleteContainerReport = async (id) => {
       const repairs = register.data.repairs;
       let deleteData = [];
       for (let i = 0; i < repairs.length; i++) {
-        const repair_damage = repairs[i].repair_damage;
+        const repair_damage = repairs[i].damage_id;
         let delete_repair_damage = [];
         if (repair_damage.length > 0) {
-          for (let i = 0; i < repair_damage.length; i++) {
-            delete_repair_damage[i] = await db.execSQL(
+          for (let j = 0; j < repair_damage.length; j++) {
+            delete_repair_damage[j] = await db.execSQL(
               "DELETE FROM repair_damage WHERE repair_id = ?",
-              [repair_damage[i].repair_id]
+              [repairs[i].id]
             );
           }
         }
@@ -432,5 +574,8 @@ module.exports = {
   getRepairDamage,
   deleteContainerReport,
   updateContainerReport,
-  showContainerReport
+  updateContainerReportYard,
+  showContainerReport,
+  storeContainerReportYard,
+  storeRepairs
 };
