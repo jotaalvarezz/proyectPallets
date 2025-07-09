@@ -52,7 +52,7 @@ const listRowsPatio = [
   },
   {
     prop: 'titular_name',
-    label: 'Conductor'
+    label: 'Titular'
   },
   {
     prop: 'role',

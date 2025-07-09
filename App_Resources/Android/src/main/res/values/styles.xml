@@ -27,8 +27,12 @@
         <item name="colorAccent">@color/ns_accent</item>
     </style>
 
-    <style name="AppTheme" parent="AppThemeBase">
+    <style name="AppTheme" parent="Theme.AppCompat.Light">
+        <!-- Puedes agregar más personalizaciones de estilo aquí si es necesario -->
     </style>
+
+    <!-- <style name="AppTheme" parent="AppThemeBase">
+    </style> -->
 
     <!-- theme for action-bar -->
     <style name="NativeScriptToolbarStyleBase" parent="Widget.AppCompat.Toolbar">

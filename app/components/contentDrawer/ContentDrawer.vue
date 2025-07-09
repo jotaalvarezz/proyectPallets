@@ -134,6 +134,7 @@ import Alert from "~/alerts/Alerts";
 import { ImageSource, knownFolders, path, Folder } from "@nativescript/core";
 import * as fs from "@nativescript/core/file-system";
 import { doUpdate } from "~/shared/doUpdate";
+import { responseCatch } from "~/shared/helpers";
 
 export default {
   name: "Content-Drawer",
@@ -200,18 +201,21 @@ export default {
         if (confirmated) {
           this.loadingCharge(true);
           const res = await doUpdate.updateApp();
+          if (res.message && res.message.status && res.message.status === 400) {
+            responseCatch(res.message.message);
+          }
           if (res.status && res.status === 400) {
             Alert.danger("Fallo la conexion con el servidor ", res.message);
             return;
           }
-          this.cleanImages();
-          this.islogout();
-          this.$router.pushClear("login.index");
           Alert.success("Actualizacion de DB");
         }
       } catch (error) {
-        Alert.danger("No se pudo actualizar la DB", error);
+        Alert.danger("Ocurrio un error al actualizar la DB", error);
       } finally {
+        this.cleanImages();
+        this.islogout();
+        this.$router.pushClear("login.index");
         this.loadingCharge();
       }
     },

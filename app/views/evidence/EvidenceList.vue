@@ -107,7 +107,7 @@
                         :text="
                           item.type_management_id === 1
                             ? 'Capitan: '
-                            : 'Conductor: '
+                            : 'Titular: '
                         "
                         fontWeight="bold"
                         fontSize="15"
@@ -116,7 +116,7 @@
                       <Span text="Tecnico: " fontWeight="bold" fontSize="15" />
                       <Span :text="item.role + '\n'" fontSize="15" />
                       <Span
-                        :text="'Elemntos:' + '\t\t\t\t\t'"
+                        :text="'Elementos:' + '\t\t\t\t\t'"
                         fontWeight="bold"
                         fontSize="15"
                       />

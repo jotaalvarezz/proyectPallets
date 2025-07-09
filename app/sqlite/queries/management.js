@@ -40,7 +40,7 @@ const storeTypesManagement = async (data) => {
     const DefaultTypesManagement = data.types_management;
     let post = [];
     for (let i = 0; i < DefaultTypesManagement.length; i++) {
-      post[i] = db.execSQL(
+      post[i] = await db.execSQL(
         `INSERT INTO types_management (id, name, icon, status, date_creation) VALUES (?, ?, ?, ?, ?)`,
         [
           DefaultTypesManagement[i].id,
@@ -55,7 +55,11 @@ const storeTypesManagement = async (data) => {
     }
     return post;
   } catch (error) {
-    console.log("error al crear registro en types management ", error);
+    return {
+      title:"ERROR",
+      message:"Ocurrio un problemar cargar los datos. \n"+error.message,
+      code:406
+    }
   }
 };
 
