@@ -1,5 +1,5 @@
 <template>
-  <StackLayout @loaded="initialMethods" backgroundColor="#F4F6F8">
+  <GridLayout rows="*" @loaded="initialMethods" backgroundColor="#F4F6F8">
     <!-- <HeaderComponent
       title="Creacion de Reporte/Contenedor"
       :handleback="$modal.close"
@@ -101,7 +101,7 @@
     </ScrollView>
     <!-- </GridLayout> -->
     <!-- </StackLayout> -->
-  </StackLayout>
+  </GridLayout>
 </template>
 
 <script>

@@ -1,7 +1,8 @@
 <template>
-  <StackLayout backgroundColor="#F4F6F8">
-    <HeaderComponent title="Actualizar Gestion" :handleback="$modal.close" />
+  <GridLayout rows="auto, *" backgroundColor="#F4F6F8">
+    <HeaderComponent row="0" title="Actualizar Gestion" :handleback="$modal.close" />
     <GridLayout
+      row="1"
       ref="form"
       class="shadow"
       rows="*"
@@ -113,7 +114,7 @@
           :method="editManagement"
         />
     </GridLayout>
-  </StackLayout>
+  </GridLayout>
 </template>
 
 <script>
