@@ -263,9 +263,11 @@ const {
   deleteManagement,
   finishOperations,
   showTypesManagement,
+  updateManagement
 } = require("~/sqlite/database");
 import ManagementEdit from "~/views/evidence/managementForm/ManagementEdit";
-import ButtomSheet from "~/components/buttomSheet/ButtomSheet.vue";
+import ButtomSheetDynamic from "~/components/buttomSheet/ButtomSheetDynamic.vue";
+import Signature from "~/components/signature/Signature.vue";
 import mixinMasters from "~/mixins/Master";
 import Alert from "~/alerts/Alerts";
 import { mapState, mapMutations } from "vuex";
@@ -277,7 +279,7 @@ import { Toasty } from "@triniwiz/nativescript-toasty";
 export default {
   name: "Management",
   components: {
-    ButtomSheet,
+    ButtomSheetDynamic,
   },
 
   data() {
@@ -482,24 +484,50 @@ export default {
 
     navigateOptions(item, index) {
       item.action = true;
+      const events = [
+        {
+          name: "Ver Detalles",
+          icon: "fa-eye",
+          event: () => this.managmentInfo(item),
+        },
+        {
+          name: "Firmar",
+          icon: "fa-signature",
+          event: () => this.signatureManagement(item),
+        },
+      ];
+
+      // Solo agregar opciones de editar y elim inar si la operación no está finalizada
+      if (this.type_management.status === 0) {
+        events.push(
+          {
+            name: "Actualizar",
+            icon: "fa-redo",
+            event: () => this.managementEdit(item),
+          },
+          {
+            name: "Eliminar",
+            icon: "fa-times",
+            event: () => this.deleteRow(item.id),
+          }
+        );
+      }
+
       const options = {
         dismissOnBackgroundTap: true,
         dismissOnDraggingDownSheet: false,
         transparent: true,
         props: {
           item: item,
-          generalOptions: this.type_management.status == 1 ? false : true,
-          component: ManagementEdit,
-          infoRegister: () => this.managmentInfo(item),
-          updateRegister: () => this.managementEdit(item),
-          deleteRow: () => this.deleteRow(item.id),
+          events: events,
+          generalOptions: false,
         },
         // listeners to be connected to MyComponent
         on: {
           someEvent: (value) => {},
         },
       };
-      this.$showBottomSheet(ButtomSheet, options);
+      this.$showBottomSheet(ButtomSheetDynamic, options);
     },
 
     managmentInfo(item) {
@@ -547,6 +575,24 @@ export default {
           Alert.danger("eleminacion fallida ", error.message);
         }
       }
+    },
+
+    signatureManagement(item) {
+      console.log("item ",item)
+      this.model = item;
+      this.$showModal(Signature, {
+        animated: true,
+        props: {
+          id: this.model.id,
+          signature: this.model.signature,
+        },
+        animated: true,
+        cancelable: true,
+      }).then(async (res) => {
+        this.model.signature = await res.signature;
+        await updateManagement(this.model);
+        //console.log("res ",this.model)
+      });
     },
 
     //evento para quitarle foco al searhBar cuando se carga la vista
