@@ -125,85 +125,125 @@
         v-if="array_filter.length > 0"
         row="2"
         ref="listView"
+        separatorColor="transparent"
         for="item in array_filter"
         @itemTap="onItemTap"
       >
-        <v-template>
-          <!-- Shows the list item label in the default color and style. -->
-          <GridLayout columns="*, 50">
-            <StackLayout orientation="horizontal" col="0">
-              <Label
-                backgroundColor="#D8E2E8"
-                :text="'fa-file-alt' | fonticon"
-                class="nt-drawer__header-image fas"
-                fontSize="45"
-                color="#EAB14D"
-              />
-              <StackLayout class="heigth" width="75%">
-                <Label
-                  text="Gestion de reporte:"
-                  class="subTittle"
-                  textWrap="true"
-                  width="auto"
-                  fontSize="15"
-                />
-                <Label textWrap="true">
-                  <!-- en barco -->
-                  <FormattedString v-if="StoreTypeManagementId === 1">
-                    <Span text="Barco: " fontWeight="bold" fontSize="15" />
-                    <Span :text="item.name + '\n'" fontSize="15" />
-                    <Span text="Viaje: " fontWeight="bold" fontSize="15" />
-                    <Span :text="item.journey + '\n'" fontSize="15" />
-                    <Span
-                      text="Nombre del Capitan: "
-                      fontWeight="bold"
-                      fontSize="15"
+                                <v-template>
+          <card-view
+            backgroundColor="white"
+            margin="10 15 5 15"
+            radius="24"
+            elevation="3"
+          >
+            <GridLayout columns="*" padding="15">
+              <StackLayout>
+                <!-- Header section with icon and main info -->
+                <GridLayout columns="90, *, 50" marginBottom="15">
+                  <!-- Icon -->
+                  <StackLayout col="0" horizontalAlignment="left">
+                    <Label
+                      backgroundColor="#D8E2E8"
+                      :text="'fa-file-alt' | fonticon"
+                      class="fas text-center"
+                      padding="10"
+                      fontSize="60"
+                      color="#EAB14D"
+                      borderRadius="8"
                     />
-                    <Span :text="item.titular_name" fontSize="15" />
-                  </FormattedString>
-                  <!-- en patio -->
-                  <FormattedString v-if="StoreTypeManagementId === 2">
-                    <Span
-                      text="Nombre de Gestion: "
+                  </StackLayout>
+
+                  <!-- Main info -->
+                  <StackLayout col="1" marginLeft="12">
+                    <Label
+                      text="Gestión de Reporte"
+                      fontSize="14"
                       fontWeight="bold"
-                      fontSize="15"
+                      color="#333"
+                      marginBottom="4"
                     />
-                    <Span :text="item.name + '\n'" fontSize="15" />
-                    <Span text="Patio: " fontWeight="bold" fontSize="15" />
-                    <Span :text="'Alieva' + '\n'" fontSize="15" />
-                    <Span
-                      text="Nombre del Conductor: "
+                    <Label
+                      :text="item.name || 'Sin nombre'"
+                      fontSize="16"
                       fontWeight="bold"
-                      fontSize="15"
+                      color="#00acc1"
+                      marginBottom="2"
+                      textWrap="true"
                     />
-                    <Span :text="item.titular_name" fontSize="15" />
-                  </FormattedString>
-                </Label>
-                <!-- <StackLayout style="padding: 0px 5px 5px 8px">
-                  <Label text="Contenedores:" class="subTittle" fontSize="12" /> -->
-                <Tag
-                  label="Contenedores"
-                  :items="item.container_reports"
-                  labelIterator="code"
-                />
-                <!-- </StackLayout> -->
-                <!-- <ViewImage
-                  ref="viewImage"
-                  label="Firma: "
-                  encrypted="true"
-                  :url="item.signature"
-                /> -->
+                  </StackLayout>
+
+                  <!-- Options button -->
+                  <ButtonNavigate
+                    col="2"
+                    height="40"
+                    width="40"
+                    icon="fa-ellipsis-v"
+                    radius="20"
+                    class="options-button"
+                    :handleEvent="() => navigateOptions(item, index)"
+                  />
+                </GridLayout>
+
+                <!-- Details section -->
+                <GridLayout
+                  columns="*, *"
+                  backgroundColor="#F4F6F8"
+                  padding="12"
+                  borderRadius="8"
+                  marginBottom="12"
+                >
+                  <!-- Left column -->
+                  <StackLayout col="0">
+                    <Label
+                      :text="StoreTypeManagementId === 1 ? 'Viaje:' : 'Patio:'"
+                      fontSize="13"
+                      fontWeight="bold"
+                      color="#666"
+                      marginBottom="2"
+                    />
+                    <Label
+                      :text="StoreTypeManagementId === 1 ? (item.journey || 'No especificado') : 'Alieva'"
+                      fontSize="13"
+                      color="#333"
+                      textWrap="true"
+                      marginBottom="8"
+                    />
+                  </StackLayout>
+
+                  <!-- Right column -->
+                  <StackLayout col="1" marginLeft="8">
+                    <Label
+                      :text="StoreTypeManagementId === 1 ? 'Capitán:' : 'Conductor:'"
+                      fontSize="13"
+                      fontWeight="bold"
+                      color="#666"
+                      marginBottom="2"
+                    />
+                    <Label
+                      :text="item.titular_name || 'No especificado'"
+                      fontSize="13"
+                      color="#333"
+                      textWrap="true"
+                    />
+                  </StackLayout>
+                </GridLayout>
+
+                <!-- Containers section -->
+                <StackLayout
+                  backgroundColor="#F4F6F8"
+                  padding="12"
+                  borderRadius="8"
+                >
+                  <Tag
+                    label="Contenedores"
+                    :items="item.container_reports"
+                    labelIterator="code"
+                    labelColor="#333"
+                  />
+                </StackLayout>
               </StackLayout>
-            </StackLayout>
-            <ButtonNavigate
-              col="1"
-              height="50"
-              width="50"
-              icon="fa-ellipsis-v"
-              radius="50"
-              :handleEvent="() => navigateOptions(item, index)"
-            />
-          </GridLayout>
+            </GridLayout>
+          </card-view>
         </v-template>
       </ListView>
       <FloatingButton
@@ -548,5 +588,16 @@ export default {
 
 .search-bar {
   font-size: 15; /* Cambia el tamaño del texto aquí */
+}
+
+.options-button {
+  background: linear-gradient(135deg, #e8f0f3 0%, #f4f6f8 40%, #d8e2e8 100%);
+  color: #666;
+  transition: all 0.2s ease;
+}
+
+.options-button:active {
+  background: #c8d4da;
+  transform: scale(0.95);
 }
 </style>

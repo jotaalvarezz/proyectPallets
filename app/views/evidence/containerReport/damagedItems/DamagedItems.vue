@@ -162,60 +162,120 @@
       >
         <v-template>
           <card-view
-            class="position"
-            backgroundColor="#D8E2E8"
+            backgroundColor="white"
+            margin="10 15 5 15"
+            radius="24"
+            elevation="3"
             ripple="true"
-            elevation="5"
-            margin="0"
-            radius="25"
-            height="245"
-            width="auto"
           >
-            <GridLayout
-              columns="*,50"
-              rows="auto, auto"
-              style="padding: 10px 10px 15px 15px"
-              borderRadius="20"
-            >
-              <Label textWrap="true" row="0">
-                <FormattedString>
-                  <Span text="Elemento: " fontWeight="bold" fontSize="15" />
-                  <Span :text="item.name + '\n'" fontSize="15" />
-                  <Span text="Ubicacion: " fontWeight="bold" fontSize="15" />
-                  <Span :text="item.location + '\n'" fontSize="15" />
-                  <Span text="Posicion: " fontWeight="bold" fontSize="15" />
-                  <Span :text="item.position" fontSize="15" />
-                </FormattedString>
-              </Label>
-              <Tag
-                col="0"
-                row="1"
-                width="100%"
-                label="Daño(s)"
-                :items="item.damage_id"
-                labelIterator="name"
-              />
-              <ButtonNavigate
-                col="1"
-                rowSpan="2"
-                height="65"
-                width="65"
-                icon="fa-ellipsis-v"
-                :size="20"
-                radius="50"
-                :handleEvent="() => handleButton(item, index)"
-              />
-              <!-- <ButtonNavigate
-                col="1"
-                rowSpan="2"
-                height="65"
-                width="65"
-                icon="fa-times"
-                :size="20"
-                iconColor="#e92222"
-                radius="50"
-                :handleEvent="() => removeRepair()"
-              /> -->
+            <GridLayout columns="*" padding="15">
+              <StackLayout>
+                <!-- Header section with icon and main info -->
+                <GridLayout columns="60, *, 50" marginBottom="15">
+                  <!-- Icon -->
+                  <StackLayout col="0" horizontalAlignment="left">
+                    <Label
+                      backgroundColor="#D8E2E8"
+                      text="🔧"
+                      class="text-center"
+                      padding="5"
+                      fontSize="24"
+                      color="#EAB14D"
+                      borderRadius="8"
+                      width="48"
+                      height="48"
+                    />
+                  </StackLayout>
+
+                  <!-- Main element info -->
+                  <StackLayout col="1" marginLeft="12">
+                    <Label
+                      text="Elemento Dañado"
+                      fontSize="14"
+                      fontWeight="bold"
+                      color="#333"
+                      marginBottom="4"
+                    />
+                    <Label
+                      :text="item.name || 'Sin especificar'"
+                      fontSize="16"
+                      fontWeight="bold"
+                      color="#00acc1"
+                      marginBottom="2"
+                      textWrap="true"
+                    />
+                  </StackLayout>
+
+                  <!-- Options button -->
+                  <ButtonNavigate
+                    col="2"
+                    height="40"
+                    width="40"
+                    icon="fa-ellipsis-v"
+                    radius="20"
+                    class="options-button"
+                    :handleEvent="() => handleButton(item, index)"
+                  />
+                </GridLayout>
+
+                <!-- Details section -->
+                <GridLayout
+                  columns="*, *"
+                  backgroundColor="#F4F6F8"
+                  padding="12"
+                  borderRadius="8"
+                  marginBottom="12"
+                >
+                  <!-- Left column -->
+                  <StackLayout col="0">
+                    <Label
+                      text="Ubicación:"
+                      fontSize="13"
+                      fontWeight="bold"
+                      color="#666"
+                      marginBottom="2"
+                    />
+                    <Label
+                      :text="item.location || 'No especificada'"
+                      fontSize="13"
+                      color="#333"
+                      textWrap="true"
+                      marginBottom="8"
+                    />
+                  </StackLayout>
+
+                  <!-- Right column -->
+                  <StackLayout col="1" marginLeft="8">
+                    <Label
+                      text="Posición:"
+                      fontSize="13"
+                      fontWeight="bold"
+                      color="#666"
+                      marginBottom="2"
+                    />
+                    <Label
+                      :text="item.position || 'No especificada'"
+                      fontSize="13"
+                      color="#333"
+                      textWrap="true"
+                    />
+                  </StackLayout>
+                </GridLayout>
+
+                <!-- Damage section -->
+                <StackLayout
+                  backgroundColor="#F4F6F8"
+                  padding="12"
+                  borderRadius="8"
+                >
+                  <Tag
+                    label="Tipos de Daño"
+                    :items="item.damage_id"
+                    labelIterator="name"
+                    labelColor="#333"
+                  />
+                </StackLayout>
+              </StackLayout>
             </GridLayout>
           </card-view>
         </v-template>
@@ -318,7 +378,7 @@ export default {
 
   watch: {
     listOfItems(newItems, oldItems) {
-      this.viewCollapse = false
+      this.viewCollapse = false;
       this.$emit("input", newItems);
     },
   },
@@ -326,16 +386,16 @@ export default {
   methods: {
     ...mapMutations(["setRecharge"]),
     initialMethods() {
-      if(this.containerReportEdit){
-        if(this.recharge){
-          this.listOfItems = this.containerReport.repairs
+      if (this.containerReportEdit) {
+        if (this.recharge) {
+          this.listOfItems = this.containerReport.repairs;
         }
       }
-      this.InfoSelect()
+      this.InfoSelect();
     },
 
-    clean(){
-      this.listOfItems = []
+    clean() {
+      this.listOfItems = [];
     },
     /* ****************************************************************** */
     validateField(fields) {
@@ -413,7 +473,7 @@ export default {
       if (confirmated) {
         try {
           this.listOfItems.splice(index, 1);
-          this.$closeBottomSheet()
+          this.$closeBottomSheet();
         } catch (error) {
           Alert.danger("eleminacion fallida ", error.message);
         }
@@ -521,7 +581,7 @@ export default {
       };
 
       try {
-        this.setRecharge(false)
+        this.setRecharge(false);
         const imageAsset = await camera.takePicture(options);
         let pathSplit = imageAsset._android.split("/");
         let photo = pathSplit[pathSplit.length - 1];
@@ -537,7 +597,7 @@ export default {
           new Toasty({ text: "Foto cancelada" }).show();
         }
       } finally {
-        this.setRecharge(true)
+        this.setRecharge(true);
       }
     },
 
@@ -572,7 +632,7 @@ export default {
 
     async selectFromGallery() {
       try {
-        this.setRecharge(false)
+        this.setRecharge(false);
         const context = imagepicker.create({ mode: "single" });
         await context.authorize(); // Solicita permisos
         const selection = await context.present();
@@ -602,7 +662,7 @@ export default {
         }
         Alert.danger("Error al seleccionar imagen: ", error.message);
       } finally {
-        this.setRecharge(true)
+        this.setRecharge(true);
       }
     },
 
@@ -703,5 +763,16 @@ export default {
   color: #e92222;
   width: 90%;
   text-align: left;
+}
+
+.options-button {
+  background: linear-gradient(135deg, #e8f0f3 0%, #f4f6f8 40%, #d8e2e8 100%);
+  color: #666;
+  transition: all 0.2s ease;
+}
+
+.options-button:active {
+  background: #c8d4da;
+  transform: scale(0.95);
 }
 </style>
