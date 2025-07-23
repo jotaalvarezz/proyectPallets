@@ -129,7 +129,7 @@
         for="item in array_filter"
         @itemTap="onItemTap"
       >
-                                <v-template>
+        <v-template>
           <card-view
             backgroundColor="white"
             margin="10 15 5 15"
@@ -139,7 +139,7 @@
             <GridLayout columns="*" padding="15">
               <StackLayout>
                 <!-- Header section with icon and main info -->
-                <GridLayout columns="90, *, 50" marginBottom="15">
+                <GridLayout columns="90, *, 70" marginBottom="15">
                   <!-- Icon -->
                   <StackLayout col="0" horizontalAlignment="left">
                     <Label
@@ -175,10 +175,10 @@
                   <!-- Options button -->
                   <ButtonNavigate
                     col="2"
-                    height="40"
-                    width="40"
+                    height="50"
+                    width="50"
                     icon="fa-ellipsis-v"
-                    radius="20"
+                    radius="50"
                     class="options-button"
                     :handleEvent="() => navigateOptions(item, index)"
                   />
@@ -202,7 +202,11 @@
                       marginBottom="2"
                     />
                     <Label
-                      :text="StoreTypeManagementId === 1 ? (item.journey || 'No especificado') : 'Alieva'"
+                      :text="
+                        StoreTypeManagementId === 1
+                          ? item.journey || 'No especificado'
+                          : 'Alieva'
+                      "
                       fontSize="13"
                       color="#333"
                       textWrap="true"
@@ -213,7 +217,9 @@
                   <!-- Right column -->
                   <StackLayout col="1" marginLeft="8">
                     <Label
-                      :text="StoreTypeManagementId === 1 ? 'Capitán:' : 'Conductor:'"
+                      :text="
+                        StoreTypeManagementId === 1 ? 'Capitán:' : 'Conductor:'
+                      "
                       fontSize="13"
                       fontWeight="bold"
                       color="#666"
@@ -263,7 +269,7 @@ const {
   deleteManagement,
   finishOperations,
   showTypesManagement,
-  updateManagement
+  updateManagement,
 } = require("~/sqlite/database");
 import ManagementEdit from "~/views/evidence/managementForm/ManagementEdit";
 import ButtomSheetDynamic from "~/components/buttomSheet/ButtomSheetDynamic.vue";
@@ -334,9 +340,9 @@ export default {
 
     async finish() {
       try {
-        if(this.type_management.status === 1){
-           new Toasty({ text: "La operacion ya esta finalizada" }).show();
-           return
+        if (this.type_management.status === 1) {
+          new Toasty({ text: "La operacion ya esta finalizada" }).show();
+          return;
         }
         let confirmated = await Alert.info(
           "Al finalizar la operacion no podra realizar mas cambios.",
@@ -351,7 +357,9 @@ export default {
           }
 
           this.type_management.status = res.data.status;
-          new Toasty({ text: "Operacion "+res.data.name+" Finalizada" }).show();
+          new Toasty({
+            text: "Operacion " + res.data.name + " Finalizada",
+          }).show();
           return;
         }
       } catch (error) {
@@ -490,16 +498,16 @@ export default {
           icon: "fa-eye",
           event: () => this.managmentInfo(item),
         },
-        {
-          name: "Firmar",
-          icon: "fa-signature",
-          event: () => this.signatureManagement(item),
-        },
       ];
 
       // Solo agregar opciones de editar y elim inar si la operación no está finalizada
       if (this.type_management.status === 0) {
         events.push(
+          {
+            name: "Firmar",
+            icon: "fa-signature",
+            event: () => this.signatureManagement(item),
+          },
           {
             name: "Actualizar",
             icon: "fa-redo",
@@ -531,23 +539,27 @@ export default {
     },
 
     managmentInfo(item) {
+      this.loadingCharge(true);
       let listRows = [];
       if (item.type_management_id === 1) {
         listRows = ManagmentShipList.listRowsShip;
       } else if (item.type_management_id === 2) {
         listRows = ManagmentShipList.listRowsPatio;
       }
-      this.$showModal(ListModal, {
-        animated: true,
-        stretched: false,
-        props: {
-          title: "Informacion del reporte",
-          info: item,
-          listRows: listRows,
-          showTags: "container_reports",
-          iteratorTags: "code",
-        },
-      });
+      setTimeout(() => {
+        this.$showModal(ListModal, {
+          animated: true,
+          stretched: false,
+          props: {
+            title: "Informacion del reporte",
+            info: item,
+            listRows: listRows,
+            showTags: "container_reports",
+            iteratorTags: "code",
+          },
+        });
+      }, 5);
+      this.loadingCharge();
     },
 
     managementEdit(item) {
@@ -578,7 +590,7 @@ export default {
     },
 
     signatureManagement(item) {
-      console.log("item ",item)
+      console.log("item ", item);
       this.model = item;
       this.$showModal(Signature, {
         animated: true,

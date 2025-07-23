@@ -171,7 +171,7 @@
             <GridLayout columns="*" padding="15">
               <StackLayout>
                 <!-- Header section with icon and main info -->
-                <GridLayout columns="60, *, 50" marginBottom="15">
+                <GridLayout columns="80, *, 60" marginBottom="15">
                   <!-- Icon -->
                   <StackLayout col="0" horizontalAlignment="left">
                     <Label
@@ -182,8 +182,8 @@
                       fontSize="24"
                       color="#EAB14D"
                       borderRadius="8"
-                      width="48"
-                      height="48"
+                      width="70"
+                      height="70"
                     />
                   </StackLayout>
 
@@ -209,10 +209,10 @@
                   <!-- Options button -->
                   <ButtonNavigate
                     col="2"
-                    height="40"
-                    width="40"
+                    height="50"
+                    width="50"
                     icon="fa-ellipsis-v"
-                    radius="20"
+                    radius="50"
                     class="options-button"
                     :handleEvent="() => handleButton(item, index)"
                   />

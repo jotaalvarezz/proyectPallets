@@ -40,6 +40,7 @@
 const { getTypesManagement } = require("~/sqlite/database");
 import Alert from "~/alerts/Alerts";
 import { mapMutations } from "vuex";
+import mixinMasters from "~/mixins/Master";
 
 export default {
   name: "Evidences",
@@ -50,27 +51,37 @@ export default {
     };
   },
 
+  mixins: [mixinMasters],
+
   methods: {
-    ...mapMutations("managementStore",["setType","setTypeMangement","cleanStoreTypeManagementId"]),
-    ...mapMutations("evidenceStore",["cleanManagementModel"]),
+    ...mapMutations("managementStore", [
+      "setType",
+      "setTypeMangement",
+      "cleanStoreTypeManagementId",
+    ]),
+    ...mapMutations("evidenceStore", ["cleanManagementModel"]),
 
     navigate(id) {
-      this.setTypeMangement(id)
-      switch (id) {
-        case 1:
-          this.setType(false)
-          this.$router.push("verification.details");
-          break;
-        case 2:
-          this.setType(true)
-          this.$router.push("container_report.index");
-          break;
-      }
+      this.setTypeMangement(id);
+      this.loadingCharge(true);
+      setTimeout(() => {
+        switch (id) {
+          case 1:
+            this.setType(false);
+            this.$router.push("verification.details");
+            break;
+          case 2:
+            this.setType(true);
+            this.$router.push("container_report.index");
+            break;
+        }
+      }, 0);
+      this.loadingCharge();
     },
 
     async typesManagement() {
-      this.cleanStoreTypeManagementId()
-      this.cleanManagementModel()
+      this.cleanStoreTypeManagementId();
+      this.cleanManagementModel();
       try {
         const res = await getTypesManagement();
         this.types_management = res.data;

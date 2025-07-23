@@ -60,13 +60,10 @@
             elevation="3"
             ripple="true"
           >
-            <GridLayout
-              columns="*"
-              padding="15"
-            >
+            <GridLayout columns="*" padding="15">
               <StackLayout>
                 <!-- Header section with icon and main info -->
-                <GridLayout columns="90, *, 50" marginBottom="15">
+                <GridLayout columns="90, *, 70" marginBottom="15">
                   <!-- Icon -->
                   <StackLayout col="0" horizontalAlignment="left">
                     <Label
@@ -108,10 +105,10 @@
                   <!-- Options button -->
                   <ButtonNavigate
                     col="2"
-                    height="40"
-                    width="40"
+                    height="50"
+                    width="50"
                     icon="fa-ellipsis-v"
-                    radius="20"
+                    radius="50"
                     class="options-button"
                     :handleEvent="() => navigateOptions(item, index)"
                   />
@@ -146,7 +143,7 @@
 
                     <Label
                       v-if="item.type_management_id === 1"
-                      text="Ubicación:"
+                      text="Viaje:"
                       fontSize="14"
                       fontWeight="bold"
                       color="#666"
@@ -154,7 +151,7 @@
                     />
                     <Label
                       v-if="item.type_management_id === 1"
-                      :text="item.journey || 'No especificada'"
+                      :text="item.journey || 'No especificado'"
                       fontSize="13"
                       color="#333"
                       textWrap="true"
@@ -279,7 +276,7 @@ const { getAllManagementsYard } = require("~/sqlite/queries/management");
 import mixinMasters from "~/mixins/Master";
 import Alert from "~/alerts/Alerts";
 import { mapState, mapMutations } from "vuex";
-import ButtomSheet from "~/components/buttomSheet/ButtomSheet.vue";
+import ButtomSheetDynamic from "~/components/buttomSheet/ButtomSheetDynamic.vue";
 import ListModal from "~/components/listModal/ListModal.vue";
 import containerReportListInfo from "~/views/evidence/containerReport/ContainerReportListInfo";
 import DamagedItems from "~/views/evidence/containerReport/damagedItems/DamagedItems.vue";
@@ -289,7 +286,7 @@ import { Toasty } from "@triniwiz/nativescript-toasty";
 export default {
   name: "containerReportList",
   components: {
-    ButtomSheet,
+    ButtomSheetDynamic,
   },
   data() {
     return {
@@ -339,11 +336,15 @@ export default {
     },
 
     openModal() {
-      if (this.type) {
-        this.$router.push("reportinyard.create");
-      } else {
-        this.$router.push("reportship.create");
-      }
+      this.loadingCharge(true);
+      setTimeout(() => {
+        if (this.type) {
+          this.$router.push("reportinyard.create");
+        } else {
+          this.$router.push("reportship.create");
+        }
+      }, 0);
+      this.loadingCharge();
     },
 
     openFormDamaged(item) {
@@ -363,23 +364,41 @@ export default {
 
     navigateOptions(item, index) {
       item.action = true;
+      const events = [
+        {
+          name: "Ver Detalles",
+          icon: "fa-eye",
+          event: () => this.containerReportInfo(item),
+        },
+      ];
+      if (this.type_management.status === 0) {
+        events.push(
+          {
+            name: "Actualizar",
+            icon: "fa-redo",
+            event: () => this.containerReportEdit(item),
+          },
+          {
+            name: "Eliminar",
+            icon: "fa-times",
+            event: () => this.deleteRow(item.id),
+          }
+        );
+      }
       const options = {
         dismissOnBackgroundTap: true,
         dismissOnDraggingDownSheet: false,
         transparent: true,
         props: {
           item: item,
-          generalOptions: this.type_management.status === 0 ? true : false,
-          infoRegister: () => this.containerReportInfo(item),
-          updateRegister: () => this.containerReportEdit(item),
-          deleteRow: () => this.deleteRow(item.id),
+          events: events,
+          generalOptions: false,
         },
-        // listeners to be connected to MyComponent
         on: {
           someEvent: (value) => {},
         },
       };
-      this.$showBottomSheet(ButtomSheet, options);
+      this.$showBottomSheet(ButtomSheetDynamic, options);
     },
 
     navigateBack() {
@@ -520,40 +539,49 @@ export default {
     containerReportEdit(item) {
       this.setContainerReport(item);
       this.setContainerReportEdit(true);
-      if (this.type) {
-        this.$router.push("reportinyard.create");
-      } else {
-        this.$router.push("reportship.create");
-      }
+      this.loadingCharge(true);
+      setTimeout(() => {
+        if (this.type) {
+          this.$router.push("reportinyard.create");
+        } else {
+          this.$router.push("reportship.create");
+        }
+      }, 3);
+      this.loadingCharge();
     },
 
     containerReportInfo(item) {
+      this.loadingCharge(true);
       let listRows = [];
       if (!this.type) {
         listRows = containerReportListInfo.listRowsVeesel;
       } else {
         listRows = containerReportListInfo.listRowsPatio;
       }
-      this.$showModal(ListModal, {
-        fullscreen: true,
-        animated: true,
-        props: {
-          title: "Informacion del reporte",
-          info: item,
-          listRows: listRows,
-          showTags: "additionalDamage",
-          iteratorTags: "name",
-          showMulTags: "repairs",
-          propsGeneralComponent: {
-            labelTag: "name",
-            itemsKey: "damage_id",
-            labelIterator: "name",
-            titleCollapse: "Visualizar Evidencia",
-            labelViewImage: "Foto",
-            viewImageKey: "photo",
+      setTimeout(() => {
+        this.$showModal(ListModal, {
+          fullscreen: true,
+          animated: true,
+          props: {
+            title: "Informacion del reporte",
+            info: item,
+            listRows: listRows,
+            showTags: "additionalDamage",
+            iteratorTags: "name",
+            showMulTags: "repairs",
+            propsGeneralComponent: {
+              labelTag: "name",
+              itemsKey: "damage_id",
+              labelIterator: "name",
+              titleCollapse: "Visualizar Evidencia",
+              labelViewImage: "Foto",
+              viewImageKey: "photo",
+            },
           },
-        },
-      });
+        });
+      }, 5);
+
+      this.loadingCharge();
     },
 
     refreshEvidences() {

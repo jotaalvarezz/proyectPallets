@@ -56,7 +56,7 @@ export default {
         type_management_id: null,
         name: "patio",
         journey: "",
-        titular_name: "jesus alvarez",
+        titular_name: "",
         signature: "",
       },
       reportModel: {},
@@ -66,6 +66,7 @@ export default {
         prefix: false,
         code: false,
         role: false,
+        titular_name: false,
         type_id: false,
       },
     };
@@ -99,6 +100,7 @@ export default {
       this.errors.prefix = this.reportModel.prefix === null ? true : false;
       this.errors.code = !this.reportModel.code.trim();
       this.errors.role = !this.reportModel.role.trim();
+      this.errors.titular_name = !this.reportModel.titular_name.trim();
       this.errors.type_id = this.reportModel.type_id === null ? true : false;
       let fullfield = "";
       for (const key in this.errors) {

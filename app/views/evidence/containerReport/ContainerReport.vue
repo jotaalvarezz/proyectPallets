@@ -16,19 +16,19 @@
       <GridLayout
         ref="form2"
         class="shadow"
-        rows="auto,auto,auto,auto,auto,auto,60,auto,auto,auto"
+        rows="auto,auto,auto,auto,auto,60,auto,auto,auto"
         padding="30"
       >
-        <Label
-          class="text-center"
-          text="INFORME DE DAÑOS DEL CONTENEDOR"
-          fontSize="18"
-          color="#3c495e"
-          fontWeight="bold"
-        ></Label>
-        <Stripe row="1" margin="20" />
+        <FormGroupTextField
+          v-if="type === true"
+          row="0"
+          label="TITULAR:"
+          placeholder="Nombre del encargado..."
+          v-model="model.titular_name"
+          :required="errors.titular_name"
+        />
         <FilterSelectField
-          row="2"
+          row="1"
           :value="model.prefix"
           :items="prefixes"
           label="PREFIJO:"
@@ -38,7 +38,7 @@
           :required="errors.prefix"
         />
         <FormGroupTextField
-          row="3"
+          row="2"
           label="CONTENEDOR:"
           placeholder="Codigo..."
           typeInput="number"
@@ -46,7 +46,7 @@
           :required="errors.code"
         />
         <SelectField
-          row="4"
+          row="3"
           :value="model.type_id"
           :items="types"
           label="TIPO:"
@@ -55,7 +55,7 @@
           :required="errors.type_id"
         />
         <FormGroupTextField
-          row="5"
+          row="4"
           label="TECNICO:"
           placeholder="Nombre..."
           v-model="model.role"
@@ -63,7 +63,7 @@
         />
         <!-- tabla de descripcion de daños y elementos -->
         <Label
-          row="6"
+          row="5"
           textWrap="true"
           marginTop="5"
           style="
@@ -82,7 +82,7 @@
           </FormattedString>
         </Label>
         <SelectField
-          row="7"
+          row="6"
           :value="model.additional_damage_id"
           :items="additionalDamage"
           label="DAÑO ADICIONAL:"
@@ -91,7 +91,7 @@
           @value="model.additional_damage_id = $event"
         />
         <FormGroupTextField
-          row="8"
+          row="7"
           label="OBSERVACION:"
           textArea="true"
           placeholder="Observaciones..."
@@ -145,6 +145,7 @@ export default {
         code: "",
         type_id: null,
         role: "",
+        titular_name: "",
         repairs: [],
         additional_damage_id: [],
         observation: "",
@@ -231,6 +232,9 @@ export default {
             this.model.prefix = this.containerReport.prefixId;
           }, 1000);
           this.model.role = this.containerReport.role;
+          this.model.titular_name = this.containerReport.titular_name
+          ? this.containerReport.titular_name
+          : "";
           this.model.additional_damage_id = additional_damage_id;
           this.model.observation = this.containerReport.observation;
         }

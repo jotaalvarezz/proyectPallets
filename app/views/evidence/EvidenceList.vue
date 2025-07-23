@@ -58,7 +58,7 @@
             <GridLayout columns="*" padding="15">
               <StackLayout>
                 <!-- Header section with icon and main info -->
-                <GridLayout columns="100, *, 50" marginBottom="15">
+                <GridLayout columns="100, *, 70" marginBottom="15">
                   <!-- Icon -->
                   <StackLayout col="0" horizontalAlignment="center">
                     <Label
@@ -98,10 +98,10 @@
                   <!-- Options button -->
                   <ButtonNavigate
                     col="2"
-                    height="40"
-                    width="40"
+                    height="50"
+                    width="50"
                     icon="fa-eye"
-                    radius="20"
+                    radius="50"
                     class="options-button"
                     :handleEvent="() => navigateOptions(item, index)"
                   />
@@ -128,6 +128,23 @@
                     />
                     <Label
                       :text="item.vessel || 'No especificado'"
+                      fontSize="13"
+                      color="#333"
+                      textWrap="true"
+                      marginBottom="8"
+                    />
+
+                    <Label
+                      v-if="item.type_management_id === 1"
+                      text="Viaje:"
+                      fontSize="14"
+                      fontWeight="bold"
+                      color="#666"
+                      marginBottom="2"
+                    />
+                    <Label
+                      v-if="item.type_management_id === 1"
+                      :text="item.journey || 'No especificado'"
                       fontSize="13"
                       color="#333"
                       textWrap="true"
@@ -266,9 +283,11 @@ export default {
       //this.$refs.searchBar.nativeView.dismissSoftInput();
       this.setContainerReport({});
       this.setContainerReportEdit(false);
+      this.loadingCharge(true);
       setTimeout(() => {
         this.getEvidenceReports();
-      }, 300);
+      }, 0);
+      this.loadingCharge();
     },
 
     refreshEvidenceRports() {
@@ -322,32 +341,36 @@ export default {
     },
 
     evidenceReportsInfo(item) {
+      this.loadingCharge(true);
       let listRows = [];
       if (item.type_management_id === 1) {
         listRows = EvidenceListInfo.listRowsVeesel;
       } else if (item.type_management_id === 2) {
         listRows = EvidenceListInfo.listRowsPatio;
       }
-      this.$showModal(ListModal, {
-        fullscreen: true,
-        animated: true,
-        props: {
-          title: "Informacion del reporte",
-          info: item,
-          listRows: listRows,
-          showTags: "additionalDamage",
-          iteratorTags: "name",
-          showMulTags: "repairs",
-          propsGeneralComponent: {
-            labelTag: "name",
-            itemsKey: "repair_damage",
-            labelIterator: "name",
-            titleCollapse: "Visualizar Evidencia",
-            labelViewImage: "Foto",
-            viewImageKey: "photo",
+      setTimeout(() => {
+        this.$showModal(ListModal, {
+          fullscreen: true,
+          animated: true,
+          props: {
+            title: "Informacion del reporte",
+            info: item,
+            listRows: listRows,
+            showTags: "additionalDamage",
+            iteratorTags: "name",
+            showMulTags: "repairs",
+            propsGeneralComponent: {
+              labelTag: "name",
+              itemsKey: "repair_damage",
+              labelIterator: "name",
+              titleCollapse: "Visualizar Evidencia",
+              labelViewImage: "Foto",
+              viewImageKey: "photo",
+            },
           },
-        },
-      });
+        });
+      }, 5);
+      this.loadingCharge();
     },
 
     evidenceReportsEdit(item) {
