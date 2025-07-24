@@ -1,5 +1,6 @@
 <template>
   <ViewFlipper
+    title="Reporte de Contenedor en Patio"
     ref="flipper"
     v-model="position"
     :steps="3"

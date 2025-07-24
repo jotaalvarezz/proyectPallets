@@ -1,7 +1,7 @@
 <template>
   <page @loaded="initialFunction" actionBarHidden="false">
     <ActionBar backgroundColor="#00acc1" padding="0">
-      <HeaderComponent title="Reportes/Evidencias" :handleback="navigateBack" />
+      <HeaderComponent :title="'Reportes/Evidencias en '+nameManagement" :handleback="navigateBack" />
     </ActionBar>
     <GridLayout rows="auto,*" backgroundColor="#F4F6F8">
       <GridLayout margin="5" row="0" rows="auto" columns="*, 70">
@@ -304,6 +304,10 @@ export default {
   computed: {
     ...mapState("evidenceStore", ["managementModel", "containerReport"]),
     ...mapState("managementStore", ["close", "type", "StoreTypeManagementId"]),
+    nameManagement() {
+      const name = this.type ? "Patio" : "Barco";
+      return name;
+    }
   },
 
   methods: {

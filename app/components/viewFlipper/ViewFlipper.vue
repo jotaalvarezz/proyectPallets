@@ -14,8 +14,8 @@
         />
         <Label
         col="1"
-          text="INFORME DE DAÑOS DEL CONTENEDOR"
-          fontSize="18"
+          :text="title"
+          fontSize="20"
           color="#F4F6F8"
           fontWeight="bold"
         />
@@ -94,6 +94,10 @@ export default {
     operation:{
       type:Function,
       default: () => ""
+    },
+    title: {
+      type: String,
+      default: "",
     }
   },
   computed: {

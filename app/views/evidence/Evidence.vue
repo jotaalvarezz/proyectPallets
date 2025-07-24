@@ -1,6 +1,8 @@
 <template>
   <page @loaded="typesManagement">
-    <Header :search="false" />
+    <ActionBar backgroundColor="#00acc1" padding="0">
+      <HeaderComponent title="Reportes/Evidencias" :handleback="openDrawer" />
+    </ActionBar>
     <GridLayout rows="*, *" backgroundColor="#F4F6F8" padding="30">
       <card-view
         v-for="(item, index) in types_management"
@@ -41,6 +43,7 @@ const { getTypesManagement } = require("~/sqlite/database");
 import Alert from "~/alerts/Alerts";
 import { mapMutations } from "vuex";
 import mixinMasters from "~/mixins/Master";
+import * as util from "~/shared/util";
 
 export default {
   name: "Evidences",
@@ -60,6 +63,10 @@ export default {
       "cleanStoreTypeManagementId",
     ]),
     ...mapMutations("evidenceStore", ["cleanManagementModel"]),
+
+    openDrawer() {
+      util.showDrawer();
+    },
 
     navigate(id) {
       this.setTypeMangement(id);

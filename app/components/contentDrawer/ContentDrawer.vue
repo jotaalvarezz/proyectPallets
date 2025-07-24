@@ -211,11 +211,11 @@ export default {
           Alert.success("Actualizacion de DB");
         }
       } catch (error) {
+        this.islogout();
+        this.$router.pushClear("login.index");
         Alert.danger("Ocurrio un error al actualizar la DB", error);
       } finally {
         this.cleanImages();
-        this.islogout();
-        this.$router.pushClear("login.index");
         this.loadingCharge();
       }
     },

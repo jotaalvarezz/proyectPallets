@@ -1,6 +1,8 @@
 <template>
   <page @loaded="index">
-    <Header :search="false" />
+    <ActionBar backgroundColor="#00acc1" padding="0">
+      <HeaderComponent title="Sincronizar Reportes/Evidencias" :handleback="openDrawer" />
+    </ActionBar>
     <GridLayout rows="auto,*" backgroundColor="#F4F6F8">
       <GridLayout margin="5" row="0" rows="*" columns="*, 70">
         <SearchBar
@@ -254,6 +256,7 @@ import EvidenceListInfo from "./EvidenceListInfo";
 import Alert from "~/alerts/Alerts";
 import axios from "axios";
 import { onSearchBarLoaded } from "~/shared/helpers";
+import * as util from "~/shared/util";
 
 export default {
   name: "EvidenceList",
@@ -304,6 +307,10 @@ export default {
       } else if (this.search.length === 0) {
         this.array_filter = this.evidenceReports;
       }
+    },
+
+    openDrawer() {
+      util.showDrawer();
     },
 
     navigateOptions(item, index) {

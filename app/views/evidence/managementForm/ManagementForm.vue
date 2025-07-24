@@ -1,6 +1,8 @@
 <template>
   <page @loaded="index">
-    <Header :search="false" />
+    <ActionBar backgroundColor="#00acc1" padding="0">
+      <HeaderComponent title="Gestion en Barco" :handleback="openDrawer" />
+    </ActionBar>
     <GridLayout rows="auto, auto, *" backgroundColor="#FFFFFF">
       <Collapse
         ref="Collapse"
@@ -338,6 +340,10 @@ export default {
       this.getManagements(this.model.type_management_id);
     },
 
+    openDrawer() {
+      util.showDrawer();
+    },
+
     async finish() {
       try {
         if (this.type_management.status === 1) {
@@ -551,7 +557,7 @@ export default {
           animated: true,
           stretched: false,
           props: {
-            title: "Informacion del reporte",
+            title: "Informacion de la gestion",
             info: item,
             listRows: listRows,
             showTags: "container_reports",
@@ -590,7 +596,6 @@ export default {
     },
 
     signatureManagement(item) {
-      console.log("item ", item);
       this.model = item;
       this.$showModal(Signature, {
         animated: true,
