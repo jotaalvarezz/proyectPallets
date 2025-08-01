@@ -1,6 +1,8 @@
 <template>
   <page @loaded="typesManagement">
-    <Header :search="false" />
+    <ActionBar backgroundColor="#00acc1" padding="0">
+      <HeaderComponent title="Reportes/Evidencias" :handleback="openDrawer" />
+    </ActionBar>
     <GridLayout rows="*, *" backgroundColor="#F4F6F8" padding="30">
       <card-view
         v-for="(item, index) in types_management"
@@ -40,6 +42,8 @@
 const { getTypesManagement } = require("~/sqlite/database");
 import Alert from "~/alerts/Alerts";
 import { mapMutations } from "vuex";
+import mixinMasters from "~/mixins/Master";
+import * as util from "~/shared/util";
 
 export default {
   name: "Evidences",
@@ -50,27 +54,41 @@ export default {
     };
   },
 
+  mixins: [mixinMasters],
+
   methods: {
-    ...mapMutations("managementStore",["setType","setTypeMangement","cleanStoreTypeManagementId"]),
-    ...mapMutations("evidenceStore",["cleanManagementModel"]),
+    ...mapMutations("managementStore", [
+      "setType",
+      "setTypeMangement",
+      "cleanStoreTypeManagementId",
+    ]),
+    ...mapMutations("evidenceStore", ["cleanManagementModel"]),
+
+    openDrawer() {
+      util.showDrawer();
+    },
 
     navigate(id) {
-      this.setTypeMangement(id)
-      switch (id) {
-        case 1:
-          this.setType(false)
-          this.$router.push("verification.details");
-          break;
-        case 2:
-          this.setType(true)
-          this.$router.push("container_report.index");
-          break;
-      }
+      this.setTypeMangement(id);
+      this.loadingCharge(true);
+      setTimeout(() => {
+        switch (id) {
+          case 1:
+            this.setType(false);
+            this.$router.push("verification.details");
+            break;
+          case 2:
+            this.setType(true);
+            this.$router.push("container_report.index");
+            break;
+        }
+      }, 0);
+      this.loadingCharge();
     },
 
     async typesManagement() {
-      this.cleanStoreTypeManagementId()
-      this.cleanManagementModel()
+      this.cleanStoreTypeManagementId();
+      this.cleanManagementModel();
       try {
         const res = await getTypesManagement();
         this.types_management = res.data;

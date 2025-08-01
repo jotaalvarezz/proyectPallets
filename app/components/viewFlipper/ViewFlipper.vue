@@ -1,7 +1,7 @@
 <template>
   <Page @loaded="initialPosition">
     <ActionBar backgroundColor="#00acc1" flat="true">
-      <GridLayout rows="*" columns="60, 3*, 60" height="65">
+      <GridLayout rows="*" columns="60, *" height="65">
         <ButtonNavigate
           col="0"
           height="60"
@@ -12,32 +12,12 @@
           radius="50"
           :handleEvent="() => openDrawer()"
         />
-        <StackLayout col="1" padding="10" style="width: 100%">
-          <Image
-            src="~/assets/images/logobarco.png"
-            width="30"
-            height="30"
-            horizontalAlignment="center"
-          />
-          <Label
-            text="WSP"
-            fontSize="12"
-            padding="0"
-            color="#F4F6F8"
-            fontWeight="bold"
-            horizontalAlignment="center"
-          />
-        </StackLayout>
-        <ButtonNavigate
-          v-show="search"
-          col="2"
-          height="60"
-          width="60"
-          icon="fa-search"
-          size="20"
-          iconColor="#F4F6F8"
-          radius="50"
-          :handleEvent="() => modalSearch()"
+        <Label
+        col="1"
+          :text="title"
+          fontSize="20"
+          color="#F4F6F8"
+          fontWeight="bold"
         />
       </GridLayout>
       <ActionItem
@@ -114,6 +94,10 @@ export default {
     operation:{
       type:Function,
       default: () => ""
+    },
+    title: {
+      type: String,
+      default: "",
     }
   },
   computed: {

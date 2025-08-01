@@ -64,9 +64,10 @@ export default {
           // El usuario ha tocado la pantalla
           this.isAnimating = true;
           hoverLabel.animate({
-            backgroundColor: "lightgray", // Cambiar el color de fondo
+            backgroundColor: "#c8d4da", // Color más oscuro que complementa el degradado
             rotate: this.rotate,
-            duration: 300,
+            scale: { x: 0.95, y: 0.95 }, // Ligera reducción de escala para efecto de presión
+            duration: 150,
           });
           break;
         case "up":
@@ -76,9 +77,10 @@ export default {
             hoverLabel.animate({
               backgroundColor: this.iconBackground, // Revertir al color original
               rotate: 0,
-              duration: 300,
+              scale: { x: 1, y: 1 }, // Restaurar escala original
+              duration: 200,
             });
-          }, 300); // Retrasar hasta que la animación down termine
+          }, 100); // Reducir el delay para una transición más fluida
           break;
       }
     },

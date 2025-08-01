@@ -22,7 +22,7 @@
           col="1"
           class="text-center text-decoration"
           :text="title"
-          fontSize="15"
+          fontSize="20"
           color="#F4F6F8"
           fontWeight="bold"
         ></Label>

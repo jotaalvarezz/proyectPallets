@@ -8,10 +8,11 @@
     <ButtonNavigate
       height="60"
       width="60"
-      icon="fa-chevron-left"
+      icon="fa-bars"
+      size="20"
       iconColor="#F4F6F8"
       radius="50"
-      :handleEvent="() => back()"
+      :handleEvent="() => openDrawer()"
     />
     <Label
       row="0"
@@ -26,6 +27,8 @@
 </template>
 
 <script>
+import * as util from "~/shared/util";
+
 export default {
   name: "HeaderComponent",
   props: {
@@ -41,13 +44,17 @@ export default {
 
     textSize: {
       type: Number,
-      default: 15,
+      default: 20,
     },
   },
 
   methods: {
     back() {
       this.handleback();
+    },
+
+    openDrawer() {
+      util.showDrawer();
     },
   },
 

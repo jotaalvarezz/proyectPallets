@@ -1,8 +1,8 @@
 <template>
   <StackLayout style="padding: 0px">
-    <Label textWrap="true">
+    <Label textWrap="true" v-if="label">
       <FormattedString>
-        <Span :text="label + ': '" fontWeight="bold" fontSize="14" />
+        <Span :text="label + ': '" fontWeight="bold" fontSize="14" :color="labelColor" />
       </FormattedString>
     </Label>
     <Label
@@ -40,11 +40,15 @@ export default {
     },
     label: {
       type: String,
-      default: "sin label",
+      default: null,
     },
     labelIterator: {
       type: String,
       default: "name",
+    },
+    labelColor: {
+      type: String,
+      default: "#666",
     },
   },
 };
@@ -52,15 +56,18 @@ export default {
 
 <style scoped>
 .tag {
-  height: 26rem;
-  margin: 6px 12px 6px 0px;
-  border-radius: 5px;
-  border-width: 2px;
-  padding-left: 5px;
-  padding-right: 5px;
-  font-weight: bold;
-  /* background-color: rgba(0, 172, 193, 0.19); */
-  border-color: #00acc1;
-  color: #00acc1;
+  height: auto;
+  min-height: 28rem;
+  margin: 4px 8px 4px 0px;
+  border-radius: 12px;
+  border-width: 0px;
+  padding: 6px 12px;
+  font-weight: 500;
+  font-size: 12;
+  background-color: #00acc1;
+  color: white;
+  box-shadow: 0 2px 4px rgba(0, 172, 193, 0.2);
+  text-align: center;
+  vertical-align: center;
 }
 </style>
