@@ -208,14 +208,17 @@ export default {
             Alert.danger("Fallo la conexion con el servidor ", res.message);
             return;
           }
+          this.islogout();
+          this.cleanImages();
+          this.$router.pushClear("login.index");
           Alert.success("Actualizacion de DB");
         }
       } catch (error) {
         this.islogout();
+        this.cleanImages();
         this.$router.pushClear("login.index");
         Alert.danger("Ocurrio un error al actualizar la DB", error);
       } finally {
-        this.cleanImages();
         this.loadingCharge();
       }
     },
