@@ -1,6 +1,7 @@
 <template>
   <ViewFlipper
     ref="flipper"
+    title="Reporte de Contenedor en Barco"
     v-model="position"
     :steps="2"
     :operation="containerReportEdit == false ? saveReport : updateReport"

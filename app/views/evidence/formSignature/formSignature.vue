@@ -1,5 +1,5 @@
 <template>
-  <StackLayout @loaded="index" backgroundColor="#FFFFFF">
+  <GridLayout rows="*" @loaded="index" backgroundColor="#FFFFFF">
     <!-- GridLayout
       ref="form"
       class="form-container"
@@ -85,7 +85,7 @@
       </GridLayout>
     </ScrollView>
     <!--   </GridLayout> -->
-  </StackLayout>
+  </GridLayout>
 </template>
 
 <script>

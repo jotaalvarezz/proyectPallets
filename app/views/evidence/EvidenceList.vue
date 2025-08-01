@@ -1,6 +1,8 @@
 <template>
   <page @loaded="index">
-    <Header :search="false" />
+    <ActionBar backgroundColor="#00acc1" padding="0">
+      <HeaderComponent title="Sincronizar Reportes/Evidencias" :handleback="openDrawer" />
+    </ActionBar>
     <GridLayout rows="auto,*" backgroundColor="#F4F6F8">
       <GridLayout margin="5" row="0" rows="*" columns="*, 70">
         <SearchBar
@@ -45,111 +47,193 @@
         v-if="array_filter.length > 0"
         row="1"
         ref="listView"
+        separatorColor="transparent"
         for="item in array_filter"
       >
         <v-template>
-          <!-- Shows the list item label in the default color and style. -->
-          <GridLayout columns="*, 50">
-            <StackLayout>
-              <Label
-                backgroundColor="#D8E2E8"
-                :text="'fa-tools' | fonticon"
-                class="fas text-center"
-                padding="20"
-                fontSize="45"
-                color="#EAB14D"
-              />
-              <StackLayout orientation="horizontal" col="0">
-                <StackLayout class="heigth" width="75%">
-                  <Label
-                    text="Reporte:"
-                    class="subTittle"
-                    textWrap="true"
-                    width="auto"
-                    fontSize="18"
-                  />
-                  <Label textWrap="true">
-                    <!-- Barco -->
-                    <FormattedString>
-                      <Span
-                        text="Contenedor: "
-                        fontWeight="bold"
-                        fontSize="15"
-                      />
-                      <Span
-                        :text="item.prefix + item.code + '\n'"
-                        fontSize="15"
-                      />
-                      <Span text="Tipo: " fontWeight="bold" fontSize="15" />
-                      <Span :text="item.nameType + '\n'" fontSize="15" />
-                      <Span
-                        :text="
-                          item.type_management_id === 1
-                            ? 'Buque: '
-                            : 'Nombre de Gestion: '
-                        "
-                        fontWeight="bold"
-                        fontSize="15"
-                      />
-                      <Span :text="item.vessel + '\n'" fontSize="15" />
-                      <Span
-                        v-if="item.type_management_id === 2"
-                        text="Patio: "
-                        fontWeight="bold"
-                        fontSize="15"
-                      />
-                      <Span
-                        v-if="item.type_management_id === 2"
-                        :text="'Alieva' + '\n'"
-                        fontSize="15"
-                      />
-                      <Span
-                        :text="
-                          item.type_management_id === 1
-                            ? 'Capitan: '
-                            : 'Titular: '
-                        "
-                        fontWeight="bold"
-                        fontSize="15"
-                      />
-                      <Span :text="item.titular_name + '\n'" fontSize="15" />
-                      <Span text="Tecnico: " fontWeight="bold" fontSize="15" />
-                      <Span :text="item.role + '\n'" fontSize="15" />
-                      <Span
-                        :text="'Elementos:' + '\t\t\t\t\t'"
-                        fontWeight="bold"
-                        fontSize="15"
-                      />
-                    </FormattedString>
-                  </Label>
-                  <GridLayout
-                    columns="*"
-                    backgroundColor="#D8E2E8"
-                    v-for="(repair, index) in item.repairs"
-                    :key="index"
-                    style="padding: 0px 5px 5px 8px; margin-bottom: 3dp"
-                    borderRadius="5"
-                  >
-                    <Tag
-                      col="0"
-                      width="80%"
-                      :label="repair.name"
-                      :items="repair.damage_id"
-                      labelIterator="name"
+          <card-view
+            backgroundColor="white"
+            margin="10 15 5 15"
+            radius="24"
+            elevation="3"
+          >
+            <GridLayout columns="*" padding="15">
+              <StackLayout>
+                <!-- Header section with icon and main info -->
+                <GridLayout columns="100, *, 70" marginBottom="15">
+                  <!-- Icon -->
+                  <StackLayout col="0" horizontalAlignment="center">
+                    <Label
+                      backgroundColor="#D8E2E8"
+                      :text="'fa-tools' | fonticon"
+                      class="fas text-center"
+                      padding="15"
+                      fontSize="45"
+                      color="#EAB14D"
+                      borderRadius="8"
                     />
-                  </GridLayout>
+                  </StackLayout>
+
+                  <!-- Main container info -->
+                  <StackLayout col="1" marginLeft="12">
+                    <Label
+                      text="Reporte de Contenedor"
+                      fontSize="13"
+                      fontWeight="bold"
+                      color="#333"
+                      marginBottom="4"
+                    />
+                    <Label
+                      :text="(item.prefix || '') + (item.code || 'Sin código')"
+                      fontSize="13"
+                      fontWeight="bold"
+                      color="#00acc1"
+                      marginBottom="2"
+                    />
+                    <Label
+                      :text="'Tipo: ' + (item.nameType || 'No especificado')"
+                      fontSize="13"
+                      color="#666"
+                    />
+                  </StackLayout>
+
+                  <!-- Options button -->
+                  <ButtonNavigate
+                    col="2"
+                    height="50"
+                    width="50"
+                    icon="fa-eye"
+                    radius="50"
+                    class="options-button"
+                    :handleEvent="() => navigateOptions(item, index)"
+                  />
+                </GridLayout>
+
+                <!-- Details section -->
+                <GridLayout
+                  columns="*, *"
+                  backgroundColor="#F4F6F8"
+                  padding="12"
+                  borderRadius="8"
+                  marginBottom="12"
+                >
+                  <!-- Left column -->
+                  <StackLayout col="0">
+                    <Label
+                      :text="
+                        item.type_management_id === 1 ? 'Buque:' : 'Gestión:'
+                      "
+                      fontSize="14"
+                      fontWeight="bold"
+                      color="#666"
+                      marginBottom="2"
+                    />
+                    <Label
+                      :text="item.vessel || 'No especificado'"
+                      fontSize="13"
+                      color="#333"
+                      textWrap="true"
+                      marginBottom="8"
+                    />
+
+                    <Label
+                      v-if="item.type_management_id === 1"
+                      text="Viaje:"
+                      fontSize="14"
+                      fontWeight="bold"
+                      color="#666"
+                      marginBottom="2"
+                    />
+                    <Label
+                      v-if="item.type_management_id === 1"
+                      :text="item.journey || 'No especificado'"
+                      fontSize="13"
+                      color="#333"
+                      textWrap="true"
+                      marginBottom="8"
+                    />
+
+                    <Label
+                      v-if="item.type_management_id === 2"
+                      text="Patio:"
+                      fontSize="14"
+                      fontWeight="bold"
+                      color="#666"
+                      marginBottom="2"
+                    />
+                    <Label
+                      v-if="item.type_management_id === 2"
+                      text="Alieva"
+                      fontSize="13"
+                      color="#333"
+                      marginBottom="8"
+                    />
+                  </StackLayout>
+
+                  <!-- Right column -->
+                  <StackLayout col="1" marginLeft="8">
+                    <Label
+                      :text="
+                        item.type_management_id === 1 ? 'Capitán:' : 'Titular:'
+                      "
+                      fontSize="14"
+                      fontWeight="bold"
+                      color="#666"
+                      marginBottom="2"
+                    />
+                    <Label
+                      :text="item.titular_name || 'No especificado'"
+                      fontSize="13"
+                      color="#333"
+                      textWrap="true"
+                      marginBottom="8"
+                    />
+
+                    <Label
+                      text="Técnico:"
+                      fontSize="14"
+                      fontWeight="bold"
+                      color="#666"
+                      marginBottom="2"
+                    />
+                    <Label
+                      :text="item.role || 'No asignado'"
+                      fontSize="13"
+                      color="#333"
+                      textWrap="true"
+                    />
+                  </StackLayout>
+                </GridLayout>
+
+                <!-- Elements section -->
+                <StackLayout
+                  v-if="item.repairs && item.repairs.length > 0"
+                  backgroundColor="#F4F6F8"
+                  padding="12"
+                  borderRadius="8"
+                >
+                  <Tag
+                    label="Elementos Dañados"
+                    :items="item.repairs"
+                    labelIterator="name"
+                    labelColor="#333"
+                  />
+                </StackLayout>
+
+                <!-- No elements message -->
+                <StackLayout v-else>
+                  <Label
+                    text="Sin elementos dañados registrados"
+                    fontSize="13"
+                    color="#999"
+                    fontStyle="italic"
+                    textAlignment="center"
+                    padding="8"
+                  />
                 </StackLayout>
               </StackLayout>
-            </StackLayout>
-            <ButtonNavigate
-              col="1"
-              height="50"
-              width="50"
-              icon="fa-eye"
-              radius="50"
-              :handleEvent="() => navigateOptions(item, index)"
-            />
-          </GridLayout>
+            </GridLayout>
+          </card-view>
         </v-template>
       </ListView>
       <FloatingButton row="2" :icon="'fa-cloud-upload-alt'" :method="sendAll" />
@@ -172,6 +256,7 @@ import EvidenceListInfo from "./EvidenceListInfo";
 import Alert from "~/alerts/Alerts";
 import axios from "axios";
 import { onSearchBarLoaded } from "~/shared/helpers";
+import * as util from "~/shared/util";
 
 export default {
   name: "EvidenceList",
@@ -201,9 +286,11 @@ export default {
       //this.$refs.searchBar.nativeView.dismissSoftInput();
       this.setContainerReport({});
       this.setContainerReportEdit(false);
+      this.loadingCharge(true);
       setTimeout(() => {
         this.getEvidenceReports();
-      }, 300);
+      }, 0);
+      this.loadingCharge();
     },
 
     refreshEvidenceRports() {
@@ -220,6 +307,10 @@ export default {
       } else if (this.search.length === 0) {
         this.array_filter = this.evidenceReports;
       }
+    },
+
+    openDrawer() {
+      util.showDrawer();
     },
 
     navigateOptions(item, index) {
@@ -257,32 +348,36 @@ export default {
     },
 
     evidenceReportsInfo(item) {
+      this.loadingCharge(true);
       let listRows = [];
       if (item.type_management_id === 1) {
         listRows = EvidenceListInfo.listRowsVeesel;
       } else if (item.type_management_id === 2) {
         listRows = EvidenceListInfo.listRowsPatio;
       }
-      this.$showModal(ListModal, {
-        fullscreen: true,
-        animated: true,
-        props: {
-          title: "Informacion del reporte",
-          info: item,
-          listRows: listRows,
-          showTags: "additionalDamage",
-          iteratorTags: "name",
-          showMulTags: "repairs",
-          propsGeneralComponent: {
-            labelTag: "name",
-            itemsKey: "repair_damage",
-            labelIterator: "name",
-            titleCollapse: "Visualizar Evidencia",
-            labelViewImage: "Foto",
-            viewImageKey: "photo",
+      setTimeout(() => {
+        this.$showModal(ListModal, {
+          fullscreen: true,
+          animated: true,
+          props: {
+            title: "Informacion del reporte",
+            info: item,
+            listRows: listRows,
+            showTags: "additionalDamage",
+            iteratorTags: "name",
+            showMulTags: "repairs",
+            propsGeneralComponent: {
+              labelTag: "name",
+              itemsKey: "repair_damage",
+              labelIterator: "name",
+              titleCollapse: "Visualizar Evidencia",
+              labelViewImage: "Foto",
+              viewImageKey: "photo",
+            },
           },
-        },
-      });
+        });
+      }, 5);
+      this.loadingCharge();
     },
 
     evidenceReportsEdit(item) {
@@ -372,5 +467,16 @@ export default {
 
 .search-bar {
   font-size: 15; /* Cambia el tamaño del texto aquí */
+}
+
+.options-button {
+  background: linear-gradient(135deg, #e8f0f3 0%, #f4f6f8 40%, #d8e2e8 100%);
+  color: #666;
+  transition: all 0.2s ease;
+}
+
+.options-button:active {
+  background: #c8d4da;
+  transform: scale(0.95);
 }
 </style>

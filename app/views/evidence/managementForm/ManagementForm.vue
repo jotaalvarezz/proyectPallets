@@ -1,6 +1,8 @@
 <template>
   <page @loaded="index">
-    <Header :search="false" />
+    <ActionBar backgroundColor="#00acc1" padding="0">
+      <HeaderComponent title="Gestion en Barco" :handleback="openDrawer" />
+    </ActionBar>
     <GridLayout rows="auto, auto, *" backgroundColor="#FFFFFF">
       <Collapse
         ref="Collapse"
@@ -125,85 +127,131 @@
         v-if="array_filter.length > 0"
         row="2"
         ref="listView"
+        separatorColor="transparent"
         for="item in array_filter"
         @itemTap="onItemTap"
       >
         <v-template>
-          <!-- Shows the list item label in the default color and style. -->
-          <GridLayout columns="*, 50">
-            <StackLayout orientation="horizontal" col="0">
-              <Label
-                backgroundColor="#D8E2E8"
-                :text="'fa-file-alt' | fonticon"
-                class="nt-drawer__header-image fas"
-                fontSize="45"
-                color="#EAB14D"
-              />
-              <StackLayout class="heigth" width="75%">
-                <Label
-                  text="Gestion de reporte:"
-                  class="subTittle"
-                  textWrap="true"
-                  width="auto"
-                  fontSize="15"
-                />
-                <Label textWrap="true">
-                  <!-- en barco -->
-                  <FormattedString v-if="StoreTypeManagementId === 1">
-                    <Span text="Barco: " fontWeight="bold" fontSize="15" />
-                    <Span :text="item.name + '\n'" fontSize="15" />
-                    <Span text="Viaje: " fontWeight="bold" fontSize="15" />
-                    <Span :text="item.journey + '\n'" fontSize="15" />
-                    <Span
-                      text="Nombre del Capitan: "
-                      fontWeight="bold"
-                      fontSize="15"
+          <card-view
+            backgroundColor="white"
+            margin="10 15 5 15"
+            radius="24"
+            elevation="3"
+          >
+            <GridLayout columns="*" padding="15">
+              <StackLayout>
+                <!-- Header section with icon and main info -->
+                <GridLayout columns="90, *, 70" marginBottom="15">
+                  <!-- Icon -->
+                  <StackLayout col="0" horizontalAlignment="left">
+                    <Label
+                      backgroundColor="#D8E2E8"
+                      :text="'fa-file-alt' | fonticon"
+                      class="fas text-center"
+                      padding="10"
+                      fontSize="60"
+                      color="#EAB14D"
+                      borderRadius="8"
                     />
-                    <Span :text="item.titular_name" fontSize="15" />
-                  </FormattedString>
-                  <!-- en patio -->
-                  <FormattedString v-if="StoreTypeManagementId === 2">
-                    <Span
-                      text="Nombre de Gestion: "
+                  </StackLayout>
+
+                  <!-- Main info -->
+                  <StackLayout col="1" marginLeft="12">
+                    <Label
+                      text="Gestión de Reporte"
+                      fontSize="14"
                       fontWeight="bold"
-                      fontSize="15"
+                      color="#333"
+                      marginBottom="4"
                     />
-                    <Span :text="item.name + '\n'" fontSize="15" />
-                    <Span text="Patio: " fontWeight="bold" fontSize="15" />
-                    <Span :text="'Alieva' + '\n'" fontSize="15" />
-                    <Span
-                      text="Nombre del Conductor: "
+                    <Label
+                      :text="item.name || 'Sin nombre'"
+                      fontSize="16"
                       fontWeight="bold"
-                      fontSize="15"
+                      color="#00acc1"
+                      marginBottom="2"
+                      textWrap="true"
                     />
-                    <Span :text="item.titular_name" fontSize="15" />
-                  </FormattedString>
-                </Label>
-                <!-- <StackLayout style="padding: 0px 5px 5px 8px">
-                  <Label text="Contenedores:" class="subTittle" fontSize="12" /> -->
-                <Tag
-                  label="Contenedores"
-                  :items="item.container_reports"
-                  labelIterator="code"
-                />
-                <!-- </StackLayout> -->
-                <!-- <ViewImage
-                  ref="viewImage"
-                  label="Firma: "
-                  encrypted="true"
-                  :url="item.signature"
-                /> -->
+                  </StackLayout>
+
+                  <!-- Options button -->
+                  <ButtonNavigate
+                    col="2"
+                    height="50"
+                    width="50"
+                    icon="fa-ellipsis-v"
+                    radius="50"
+                    class="options-button"
+                    :handleEvent="() => navigateOptions(item, index)"
+                  />
+                </GridLayout>
+
+                <!-- Details section -->
+                <GridLayout
+                  columns="*, *"
+                  backgroundColor="#F4F6F8"
+                  padding="12"
+                  borderRadius="8"
+                  marginBottom="12"
+                >
+                  <!-- Left column -->
+                  <StackLayout col="0">
+                    <Label
+                      :text="StoreTypeManagementId === 1 ? 'Viaje:' : 'Patio:'"
+                      fontSize="13"
+                      fontWeight="bold"
+                      color="#666"
+                      marginBottom="2"
+                    />
+                    <Label
+                      :text="
+                        StoreTypeManagementId === 1
+                          ? item.journey || 'No especificado'
+                          : 'Alieva'
+                      "
+                      fontSize="13"
+                      color="#333"
+                      textWrap="true"
+                      marginBottom="8"
+                    />
+                  </StackLayout>
+
+                  <!-- Right column -->
+                  <StackLayout col="1" marginLeft="8">
+                    <Label
+                      :text="
+                        StoreTypeManagementId === 1 ? 'Capitán:' : 'Conductor:'
+                      "
+                      fontSize="13"
+                      fontWeight="bold"
+                      color="#666"
+                      marginBottom="2"
+                    />
+                    <Label
+                      :text="item.titular_name || 'No especificado'"
+                      fontSize="13"
+                      color="#333"
+                      textWrap="true"
+                    />
+                  </StackLayout>
+                </GridLayout>
+
+                <!-- Containers section -->
+                <StackLayout
+                  backgroundColor="#F4F6F8"
+                  padding="12"
+                  borderRadius="8"
+                >
+                  <Tag
+                    label="Contenedores"
+                    :items="item.container_reports"
+                    labelIterator="code"
+                    labelColor="#333"
+                  />
+                </StackLayout>
               </StackLayout>
-            </StackLayout>
-            <ButtonNavigate
-              col="1"
-              height="50"
-              width="50"
-              icon="fa-ellipsis-v"
-              radius="50"
-              :handleEvent="() => navigateOptions(item, index)"
-            />
-          </GridLayout>
+            </GridLayout>
+          </card-view>
         </v-template>
       </ListView>
       <FloatingButton
@@ -223,9 +271,11 @@ const {
   deleteManagement,
   finishOperations,
   showTypesManagement,
+  updateManagement,
 } = require("~/sqlite/database");
 import ManagementEdit from "~/views/evidence/managementForm/ManagementEdit";
-import ButtomSheet from "~/components/buttomSheet/ButtomSheet.vue";
+import ButtomSheetDynamic from "~/components/buttomSheet/ButtomSheetDynamic.vue";
+import Signature from "~/components/signature/Signature.vue";
 import mixinMasters from "~/mixins/Master";
 import Alert from "~/alerts/Alerts";
 import { mapState, mapMutations } from "vuex";
@@ -237,7 +287,7 @@ import { Toasty } from "@triniwiz/nativescript-toasty";
 export default {
   name: "Management",
   components: {
-    ButtomSheet,
+    ButtomSheetDynamic,
   },
 
   data() {
@@ -290,11 +340,15 @@ export default {
       this.getManagements(this.model.type_management_id);
     },
 
+    openDrawer() {
+      util.showDrawer();
+    },
+
     async finish() {
       try {
-        if(this.type_management.status === 1){
-           new Toasty({ text: "La operacion ya esta finalizada" }).show();
-           return
+        if (this.type_management.status === 1) {
+          new Toasty({ text: "La operacion ya esta finalizada" }).show();
+          return;
         }
         let confirmated = await Alert.info(
           "Al finalizar la operacion no podra realizar mas cambios.",
@@ -309,7 +363,9 @@ export default {
           }
 
           this.type_management.status = res.data.status;
-          new Toasty({ text: "Operacion "+res.data.name+" Finalizada" }).show();
+          new Toasty({
+            text: "Operacion " + res.data.name + " Finalizada",
+          }).show();
           return;
         }
       } catch (error) {
@@ -442,44 +498,74 @@ export default {
 
     navigateOptions(item, index) {
       item.action = true;
+      const events = [
+        {
+          name: "Ver Detalles",
+          icon: "fa-eye",
+          event: () => this.managmentInfo(item),
+        },
+      ];
+
+      // Solo agregar opciones de editar y elim inar si la operación no está finalizada
+      if (this.type_management.status === 0) {
+        events.push(
+          {
+            name: "Firmar",
+            icon: "fa-signature",
+            event: () => this.signatureManagement(item),
+          },
+          {
+            name: "Actualizar",
+            icon: "fa-redo",
+            event: () => this.managementEdit(item),
+          },
+          {
+            name: "Eliminar",
+            icon: "fa-times",
+            event: () => this.deleteRow(item.id),
+          }
+        );
+      }
+
       const options = {
         dismissOnBackgroundTap: true,
         dismissOnDraggingDownSheet: false,
         transparent: true,
         props: {
           item: item,
-          generalOptions: this.type_management.status == 1 ? false : true,
-          component: ManagementEdit,
-          infoRegister: () => this.managmentInfo(item),
-          updateRegister: () => this.managementEdit(item),
-          deleteRow: () => this.deleteRow(item.id),
+          events: events,
+          generalOptions: false,
         },
         // listeners to be connected to MyComponent
         on: {
           someEvent: (value) => {},
         },
       };
-      this.$showBottomSheet(ButtomSheet, options);
+      this.$showBottomSheet(ButtomSheetDynamic, options);
     },
 
     managmentInfo(item) {
+      this.loadingCharge(true);
       let listRows = [];
       if (item.type_management_id === 1) {
         listRows = ManagmentShipList.listRowsShip;
       } else if (item.type_management_id === 2) {
         listRows = ManagmentShipList.listRowsPatio;
       }
-      this.$showModal(ListModal, {
-        animated: true,
-        stretched: false,
-        props: {
-          title: "Informacion del reporte",
-          info: item,
-          listRows: listRows,
-          showTags: "container_reports",
-          iteratorTags: "code",
-        },
-      });
+      setTimeout(() => {
+        this.$showModal(ListModal, {
+          animated: true,
+          stretched: false,
+          props: {
+            title: "Informacion de la gestion",
+            info: item,
+            listRows: listRows,
+            showTags: "container_reports",
+            iteratorTags: "code",
+          },
+        });
+      }, 5);
+      this.loadingCharge();
     },
 
     managementEdit(item) {
@@ -507,6 +593,23 @@ export default {
           Alert.danger("eleminacion fallida ", error.message);
         }
       }
+    },
+
+    signatureManagement(item) {
+      this.model = item;
+      this.$showModal(Signature, {
+        animated: true,
+        props: {
+          id: this.model.id,
+          signature: this.model.signature,
+        },
+        animated: true,
+        cancelable: true,
+      }).then(async (res) => {
+        this.model.signature = await res.signature;
+        await updateManagement(this.model);
+        //console.log("res ",this.model)
+      });
     },
 
     //evento para quitarle foco al searhBar cuando se carga la vista
@@ -548,5 +651,16 @@ export default {
 
 .search-bar {
   font-size: 15; /* Cambia el tamaño del texto aquí */
+}
+
+.options-button {
+  background: linear-gradient(135deg, #e8f0f3 0%, #f4f6f8 40%, #d8e2e8 100%);
+  color: #666;
+  transition: all 0.2s ease;
+}
+
+.options-button:active {
+  background: #c8d4da;
+  transform: scale(0.95);
 }
 </style>

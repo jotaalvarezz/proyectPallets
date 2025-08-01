@@ -21,7 +21,7 @@
         col="1"
         class="text-center"
         text="Firmar"
-        fontSize="15"
+        fontSize="20"
         color="#F4F6F8"
         fontWeight="bold"
       ></Label>

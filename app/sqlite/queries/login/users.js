@@ -30,7 +30,7 @@ const showUser = async (user_id) => {
       /* consulta para traer los modulos a los que tiene acceso */
       let modules = await db.all(
                                   `SELECT m.id, m.name_module, m.url,
-                                            m.icon, m.description, m.date_creation
+                                            m.icon, m.movil_id, m.description, m.date_creation
                                     FROM  module_user ms
                                     INNER JOIN modules m on m.id = ms.module_id
                                     WHERE ms.user_id = ?`,
@@ -38,7 +38,7 @@ const showUser = async (user_id) => {
       const modulesFormatted = await showData(
         "modules",
         modules,
-        ["id", "name", "url", "icon", "description", "date_creation"]
+        ["id", "name", "url", "icon", "movil_id", "description", "date_creation"]
       );
       dataFormatted.modules = modulesFormatted;
     }

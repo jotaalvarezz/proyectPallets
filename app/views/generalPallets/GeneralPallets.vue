@@ -1,6 +1,8 @@
 <template>
   <Page @loaded="onPageLoaded">
-    <Header :search="false" />
+    <ActionBar backgroundColor="#00acc1" padding="0">
+      <HeaderComponent title="Sincronizar Pallets" :handleback="openDrawer" />
+    </ActionBar>
     <GridLayout rows="auto, *" backgroundColor="#F4F6F8">
       <GridLayout margin="5" row="0" rows="*" columns="*, 70">
         <SearchBar
@@ -137,7 +139,7 @@ import { mapMutations } from "vuex";
 import mixinMasters from "~/mixins/Master";
 import ListModal from "~/components/listModal/ListModal.vue";
 import GeneralPalletList from "~/views/generalPallets/GeneralPalletList";
-import { onSearchBarLoaded } from "~/shared/helpers"
+import { onSearchBarLoaded } from "~/shared/helpers";
 
 export default {
   name: "Ships",
@@ -175,7 +177,6 @@ export default {
   },
 
   methods: {
-
     onPageLoaded() {
       // Quita el foco inicial del SearchBar para evitar que el teclado se active
       this.$refs.searchBar.nativeView.dismissSoftInput();
@@ -209,10 +210,14 @@ export default {
       this.getAll();
     },
 
+    openDrawer() {
+      util.showDrawer();
+    },
+
     async palletInfo(item) {
       try {
         const res = await getPallet(item);
-        this.infoPallet = res.data
+        this.infoPallet = res.data;
       } catch (error) {
         console.log("error al traer los datos ", error);
       }
@@ -273,20 +278,30 @@ export default {
 
     async sendAll() {
       try {
-        this.loadingCharge(true);
-        this.sendPallets = [];
-        const res = await loadPallets();
-        if (res.data.length > 0) {
-          this.sendPallets = res.data
-          const postPallets = await axios.post(process.env.VUE_APP_API_URL+'/loadpallets', this.sendPallets)
-          this.loadingCharge();
-          Alert.success("Cargue Exitoso!");
-        } else {
-          this.loadingCharge();
-          Alert.danger(
-            "No se encontraron pallets",
-            "por favor asegurese antes de sincronizar"
-          );
+        let confirmated = await Alert.info(
+          "¿Desea sincronizar la informacion?",
+          3,
+          "Sincronizar"
+        );
+        if (confirmated) {
+          this.loadingCharge(true);
+          this.sendPallets = [];
+          const res = await loadPallets();
+          if (res.data.length > 0) {
+            this.sendPallets = res.data;
+            const postPallets = await axios.post(
+              process.env.VUE_APP_API_URL + "/loadpallets",
+              this.sendPallets
+            );
+            this.loadingCharge();
+            Alert.success("Cargue Exitoso!");
+          } else {
+            this.loadingCharge();
+            Alert.danger(
+              "No se encontraron pallets",
+              "por favor asegurese antes de sincronizar"
+            );
+          }
         }
       } catch (error) {
         this.loadingCharge();
@@ -317,9 +332,9 @@ export default {
       }
     },
     //evento para quitarle foco al searhBar cuando se carga la vista
-    focus(event){
-      onSearchBarLoaded(event)
-    }
+    focus(event) {
+      onSearchBarLoaded(event);
+    },
   },
 
   created() {
