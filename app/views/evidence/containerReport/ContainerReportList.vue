@@ -82,7 +82,6 @@
                   <StackLayout col="1" marginLeft="12">
                     <Label
                       text="Reporte de Contenedor"
-                      class="subTittle"
                       fontSize="16"
                       fontWeight="bold"
                       color="#333"
@@ -90,7 +89,7 @@
                     />
                     <Label
                       :text="(item.prefix || '') + (item.code || 'Sin código')"
-                      fontSize="20"
+                      fontSize="18"
                       fontWeight="bold"
                       color="#00acc1"
                       marginBottom="1"
