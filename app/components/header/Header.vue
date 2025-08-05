@@ -14,16 +14,8 @@
       <StackLayout col="1" padding="10" style="width: 100%">
         <Image
           src="~/assets/images/logobarco.png"
-          width="30"
-          height="30"
-          horizontalAlignment="center"
-        />
-        <Label
-          text="WSP"
-          fontSize="12"
-          padding="0"
-          color="#F4F6F8"
-          fontWeight="bold"
+          width="auto"
+          height="auto"
           horizontalAlignment="center"
         />
       </StackLayout>

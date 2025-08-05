@@ -18,7 +18,7 @@
 	<application
 		android:name="com.tns.NativeScriptApplication"
 		android:allowBackup="true"
-		android:icon="@mipmap/barco_de_carga"
+		android:icon="@mipmap/wsp_image"
 		android:label="@string/app_name"
 		tools:replace="android:label"
 		android:theme="@style/AppTheme"
