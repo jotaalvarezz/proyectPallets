@@ -5,12 +5,6 @@
         class="nt-drawer__header-image fas t-36"
         src="~/assets/images/logobarco.png"
       />
-      <Label
-        class="nt-drawer__header-brand coloIcons"
-        color="#F4F6F8"
-        fontWeight="bold"
-        text="WSP"
-      />
     </StackLayout>
     <ScrollView row="1" class="nt-drawer__body" backgroundColor="#F4F6F8">
       <StackLayout>

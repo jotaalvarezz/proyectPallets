@@ -138,10 +138,8 @@ export default {
 
   methods: {
     initialMethod(){
-      console.log(this.modules);
       this.processModules = this.modules.filter(item => !item.movil_id.startsWith('ns_sync'));
       this.syncModules = this.modules.filter(item => item.movil_id.startsWith('ns_sync'));
-      console.log(this.processModules);
     },
 
     navegate(url) {
