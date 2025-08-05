@@ -159,14 +159,14 @@
                   <StackLayout col="1" marginLeft="12">
                     <Label
                       text="Gestión de Reporte"
-                      fontSize="14"
+                      fontSize="16"
                       fontWeight="bold"
                       color="#333"
                       marginBottom="4"
                     />
                     <Label
                       :text="item.name || 'Sin nombre'"
-                      fontSize="16"
+                      fontSize="18"
                       fontWeight="bold"
                       color="#00acc1"
                       marginBottom="2"
